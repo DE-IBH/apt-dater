@@ -1,0 +1,99 @@
+# Syntax:
+# [Customer]
+# Hosts=[OptionalUser@]host.domain[:OptionalPort]
+
+[IBH]
+Hosts=daisy.ibh.net;pluto.ibh.net;duck.ibh.net;micky.ibh.net;adolar.ibh.net;playground.ibh.net;secure.ibh.net;cobalt.ibh.net;blasius.messenetz.net;wormhole.ibh.net;themepark.ibh.net;orphanage.ibh.net;commonplace.ibh.net;
+
+[SMT Hybrid]
+Hosts=test@inet.smt-hybrid.de;
+
+[Presswerkzeugbau Grossdubrau]
+Hosts=123@inet.pwb-online.de:2222;
+
+[SHK Nordhausen]
+Hosts=lakai.shk-ndh.de;
+
+[Bavaria]
+Hosts=inet.klinik-bavaria.de;mail.klinik-bavaria.de:22422;
+
+[Porzelanmanufaktur Meissen]
+Hosts=aurum.meissen.de;boettger.meissen.de:22422;friedrich.meissen.de;
+
+[Technisat]
+Hosts=astra.technisat-digital.de;
+
+[media project]
+Hosts=mailer.mediaproject.de;
+
+[hap]
+Hosts=inet.hap-dresden.de;
+
+[AMEOS St. Salvator Halberstadt]
+Hosts=hermes2.salvator-kh.de;hbs-vpnmgmt-1.halberstadt.ameos.intern;
+
+[Steuerberater Schmeinck+Biermann]
+Hosts=steuermann.schmeinck-biermann.de;
+
+[Sysmik]
+Hosts=wwwli001.sysmik.de;
+
+[CTK]
+Hosts=mid.ctk.de;
+
+[SITA]
+Hosts=sita.tz-dd.de;
+
+[SKC]
+Hosts=mailgate.skc.de;
+
+[Internet Ostsachsen]
+Hosts=marconi.launet.de;
+
+[Mesacon]
+Hosts=linux.mesacon.de;
+
+[IPRO Dresden]
+Hosts=web1.ipro-dresden.de;wega.ipro-dresden.de;
+
+[Inerconsult]
+Hosts=econtrade.inerconsult.com;natalka.inerconsult.com:22422;
+
+[IKA]
+Hosts=ika.ika-dresden.de;
+
+[Dieter+Joerg Fischer Versicherungsmakler]
+Hosts=djf-gate.d-und-j-fischer.de;
+
+[TZ Dresden]
+Hosts=tzd-gate.tz-dd.de;
+
+[GFI/DGFZ]
+Hosts=orion.dgfz.de;
+
+[Dresden Elektronik]
+Hosts=inet.dresden-elektronik.de;
+
+[SQL GmbH]
+Hosts=caesar.sql-gmbh.de;
+
+[WAD]
+Hosts=studio.wad.de;
+
+[WOBA Dresden]
+Hosts=erlwein.woba-dresden.de;hermes.woba-dresden.de;
+
+[SVG]
+Hosts=svg.svg-dresden.de;
+
+[Krankenhaus St. Joseph Stift]
+Hosts=arthur.josephstift-dresden.de;
+
+[RKW]
+Hosts=max.rkw-sachsen.de;
+
+[Evangelisches Landeskirchenamt]
+Hosts=evlks.ibh-dialin.net;
+
+[DRK Bildungswerk Sachsen]
+Hosts=srv-inet.drk-bildungswerk-sachsen.de;

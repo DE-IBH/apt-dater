@@ -1,0 +1,16 @@
+# Config file of apt-dater in the form of the glib GKeyFile required
+
+[Paths]
+HostsFile=conf/hosts.conf
+StatsDir=stats
+
+[SSH]
+Cmd=/usr/bin/ssh
+OptionalCmdFlags=
+DefaultUser=ibh
+DefaultPort=22
+
+[Commands]
+CmdRefresh=sudo apt-get -q update && sudo apt-get -q -s upgrade
+CmdUpgrade=sudo apt-get upgrade && debtrack/debtrack
+CmdInstall=sudo apt-get install %s && debtrack/debtrack
