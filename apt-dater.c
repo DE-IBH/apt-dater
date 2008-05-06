@@ -2,8 +2,6 @@
  *
  * Makes our customer Linux updates faster.
  *
- * $Log$
- *
  */
 
 #include "apt-dater.h"
