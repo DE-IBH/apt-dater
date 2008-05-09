@@ -4,6 +4,12 @@
 
 #include "apt-dater.h"
 
+
+static int cmpStringP(const void *p1, const void *p2)
+{
+ return(g_ascii_strcasecmp (*(gchar * const *) p1, *(gchar * const *) p2));
+}
+
 void freeConfig (CfgFile *cfg)
 {
  g_free(cfg->hostsfile);
@@ -128,6 +134,7 @@ GList *loadHosts (char *filename)
  }
  
  groups = g_key_file_get_groups (keyfile, &lengrp);
+ qsort(groups, lengrp, sizeof(gchar *), cmpStringP);
 
  for(i = 0; i < lengrp; i++) {
   if(!(khosts = 
@@ -137,20 +144,22 @@ GList *loadHosts (char *filename)
    return(NULL);
   }
 
+  qsort(khosts, lenkey, sizeof(gchar *), cmpStringP);
+
   for(j = 0; j < lenkey; j++) {
    hostnode = g_new0(HostNode, 1);
 
    *hostname = *ssh_user = 0; ssh_port = 0;
 
    if(sscanf(khosts[j], "%[a-zA-Z0-9_-.]@%[a-zA-Z0-9-.]:%d", ssh_user, hostname, &ssh_port) != 3) {
+    *hostname = *ssh_user = 0; ssh_port = 0;
+    if(sscanf(khosts[j], "%[a-zA-Z0-9-.]:%d", hostname, &ssh_port) != 2) {
      *hostname = *ssh_user = 0; ssh_port = 0;
-     if(sscanf(khosts[j], "%[a-zA-Z0-9-.]:%d", hostname, &ssh_port) != 2) {
-       *hostname = *ssh_user = 0; ssh_port = 0;
-       if(sscanf(khosts[j], "%[a-zA-Z0-9_-.]@%[a-zA-Z0-9-.]", ssh_user, hostname) != 2) {
-         *hostname = *ssh_user = 0; ssh_port = 0;
-         sscanf(khosts[j], "%s", hostname);
-       }
+     if(sscanf(khosts[j], "%[a-zA-Z0-9_-.]@%[a-zA-Z0-9-.]", ssh_user, hostname) != 2) {
+      *hostname = *ssh_user = 0; ssh_port = 0;
+      sscanf(khosts[j], "%s", hostname);
      }
+    }
    }
 
    hostnode->hostname = g_strdup(hostname);

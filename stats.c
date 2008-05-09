@@ -182,20 +182,20 @@ Category getUpdatesFromStat(gchar *hostname, GList *updates, guint *stat)
   if (sscanf((gchar *) line, "%d upgraded, %d newly installed, %d to remove and %d not upgraded.", &cnt_upgraded, &cnt_newly_installed, &cnt_remove, &cnt_not_upgraded)) continue;
 
   if (sscanf((gchar *) line, "KERNELINFO: %d", &status)) {
-    switch(status){
-      case 1:
-        *stat = *stat | 2;
-        break;
-      case 2:
-        *stat = *stat | 4;
-        break;
-    }
-    continue;
+   switch(status){
+   case 1:
+    *stat = *stat | 2;
+    break;
+   case 2:
+    *stat = *stat | 4;
+    break;
+   }
+   continue;
   }
 
   if  (!strcmp(line,"The following packages have been kept back:")) {
-    *stat = *stat | 1;
-    continue;
+   *stat = *stat | 1;
+   continue;
   }
 
   *package = *oldver = *newver = *section = *dist = 0;

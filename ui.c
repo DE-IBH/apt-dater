@@ -337,7 +337,8 @@ void checkSelected()
  dn = getSelectedDrawNode();
  if (!dn) {
   dl = g_list_first(drawlist);
-  while (dl && (((DrawNode *) dl->data)->scrpos != LINES-2)) dl = g_list_next(dl);
+  while (dl && (((DrawNode *) dl->data)->scrpos != LINES-2)) 
+   dl = g_list_next(dl);
   if (!dl) dl = g_list_last(drawlist);
   setEntryActiveStatus((DrawNode *) dl->data, TRUE);
   return;
@@ -345,7 +346,8 @@ void checkSelected()
  if (dn -> scrpos == 0 || dn -> scrpos > LINES-2) {
   setEntryActiveStatus(dn, FALSE);
   dl = g_list_first(drawlist);
-  while (dl && (((DrawNode *) dl->data)->scrpos != LINES-2)) dl = g_list_next(dl);
+  while (dl && (((DrawNode *) dl->data)->scrpos != LINES-2)) 
+   dl = g_list_next(dl);
   if (!dl) dl = g_list_last(drawlist);
   setEntryActiveStatus((DrawNode *) dl->data, TRUE);
   return;
@@ -385,7 +387,8 @@ void buildIntialDrawList(GList *hosts)
   drawnode->selected = i == 0 ? TRUE : FALSE;
   drawnode->scrpos = i == 0 ? 1 : 0;
   drawnode->elements = getHostCatCnt(hosts, i);
-  if((i == (Category) C_UPDATES_PENDING || i == (Category) C_NO_STATS ) && drawnode->elements > 0)
+  if((i == (Category) C_UPDATES_PENDING || 
+      i == (Category) C_NO_STATS ) && drawnode->elements > 0)
    drawnode->attrs = A_BOLD;
   else
    drawnode->attrs = A_NORMAL;
@@ -435,7 +438,8 @@ gboolean ctrlKeyUpDown(int ic)
    setEntryActiveStatus((DrawNode *) dl->data, FALSE);
    dl = g_list_next(dl);
    setEntryActiveStatus((DrawNode *) dl->data, TRUE);
-   if(((DrawNode *) dl->data)->scrpos >= LINES-2 || ((DrawNode *) dl->data)->scrpos == 0) reorderScrpos(2);
+   if(((DrawNode *) dl->data)->scrpos >= LINES-2 || 
+      ((DrawNode *) dl->data)->scrpos == 0) reorderScrpos(2);
    ret = TRUE;
   }
   break;
@@ -451,7 +455,8 @@ gboolean ctrlKeyUpDown(int ic)
   setEntryActiveStatus((DrawNode *) dl->data, FALSE);
   dl = g_list_last(drawlist);
   setEntryActiveStatus((DrawNode *) dl->data, TRUE);
-  if(((DrawNode *) dl->data)->scrpos == 0 || ((DrawNode *) dl->data)->scrpos > LINES-2) {
+  if(((DrawNode *) dl->data)->scrpos == 0 || 
+     ((DrawNode *) dl->data)->scrpos > LINES-2) {
    i = 0;
    while (dl) {
     ((DrawNode *) dl->data)->scrpos = LINES-3-i;
@@ -478,11 +483,13 @@ gboolean compDrawNodes(DrawNode* n1, DrawNode* n2)
    return(TRUE);
   break;
  case HOST:
-  if (!g_strcasecmp(((HostNode *) (n1->p))->hostname, ((HostNode *)(n2->p))->hostname))
+  if (!g_strcasecmp(((HostNode *) (n1->p))->hostname, 
+		    ((HostNode *)(n2->p))->hostname))
    return(TRUE);
   break;
  case UPDATE:
-  if (!g_strcasecmp(((UpdNode *) n1->p)->package,((UpdNode *) n2->p)->package)) return(TRUE);
+  if (!g_strcasecmp(((UpdNode *) n1->p)->package,
+		    ((UpdNode *) n2->p)->package)) return(TRUE);
   break;
  default:
   break;
@@ -619,7 +626,8 @@ void extDrawListCategory(gint atpos, gchar *category, GList *hosts)
 
  while(ho) {
   if(((HostNode *) ho->data)->category == i) {
-   if((drawnode) && (!g_strcasecmp(drawnode->p, ((HostNode *) ho->data)->group))) {
+   if((drawnode) && (!g_strcasecmp(drawnode->p, 
+				   ((HostNode *) ho->data)->group))) {
     ho = g_list_next(ho);
     continue;
    }
@@ -629,7 +637,8 @@ void extDrawListCategory(gint atpos, gchar *category, GList *hosts)
    drawnode->extended = FALSE;
    drawnode->selected = FALSE;
    drawnode->scrpos = 0;
-   drawnode->elements = getHostGrpCatCnt(hosts, ((HostNode *) ho->data)->group, i);
+   drawnode->elements = getHostGrpCatCnt(hosts, 
+					 ((HostNode *) ho->data)->group, i);
    drawnode->attrs = A_NORMAL;
    drawlist = g_list_insert(drawlist, drawnode, ++atpos);
   }
@@ -647,7 +656,8 @@ void extDrawListGroup(gint atpos, gchar *group, GList *hosts)
  ho = g_list_first(hosts);
 
  while(ho) {
-  if(!g_strcasecmp(((HostNode *) ho->data)->group, group) && drawCategories[((HostNode *) ho->data)->category] == incategory) {
+  if(!g_strcasecmp(((HostNode *) ho->data)->group, group) && 
+     drawCategories[((HostNode *) ho->data)->category] == incategory) {
    drawnode = g_new0(DrawNode, 1);
    drawnode->p = ((HostNode *) ho->data);
    drawnode->type = HOST;
@@ -697,6 +707,7 @@ void shrinkDrawListCategory(gint atpos)
   drawnode = ((DrawNode *) dl->data);
   if(drawnode->type != CATEGORY) {
    drawlist = g_list_remove(drawlist, drawnode);
+   freeDrawNode(drawnode);
   }
   else break;
   dl = g_list_nth(drawlist, (guint) atpos+1);
@@ -715,6 +726,7 @@ void shrinkDrawListGroup(gint atpos)
   drawnode = ((DrawNode *) dl->data);
   if(drawnode->type != GROUP && drawnode->type != CATEGORY) {
    drawlist = g_list_remove(drawlist, drawnode);
+   freeDrawNode(drawnode);
   }
   else break;
   dl = g_list_nth(drawlist, (guint) atpos+1);
@@ -733,6 +745,7 @@ void shrinkDrawListHost(gint atpos)
   drawnode = ((DrawNode *) dl->data);
   if(drawnode->type != GROUP && drawnode->type != CATEGORY && drawnode->type != HOST) {
    drawlist = g_list_remove(drawlist, drawnode);
+   freeDrawNode(drawnode);
   }
   else break;
   dl = g_list_nth(drawlist, (guint) atpos+1);
