@@ -6,12 +6,15 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include <glib-2.0/glib.h>
 
 #define PATH_CONFIG "conf/apt-dater.conf"
 #define STATS_MAX_LINE_LEN 1000
-#define BUF_MAX_LEN 255
+#define BUF_MAX_LEN 256
 
 typedef struct _cfgfile {
  gchar *hostsfile;

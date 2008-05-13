@@ -9,7 +9,7 @@
 CfgFile *cfg = NULL;
 GMainLoop *loop = NULL;
 gboolean rebuilddl = FALSE;
-
+time_t oldest_st_mtime;
 
 int main(int argc, char **argv)
 {
@@ -17,10 +17,9 @@ int main(int argc, char **argv)
  char *cfgfilename = NULL;
  GList *hosts = NULL;
 
-
  cfgfilename = (char *) strdup (PATH_CONFIG);
  g_set_prgname("apt-dater");
- 
+
  while ((opts = getopt(argc, argv, "c:")) != EOF) {
   switch(opts) {
   case 'c':
@@ -47,6 +46,8 @@ int main(int argc, char **argv)
   g_printerr("Error on loading config file %s\n", cfg->hostsfile);
   exit(EXIT_FAILURE);
  }
+
+ getOldestMtime(hosts);
 
  doUI(hosts);
 

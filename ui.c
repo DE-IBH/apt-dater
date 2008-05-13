@@ -103,12 +103,25 @@ void drawMenu (char *str)
 
 void drawStatus (char *str)
 {
+ char strmtime[30];
+ struct tm *tm_mtime;
+ int mtime_pos;
+
+ tm_mtime = localtime(&oldest_st_mtime);
+ strftime(strmtime, sizeof(strmtime), " Oldest: %D %H:%M", tm_mtime);
+
  attron(A_REVERSE);
  move(LINES - 2, 0);
  hline( ' ', COLS);
  if(str) {
   addnstr(str, COLS);
  }
+
+ mtime_pos = COLS - strlen(strmtime) - 1;
+
+ move(LINES - 2, mtime_pos);
+ addnstr(strmtime, COLS-mtime_pos);
+
  attroff(A_REVERSE);
 }
 
@@ -146,6 +159,7 @@ void drawCategoryEntry (DrawNode *n)
  if(n->selected == TRUE) {
   sprintf(statusln, "%d %s in status \"%s\"", n->elements, n->elements > 1 || n->elements == 0 ? "Hosts" : "Host", (char *) n->p);
   sprintf(menuln, "%s  g:Check for new updates", MENU_TEXT);
+
   drawMenu(menuln);
   drawStatus(statusln);
  }
@@ -197,7 +211,7 @@ void drawHostEntry (DrawNode *n)
  if(n->selected == TRUE) {
   switch(((HostNode *) n->p)->category) {
   case C_UPDATES_PENDING:
-   sprintf(menuln, "%s  c:ssh-Connect  u:Upgrade host  g:Check for new updates", MENU_TEXT);
+   sprintf(menuln, "%s  c:ssh-Connect  u:Upgrade host  g:Check for new updates",MENU_TEXT);
    sprintf(statusln, "%d %s required", n->elements, n->elements > 1 || n->elements == 0 ? "Updates" : "Update");
    break;
   case C_UP_TO_DATE:
@@ -221,6 +235,7 @@ void drawHostEntry (DrawNode *n)
    sprintf(statusln, "Status is unknown");
    break;
   }
+
   if (((HostNode *) n->p)->status & 1) strcat(statusln," - packages kept back");
   if (((HostNode *) n->p)->status & 2) strcat(statusln," - running Kernel is not the latest");
   if (((HostNode *) n->p)->status & 4) strcat(statusln," - a selfbuilt kernel is running");
@@ -1038,7 +1053,9 @@ gboolean ctrlUI (GList *hosts)
  default:
   break;
  }
- if(refscr == TRUE)
+ if(refscr == TRUE) {
+  getOldestMtime(hosts);
   refreshDraw();
+ }
  return (ret);
 }

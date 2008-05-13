@@ -72,11 +72,11 @@ gboolean ssh_cmd_upgrade(gchar *hostname, gchar *ssh_user, gint ssh_port)
  gchar **argv = NULL;
 
  if(strlen(cfg->ssh_optflags) > 0) {
-  cmd = g_strdup_printf ("%s+-l+%s+-p+%d+%s+%s+export DEBIAN_FRONTEND=teletype && unset LANG && %s", 
+  cmd = g_strdup_printf ("%s+-l+%s+-p+%d+%s+%s+unset LANG && %s", 
 			 cfg->ssh_cmd, ssh_user, ssh_port, 
 			 cfg->ssh_optflags, hostname, cfg->cmd_upgrade);
  } else {
-  cmd = g_strdup_printf ("%s+-l+%s+-p+%d+%s+export DEBIAN_FRONTEND=teletype && unset LANG && %s", 
+  cmd = g_strdup_printf ("%s+-l+%s+-p+%d+%s+unset LANG && %s", 
 			 cfg->ssh_cmd, ssh_user, ssh_port, hostname,
 			 cfg->cmd_upgrade);
  }
@@ -111,11 +111,11 @@ gboolean ssh_cmd_install(gchar *hostname, gchar *ssh_user, gint ssh_port,
  gchar **argv = NULL;
 
  if(strlen(cfg->ssh_optflags) > 0) {
-  cmd = g_strdup_printf ("%s+-l+%s+-p+%d+%s+%s+export DEBIAN_FRONTEND=teletype && unset LANG && %s", 
+  cmd = g_strdup_printf ("%s+-l+%s+-p+%d+%s+%s+unset LANG && %s", 
 			 cfg->ssh_cmd, ssh_user, ssh_port, 
 			 cfg->ssh_optflags, hostname, cfg->cmd_install);
  } else {
-  cmd = g_strdup_printf ("%s+-l+%s+-p+%d+%s+export DEBIAN_FRONTEND=teletype && unset LANG && %s", 
+  cmd = g_strdup_printf ("%s+-l+%s+-p+%d+%s+unset LANG && %s", 
 			 cfg->ssh_cmd, ssh_user, ssh_port, hostname,
 			 cfg->cmd_install);
  }

@@ -279,3 +279,32 @@ gboolean refreshStats(GList *hosts)
 
  return(r);
 }
+
+
+void getOldestMtime(GList *hosts)
+{
+ GList *ho;
+ gchar *statsfile;
+ struct stat stat_p;
+ HostNode *n;
+
+ oldest_st_mtime = time(NULL);
+
+ ho = g_list_first(hosts);
+ 
+ while(ho) {
+  n = (HostNode *) ho->data;
+
+  if((statsfile = getStatsFile(n->hostname)))
+   {
+    if(!stat(statsfile, &stat_p)) {
+     if(difftime(stat_p.st_mtime, oldest_st_mtime) < 0)
+      oldest_st_mtime = stat_p.st_mtime;
+    }
+
+    g_free(statsfile);
+   }
+
+  ho = g_list_next(ho);
+ }
+}
