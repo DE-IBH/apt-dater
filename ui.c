@@ -70,17 +70,27 @@ guint getHostGrpCatCnt(GList *hosts, gchar *group, Category category)
  return(cnt);
 }
 
+void disableInput() {
+ noecho();
+ curs_set(0);
+ nodelay(stdscr, TRUE);
+}
+
+void enableInput() {
+ echo();
+ curs_set(1);
+ nodelay(stdscr, FALSE);
+}
+
 void initUI ()
 {
  initscr();
  cbreak();
  nonl();
- noecho();
- curs_set(0);
+ disableInput();
  leaveok(stdscr, TRUE);
  intrflush(stdscr, FALSE);
  keypad(stdscr, TRUE);
- nodelay(stdscr, TRUE);
  clear();
  refresh();
 }
@@ -123,6 +133,22 @@ void drawStatus (char *str)
  addnstr(strmtime, COLS-mtime_pos);
 
  attroff(A_REVERSE);
+}
+
+void queryString(const gchar *query, gchar *in, const gint size) {
+ mvaddstr(LINES - 1, 0, query);
+ move(LINES - 1, strlen(query) + 1);
+
+ gint i;
+ for(i = strlen(in)-1; i>=0; i--)
+  ungetch(in[i]);
+
+ enableInput();
+ getnstr(in, size);
+ disableInput();
+
+ move(LINES - 1, 0);
+ hline( ' ', COLS);
 }
 
 /* actually not used
@@ -211,19 +237,19 @@ void drawHostEntry (DrawNode *n)
  if(n->selected == TRUE) {
   switch(((HostNode *) n->p)->category) {
   case C_UPDATES_PENDING:
-   sprintf(menuln, "%s  c:ssh-Connect  u:Upgrade host  g:Check for new updates",MENU_TEXT);
+   sprintf(menuln, "%s  c:ssh-Connect  u:Upgrade host  g:Check for new updates  i:Install Package",MENU_TEXT);
    sprintf(statusln, "%d %s required", n->elements, n->elements > 1 || n->elements == 0 ? "Updates" : "Update");
    break;
   case C_UP_TO_DATE:
-   sprintf(menuln, "%s  c:ssh-Connect  g:Check for new updates" , MENU_TEXT);
+   sprintf(menuln, "%s  c:ssh-Connect  g:Check for new updates  i:Install Package" , MENU_TEXT);
    sprintf(statusln, "No update required");
    break;
   case C_NO_STATS:
-   sprintf(menuln, "%s  c:ssh-Connect  g:Check for new updates", MENU_TEXT);
+   sprintf(menuln, "%s  c:ssh-Connect  g:Check for new updates  i:Install Package", MENU_TEXT);
    sprintf(statusln, "Statusfile is missing");
    break;
   case C_REFRESH_REQUIRED:
-   sprintf(menuln, "%s  c:ssh-Connect  g:Check for new updates", MENU_TEXT);
+   sprintf(menuln, "%s  c:ssh-Connect  g:Check for new updates  i:Install Package", MENU_TEXT);
    sprintf(statusln, "Refresh required");
    break;
   case C_REFRESH:
@@ -231,7 +257,7 @@ void drawHostEntry (DrawNode *n)
    sprintf(statusln, "In refresh");
    break;
   default:
-   sprintf(menuln, "%s  c:ssh-Connect  g:Check for new updates", MENU_TEXT);
+   sprintf(menuln, "%s  c:ssh-Connect  g:Check for new updates  i:Install Package", MENU_TEXT);
    sprintf(statusln, "Status is unknown");
    break;
   }
@@ -1033,18 +1059,27 @@ gboolean ctrlUI (GList *hosts)
   break;
  case 'i':
   n = getSelectedDrawNode();
-  if(!n) break;
   if(!inhost) break;
-  if(n->type == UPDATE) {
-   cleanUI();
-   ssh_cmd_install(inhost->hostname, inhost->ssh_user, inhost->ssh_port, ((UpdNode *) n->p)->package);
-   inhost->category = C_REFRESH_REQUIRED;
-   freeUpdates(inhost->updates);
-   inhost->updates = NULL;
-   rebuildDrawList(hosts);
-   initUI();
-   refscr = TRUE;
+  
+  static gchar in[64];
+  gchar *pkg;
+  if(!n || (n->type != UPDATE)) {
+    queryString("Install package:", in, sizeof(in));
+    if (strlen(in)==0)
+     break;
+    pkg = in;
   }
+  else {
+    pkg = ((UpdNode *) n->p)->package;
+  }
+  cleanUI();
+  ssh_cmd_install(inhost->hostname, inhost->ssh_user, inhost->ssh_port, pkg);
+  inhost->category = C_REFRESH_REQUIRED;
+  freeUpdates(inhost->updates);
+  inhost->updates = NULL;
+  rebuildDrawList(hosts);
+  initUI();
+  refscr = TRUE;
   break;
  case 'q':
   ret = FALSE;
