@@ -8,8 +8,8 @@ LIBDIR = -L/usr/lib
 CFLAGS = $(INCDIR) -ggdb
 INCDIR = -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
 BIN = apt-dater
-OBJ = apt-dater.o keyfiles.o ui.o stats.o exec.o
-SRC = apt-dater.c keyfiles.c ui.c stats.c exec.c apt-dater.h extern.h ui.h
+OBJ = apt-dater.o keyfiles.o ui.o stats.o exec.o screen.o
+SRC = apt-dater.c keyfiles.c ui.c stats.c exec.c screen.c apt-dater.h extern.h ui.h screen.h
 
 apt-dater: $(OBJ)
 	   $(CC) $(CFLAGS) $(INCDIR) $(LIBDIR) $(LIBS) $(OBJ) -o $(BIN)
