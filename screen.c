@@ -13,32 +13,52 @@ screen_get_sdir() {
   return sdir;
 }
 
-GHashTable *
-screen_get_screens() {
-  GDir *d = g_dir_open(screen_get_sdir(), 0, NULL);
+gboolean
+screen_get_sessions(HostNode *n) {
+  if (n->screens) {
+    g_list_free(n->screens);
+    n->screens = NULL;
+  }
+
+  const gchar *sdir = screen_get_sdir();
+  GDir *d = g_dir_open(sdir, 0, NULL);
 
   if (!d)
-    return;
+    return FALSE;
 
-  GHashTable *slist = g_hash_table_new(g_int_hash, g_int_equal);
+  gchar *search = g_strdup_printf(SCREEN_SOCKPRE"%s_%s_%d", n->ssh_user, n->hostname, n->ssh_port);
 
   gchar *f;
   while ((f = g_dir_read_name(d))) {
-    if (g_file_test(f, G_FILE_TEST_IS_REGULAR)) {
-      gint key;
-      gchar *val = strdup(f);
+    gchar *fn = g_strdup_printf("%s/%s", sdir, f);
+    
+    if (g_file_test(fn, G_FILE_TEST_EXISTS)) {
+      gint pid;
+      gchar *name = g_strdup(f);
 
-      scanf("%d.%s", &key, val);
+      sscanf(f, "%d.%s", &pid, name);
       
-      if ((key > 1) &&
-	  (strncmp(val, SCREEN_SOCKPRE, strlen(SCREEN_SOCKPRE))))
-	g_hash_table_insert(slist, &key, &val);
+      if ((pid > 1) &&
+	  (strcmp(name, search) == 0)) {
+
+	struct stat buf;
+	g_stat(fn, &buf);
+
+	SessNode *s = g_new0(SessNode, 1);
+	s->pid = pid;
+	s->ts = buf.st_mtime;
+
+	n->screens = g_list_prepend(n->screens, s);
+      }
+
+      g_free(name);
     }
   }
-
   g_dir_close(d);
 
-  return slist;
+  g_free(search);
+
+  return g_list_length(n->screens) > 0;
 }
 
 gchar *

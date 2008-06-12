@@ -8,7 +8,7 @@
 
 
 GList *drawlist = NULL;
-char *drawCategories[] = {"Updates pending", "Up to date", "Status file missing", "Refresh required", "In refresh", "Unknown", 0};
+char *drawCategories[] = {"Updates pending", "Up to date", "Status file missing", "Refresh required", "In refresh", "Sessions", "Unknown", 0};
 gchar *incategory = NULL;
 gchar *ingroup = NULL;
 HostNode *inhost = NULL;
@@ -247,6 +247,10 @@ void drawHostEntry (DrawNode *n)
    sprintf(menuln, "%s", MENU_TEXT);
    sprintf(statusln, "In refresh");
    break;
+  case C_SESSIONS:
+   sprintf(menuln, "%s  r:reconnect  R:force reconnect", MENU_TEXT);
+   sprintf(statusln, "Session running");
+   break;
   default:
    sprintf(menuln, "%s  c:ssh-Connect  g:Check for new updates  i:Install Package", MENU_TEXT);
    sprintf(statusln, "Status is unknown");
@@ -275,6 +279,26 @@ void drawUpdateEntry (DrawNode *n)
   sprintf(statusln, "%s -> %s (%s %s)", ((UpdNode *) n->p)->oldver, ((UpdNode *) n->p)->newver, ((UpdNode *) n->p)->dist, ((UpdNode *) n->p)->section);
   drawMenu(menuln);
   drawStatus(statusln);
+ }
+}
+
+void drawSessionEntry (DrawNode *n)
+{
+ char statusln[BUF_MAX_LEN];
+ char menuln[BUF_MAX_LEN];
+ char h[BUF_MAX_LEN];
+
+ snprintf(h, BUF_MAX_LEN, "[%d] since %d", ((SessNode *) n->p)->pid, ((SessNode *) n->p)->ts);
+
+ attron(n->attrs);
+ mvhline(n->scrpos, 0, ' ', COLS);
+ mvaddnstr(n->scrpos, 7, h, COLS);
+ attroff(n->attrs);
+ if(n->selected == TRUE) {
+  sprintf(menuln, "%s  r:reconnect  R:force reconnect", MENU_TEXT);
+  //  sprintf(statusln, "%s -> %s (%s %s)", ((UpdNode *) n->p)->oldver, ((UpdNode *) n->p)->newver, ((UpdNode *) n->p)->dist, ((UpdNode *) n->p)->section);
+  drawMenu(menuln);
+  //  drawStatus(statusln);
  }
 }
 
@@ -319,6 +343,9 @@ void drawEntry (DrawNode *n)
   break;
  case UPDATE:
   drawUpdateEntry(n);
+  break;
+ case SESSION:
+  drawSessionEntry(n);
   break;
  default:
   break;
@@ -420,7 +447,8 @@ void buildIntialDrawList(GList *hosts)
   drawnode->scrpos = i == 0 ? 1 : 0;
   drawnode->elements = getHostCatCnt(hosts, i);
   if((i == (Category) C_UPDATES_PENDING || 
-      i == (Category) C_NO_STATS ) && drawnode->elements > 0)
+      i == (Category) C_NO_STATS ||
+      i == (Category) C_SESSIONS ) && drawnode->elements > 0)
    drawnode->attrs = A_BOLD;
   else
    drawnode->attrs = A_NORMAL;
@@ -522,6 +550,10 @@ gboolean compDrawNodes(DrawNode* n1, DrawNode* n2)
  case UPDATE:
   if (!g_strcasecmp(((UpdNode *) n1->p)->package,
 		    ((UpdNode *) n2->p)->package)) return(TRUE);
+  break;
+ case SESSION:
+  if (((SessNode *) n1->p)->pid ==
+      ((SessNode *) n2->p)->pid) return(TRUE);
   break;
  default:
   break;
@@ -696,7 +728,10 @@ void extDrawListGroup(gint atpos, gchar *group, GList *hosts)
    drawnode->extended = FALSE;
    drawnode->selected = FALSE;
    drawnode->scrpos = 0;
-   drawnode->elements = g_list_length(((HostNode *) ho->data)->updates);
+   if (((HostNode *) ho->data)->category != C_SESSIONS)
+     drawnode->elements = g_list_length(((HostNode *) ho->data)->updates);
+   else
+     drawnode->elements = g_list_length(((HostNode *) ho->data)->screens);
    drawnode->attrs = A_NORMAL;
    drawlist = g_list_insert(drawlist, drawnode, ++atpos);
   }
@@ -708,10 +743,25 @@ void extDrawListGroup(gint atpos, gchar *group, GList *hosts)
 void extDrawListHost(gint atpos, HostNode *n)
 {
  guint i = 0;
- GList *upd;
  DrawNode *drawnode = NULL;
 
- upd = g_list_first(n->updates);
+ if (n->category == C_SESSIONS) {
+   GList *sess = g_list_first(n->screens);
+   
+   while(sess) {
+     drawnode = g_new0(DrawNode, 1);
+     drawnode->p = ((SessNode *)sess->data);
+     drawnode->type = SESSION;
+     drawlist = g_list_insert(drawlist, drawnode, ++atpos);
+     sess = g_list_next(sess);
+   }
+   reorderScrpos(1);
+
+   return;
+ }
+      
+
+ GList *upd = g_list_first(n->updates);
 
  while(upd) {
   drawnode = g_new0(DrawNode, 1);

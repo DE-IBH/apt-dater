@@ -265,13 +265,22 @@ gboolean refreshStats(GList *hosts)
  while(ho) {
   n = (HostNode *) ho->data;
 
-  if(n->category == C_REFRESH_REQUIRED) {
-   n->category = C_REFRESH;
-   freeUpdates(n->updates);
+  if(screen_get_sessions(n)) {
+    n->category = C_SESSIONS;
+    rebuilddl = TRUE;
+  }
+  else {
+    if (n->category == C_SESSIONS)
+      n->category = C_REFRESH_REQUIRED;
 
-   if(ssh_cmd_refresh(n->hostname, n->ssh_user, n->ssh_port, n) == FALSE) {
-    n->category = C_NO_STATS;
-   }
+    if(n->category == C_REFRESH_REQUIRED) {
+      n->category = C_REFRESH;
+      freeUpdates(n->updates);
+
+      if(ssh_cmd_refresh(n->hostname, n->ssh_user, n->ssh_port, n) == FALSE) {
+	n->category = C_NO_STATS;
+      }
+    }
   }
 
   ho = g_list_next(ho);

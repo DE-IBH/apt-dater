@@ -8,7 +8,8 @@ typedef enum {
  CATEGORY,
  GROUP,
  HOST,
- UPDATE
+ UPDATE,
+ SESSION,
 } DrawType;
 
 typedef struct _drawnode {

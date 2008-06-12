@@ -12,6 +12,9 @@
 #define SCREEN_SOCKDIR "/var/run/screen"
 #define SCREEN_SOCKPRE "apt-dater_"
 
+gboolean
+screen_get_sessions(HostNode *n);
+
 gchar *
 screen_new_cmd(const gchar *host, const gchar *user, const gint port);
 

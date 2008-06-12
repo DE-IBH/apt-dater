@@ -37,24 +37,31 @@ typedef struct _update {
  gchar *dist;
 } UpdNode;
 
+typedef struct _session {
+  gint pid;
+  gint ts;
+} SessNode;
+
 typedef enum {
  C_UPDATES_PENDING = 0,
  C_UP_TO_DATE = 1,
  C_NO_STATS = 2,
  C_REFRESH_REQUIRED = 3,
  C_REFRESH = 4,
- C_UNKNOW = 5
+ C_SESSIONS = 5,
+ C_UNKNOW = 6
 } Category;
 
 typedef struct _hostnode {
- gchar    *hostname;
- gchar    *group;
- gchar    *ssh_user;
- gint     ssh_port;
- gint     status;
- gboolean keptback;
- Category category;
- GList    *updates;
+ gchar     *hostname;
+ gchar     *group;
+ gchar     *ssh_user;
+ gint      ssh_port;
+ gint      status;
+ gboolean  keptback;
+ Category  category;
+ GList     *updates;
+ GList     *screens;
 } HostNode;
 
 #include "extern.h"
