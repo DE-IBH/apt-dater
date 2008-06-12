@@ -73,22 +73,25 @@ guint getHostGrpCatCnt(GList *hosts, gchar *group, Category category)
 void disableInput() {
  noecho();
  curs_set(0);
+ leaveok(stdscr, TRUE);
  nodelay(stdscr, TRUE);
 }
 
 void enableInput() {
  echo();
  curs_set(1);
+ leaveok(stdscr, FALSE);
  nodelay(stdscr, FALSE);
 }
 
 void initUI ()
 {
  initscr();
+ start_color();
+ use_default_colors();
  cbreak();
  nonl();
  disableInput();
- leaveok(stdscr, TRUE);
  intrflush(stdscr, FALSE);
  keypad(stdscr, TRUE);
  clear();
@@ -135,35 +138,23 @@ void drawStatus (char *str)
  attroff(A_REVERSE);
 }
 
-void queryString(const gchar *query, gchar *in, const gint size) {
- mvaddstr(LINES - 1, 0, query);
- move(LINES - 1, strlen(query) + 1);
-
+void queryString(const gchar *query, gchar *in, const gint size)
+{
  gint i;
+
+ enableInput();
+ mvaddstr(LINES - 1, 0, query);
+ move(LINES - 1, strlen(query));
+
  for(i = strlen(in)-1; i>=0; i--)
   ungetch(in[i]);
 
- enableInput();
  getnstr(in, size);
  disableInput();
 
  move(LINES - 1, 0);
- hline( ' ', COLS);
+ hline(' ', COLS);
 }
-
-/* actually not used
-
-void drawStatusBlink (char *str)
-{
-attron(A_REVERSE | A_BOLD | A_BLINK);
-move(LINES - 2, 0);
-hline( ' ', COLS);
-if(str) {
-addnstr(str, COLS);
-}
-attroff(A_REVERSE | A_BOLD | A_BLINK);
-}
-*/
 
 void drawCategoryEntry (DrawNode *n)
 {
@@ -962,6 +953,8 @@ gboolean ctrlUI (GList *hosts)
  gboolean ret = TRUE;
  gboolean refscr = FALSE;
  DrawNode *n;
+ static   gchar in[64];
+ gchar    *pkg = NULL;
 
  if(rebuilddl == TRUE) {
   rebuildDrawList(hosts);
@@ -1061,10 +1054,8 @@ gboolean ctrlUI (GList *hosts)
   n = getSelectedDrawNode();
   if(!inhost) break;
   
-  static gchar in[64];
-  gchar *pkg;
   if(!n || (n->type != UPDATE)) {
-    queryString("Install package:", in, sizeof(in));
+   queryString("Install package: ", in, sizeof(in));
     if (strlen(in)==0)
      break;
     pkg = in;
