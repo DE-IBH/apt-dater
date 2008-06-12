@@ -2,11 +2,10 @@
  *
  */
 
-#include <curses.h>
-#include "apt-dater.h"
 #include "screen.h"
 
-const static gchar *screen_get_sdir() {
+const static gchar *
+screen_get_sdir() {
   static gchar sdir[256];
 
   g_snprintf(sdir, sizeof(sdir), SCREEN_SDFORMT, SCREEN_SOCKDIR, g_get_user_name());
@@ -14,7 +13,8 @@ const static gchar *screen_get_sdir() {
   return sdir;
 }
 
-GHashTable *screen_get_screens() {
+GHashTable *
+screen_get_screens() {
   GDir *d = g_dir_open(screen_get_sdir(), 0, NULL);
 
   if (!d)
@@ -41,14 +41,31 @@ GHashTable *screen_get_screens() {
   return slist;
 }
 
-gchar *screen_new_cmd(const gchar *name) {
-  // screen -S $SCREEN_SOCKPRE$name -t $name
+gchar *
+screen_new_cmd(const gchar *host, const gchar *user, const gint port) {
+  if (!cfg->use_screen)
+    return g_strdup("");
+  
+  return g_strdup_printf(SCREEN_BINARY"+-S+"SCREEN_SOCKPRE"%s_%s_%d" \
+			 "+-t+%s@%s:%d+",
+			 user, host, port,
+			 user, host, port);
 }
 
-gchar *screen_connect_cmd(const gchar *name) {
-    // screen -r $SCREEN_SOCKPRE$name
+gchar *
+screen_connect_cmd(const gchar *host, const gchar *user, const gint port) {
+  if (!cfg->use_screen)
+    return g_strdup("");
+  
+  return g_strdup_printf(SCREEN_BINARY"+-r+"SCREEN_SOCKPRE"%s_%s_%d+",
+			 user, host, port);
 }
 
-gchar *screen_force_connect_cmd(const gchar *name) {
-    // screen -rd $SCREEN_SOCKPRE$name
+gchar *
+screen_force_connect_cmd(const gchar *host, const gchar *user, const gint port) {
+  if (!cfg->use_screen)
+    return g_strdup("");
+  
+  return g_strdup_printf(SCREEN_BINARY"+-rd+"SCREEN_SOCKPRE"%s_%s_%d+",
+			 user, host, port);
 }

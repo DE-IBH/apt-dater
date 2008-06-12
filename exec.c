@@ -3,7 +3,7 @@
  */
 
 #include "apt-dater.h"
-
+#include "screen.h"
 
 gboolean ssh_cmd_refresh(gchar *hostname, gchar *ssh_user, gint ssh_port,
 			 HostNode *n)
@@ -71,16 +71,21 @@ gboolean ssh_cmd_upgrade(gchar *hostname, gchar *ssh_user, gint ssh_port)
  gchar *cmd = NULL;
  gchar **argv = NULL;
 
+ gchar *screen = screen_new_cmd(hostname, ssh_user, ssh_port);
+
  if(strlen(cfg->ssh_optflags) > 0) {
-  cmd = g_strdup_printf ("%s+-l+%s+-p+%d+%s+%s+unset LANG && %s", 
+  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+%s+unset LANG && %s", 
+			 screen,
 			 cfg->ssh_cmd, ssh_user, ssh_port, 
 			 cfg->ssh_optflags, hostname, cfg->cmd_upgrade);
  } else {
-  cmd = g_strdup_printf ("%s+-l+%s+-p+%d+%s+unset LANG && %s", 
+  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+unset LANG && %s", 
+			 screen,
 			 cfg->ssh_cmd, ssh_user, ssh_port, hostname,
 			 cfg->cmd_upgrade);
  }
- 
+ g_free(screen);
+
  if(!cmd) return(FALSE);
 
  argv = g_strsplit(cmd, "+", 0);
@@ -110,15 +115,20 @@ gboolean ssh_cmd_install(gchar *hostname, gchar *ssh_user, gint ssh_port,
  gchar *buf = NULL;
  gchar **argv = NULL;
 
+ gchar *screen = screen_new_cmd(hostname, ssh_user, ssh_port);
+
  if(strlen(cfg->ssh_optflags) > 0) {
-  cmd = g_strdup_printf ("%s+-l+%s+-p+%d+%s+%s+unset LANG && %s", 
+  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+%s+unset LANG && %s", 
+			 screen,
 			 cfg->ssh_cmd, ssh_user, ssh_port, 
 			 cfg->ssh_optflags, hostname, cfg->cmd_install);
  } else {
-  cmd = g_strdup_printf ("%s+-l+%s+-p+%d+%s+unset LANG && %s", 
+  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+unset LANG && %s", 
+			 screen,
 			 cfg->ssh_cmd, ssh_user, ssh_port, hostname,
 			 cfg->cmd_install);
  }
+ g_free(screen);
 
  buf = g_strdup_printf (cmd, package);
  if(!buf) return(FALSE);
@@ -145,7 +155,6 @@ gboolean ssh_cmd_install(gchar *hostname, gchar *ssh_user, gint ssh_port,
  return (r);
 }
 
-
 gboolean ssh_connect(gchar *hostname, gchar *ssh_user, gint ssh_port)
 {
  gboolean r;
@@ -153,14 +162,19 @@ gboolean ssh_connect(gchar *hostname, gchar *ssh_user, gint ssh_port)
  gchar *cmd = NULL;
  gchar **argv = NULL;
 
+ gchar *screen = screen_new_cmd(hostname, ssh_user, ssh_port);
+
  if(strlen(cfg->ssh_optflags) > 0) {
-  cmd = g_strdup_printf ("%s+-l+%s+-p+%d+%s+%s", 
+  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+%s", 
+			 screen,
 			 cfg->ssh_cmd, ssh_user, ssh_port, 
 			 cfg->ssh_optflags, hostname);
  } else {
-  cmd = g_strdup_printf ("%s+-l+%s+-p+%d+%s", 
+  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s", 
+			 screen,
 			 cfg->ssh_cmd, ssh_user, ssh_port, hostname);
  }
+ g_free(screen);
 
  if(!cmd) return(FALSE);
 

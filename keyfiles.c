@@ -3,7 +3,7 @@
  */
 
 #include "apt-dater.h"
-
+#include "screen.h"
 
 static int cmpStringP(const void *p1, const void *p2)
 {
@@ -101,6 +101,11 @@ CfgFile *loadConfig (char *filename)
       g_key_file_get_string(keyfile, "Commands", "CmdInstall", &error))) {
   g_error ("%s: %s", filename, error->message);
   return (NULL);
+ }
+
+ if(!(lcfg->use_screen = 
+      g_key_file_get_integer(keyfile, "Screen", "Enabled", &error))) {
+   lcfg->use_screen = g_file_test(SCREEN_BINARY, G_FILE_TEST_IS_EXECUTABLE);
  }
 
  g_clear_error(&error);

@@ -26,6 +26,7 @@ typedef struct _cfgfile {
  gchar *cmd_refresh;
  gchar *cmd_upgrade;
  gchar *cmd_install;
+ gboolean use_screen;
 } CfgFile;
 
 typedef struct _update {
