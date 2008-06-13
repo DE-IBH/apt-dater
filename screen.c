@@ -33,16 +33,15 @@ screen_get_sessions(HostNode *n) {
     gchar *fn = g_strdup_printf("%s/%s", sdir, f);
     
     if (g_file_test(fn, G_FILE_TEST_EXISTS)) {
-      gint pid;
-      gchar *name = g_strdup(f);
+      gint pid = atoi(f);
+      gchar *name = strchr(f, '.');
 
-      sscanf(f, "%d.%s", &pid, name);
-      
       if ((pid > 1) &&
-	  (strcmp(name, search) == 0)) {
+	  (name) &&
+	  (strcmp(name+1, search) == 0)) {
 
 	struct stat buf;
-	g_stat(fn, &buf);
+	stat(fn, &buf);
 
 	SessNode *s = g_new0(SessNode, 1);
 	s->pid = pid;
@@ -50,8 +49,6 @@ screen_get_sessions(HostNode *n) {
 
 	n->screens = g_list_prepend(n->screens, s);
       }
-
-      g_free(name);
     }
   }
   g_dir_close(d);

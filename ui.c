@@ -287,8 +287,12 @@ void drawSessionEntry (DrawNode *n)
  char statusln[BUF_MAX_LEN];
  char menuln[BUF_MAX_LEN];
  char h[BUF_MAX_LEN];
+ struct tm *tm_mtime;
 
- snprintf(h, BUF_MAX_LEN, "[%d] since %d", ((SessNode *) n->p)->pid, ((SessNode *) n->p)->ts);
+ snprintf(h, sizeof(h), "[%d] since ", ((SessNode *) n->p)->pid);
+
+ tm_mtime = localtime(&((SessNode *) n->p)->ts);
+ strftime(&h[strlen(h)], sizeof(h)-strlen(h), "%D %H:%M", tm_mtime);
 
  attron(n->attrs);
  mvhline(n->scrpos, 0, ' ', COLS);

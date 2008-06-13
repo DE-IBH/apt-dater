@@ -39,7 +39,7 @@ typedef struct _update {
 
 typedef struct _session {
   gint pid;
-  gint ts;
+  time_t ts;
 } SessNode;
 
 typedef enum {
