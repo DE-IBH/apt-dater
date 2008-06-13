@@ -52,6 +52,10 @@ typedef enum {
  C_UNKNOW = 6
 } Category;
 
+#define HOST_STATUS_PKGKEPTBACK     1
+#define HOST_STATUS_KERNELNOTMATCH  2
+#define HOST_STATUS_KERNELSELFBUILD 4
+
 typedef struct _hostnode {
  gchar     *hostname;
  gchar     *group;

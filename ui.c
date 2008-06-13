@@ -257,9 +257,12 @@ void drawHostEntry (DrawNode *n)
    break;
   }
 
-  if (((HostNode *) n->p)->status & 1) strcat(statusln," - packages kept back");
-  if (((HostNode *) n->p)->status & 2) strcat(statusln," - running Kernel is not the latest");
-  if (((HostNode *) n->p)->status & 4) strcat(statusln," - a selfbuilt kernel is running");
+  if (((HostNode *) n->p)->status & HOST_STATUS_PKGKEPTBACK) 
+   strcat(statusln," - packages kept back");
+  if (((HostNode *) n->p)->status & HOST_STATUS_KERNELNOTMATCH) 
+   strcat(statusln," - running Kernel is not the latest");
+  if (((HostNode *) n->p)->status & HOST_STATUS_KERNELSELFBUILD) 
+   strcat(statusln," - a selfbuilt kernel is running");
   drawMenu(menuln);
   drawStatus(statusln);
  }
