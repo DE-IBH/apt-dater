@@ -13,6 +13,7 @@ char *drawCategories[] = {"Updates pending", "Up to date", "Status file missing"
 gchar *incategory = NULL;
 gchar *ingroup = NULL;
 HostNode *inhost = NULL;
+SessNode *insession = NULL;
 static gint bottomDrawLine;
 static WINDOW *win_dump = NULL;
 
@@ -99,6 +100,8 @@ void initUI ()
  keypad(stdscr, TRUE);
  clear();
  refresh();
+
+ bottomDrawLine = LINES-2;
 }
 
 void cleanUI ()
@@ -329,21 +332,27 @@ void drawSessionEntry (DrawNode *n)
  attroff(n->attrs);
  if(n->selected == TRUE) {
   sprintf(menuln, "%s  a:attach", MENU_TEXT);
+  drawMenu(menuln);
 
-  gchar *dump = screen_get_dump((SessNode *) n->p);
+  if (cfg->dump_screen) {
+    gchar *dump = screen_get_dump((SessNode *) n->p);
 
-  if(dump) {
-    if (win_dump) {
-      wmove(win_dump, 0, 0);
-      waddstr(win_dump, dump);
-      wrefresh(win_dump);
+    if(dump) {
+      if (win_dump) {
+	wmove(win_dump, 0, 0);
+	waddstr(win_dump, dump);
+	wrefresh(win_dump);
+      }
+
+      drawStatus("Running session:");
+
+      g_free(dump);
     }
-
-    drawMenu("");
-    drawStatus("Running session:");
-
-    g_free(dump);
+    else
+      drawStatus("Could not read session dump.");
   }
+  else
+    drawStatus("");
  }
 }
 
@@ -363,6 +372,9 @@ void detectPos()
    break;
   case HOST:
    inhost = ((DrawNode *) dl->data)->p;
+   break;
+  case SESSION:
+   insession = ((DrawNode *) dl->data)->p;
    break;
   default:
    break;
@@ -402,24 +414,28 @@ void refreshDraw()
  clear();
  detectPos();
 
- if((getCategoryNumber(incategory) == C_SESSIONS) &&
-    inhost) {
-   if (!win_dump) {
-     bottomDrawLine = LINES/2;
+ if(cfg->dump_screen) {
+   if((getCategoryNumber(incategory) == C_SESSIONS) &&
+      insession) {
+     if (!win_dump) {
+       bottomDrawLine = LINES/2;
 
-     win_dump = subwin(stdscr, bottomDrawLine-1, COLS, LINES-bottomDrawLine, 0);
-     scrollok(win_dump, FALSE);
-     syncok(win_dump, TRUE);
+       win_dump = subwin(stdscr, bottomDrawLine-1, COLS, LINES-bottomDrawLine, 0);
+       scrollok(win_dump, FALSE);
+       syncok(win_dump, TRUE);
+     }
+   }
+   else {
+     bottomDrawLine = LINES - 2;
+
+     if(win_dump) {
+       delwin(win_dump);
+       win_dump = NULL;
+     }
    }
  }
- else {
-   bottomDrawLine = LINES-2;
-
-   if(win_dump) {
-     delwin(win_dump);
-     win_dump = NULL;
-   }
- }
+ else
+   bottomDrawLine = LINES - 2;
 
  g_list_foreach(drawlist, (GFunc) drawEntry, NULL);
  refresh();
@@ -461,19 +477,33 @@ void checkSelected()
  dn = getSelectedDrawNode();
  if (!dn) {
   dl = g_list_first(drawlist);
-  while (dl && (((DrawNode *) dl->data)->scrpos != LINES-2)) 
+  while (dl && (((DrawNode *) dl->data)->scrpos < bottomDrawLine)) 
    dl = g_list_next(dl);
   if (!dl) dl = g_list_last(drawlist);
   setEntryActiveStatus((DrawNode *) dl->data, TRUE);
   return;
  }
- if (dn -> scrpos == 0 || dn -> scrpos > LINES-2) {
+ if (dn -> scrpos == 0 || dn -> scrpos > bottomDrawLine) {
+  dl = g_list_first(drawlist);
+
+  while(dl && (dl->data != dn))
+   dl = g_list_next(dl);
+
+  gint p = bottomDrawLine-1;
+  while(dl && p) {
+   ((DrawNode *)dl->data)->scrpos = p--;
+   dl = g_list_previous(dl);
+  }
+
+/*
   setEntryActiveStatus(dn, FALSE);
   dl = g_list_first(drawlist);
-  while (dl && (((DrawNode *) dl->data)->scrpos != LINES-2)) 
+  while (dl && (((DrawNode *) dl->data)->scrpos < bottomDrawLine)) 
    dl = g_list_next(dl);
   if (!dl) dl = g_list_last(drawlist);
   setEntryActiveStatus((DrawNode *) dl->data, TRUE);
+*/
+
   return;
  }
 }
@@ -487,7 +517,7 @@ void reorderScrpos(guint startat)
 
  while(dl) {
   if (((DrawNode *) dl->data)->scrpos == startat)
-   while (++count <= LINES-2) {
+   while (++count <= bottomDrawLine) {
     if(!dl) return;
     ((DrawNode *) dl->data)->scrpos = count;
     dl = g_list_next(dl);
@@ -563,7 +593,7 @@ gboolean ctrlKeyUpDown(int ic)
    setEntryActiveStatus((DrawNode *) dl->data, FALSE);
    dl = g_list_next(dl);
    setEntryActiveStatus((DrawNode *) dl->data, TRUE);
-   if(((DrawNode *) dl->data)->scrpos >= LINES-2 || 
+   if(((DrawNode *) dl->data)->scrpos >= bottomDrawLine || 
       ((DrawNode *) dl->data)->scrpos == 0) reorderScrpos(2);
    ret = TRUE;
   }
@@ -581,7 +611,7 @@ gboolean ctrlKeyUpDown(int ic)
   dl = g_list_last(drawlist);
   setEntryActiveStatus((DrawNode *) dl->data, TRUE);
   if(((DrawNode *) dl->data)->scrpos == 0 || 
-     ((DrawNode *) dl->data)->scrpos > LINES-2) {
+     ((DrawNode *) dl->data)->scrpos > bottomDrawLine) {
    i = 0;
    while (dl) {
     ((DrawNode *) dl->data)->scrpos = LINES-3-i;
@@ -1011,7 +1041,7 @@ gboolean ctrlKeyPgDown()
  while (dl && (((DrawNode *) dl->data)->selected != TRUE)) dl = g_list_next(dl);
 
  setEntryActiveStatus((DrawNode *) dl->data, FALSE);
- reorderScrpos(LINES-2);
+ reorderScrpos(bottomDrawLine);
 
  dl = g_list_first(drawlist);
  while (dl && (((DrawNode *) dl->data)->scrpos != 1)) dl = g_list_next(dl);
@@ -1045,7 +1075,7 @@ gboolean ctrlKeyPgUp()
  dl_1 = dl;
  dl_1 = g_list_previous(dl_1);
 
- while (dl && (++i < LINES-2)) dl = g_list_previous(dl);
+ while (dl && (++i < bottomDrawLine)) dl = g_list_previous(dl);
 
  if (dl && dl_1) {
   ((DrawNode *) dl->data)->scrpos =1;
