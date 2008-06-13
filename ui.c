@@ -13,6 +13,8 @@ char *drawCategories[] = {"Updates pending", "Up to date", "Status file missing"
 gchar *incategory = NULL;
 gchar *ingroup = NULL;
 HostNode *inhost = NULL;
+static gint bottomDrawLine;
+static WINDOW *win_dump = NULL;
 
 void freeDrawNode (DrawNode *n)
 {
@@ -125,7 +127,7 @@ void drawStatus (char *str)
  strftime(strmtime, sizeof(strmtime), " Oldest: %D %H:%M", tm_mtime);
 
  attron(A_REVERSE);
- move(LINES - 2, 0);
+ move(bottomDrawLine, 0);
  hline( ' ', COLS);
  if(str) {
   addnstr(str, COLS);
@@ -133,7 +135,7 @@ void drawStatus (char *str)
 
  mtime_pos = COLS - strlen(strmtime) - 1;
 
- move(LINES - 2, mtime_pos);
+ move(bottomDrawLine, mtime_pos);
  addnstr(strmtime, COLS-mtime_pos);
 
  attroff(A_REVERSE);
@@ -327,9 +329,21 @@ void drawSessionEntry (DrawNode *n)
  attroff(n->attrs);
  if(n->selected == TRUE) {
   sprintf(menuln, "%s  a:attach", MENU_TEXT);
-  //  sprintf(statusln, "%s -> %s (%s %s)", ((UpdNode *) n->p)->oldver, ((UpdNode *) n->p)->newver, ((UpdNode *) n->p)->dist, ((UpdNode *) n->p)->section);
-  drawMenu(menuln);
-  //  drawStatus(statusln);
+
+  gchar *dump = screen_get_dump((SessNode *) n->p);
+
+  if(dump) {
+    if (win_dump) {
+      wmove(win_dump, 0, 0);
+      waddstr(win_dump, dump);
+      wrefresh(win_dump);
+    }
+
+    drawMenu("");
+    drawStatus("Running session:");
+
+    g_free(dump);
+  }
  }
 }
 
@@ -360,7 +374,7 @@ void detectPos()
 
 void drawEntry (DrawNode *n)
 {
- if(n->scrpos == 0 || n->scrpos >= LINES-2) return;
+ if(n->scrpos == 0 || n->scrpos >= bottomDrawLine) return;
 
  switch(n->type) {
  case CATEGORY:
@@ -387,6 +401,26 @@ void refreshDraw()
 {
  clear();
  detectPos();
+
+ if((getCategoryNumber(incategory) == C_SESSIONS) &&
+    inhost) {
+   if (!win_dump) {
+     bottomDrawLine = LINES/2;
+
+     win_dump = subwin(stdscr, bottomDrawLine-1, COLS, LINES-bottomDrawLine, 0);
+     scrollok(win_dump, FALSE);
+     syncok(win_dump, TRUE);
+   }
+ }
+ else {
+   bottomDrawLine = LINES-2;
+
+   if(win_dump) {
+     delwin(win_dump);
+     win_dump = NULL;
+   }
+ }
+
  g_list_foreach(drawlist, (GFunc) drawEntry, NULL);
  refresh();
 }

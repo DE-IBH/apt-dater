@@ -2,7 +2,12 @@
  *
  */
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include "screen.h"
+
+static gchar *dump_fn = NULL;
 
 const static gchar *
 screen_get_sdir() {
@@ -95,4 +100,49 @@ screen_connect(const SessNode *s) {
  g_strfreev(argv);
  
  return r;
+}
+
+static gchar *
+screen_dump_cmd(const SessNode *s, const gchar *fn) {
+  return g_strdup_printf(SCREEN_BINARY"+-S+%d+-X+hardcopy+%s", s->pid, fn);
+}
+
+gchar *
+screen_get_dump(const SessNode *s) {
+ gboolean r;
+ GError *error = NULL;
+ gchar **argv = NULL;
+
+ if(!dump_fn) {
+   dump_fn = g_strdup_printf("/tmp/%d.dump", getpid());
+ }
+
+ g_unlink(dump_fn);
+
+ gint fd = g_open(dump_fn, O_CREAT | O_EXCL | O_TRUNC |O_RDWR, S_IRUSR | S_IWUSR);
+
+ if(fd == -1)
+   return NULL;
+
+ gchar *cmd = screen_dump_cmd(s, dump_fn);
+ if(!cmd) return;
+
+ argv = g_strsplit(cmd, "+", 0);
+
+ r = g_spawn_sync(g_getenv ("HOME"), argv, NULL, 
+		  G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
+		  NULL, NULL, NULL, &error);
+
+ if(r == FALSE) {
+  g_warning("%s", error->message);
+  g_clear_error (&error);
+ }
+
+ g_free(cmd);
+ g_strfreev(argv);
+ 
+ gchar *c = NULL;
+ g_file_get_contents(dump_fn, &c, NULL, NULL);
+
+ return c;
 }
