@@ -5,6 +5,7 @@
 #include <curses.h>
 #include "apt-dater.h"
 #include "ui.h"
+#include "screen.h"
 
 
 GList *drawlist = NULL;
@@ -156,6 +157,24 @@ void queryString(const gchar *query, gchar *in, const gint size)
  hline(' ', COLS);
 }
 
+gboolean queryConfirm(const gchar *query)
+{
+ gchar c;
+
+ enableInput();
+ mvaddstr(LINES - 1, 0, query);
+ move(LINES - 1, strlen(query));
+
+ c = getch();
+
+ disableInput();
+
+ move(LINES - 1, 0);
+ hline(' ', COLS);
+
+ return ((c == 'y') || (c == 'Y'));
+}
+
 void drawCategoryEntry (DrawNode *n)
 {
  char statusln[BUF_MAX_LEN];
@@ -248,7 +267,7 @@ void drawHostEntry (DrawNode *n)
    sprintf(statusln, "In refresh");
    break;
   case C_SESSIONS:
-   sprintf(menuln, "%s  r:reconnect  R:force reconnect", MENU_TEXT);
+   sprintf(menuln, "%s  a:attach", MENU_TEXT);
    sprintf(statusln, "%d session%s running", g_list_length(((HostNode *) n->p)->screens),
 	   (g_list_length(((HostNode *) n->p)->screens)==1?"":"s"));
    break;
@@ -299,7 +318,7 @@ void drawSessionEntry (DrawNode *n)
  strftime(&h[strlen(h)], sizeof(h)-strlen(h), "%D %H:%M ", tm_mtime);
 
  snprintf(&h[strlen(h)], sizeof(h)-strlen(h), "(%s)",
-	  (((SessNode *) n->p)->st.st_mode & S_IXUSR ? "Attached" : "Detached"));
+	  (screen_is_attached((SessNode *) n->p) ? "Attached" : "Detached"));
 
 
  attron(n->attrs);
@@ -307,7 +326,7 @@ void drawSessionEntry (DrawNode *n)
  mvaddnstr(n->scrpos, 7, h, COLS);
  attroff(n->attrs);
  if(n->selected == TRUE) {
-  sprintf(menuln, "%s  r:reconnect  R:force reconnect", MENU_TEXT);
+  sprintf(menuln, "%s  a:attach", MENU_TEXT);
   //  sprintf(statusln, "%s -> %s (%s %s)", ((UpdNode *) n->p)->oldver, ((UpdNode *) n->p)->newver, ((UpdNode *) n->p)->dist, ((UpdNode *) n->p)->section);
   drawMenu(menuln);
   //  drawStatus(statusln);
@@ -1011,7 +1030,7 @@ gboolean ctrlKeyPgUp()
 
 gboolean ctrlUI (GList *hosts)
 {
- gint ic, oic;
+ gint ic;
  gboolean ret = TRUE;
  gboolean refscr = FALSE;
  DrawNode *n;
@@ -1023,11 +1042,10 @@ gboolean ctrlUI (GList *hosts)
   refscr = TRUE;
  }
 
- oic = getch();
- ic = tolower(oic);
+ ic = tolower(getch());
 
  /* To slow down the idle process. */
- if(oic == ERR)
+ if(ic == ERR)
   g_usleep(10000);
 
  switch(ic) {
@@ -1088,6 +1106,12 @@ gboolean ctrlUI (GList *hosts)
   if(!n) break;
   if(n->type == HOST) {
    if(n->extended == TRUE) n->extended = FALSE;
+
+   if (g_list_length(inhost->screens)) {
+     if (!queryConfirm("There are running sessions on this host! Continue? "))
+       break;
+   }
+
    cleanUI();
    ssh_connect(((HostNode *) n->p)->hostname, ((HostNode *) n->p)->ssh_user, ((HostNode *) n->p)->ssh_port);
    ((HostNode *) n->p)->category = C_REFRESH_REQUIRED;
@@ -1103,6 +1127,12 @@ gboolean ctrlUI (GList *hosts)
   if(!n) break;
   if(n->type == HOST) {
    if(n->extended == TRUE) n->extended = FALSE;
+
+   if (g_list_length(inhost->screens)) {
+     if (!queryConfirm("There are running sessions on this host! Continue? "))
+       break;
+   }
+
    cleanUI();
    ssh_cmd_upgrade(((HostNode *) n->p)->hostname, ((HostNode *) n->p)->ssh_user, ((HostNode *) n->p)->ssh_port);
    ((HostNode *) n->p)->category = C_REFRESH_REQUIRED;
@@ -1116,6 +1146,11 @@ gboolean ctrlUI (GList *hosts)
  case 'i':
   n = getSelectedDrawNode();
   if(!inhost) break;
+
+  if (g_list_length(inhost->screens)) {
+    if (!queryConfirm("There are running sessions on this host! Continue? "))
+      break;
+  }
   
   if(!n || (n->type != UPDATE)) {
    queryString("Install package: ", in, sizeof(in));
@@ -1139,7 +1174,7 @@ gboolean ctrlUI (GList *hosts)
   ret = FALSE;
   g_main_loop_quit (loop);
   break;
- case 'r':
+ case 'a':
   n = getSelectedDrawNode();
   if(!inhost) break;
 
@@ -1157,8 +1192,14 @@ gboolean ctrlUI (GList *hosts)
   if(!s)
     break;
 
+  /* Session already attached! */
+  if (screen_is_attached(s)) {
+    if (!queryConfirm("Already attached - share session? "))
+      break;
+  }
+
   cleanUI();
-  screen_connect(s, oic == 'R');
+  screen_connect(s);
   initUI();
   refscr = TRUE;
   break;

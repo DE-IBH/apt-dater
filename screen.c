@@ -68,25 +68,15 @@ screen_new_cmd(const gchar *host, const gchar *user, const gint port) {
 
 static gchar *
 screen_connect_cmd(const SessNode *s) {
-  return g_strdup_printf(SCREEN_BINARY"+-r+%d+", s->pid);
-}
-
-static gchar *
-screen_force_connect_cmd(const SessNode *s) {
-  return g_strdup_printf(SCREEN_BINARY"+-rd+%d+", s->pid);
+  return g_strdup_printf(SCREEN_BINARY"+-rx+%d+", s->pid);
 }
 
 gboolean
-screen_connect(const SessNode *s, const gboolean force) {
+screen_connect(const SessNode *s) {
  gboolean r;
  GError *error = NULL;
- gchar *cmd = NULL;
+ gchar *cmd = screen_connect_cmd(s);
  gchar **argv = NULL;
-
- if(force)
-   cmd = screen_force_connect_cmd(s);
- else
-   cmd = screen_connect_cmd(s);
 
  if(!cmd) return FALSE;
 

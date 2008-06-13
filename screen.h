@@ -19,6 +19,14 @@ gchar *
 screen_new_cmd(const gchar *host, const gchar *user, const gint port);
 
 gboolean
-screen_connect(const SessNode *s, const gboolean force);
+screen_connect(const SessNode *s);
+
+static inline gboolean
+screen_is_attached(const SessNode *s) {
+  if (s->st.st_mode & S_IXUSR)
+    return TRUE;
+
+  return FALSE;
+}
 
 #endif /* _SCREEN_H */
