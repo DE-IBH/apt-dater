@@ -249,7 +249,8 @@ void drawHostEntry (DrawNode *n)
    break;
   case C_SESSIONS:
    sprintf(menuln, "%s  r:reconnect  R:force reconnect", MENU_TEXT);
-   sprintf(statusln, "Session running");
+   sprintf(statusln, "%d session%s running", g_list_length(((HostNode *) n->p)->screens),
+	   (g_list_length(((HostNode *) n->p)->screens)==1?"":"s"));
    break;
   default:
    sprintf(menuln, "%s  c:ssh-Connect  g:Check for new updates  i:Install Package", MENU_TEXT);
@@ -292,10 +293,14 @@ void drawSessionEntry (DrawNode *n)
  char h[BUF_MAX_LEN];
  struct tm *tm_mtime;
 
- snprintf(h, sizeof(h), "[%d] since ", ((SessNode *) n->p)->pid);
+ snprintf(h, sizeof(h), "%5d: ", ((SessNode *) n->p)->pid);
 
- tm_mtime = localtime(&((SessNode *) n->p)->ts);
- strftime(&h[strlen(h)], sizeof(h)-strlen(h), "%D %H:%M", tm_mtime);
+ tm_mtime = localtime(&((SessNode *) n->p)->st.st_mtime);
+ strftime(&h[strlen(h)], sizeof(h)-strlen(h), "%D %H:%M ", tm_mtime);
+
+ snprintf(&h[strlen(h)], sizeof(h)-strlen(h), "(%s)",
+	  (((SessNode *) n->p)->st.st_mode & S_IXUSR ? "Attached" : "Detached"));
+
 
  attron(n->attrs);
  mvhline(n->scrpos, 0, ' ', COLS);
@@ -1006,11 +1011,11 @@ gboolean ctrlKeyPgUp()
 
 gboolean ctrlUI (GList *hosts)
 {
- int ic = 0;
+ gint ic, oic;
  gboolean ret = TRUE;
  gboolean refscr = FALSE;
  DrawNode *n;
- static   gchar in[64];
+ static   gchar in[BUF_MAX_LEN];
  gchar    *pkg = NULL;
 
  if(rebuilddl == TRUE) {
@@ -1018,10 +1023,11 @@ gboolean ctrlUI (GList *hosts)
   refscr = TRUE;
  }
 
- ic = tolower(getch());
+ oic = getch();
+ ic = tolower(oic);
 
  /* To slow down the idle process. */
- if(ic == ERR)
+ if(oic == ERR)
   g_usleep(10000);
 
  switch(ic) {
@@ -1132,6 +1138,29 @@ gboolean ctrlUI (GList *hosts)
  case 'q':
   ret = FALSE;
   g_main_loop_quit (loop);
+  break;
+ case 'r':
+  n = getSelectedDrawNode();
+  if(!inhost) break;
+
+  SessNode *s = NULL;
+  
+  if(!n || (n->type != SESSION)) {
+    GList *l = g_list_first(inhost->screens);
+    if (l)
+      s = l->data;
+  }
+  else {
+    s = (SessNode *) n->p;
+  }
+
+  if(!s)
+    break;
+
+  cleanUI();
+  screen_connect(s, oic == 'R');
+  initUI();
+  refscr = TRUE;
   break;
  default:
   break;

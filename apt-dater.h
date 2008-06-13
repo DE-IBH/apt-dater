@@ -1,3 +1,6 @@
+/* $Id: ui.c 17 2008-06-13 08:16:29Z ellguth $
+ *
+ */
 
 #ifndef _APT_DATER_H
 #define _APT_DATER_H
@@ -39,7 +42,7 @@ typedef struct _update {
 
 typedef struct _session {
   gint pid;
-  time_t ts;
+  struct stat st;
 } SessNode;
 
 typedef enum {

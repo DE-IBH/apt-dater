@@ -18,10 +18,7 @@ screen_get_sessions(HostNode *n);
 gchar *
 screen_new_cmd(const gchar *host, const gchar *user, const gint port);
 
-gchar *
-screen_connect_cmd(const gchar *host, const gchar *user, const gint port);
-
-gchar *
-screen_force_connect_cmd(const gchar *host, const gchar *user, const gint port);
+gboolean
+screen_connect(const SessNode *s, const gboolean force);
 
 #endif /* _SCREEN_H */

@@ -28,7 +28,7 @@ screen_get_sessions(HostNode *n) {
 
   gchar *search = g_strdup_printf(SCREEN_SOCKPRE"%s_%s_%d", n->ssh_user, n->hostname, n->ssh_port);
 
-  gchar *f;
+  const gchar *f;
   while ((f = g_dir_read_name(d))) {
     gchar *fn = g_strdup_printf("%s/%s", sdir, f);
     
@@ -40,12 +40,9 @@ screen_get_sessions(HostNode *n) {
 	  (name) &&
 	  (strcmp(name+1, search) == 0)) {
 
-	struct stat buf;
-	stat(fn, &buf);
-
 	SessNode *s = g_new0(SessNode, 1);
 	s->pid = pid;
-	s->ts = buf.st_mtime;
+	stat(fn, &s->st);
 
 	n->screens = g_list_prepend(n->screens, s);
       }
@@ -69,20 +66,43 @@ screen_new_cmd(const gchar *host, const gchar *user, const gint port) {
 			 user, host, port);
 }
 
-gchar *
-screen_connect_cmd(const gchar *host, const gchar *user, const gint port) {
-  if (!cfg->use_screen)
-    return g_strdup("");
-  
-  return g_strdup_printf(SCREEN_BINARY"+-r+"SCREEN_SOCKPRE"%s_%s_%d+",
-			 user, host, port);
+static gchar *
+screen_connect_cmd(const SessNode *s) {
+  return g_strdup_printf(SCREEN_BINARY"+-r+%d+", s->pid);
 }
 
-gchar *
-screen_force_connect_cmd(const gchar *host, const gchar *user, const gint port) {
-  if (!cfg->use_screen)
-    return g_strdup("");
-  
-  return g_strdup_printf(SCREEN_BINARY"+-rd+"SCREEN_SOCKPRE"%s_%s_%d+",
-			 user, host, port);
+static gchar *
+screen_force_connect_cmd(const SessNode *s) {
+  return g_strdup_printf(SCREEN_BINARY"+-rd+%d+", s->pid);
+}
+
+gboolean
+screen_connect(const SessNode *s, const gboolean force) {
+ gboolean r;
+ GError *error = NULL;
+ gchar *cmd = NULL;
+ gchar **argv = NULL;
+
+ if(force)
+   cmd = screen_force_connect_cmd(s);
+ else
+   cmd = screen_connect_cmd(s);
+
+ if(!cmd) return FALSE;
+
+ argv = g_strsplit(cmd, "+", 0);
+
+ r = g_spawn_sync(g_getenv ("HOME"), argv, NULL, 
+		  G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
+		  NULL, NULL, NULL, &error);
+
+ if(r == FALSE) {
+  g_warning("%s", error->message);
+  g_clear_error (&error);
+ }
+
+ g_free(cmd);
+ g_strfreev(argv);
+ 
+ return r;
 }
