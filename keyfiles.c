@@ -20,6 +20,7 @@ void freeConfig (CfgFile *cfg)
  g_free(cfg->cmd_refresh);
  g_free(cfg->cmd_upgrade);
  g_free(cfg->cmd_install);
+ g_strfreev(cfg->colors);
 
  g_free(cfg);
 }
@@ -38,6 +39,7 @@ CfgFile *loadConfig (char *filename)
  GKeyFileFlags flags;
  GError *error = NULL;
  CfgFile *lcfg = NULL;
+ gint i, j;
 
  keyfile = g_key_file_new ();
  flags = G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS;
@@ -113,6 +115,13 @@ CfgFile *loadConfig (char *filename)
  if (error) {
    lcfg->dump_screen = TRUE;
    g_clear_error(&error);
+ }
+
+ if(!(lcfg->colors = 
+     g_key_file_get_string_list(keyfile, "Appearance", "Colors", 
+				NULL, &error))) {
+
+  g_message ("%s: %s", filename, error->message);
  }
 
  g_clear_error(&error);

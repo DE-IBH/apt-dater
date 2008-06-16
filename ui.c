@@ -5,6 +5,7 @@
 #include <curses.h>
 #include "apt-dater.h"
 #include "ui.h"
+#include "colors.h"
 #include "screen.h"
 
 
@@ -92,8 +93,7 @@ void enableInput() {
 void initUI ()
 {
  initscr();
- start_color();
- use_default_colors();
+ ui_start_color();
  cbreak();
  nonl();
  disableInput();
@@ -114,11 +114,11 @@ void drawMenu (char *str)
 {
  int cy, cx;
 
- attron(A_REVERSE);
+ attron(uicolors[UI_COLOR_MENU]);
  move(0,0);
  hline(' ',COLS);
  addnstr(str, COLS);
- attroff(A_REVERSE);
+ attroff(uicolors[UI_COLOR_MENU]);
 }
 
 void drawStatus (char *str)
@@ -130,7 +130,7 @@ void drawStatus (char *str)
  tm_mtime = localtime(&oldest_st_mtime);
  strftime(strmtime, sizeof(strmtime), " Oldest: %D %H:%M", tm_mtime);
 
- attron(A_REVERSE);
+ attron(uicolors[UI_COLOR_STATUS]);
  move(bottomDrawLine, 0);
  hline( ' ', COLS);
  if(str) {
@@ -142,7 +142,7 @@ void drawStatus (char *str)
  move(bottomDrawLine, mtime_pos);
  addnstr(strmtime, COLS-mtime_pos);
 
- attroff(A_REVERSE);
+ attroff(uicolors[UI_COLOR_STATUS]);
 }
 
 void queryString(const gchar *query, gchar *in, const gint size)
@@ -446,14 +446,15 @@ void setEntryActiveStatus(DrawNode *n, gboolean active)
 
  if(active == TRUE) {
   n->selected = TRUE;
-  n->attrs|=A_REVERSE;
+  n->attrs|=uicolors[UI_COLOR_SELECTOR];
  }
  else {
   n->selected = FALSE;
-  if(n->attrs & A_REVERSE)
-   n->attrs^=A_REVERSE;
+  if(n->attrs & uicolors[UI_COLOR_SELECTOR])
+   n->attrs^=uicolors[UI_COLOR_SELECTOR];
  }
 }
+
 
 guint getHostCatCnt(GList *hosts, Category category)
 {
@@ -1235,6 +1236,10 @@ gboolean ctrlUI (GList *hosts)
   break;
  case 'q':
   ret = FALSE;
+  attrset(A_NORMAL);
+  clear();
+  cleanUI();
+  refresh();
   g_main_loop_quit (loop);
   break;
  case 'a':

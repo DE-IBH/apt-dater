@@ -31,6 +31,7 @@ typedef struct _cfgfile {
  gchar *cmd_install;
  gboolean use_screen;
  gboolean dump_screen;
+ gchar **colors;
 } CfgFile;
 
 typedef struct _update {
@@ -71,6 +72,12 @@ typedef struct _hostnode {
  GList     *updates;
  GList     *screens;
 } HostNode;
+
+struct mapping_t
+{
+ gchar *name;
+ gint value;
+};
 
 #include "extern.h"
 
