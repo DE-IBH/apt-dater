@@ -15,7 +15,6 @@ char *drawCategories[] = {"Updates pending", "Up to date", "Status file missing"
 gchar *incategory = NULL;
 gchar *ingroup = NULL;
 HostNode *inhost = NULL;
-SessNode *insession = NULL;
 static gint bottomDrawLine;
 static WINDOW *win_dump = NULL;
 static gboolean dump_screen = FALSE;
@@ -348,7 +347,6 @@ void drawSessionEntry (DrawNode *n)
  mvaddnstr(n->scrpos, 7, h, COLS);
  attroff(n->attrs);
  if(n->selected == TRUE) {
-   insession = n->p;
   sprintf(menuln, "%s  a:attach  d:dump", MENU_TEXT);
   drawMenu(menuln);
 
@@ -430,8 +428,7 @@ void refreshDraw()
  detectPos();
 
  if(dump_screen) {
-   if((getCategoryNumber(incategory) == C_SESSIONS) &&
-      insession) {
+   if(getSelectedDrawNode()->type == SESSION) {
      if (!win_dump) {
        bottomDrawLine = LINES/2;
 
@@ -449,8 +446,14 @@ void refreshDraw()
      }
    }
  }
- else
+ else {
+   if(win_dump) {
+     delwin(win_dump);
+     win_dump = NULL;
+   }
+
    bottomDrawLine = LINES - 2;
+ }
 
  g_list_foreach(drawlist, (GFunc) drawEntry, NULL);
  refresh();
@@ -1328,7 +1331,7 @@ gboolean ctrlUI (GList *hosts)
      break;
    dump_screen = !dump_screen;
 
-   if(!insession) {
+   if(getSelectedDrawNode()->type != SESSION) {
      if(dump_screen)
        mvaddstr(LINES - 1, 0, "Session dumps enabled.");
      else
