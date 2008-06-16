@@ -5,15 +5,22 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <pwd.h>
 #include "screen.h"
 
 static gchar *dump_fn = NULL;
+static struct passwd *pw = NULL;
 
 const static gchar *
 screen_get_sdir() {
   static gchar sdir[256];
 
-  g_snprintf(sdir, sizeof(sdir), SCREEN_SDFORMT, SCREEN_SOCKDIR, g_get_user_name());
+  if (!pw)
+    pw = getpwuid(getuid());
+  if (!pw)
+    return NULL;
+
+  g_snprintf(sdir, sizeof(sdir), SCREEN_SDFORMT, SCREEN_SOCKDIR, pw->pw_name);
   
   return sdir;
 }
@@ -26,8 +33,10 @@ screen_get_sessions(HostNode *n) {
   }
 
   const gchar *sdir = screen_get_sdir();
-  GDir *d = g_dir_open(sdir, 0, NULL);
+  if (!sdir)
+    return FALSE;
 
+  GDir *d = g_dir_open(sdir, 0, NULL);
   if (!d)
     return FALSE;
 

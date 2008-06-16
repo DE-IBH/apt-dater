@@ -3,6 +3,7 @@
  */
 
 #include <curses.h>
+#include <pwd.h>
 #include "apt-dater.h"
 #include "ui.h"
 #include "colors.h"
@@ -18,6 +19,7 @@ SessNode *insession = NULL;
 static gint bottomDrawLine;
 static WINDOW *win_dump = NULL;
 static gboolean dump_screen = FALSE;
+gchar maintainer[48];
 
 void freeDrawNode (DrawNode *n)
 {
@@ -150,14 +152,22 @@ void queryString(const gchar *query, gchar *in, const gint size)
  gint i;
 
  enableInput();
+
+ attron(uicolors[UI_COLOR_QUERY]);
  mvaddstr(LINES - 1, 0, query);
+ attroff(uicolors[UI_COLOR_QUERY]);
+
  move(LINES - 1, strlen(query));
+
+ attron(uicolors[UI_COLOR_INPUT]);
 
  for(i = strlen(in)-1; i>=0; i--)
   ungetch(in[i]);
 
  getnstr(in, size);
  disableInput();
+
+ attroff(uicolors[UI_COLOR_INPUT]);
 
  move(LINES - 1, 0);
  hline(' ', COLS);
@@ -168,10 +178,16 @@ gboolean queryConfirm(const gchar *query)
  gchar c;
 
  enableInput();
+
+ attron(uicolors[UI_COLOR_QUERY]);
  mvaddstr(LINES - 1, 0, query);
+ attroff(uicolors[UI_COLOR_QUERY]);
+
  move(LINES - 1, strlen(query));
 
+ attron(uicolors[UI_COLOR_INPUT]);
  c = getch();
+ attroff(uicolors[UI_COLOR_INPUT]);
 
  disableInput();
 
@@ -561,6 +577,42 @@ void doUI (GList *hosts)
  /* Draw the host entries intial. */
  buildIntialDrawList(hosts);
  reorderScrpos(1);
+ refreshDraw();
+
+ const gchar *m = getenv("MAINTAINER");
+ if (m)
+   strncpy(maintainer, m, sizeof(maintainer));
+ else {
+   struct passwd *pw = getpwuid(getuid());
+   if (pw && pw->pw_gecos)
+     strncpy(maintainer, pw->pw_gecos, sizeof(maintainer));
+   else
+     maintainer[0] = 0;
+ }
+
+ attron(uicolors[UI_COLOR_MENU]);
+ WINDOW *w = newwin(5, 52, LINES/2-3, (COLS-52)/2);
+ box(w,0,0);
+ wattroff(w, uicolors[UI_COLOR_MENU]);
+
+ enableInput();
+ wattron(w, uicolors[UI_COLOR_QUERY]);
+ mvwaddstr(w, 1, 2, "Maintainer name:");
+ wattroff(w, uicolors[UI_COLOR_QUERY]);
+ wmove(w, 3, 2);
+
+ wattron(w, uicolors[UI_COLOR_INPUT]);
+
+ int i;
+ for(i = strlen(maintainer)-1; i>=0; i--)
+  ungetch(maintainer[i]);
+
+ wgetnstr(w, maintainer, sizeof(maintainer));
+ disableInput();
+
+ wattroff(w, uicolors[UI_COLOR_INPUT]);
+
+ delwin(w);
  refreshDraw();
 }
 

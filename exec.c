@@ -4,6 +4,7 @@
 
 #include "apt-dater.h"
 #include "screen.h"
+#include "ui.h"
 
 gboolean ssh_cmd_refresh(gchar *hostname, gchar *ssh_user, gint ssh_port,
 			 HostNode *n)
@@ -74,15 +75,16 @@ gboolean ssh_cmd_upgrade(gchar *hostname, gchar *ssh_user, gint ssh_port)
  gchar *screen = screen_new_cmd(hostname, ssh_user, ssh_port);
 
  if(strlen(cfg->ssh_optflags) > 0) {
-  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+%s+unset LANG && %s", 
+  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+%s+unset LANG ; export MAINTAINER='%s' ; %s", 
 			 screen,
 			 cfg->ssh_cmd, ssh_user, ssh_port, 
-			 cfg->ssh_optflags, hostname, cfg->cmd_upgrade);
+			 cfg->ssh_optflags, hostname, 
+			 maintainer, cfg->cmd_upgrade);
  } else {
-  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+unset LANG && %s", 
+  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+unset LANG ; export MAINTAINER='%s' ; %s", 
 			 screen,
 			 cfg->ssh_cmd, ssh_user, ssh_port, hostname,
-			 cfg->cmd_upgrade);
+			 maintainer, cfg->cmd_upgrade);
  }
  g_free(screen);
 
@@ -101,7 +103,7 @@ gboolean ssh_cmd_upgrade(gchar *hostname, gchar *ssh_user, gint ssh_port)
 
  g_free(cmd);
  g_strfreev(argv);
- 
+
  return (r);
 }
 
@@ -118,15 +120,16 @@ gboolean ssh_cmd_install(gchar *hostname, gchar *ssh_user, gint ssh_port,
  gchar *screen = screen_new_cmd(hostname, ssh_user, ssh_port);
 
  if(strlen(cfg->ssh_optflags) > 0) {
-  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+%s+unset LANG && %s", 
+  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+%s+unset LANG ; export MAINTAINER='%s' ; %s", 
 			 screen,
 			 cfg->ssh_cmd, ssh_user, ssh_port, 
-			 cfg->ssh_optflags, hostname, cfg->cmd_install);
+			 cfg->ssh_optflags, hostname,
+			 maintainer, cfg->cmd_install);
  } else {
-  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+unset LANG && %s", 
+  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+unset LANG ; export MAINTAINER='%s' ; %s", 
 			 screen,
 			 cfg->ssh_cmd, ssh_user, ssh_port, hostname,
-			 cfg->cmd_install);
+			 maintainer, cfg->cmd_install);
  }
  g_free(screen);
 
@@ -165,14 +168,16 @@ gboolean ssh_connect(gchar *hostname, gchar *ssh_user, gint ssh_port)
  gchar *screen = screen_new_cmd(hostname, ssh_user, ssh_port);
 
  if(strlen(cfg->ssh_optflags) > 0) {
-  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+%s", 
+  cmd = g_strdup_printf ("%s%s+-l+%s+-t+-p+%d+%s+%s+export MAINTAINER='%s' ; $SHELL",
 			 screen,
 			 cfg->ssh_cmd, ssh_user, ssh_port, 
-			 cfg->ssh_optflags, hostname);
+			 cfg->ssh_optflags, hostname,
+			 maintainer);
  } else {
-  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s", 
+  cmd = g_strdup_printf ("%s%s+-l+%s+-t+-p+%d+%s+export MAINTAINER='%s' ; $SHELL", 
 			 screen,
-			 cfg->ssh_cmd, ssh_user, ssh_port, hostname);
+			 cfg->ssh_cmd, ssh_user, ssh_port, hostname,
+			 maintainer);
  }
  g_free(screen);
 

@@ -25,7 +25,7 @@ static struct mapping_t Colors[] =
 #ifdef HAVE_USE_DEFAULT_COLORS
   { "default",  COLOR_DEFAULT },
 #endif
-  { NULL, 0 }
+  { NULL, 0 },
  };
 
 
@@ -35,7 +35,9 @@ static struct mapping_t Components[] =
   { "menu", UI_COLOR_MENU },
   { "status", UI_COLOR_STATUS },
   { "selector", UI_COLOR_SELECTOR },
-  { NULL, 0 }
+  { "query", UI_COLOR_QUERY },
+  { "input", UI_COLOR_INPUT },
+  { NULL, 0 },
  };
 
 
@@ -113,8 +115,9 @@ void ui_start_color ()
  uicolors[UI_COLOR_DEFAULT] = A_NORMAL;
  uicolors[UI_COLOR_MENU] = A_REVERSE;
  uicolors[UI_COLOR_STATUS] = A_REVERSE;
- uicolors[UI_COLOR_STATUS] = A_REVERSE;
  uicolors[UI_COLOR_SELECTOR] = A_REVERSE;
+ uicolors[UI_COLOR_QUERY] = A_BOLD;
+ uicolors[UI_COLOR_INPUT] = A_NORMAL;
 
 #ifdef HAVE_COLOR
  start_color();

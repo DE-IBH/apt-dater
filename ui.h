@@ -23,4 +23,7 @@ typedef struct _drawnode {
 } DrawNode;
 
 gboolean ctrlKeyEnter(GList *hosts);
+
+extern gchar maintainer[48];
+
 #endif /* _UI_H */
