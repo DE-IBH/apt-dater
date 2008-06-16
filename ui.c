@@ -16,6 +16,7 @@ HostNode *inhost = NULL;
 SessNode *insession = NULL;
 static gint bottomDrawLine;
 static WINDOW *win_dump = NULL;
+static gboolean dump_screen = FALSE;
 
 void freeDrawNode (DrawNode *n)
 {
@@ -331,10 +332,11 @@ void drawSessionEntry (DrawNode *n)
  mvaddnstr(n->scrpos, 7, h, COLS);
  attroff(n->attrs);
  if(n->selected == TRUE) {
-  sprintf(menuln, "%s  a:attach", MENU_TEXT);
+   insession = n->p;
+  sprintf(menuln, "%s  a:attach  d:dump", MENU_TEXT);
   drawMenu(menuln);
 
-  if (cfg->dump_screen) {
+  if (dump_screen) {
     gchar *dump = screen_get_dump((SessNode *) n->p);
 
     if(dump) {
@@ -372,9 +374,6 @@ void detectPos()
    break;
   case HOST:
    inhost = ((DrawNode *) dl->data)->p;
-   break;
-  case SESSION:
-   insession = ((DrawNode *) dl->data)->p;
    break;
   default:
    break;
@@ -414,7 +413,7 @@ void refreshDraw()
  clear();
  detectPos();
 
- if(cfg->dump_screen) {
+ if(dump_screen) {
    if((getCategoryNumber(incategory) == C_SESSIONS) &&
       insession) {
      if (!win_dump) {
@@ -1267,6 +1266,21 @@ gboolean ctrlUI (GList *hosts)
   initUI();
   refscr = TRUE;
   break;
+ case 'd':
+   if (!cfg->dump_screen)
+     break;
+   dump_screen = !dump_screen;
+
+   if(!insession) {
+     if(dump_screen)
+       mvaddstr(LINES - 1, 0, "Session dumps enabled.");
+     else
+       mvaddstr(LINES - 1, 0, "Session dumps disabled.");
+   }
+   else
+     refscr = TRUE;
+
+   break;
  default:
   break;
  }

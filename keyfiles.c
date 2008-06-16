@@ -104,12 +104,16 @@ CfgFile *loadConfig (char *filename)
  }
 
  lcfg->use_screen = g_key_file_get_integer(keyfile, "Screen", "Enabled", &error);
- if (error->code == G_KEY_FILE_ERROR_KEY_NOT_FOUND)
+ if (error) {
    lcfg->use_screen = g_file_test(SCREEN_BINARY, G_FILE_TEST_IS_EXECUTABLE);
+   g_clear_error(&error);
+ }
 
  lcfg->dump_screen = !g_key_file_get_boolean(keyfile, "Screen", "NoDumps", &error);
- if (error->code == G_KEY_FILE_ERROR_KEY_NOT_FOUND)
+ if (error) {
    lcfg->dump_screen = TRUE;
+   g_clear_error(&error);
+ }
 
  g_clear_error(&error);
  g_key_file_free(keyfile);
