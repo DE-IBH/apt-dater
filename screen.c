@@ -72,26 +72,27 @@ screen_get_sessions(HostNode *n) {
 }
 
 gchar *
-screen_new_cmd(const gchar *host, const gchar *user, const gint port) {
+screen_new(HostNode *n, const gboolean detached) {
   if (!cfg->use_screen)
     return g_strdup("");
   
-  return g_strdup_printf(SCREEN_BINARY"+-S+"SCREEN_SOCKPRE"%s_%s_%d" \
+  return g_strdup_printf(SCREEN_BINARY"+-%sS+"SCREEN_SOCKPRE"%s_%s_%d" \
 			 "+-t+%s@%s:%d+",
-			 user, host, port,
-			 user, host, port);
+			 detached ? "dm" : "",
+			 n->ssh_user, n->hostname, n->ssh_port,
+			 n->ssh_user, n->hostname, n->ssh_port);
 }
 
 static gchar *
-screen_connect_cmd(const SessNode *s) {
-  return g_strdup_printf(SCREEN_BINARY"+-rx+%d+", s->pid);
+screen_attach_cmd(const SessNode *s, const gboolean shared) {
+  return g_strdup_printf(SCREEN_BINARY"+-r%s+%d+", shared ? "x" : "", s->pid);
 }
 
 gboolean
-screen_connect(const SessNode *s) {
+screen_attach(const SessNode *s, const gboolean shared) {
  gboolean r;
  GError *error = NULL;
- gchar *cmd = screen_connect_cmd(s);
+ gchar *cmd = screen_attach_cmd(s, shared);
  gchar **argv = NULL;
 
  if(!cmd) return FALSE;

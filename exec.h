@@ -5,15 +5,15 @@
 #include "ui.h"
 
 gboolean
-ssh_cmd_refresh(gchar *hostname, gchar *ssh_user, gint ssh_port, HostNode *n);;
+ssh_cmd_refresh(HostNode *n);
 
 gboolean
-ssh_cmd_upgrade(gchar *hostname, gchar *ssh_user, gint ssh_port);
+ssh_cmd_upgrade(HostNode *n, const gboolean detached);
 
 gboolean
-ssh_cmd_install(gchar *hostname, gchar *ssh_user, gint ssh_port, gchar *package);
+ssh_cmd_install(HostNode *n, const gchar *package, const gboolean detached);
 
 gboolean
-ssh_connect(gchar *hostname, gchar *ssh_user, gint ssh_port);
+ssh_connect(HostNode *n, const gboolean detached);
 
 #endif /* _EXEC_H */

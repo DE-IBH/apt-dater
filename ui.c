@@ -22,6 +22,7 @@ static gint bottomDrawLine;
 static WINDOW *win_dump = NULL;
 static gboolean dump_screen = FALSE;
 gchar maintainer[48];
+gint sc_mask = 0;
 
 typedef enum {
   SC_ATTACH=1,
@@ -50,10 +51,13 @@ static struct ShortCut shortCuts[] = {
   {"g" , "refresh"                    , FALSE , SC_REFRESH},
   {"i" , "install pkg"                , FALSE , SC_INSTALL},
   {"u" , "upgrade host"               , FALSE , SC_UPGRADE},
+  {"n" , "attach next session"        , FALSE ,0},
+  {"N" , "cycle detached sessions"    , FALSE ,0},
   {NULL, NULL                         , FALSE, 0},
 };
 
 static void setMenuEntries(gint mask) {
+  mask |= sc_mask;
   gint i = -1;
   while(shortCuts[++i].key) {
     if(shortCuts[i].id == 0)
@@ -575,15 +579,6 @@ void checkSelected()
    ((DrawNode *)dl->data)->scrpos = p--;
    dl = g_list_previous(dl);
   }
-
-/*
-  setEntryActiveStatus(dn, FALSE);
-  dl = g_list_first(drawlist);
-  while (dl && (((DrawNode *) dl->data)->scrpos < bottomDrawLine)) 
-   dl = g_list_next(dl);
-  if (!dl) dl = g_list_last(drawlist);
-  setEntryActiveStatus((DrawNode *) dl->data, TRUE);
-*/
 
   return;
  }
@@ -1221,13 +1216,13 @@ gboolean ctrlUI (GList *hosts)
   refscr = TRUE;
  }
 
- ic = tolower(getch());
+ ic = getch();
 
  /* To slow down the idle process. */
  if(ic == ERR)
   g_usleep(10000);
 
- switch(ic) {
+ switch(tolower(ic)) {
  case KEY_RESIZE:
   refscr = TRUE;
   break;
@@ -1295,7 +1290,7 @@ gboolean ctrlUI (GList *hosts)
    }
 
    cleanUI();
-   ssh_connect(((HostNode *) n->p)->hostname, ((HostNode *) n->p)->ssh_user, ((HostNode *) n->p)->ssh_port);
+   ssh_connect((HostNode *) n->p, FALSE);
    ((HostNode *) n->p)->category = C_REFRESH_REQUIRED;
    freeUpdates(((HostNode *) n->p)->updates);
    ((HostNode *) n->p)->updates = NULL;
@@ -1307,22 +1302,45 @@ gboolean ctrlUI (GList *hosts)
  case 'u':
   n = getSelectedDrawNode();
   if(!n) break;
-  if(n->type == HOST) {
-   if(n->extended == TRUE) n->extended = FALSE;
+  switch(n->type) {
+  case HOST:
+    if(n->extended == TRUE) n->extended = FALSE;
+    
+    if (g_list_length(inhost->screens)) {
+      if (!queryConfirm("There are running sessions on this host! Continue? "))
+	break;
+    }
 
-   if (g_list_length(inhost->screens)) {
-     if (!queryConfirm("There are running sessions on this host! Continue? "))
-       break;
-   }
+    cleanUI();
+    ssh_cmd_upgrade((HostNode *) n->p, FALSE);
+    ((HostNode *) n->p)->category = C_REFRESH_REQUIRED;
+    freeUpdates(((HostNode *) n->p)->updates);
+    ((HostNode *) n->p)->updates = NULL;
+    rebuildDrawList(hosts);
+    initUI();
+    refscr = TRUE;
+    break;
+  case CATEGORY:
+  case GROUP:
+  default:
+    {
+      if(((n->type == CATEGORY) && !queryConfirm("Run update for the whole category? ")) ||
+	 ((n->type == GROUP) && !queryConfirm("Run update for the whole group? ")))
+      break;
 
-   cleanUI();
-   ssh_cmd_upgrade(((HostNode *) n->p)->hostname, ((HostNode *) n->p)->ssh_user, ((HostNode *) n->p)->ssh_port);
-   ((HostNode *) n->p)->category = C_REFRESH_REQUIRED;
-   freeUpdates(((HostNode *) n->p)->updates);
-   ((HostNode *) n->p)->updates = NULL;
-   rebuildDrawList(hosts);
-   initUI();
-   refscr = TRUE;
+      GList *ho = g_list_first(hosts);
+      gint cat = getCategoryNumber(incategory);
+
+      while(ho) {
+	HostNode *m = (HostNode *)ho->data;
+	if(((n->type == GROUP) && (strcmp(m->group, ingroup) == 0)) ||
+	   ((n->type == CATEGORY) && (m->category == cat)))
+	  ssh_cmd_upgrade(m, TRUE);
+
+	ho = g_list_next(ho);
+      }
+    }
+    break;
   }
   break;
  case 'i':
@@ -1344,7 +1362,7 @@ gboolean ctrlUI (GList *hosts)
     pkg = ((UpdNode *) n->p)->package;
   }
   cleanUI();
-  ssh_cmd_install(inhost->hostname, inhost->ssh_user, inhost->ssh_port, pkg);
+  ssh_cmd_install(inhost, pkg, FALSE);
   inhost->category = C_REFRESH_REQUIRED;
   freeUpdates(inhost->updates);
   inhost->updates = NULL;
@@ -1360,6 +1378,34 @@ gboolean ctrlUI (GList *hosts)
   refscr = FALSE;
   g_main_loop_quit (loop);
   break;
+ case 'n':
+   {
+     GList *ho = g_list_first(hosts);
+
+     while(ho) {
+       HostNode *m = (HostNode *)ho->data;
+
+       GList *sc = m->screens;
+
+       while(sc) {
+	 if (!screen_is_attached((SessNode *)sc->data)) {
+	   cleanUI();
+	   screen_attach((SessNode *)sc->data, FALSE);
+	   initUI();
+
+	   if(ic != 'N') {
+	     ho = NULL;
+	     break;
+	   }
+	 }
+	 sc = g_list_next(sc);
+       }
+
+       if(ho)
+	 ho = g_list_next(ho);
+      }
+   }
+   break;
  case 'a':
   n = getSelectedDrawNode();
   if(!inhost) break;
@@ -1378,15 +1424,21 @@ gboolean ctrlUI (GList *hosts)
   if(!s)
     break;
 
-  /* Session already attached! */
-  if (screen_is_attached(s)) {
-    if (!queryConfirm("Already attached - share session? "))
-      break;
-  }
+  {
+    gboolean may_share = FALSE;
 
-  cleanUI();
-  screen_connect(s);
-  initUI();
+    /* Session already attached! */
+    if (screen_is_attached(s)) {
+      if (!queryConfirm("Already attached - share session? "))
+	break;
+      
+      may_share = TRUE;
+    }
+
+    cleanUI();
+    screen_attach(s, may_share);
+    initUI();
+  }
   refscr = TRUE;
   break;
  case 'd':

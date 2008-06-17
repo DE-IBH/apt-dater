@@ -15,8 +15,8 @@
 gboolean
 screen_get_sessions(HostNode *n);
 
-gchar *screen_new_cmd(const gchar *host, const gchar *user, const gint port);
-gboolean screen_connect(const SessNode *s);
+gchar *screen_new(HostNode *n, const gboolean detached);
+gboolean screen_attach(const SessNode *s, const gboolean shared);
 gchar *screen_get_dump(const SessNode *s);
 
 static inline gboolean

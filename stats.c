@@ -263,14 +263,12 @@ void freeUpdates(GList *updates)
 gboolean refreshStats(GList *hosts)
 {
  GList *ho;
- HostNode *n;
  gboolean r = TRUE;
- int rsetlck = 0;
 
  ho = g_list_first(hosts);
  
  while(ho) {
-  n = (HostNode *) ho->data;
+  HostNode *n = (HostNode *) ho->data;
 
   if(screen_get_sessions(n)) {
    n->category = C_SESSIONS;
@@ -282,7 +280,7 @@ gboolean refreshStats(GList *hosts)
 
    if(n->category == C_REFRESH_REQUIRED) {
     /* Try to get a lock for the host. */
-    rsetlck = setLockForHost(n);
+    gint rsetlck = setLockForHost(n);
 
     /* We don't got the lock. */
     if(rsetlck == -1) {
@@ -304,7 +302,7 @@ gboolean refreshStats(GList *hosts)
       freeUpdates(n->updates);
       n->updates = NULL;
 
-      if(ssh_cmd_refresh(n->hostname, n->ssh_user, n->ssh_port, n) == FALSE) {
+      if(ssh_cmd_refresh(n) == FALSE) {
        n->category = C_NO_STATS;
       }
      }

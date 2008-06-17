@@ -6,8 +6,7 @@
 #include "screen.h"
 #include "exec.h"
 
-gboolean ssh_cmd_refresh(gchar *hostname, gchar *ssh_user, gint ssh_port,
-			 HostNode *n)
+gboolean ssh_cmd_refresh(HostNode *n)
 {
  gboolean r;
  GError *error = NULL;
@@ -21,13 +20,13 @@ gboolean ssh_cmd_refresh(gchar *hostname, gchar *ssh_user, gint ssh_port,
  if(!n) return (FALSE);
 
  cmd = g_strdup_printf("%s+-n+-o+BatchMode=yes+-o+ConnectTimeout=5+-q+-l+%s+-p+%d+%s+unset LANG && %s",
-		       cfg->ssh_cmd, ssh_user, ssh_port, hostname,
+		       cfg->ssh_cmd, n->ssh_user, n->ssh_port, n->hostname,
 		       cfg->cmd_refresh);
  if(!cmd) return(FALSE);
 
  argv = g_strsplit(cmd, "+", 0);
 
- removeStatsFile(hostname);
+ removeStatsFile(n->hostname);
 
  r = g_spawn_async_with_pipes(g_getenv ("HOME"), /* working_directory */
 			      argv,
@@ -64,25 +63,25 @@ gboolean ssh_cmd_refresh(gchar *hostname, gchar *ssh_user, gint ssh_port,
 }
 
 
-gboolean ssh_cmd_upgrade(gchar *hostname, gchar *ssh_user, gint ssh_port)
+gboolean ssh_cmd_upgrade(HostNode *n, const gboolean detached)
 {
  gboolean r;
  GError *error = NULL;
  gchar *cmd = NULL;
  gchar **argv = NULL;
 
- gchar *screen = screen_new_cmd(hostname, ssh_user, ssh_port);
+ gchar *screen = screen_new(n, detached);
 
  if(strlen(cfg->ssh_optflags) > 0) {
   cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+%s+unset LANG ; export MAINTAINER='%s' ; %s", 
 			 screen,
-			 cfg->ssh_cmd, ssh_user, ssh_port, 
-			 cfg->ssh_optflags, hostname, 
+			 cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
+			 cfg->ssh_optflags, n->hostname, 
 			 maintainer, cfg->cmd_upgrade);
  } else {
   cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+unset LANG ; export MAINTAINER='%s' ; %s", 
 			 screen,
-			 cfg->ssh_cmd, ssh_user, ssh_port, hostname,
+			 cfg->ssh_cmd, n->ssh_user, n->ssh_port, n->hostname,
 			 maintainer, cfg->cmd_upgrade);
  }
  g_free(screen);
@@ -107,8 +106,7 @@ gboolean ssh_cmd_upgrade(gchar *hostname, gchar *ssh_user, gint ssh_port)
 }
 
 
-gboolean ssh_cmd_install(gchar *hostname, gchar *ssh_user, gint ssh_port,
-			 gchar *package)
+gboolean ssh_cmd_install(HostNode *n, const gchar *package, const gboolean detached)
 {
  gboolean r;
  GError *error = NULL;
@@ -116,18 +114,18 @@ gboolean ssh_cmd_install(gchar *hostname, gchar *ssh_user, gint ssh_port,
  gchar *buf = NULL;
  gchar **argv = NULL;
 
- gchar *screen = screen_new_cmd(hostname, ssh_user, ssh_port);
+ gchar *screen = screen_new(n, detached);
 
  if(strlen(cfg->ssh_optflags) > 0) {
   cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+%s+unset LANG ; export MAINTAINER='%s' ; %s", 
 			 screen,
-			 cfg->ssh_cmd, ssh_user, ssh_port, 
-			 cfg->ssh_optflags, hostname,
+			 cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
+			 cfg->ssh_optflags, n->hostname,
 			 maintainer, cfg->cmd_install);
  } else {
   cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+unset LANG ; export MAINTAINER='%s' ; %s", 
 			 screen,
-			 cfg->ssh_cmd, ssh_user, ssh_port, hostname,
+			 cfg->ssh_cmd, n->ssh_user, n->ssh_port, n->hostname,
 			 maintainer, cfg->cmd_install);
  }
  g_free(screen);
@@ -157,25 +155,25 @@ gboolean ssh_cmd_install(gchar *hostname, gchar *ssh_user, gint ssh_port,
  return (r);
 }
 
-gboolean ssh_connect(gchar *hostname, gchar *ssh_user, gint ssh_port)
+gboolean ssh_connect(HostNode *n, const gboolean detached)
 {
  gboolean r;
  GError *error = NULL;
  gchar *cmd = NULL;
  gchar **argv = NULL;
 
- gchar *screen = screen_new_cmd(hostname, ssh_user, ssh_port);
+ gchar *screen = screen_new(n, detached);
 
  if(strlen(cfg->ssh_optflags) > 0) {
   cmd = g_strdup_printf ("%s%s+-l+%s+-t+-p+%d+%s+%s+export MAINTAINER='%s' ; $SHELL",
 			 screen,
-			 cfg->ssh_cmd, ssh_user, ssh_port, 
-			 cfg->ssh_optflags, hostname,
+			 cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
+			 cfg->ssh_optflags, n->hostname,
 			 maintainer);
  } else {
   cmd = g_strdup_printf ("%s%s+-l+%s+-t+-p+%d+%s+export MAINTAINER='%s' ; $SHELL", 
 			 screen,
-			 cfg->ssh_cmd, ssh_user, ssh_port, hostname,
+			 cfg->ssh_cmd, n->ssh_user, n->ssh_port, n->hostname,
 			 maintainer);
  }
  g_free(screen);
