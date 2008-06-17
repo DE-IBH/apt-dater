@@ -8,8 +8,9 @@
 #include "exec.h"
 #include "screen.h"
 #include "stats.h"
+#include "lock.h"
 
-gchar *getStatsFile(gchar *hostname)
+gchar *getStatsFile(const gchar *hostname)
 {
  GDir *dir;
  GError *error = NULL;
@@ -47,7 +48,7 @@ gchar *getStatsFile(gchar *hostname)
 }
 
 
-gchar *getStatsFileName(gchar *hostname)
+gchar *getStatsFileName(const gchar *hostname)
 {
  gchar *statsfile = NULL;
 
@@ -59,7 +60,7 @@ gchar *getStatsFileName(gchar *hostname)
 }
 
 
-gboolean removeStatsFile(gchar *hostname)
+gboolean removeStatsFile(const gchar *hostname)
 {
  gboolean r = FALSE;
  gchar *statsfile;
@@ -87,6 +88,9 @@ void refreshStatsOfNode(gpointer n)
   g_list_free(((HostNode *) n)->updates);
   ((HostNode *) n)->updates = NULL;
  }
+
+ unsetLockForHost(((HostNode *) n)->hostname, ((HostNode *) n)->fdlock);
+ ((HostNode *) n)->status^= HOST_STATUS_LOCKED;
 
  rebuilddl = TRUE; /* Trigger a DrawList rebuild */
 }
@@ -262,6 +266,7 @@ gboolean refreshStats(GList *hosts)
  GList *ho;
  HostNode *n;
  gboolean r = TRUE;
+ int rsetlck = 0;
 
  ho = g_list_first(hosts);
  
@@ -269,21 +274,40 @@ gboolean refreshStats(GList *hosts)
   n = (HostNode *) ho->data;
 
   if(screen_get_sessions(n)) {
-    n->category = C_SESSIONS;
-    rebuilddl = TRUE;
+   n->category = C_SESSIONS;
+   rebuilddl = TRUE;
   }
   else {
-    if (n->category == C_SESSIONS)
-      n->category = C_REFRESH_REQUIRED;
+   if (n->category == C_SESSIONS)
+    n->category = C_REFRESH_REQUIRED;
 
-    if(n->category == C_REFRESH_REQUIRED) {
+   if(n->category == C_REFRESH_REQUIRED) {
+    /* Try to get a lock for the host. */
+    rsetlck = setLockForHost(n->hostname, n->fdlock);
+
+    if(rsetlck == -1) {
+     n->status|= HOST_STATUS_LOCKED;
+     if(n->updates) {
+      freeUpdates(n->updates);
+      n->updates = NULL;
+     }
+    } else if (rsetlck == 0) {
+     if(n->status & HOST_STATUS_LOCKED) {
+      refreshStatsOfNode(n);
+     } else {
       n->category = C_REFRESH;
       freeUpdates(n->updates);
 
+      n->status|= HOST_STATUS_LOCKED;
       if(ssh_cmd_refresh(n->hostname, n->ssh_user, n->ssh_port, n) == FALSE) {
-	n->category = C_NO_STATS;
+       n->category = C_NO_STATS;
       }
+     }
+    } else {
+     n->category = C_UNKNOW;
+     rebuilddl = TRUE;
     }
+   }
   }
 
   ho = g_list_next(ho);

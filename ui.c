@@ -150,6 +150,7 @@ void initUI ()
 
 void cleanUI ()
 {
+ clear();
  endwin();
 }
 
@@ -308,10 +309,16 @@ void drawHostEntry (DrawNode *n)
 
  attron(n->attrs);
  mvhline(n->scrpos, 0, ' ', COLS);
- if (((HostNode *) n->p)->status != 0) {
-  attron(A_BOLD);
+ if (((HostNode *) n->p)->status & (HOST_STATUS_PKGKEPTBACK |
+				    HOST_STATUS_KERNELNOTMATCH |
+				    HOST_STATUS_KERNELSELFBUILD)) {
+  attron(uicolors[UI_COLOR_HOSTSTATUS]);
   mvaddstr(n->scrpos, 1, "!");
-  attroff(A_BOLD);
+  attroff(uicolors[UI_COLOR_HOSTSTATUS]);
+ } else if (((HostNode *) n->p)->status & HOST_STATUS_LOCKED) {
+  attron(uicolors[UI_COLOR_HOSTSTATUS]);
+  mvaddstr(n->scrpos, 1, "L");
+  attroff(uicolors[UI_COLOR_HOSTSTATUS]);
  }
  mvaddstr(n->scrpos, 4, " [");
 
@@ -361,8 +368,10 @@ void drawHostEntry (DrawNode *n)
    strcat(statusln," - running Kernel is not the latest");
   if (((HostNode *) n->p)->status & HOST_STATUS_KERNELSELFBUILD) 
    strcat(statusln," - a selfbuilt kernel is running");
-
+  if (((HostNode *) n->p)->status & HOST_STATUS_LOCKED) 
+   strcat(statusln," - host locked by another process");
   drawMenu(mask);
+
   drawStatus(statusln);
  }
 }
@@ -1344,9 +1353,9 @@ gboolean ctrlUI (GList *hosts)
  case 'q':
   ret = FALSE;
   attrset(A_NORMAL);
-  clear();
   cleanUI();
   refresh();
+  refscr = FALSE;
   g_main_loop_quit (loop);
   break;
  case 'a':

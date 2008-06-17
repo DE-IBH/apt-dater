@@ -13,8 +13,9 @@ extern gboolean ctrlUI (GList *);
 void cleanUI();
 gboolean refreshStats(GList *);
 gboolean setStatsFileFromIOC(GIOChannel *, GIOCondition, gpointer);
-gchar *getStatsFileName(gchar *);
-gboolean removeStatsFile(gchar *);
+gchar *getStatsFileName(const gchar *);
+gchar *getStatsFile(const gchar *);
+gboolean removeStatsFile(const gchar *);
 Category getUpdatesFromStat(gchar *, GList *, guint *);
 void refreshStatsOfNode(gpointer);
 

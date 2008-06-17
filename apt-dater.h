@@ -60,6 +60,7 @@ typedef enum {
 #define HOST_STATUS_PKGKEPTBACK     1
 #define HOST_STATUS_KERNELNOTMATCH  2
 #define HOST_STATUS_KERNELSELFBUILD 4
+#define HOST_STATUS_LOCKED          8
 
 typedef struct _hostnode {
  gchar     *hostname;
@@ -71,6 +72,7 @@ typedef struct _hostnode {
  Category  category;
  GList     *updates;
  GList     *screens;
+ FILE      *fdlock;
 } HostNode;
 
 struct mapping_t
