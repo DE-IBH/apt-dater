@@ -72,7 +72,7 @@ typedef struct _hostnode {
  Category  category;
  GList     *updates;
  GList     *screens;
- FILE      *fdlock;
+ gint      fdlock;
 } HostNode;
 
 struct mapping_t

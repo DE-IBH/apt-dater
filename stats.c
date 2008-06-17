@@ -89,8 +89,7 @@ void refreshStatsOfNode(gpointer n)
   ((HostNode *) n)->updates = NULL;
  }
 
- unsetLockForHost(((HostNode *) n)->hostname, ((HostNode *) n)->fdlock);
- ((HostNode *) n)->status^= HOST_STATUS_LOCKED;
+ unsetLockForHost((HostNode *) n);
 
  rebuilddl = TRUE; /* Trigger a DrawList rebuild */
 }
@@ -283,26 +282,33 @@ gboolean refreshStats(GList *hosts)
 
    if(n->category == C_REFRESH_REQUIRED) {
     /* Try to get a lock for the host. */
-    rsetlck = setLockForHost(n->hostname, n->fdlock);
+    rsetlck = setLockForHost(n);
 
+    /* We don't got the lock. */
     if(rsetlck == -1) {
      n->status|= HOST_STATUS_LOCKED;
      if(n->updates) {
       freeUpdates(n->updates);
       n->updates = NULL;
      }
-    } else if (rsetlck == 0) {
+    }
+    /* We got the lock. */
+    else if (rsetlck == 0) {
      if(n->status & HOST_STATUS_LOCKED) {
       refreshStatsOfNode(n);
+      //      n->status ^= HOST_STATUS_LOCKED;
      } else {
       n->category = C_REFRESH;
-      freeUpdates(n->updates);
+      rebuilddl = TRUE;
 
-      n->status|= HOST_STATUS_LOCKED;
+      freeUpdates(n->updates);
+      n->updates = NULL;
+
       if(ssh_cmd_refresh(n->hostname, n->ssh_user, n->ssh_port, n) == FALSE) {
        n->category = C_NO_STATS;
       }
      }
+    /* Something weird happend. */
     } else {
      n->category = C_UNKNOW;
      rebuilddl = TRUE;
