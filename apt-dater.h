@@ -31,6 +31,7 @@ typedef struct _cfgfile {
  gchar *cmd_install;
  gboolean use_screen;
  gboolean dump_screen;
+ gboolean query_maintainer;
  gchar **colors;
 } CfgFile;
 

@@ -495,7 +495,7 @@ void refreshDraw()
        bottomDrawLine = LINES/2;
 
        win_dump = subwin(stdscr, bottomDrawLine-1, COLS, LINES-bottomDrawLine, 0);
-       scrollok(win_dump, FALSE);
+       scrollok(win_dump, TRUE);
        syncok(win_dump, TRUE);
      }
    }
@@ -655,28 +655,30 @@ void doUI (GList *hosts)
      maintainer[0] = 0;
  }
 
- WINDOW *w = newwin(5, 52, LINES/2-3, (COLS-52)/2);
- box(w,0,0);
+ if (cfg->query_maintainer) {
+   WINDOW *w = newwin(5, 52, LINES/2-3, (COLS-52)/2);
+   box(w,0,0);
 
- enableInput();
- wattron(w, uicolors[UI_COLOR_QUERY]);
- mvwaddstr(w, 1, 2, "Maintainer name:");
- wattroff(w, uicolors[UI_COLOR_QUERY]);
- wmove(w, 3, 2);
+   enableInput();
+   wattron(w, uicolors[UI_COLOR_QUERY]);
+   mvwaddstr(w, 1, 2, "Maintainer name:");
+   wattroff(w, uicolors[UI_COLOR_QUERY]);
+   wmove(w, 3, 2);
+   
+   wattron(w, uicolors[UI_COLOR_INPUT]);
 
- wattron(w, uicolors[UI_COLOR_INPUT]);
+   int i;
+   for(i = strlen(maintainer)-1; i>=0; i--)
+     ungetch(maintainer[i]);
+   
+   wgetnstr(w, maintainer, sizeof(maintainer));
+   disableInput();
 
- int i;
- for(i = strlen(maintainer)-1; i>=0; i--)
-  ungetch(maintainer[i]);
+   wattroff(w, uicolors[UI_COLOR_INPUT]);
 
- wgetnstr(w, maintainer, sizeof(maintainer));
- disableInput();
-
- wattroff(w, uicolors[UI_COLOR_INPUT]);
-
- delwin(w);
- refreshDraw();
+   delwin(w);
+   refreshDraw();
+ }
 }
 
 gboolean ctrlKeyUpDown(int ic)
