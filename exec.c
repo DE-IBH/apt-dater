@@ -4,7 +4,7 @@
 
 #include "apt-dater.h"
 #include "screen.h"
-#include "ui.h"
+#include "exec.h"
 
 gboolean ssh_cmd_refresh(gchar *hostname, gchar *ssh_user, gint ssh_port,
 			 HostNode *n)
@@ -15,7 +15,6 @@ gboolean ssh_cmd_refresh(gchar *hostname, gchar *ssh_user, gint ssh_port,
  gchar **argv = NULL;
  gchar *output = NULL;
  GPid  child_pid;
- gint  i = 0;
  gint  standard_output;
  GIOChannel *iocstdout;
 

@@ -90,7 +90,7 @@ gboolean setColors(const gchar **colors)
 
  i = 0;
  while(*(colors+i)) {
-  if(colordef = g_strsplit(colors[i++], " ", 3)) {
+   if((colordef = g_strsplit(colors[i++], " ", 3))) {
    j = 0;
    while(*(colordef+j++));
    if(j == 4)

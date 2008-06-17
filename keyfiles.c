@@ -4,6 +4,8 @@
 
 #include "apt-dater.h"
 #include "screen.h"
+#include "keyfiles.h"
+#include "stats.h"
 
 static int cmpStringP(const void *p1, const void *p2)
 {
@@ -39,7 +41,6 @@ CfgFile *loadConfig (char *filename)
  GKeyFileFlags flags;
  GError *error = NULL;
  CfgFile *lcfg = NULL;
- gint i, j;
 
  keyfile = g_key_file_new ();
  flags = G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS;

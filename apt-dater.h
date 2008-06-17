@@ -66,7 +66,7 @@ typedef struct _hostnode {
  gchar     *group;
  gchar     *ssh_user;
  gint      ssh_port;
- gint      status;
+ guint     status;
  gboolean  keptback;
  Category  category;
  GList     *updates;

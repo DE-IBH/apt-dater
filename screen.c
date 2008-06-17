@@ -6,6 +6,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <pwd.h>
+#include <glib-2.0/glib.h>
+#include <glib-2.0/glib/gstdio.h>
 #include "screen.h"
 
 static gchar *dump_fn = NULL;
@@ -134,7 +136,8 @@ screen_get_dump(const SessNode *s) {
    return NULL;
 
  gchar *cmd = screen_dump_cmd(s, dump_fn);
- if(!cmd) return;
+ if(!cmd)
+   return NULL;
 
  argv = g_strsplit(cmd, "+", 0);
 

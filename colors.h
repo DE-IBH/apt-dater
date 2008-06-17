@@ -17,4 +17,7 @@ enum {
  UI_COLOR_MAX,
 };
 
+void
+ui_start_color();
+
 #endif /* _COLOR_H */

@@ -2,8 +2,12 @@
  *
  */
 
-#include "apt-dater.h"
+#include <glib-2.0/glib/gstdio.h>
 
+#include "apt-dater.h"
+#include "exec.h"
+#include "screen.h"
+#include "stats.h"
 
 gchar *getStatsFile(gchar *hostname)
 {
@@ -20,7 +24,7 @@ gchar *getStatsFile(gchar *hostname)
  }
  g_clear_error(&error);
 
- while(entry = g_dir_read_name(dir)) {
+ while(((entry = g_dir_read_name(dir)))) {
   compare = g_strdup_printf("%s.stat", hostname);
   if(!g_strcasecmp(entry, compare)) {
    statsfile = g_strdup_printf("%s/%s", cfg->statsdir, entry);
@@ -156,7 +160,6 @@ Category getUpdatesFromStat(gchar *hostname, GList *updates, guint *stat)
  char section[BUF_MAX_LEN];
  char dist[BUF_MAX_LEN];
  FILE  *fp;
- gsize len;
  UpdNode *updnode = NULL;
  Category category = C_UNKNOW;
  gint i = 0;

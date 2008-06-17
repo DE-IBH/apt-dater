@@ -2,7 +2,7 @@
 #ifndef _UI_H
 #define _UI_H
 
-#define MENU_TEXT "q:Quit"
+#include <glib-2.0/glib.h>
 
 typedef enum {
  CATEGORY,
@@ -22,7 +22,11 @@ typedef struct _drawnode {
  int      attrs;
 } DrawNode;
 
-gboolean ctrlKeyEnter(GList *hosts);
+gboolean
+ctrlKeyEnter(GList *hosts);
+
+void
+doUI (GList *hosts);
 
 extern gchar maintainer[48];
 

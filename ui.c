@@ -3,22 +3,65 @@
  */
 
 #include <curses.h>
+#include <ctype.h>
 #include <pwd.h>
 #include "apt-dater.h"
 #include "ui.h"
 #include "colors.h"
 #include "screen.h"
+#include "exec.h"
+#include "stats.h"
 
 
-GList *drawlist = NULL;
-char *drawCategories[] = {"Updates pending", "Up to date", "Status file missing", "Refresh required", "In refresh", "Sessions", "Unknown", 0};
-gchar *incategory = NULL;
-gchar *ingroup = NULL;
-HostNode *inhost = NULL;
+static GList *drawlist = NULL;
+static char *drawCategories[] = {"Updates pending", "Up to date", "Status file missing", "Refresh required", "In refresh", "Sessions", "Unknown", 0};
+static gchar *incategory = NULL;
+static gchar *ingroup = NULL;
+static HostNode *inhost = NULL;
 static gint bottomDrawLine;
 static WINDOW *win_dump = NULL;
 static gboolean dump_screen = FALSE;
 gchar maintainer[48];
+
+typedef enum {
+  SC_ATTACH=1,
+  SC_CONNECT=2,
+  SC_DUMP=4,
+  SC_UPGRADE=8,
+  SC_INSTALL=16,
+  SC_REFRESH=32,
+} EShortCuts;
+
+struct ShortCut {
+  gchar *key;
+  gchar *descr;
+  gboolean visible;
+  EShortCuts id;
+};
+
+static struct ShortCut shortCuts[] = {
+  {"left/right", "expand/shrink node" , FALSE, 0},
+  {"up/down", "move up/down"          , FALSE, 0},
+  {"q" , "quit"                       , TRUE , 0},
+  {"?" , "help"                       , TRUE , 0},
+  {"a" , "attach"                     , FALSE , SC_ATTACH},
+  {"c" , "connect"                    , FALSE , SC_CONNECT},
+  {"d" , "dump"                       , FALSE , SC_DUMP},
+  {"g" , "refresh"                    , FALSE , SC_REFRESH},
+  {"i" , "install pkg"                , FALSE , SC_INSTALL},
+  {"u" , "upgrade host"               , FALSE , SC_UPGRADE},
+  {NULL, NULL                         , FALSE, 0},
+};
+
+static void setMenuEntries(gint mask) {
+  gint i = -1;
+  while(shortCuts[++i].key) {
+    if(shortCuts[i].id == 0)
+      continue;
+
+    shortCuts[i].visible = mask & shortCuts[i].id;
+  }
+}
 
 void freeDrawNode (DrawNode *n)
 {
@@ -28,7 +71,6 @@ void freeDrawNode (DrawNode *n)
 DrawNode *getSelectedDrawNode()
 {
  GList *dl;
- DrawNode *n = NULL;
 
  dl = g_list_first(drawlist);
  while (dl && (((DrawNode *) dl->data)->selected != TRUE)) dl = g_list_next(dl);
@@ -111,14 +153,33 @@ void cleanUI ()
  endwin();
 }
 
-void drawMenu (char *str)
+void drawMenu (gint mask)
 {
- int cy, cx;
+ setMenuEntries(mask);
 
  attron(uicolors[UI_COLOR_MENU]);
  move(0,0);
  hline(' ',COLS);
- addnstr(str, COLS);
+
+ gint i=-1;
+ gint p=COLS;
+ while(shortCuts[++i].key) {
+   if(!shortCuts[i].visible)
+     continue;
+
+   addnstr(shortCuts[i].key, MAX(0, p));
+   p -= strlen(shortCuts[i].key);
+
+   addnstr(":", MAX(0, p));
+   p--;
+
+   addnstr(shortCuts[i].descr, MAX(0, p));
+   p -= strlen(shortCuts[i].descr);
+
+   addnstr("  ", MAX(0, p));
+   p-=2;
+ }
+
  attroff(uicolors[UI_COLOR_MENU]);
 }
 
@@ -199,7 +260,6 @@ gboolean queryConfirm(const gchar *query)
 void drawCategoryEntry (DrawNode *n)
 {
  char statusln[BUF_MAX_LEN];
- char menuln[BUF_MAX_LEN];
 
  attron(n->attrs); 
  mvhline(n->scrpos, 0, ' ', COLS);
@@ -215,9 +275,8 @@ void drawCategoryEntry (DrawNode *n)
 
  if(n->selected == TRUE) {
   sprintf(statusln, "%d %s in status \"%s\"", n->elements, n->elements > 1 || n->elements == 0 ? "Hosts" : "Host", (char *) n->p);
-  sprintf(menuln, "%s  g:Check for new updates", MENU_TEXT);
 
-  drawMenu(menuln);
+  drawMenu(SC_REFRESH);
   drawStatus(statusln);
  }
 }
@@ -225,7 +284,6 @@ void drawCategoryEntry (DrawNode *n)
 void drawGroupEntry (DrawNode *n)
 {
  char statusln[BUF_MAX_LEN];
- char menuln[BUF_MAX_LEN];
 
  attron(n->attrs);
  mvhline(n->scrpos, 0, ' ', COLS); 
@@ -237,8 +295,8 @@ void drawGroupEntry (DrawNode *n)
 
  if(n->selected == TRUE) {
   sprintf(statusln, "%d %s is in status \"%s\"", n->elements, n->elements > 1 || n->elements == 0 ? "Hosts" : "Host", incategory);
-  sprintf(menuln, "%s  g:Check for new updates", MENU_TEXT);
-  drawMenu(menuln);
+
+  drawMenu(SC_REFRESH);
   drawStatus(statusln);
  }
 }
@@ -246,7 +304,7 @@ void drawGroupEntry (DrawNode *n)
 void drawHostEntry (DrawNode *n)
 {
  char statusln[BUF_MAX_LEN];
- char menuln[BUF_MAX_LEN];
+ gint mask = 0;
 
  attron(n->attrs);
  mvhline(n->scrpos, 0, ' ', COLS);
@@ -268,32 +326,31 @@ void drawHostEntry (DrawNode *n)
  if(n->selected == TRUE) {
   switch(((HostNode *) n->p)->category) {
   case C_UPDATES_PENDING:
-   sprintf(menuln, "%s  c:ssh-Connect  u:Upgrade host  g:Check for new updates  i:Install Package",MENU_TEXT);
+   mask = SC_CONNECT | SC_UPGRADE | SC_REFRESH | SC_INSTALL;
    sprintf(statusln, "%d %s required", n->elements, n->elements > 1 || n->elements == 0 ? "Updates" : "Update");
    break;
   case C_UP_TO_DATE:
-   sprintf(menuln, "%s  c:ssh-Connect  g:Check for new updates  i:Install Package" , MENU_TEXT);
+   mask = SC_CONNECT | SC_REFRESH | SC_INSTALL;
    sprintf(statusln, "No update required");
    break;
   case C_NO_STATS:
-   sprintf(menuln, "%s  c:ssh-Connect  g:Check for new updates  i:Install Package", MENU_TEXT);
+   mask = SC_CONNECT | SC_REFRESH | SC_INSTALL;
    sprintf(statusln, "Statusfile is missing");
    break;
   case C_REFRESH_REQUIRED:
-   sprintf(menuln, "%s  c:ssh-Connect  g:Check for new updates  i:Install Package", MENU_TEXT);
+   mask = SC_CONNECT | SC_REFRESH | SC_INSTALL;
    sprintf(statusln, "Refresh required");
    break;
   case C_REFRESH:
-   sprintf(menuln, "%s", MENU_TEXT);
    sprintf(statusln, "In refresh");
    break;
   case C_SESSIONS:
-   sprintf(menuln, "%s  a:attach", MENU_TEXT);
+   mask = SC_ATTACH;
    sprintf(statusln, "%d session%s running", g_list_length(((HostNode *) n->p)->screens),
 	   (g_list_length(((HostNode *) n->p)->screens)==1?"":"s"));
    break;
   default:
-   sprintf(menuln, "%s  c:ssh-Connect  g:Check for new updates  i:Install Package", MENU_TEXT);
+   mask = SC_CONNECT | SC_REFRESH | SC_INSTALL;
    sprintf(statusln, "Status is unknown");
    break;
   }
@@ -304,7 +361,8 @@ void drawHostEntry (DrawNode *n)
    strcat(statusln," - running Kernel is not the latest");
   if (((HostNode *) n->p)->status & HOST_STATUS_KERNELSELFBUILD) 
    strcat(statusln," - a selfbuilt kernel is running");
-  drawMenu(menuln);
+
+  drawMenu(mask);
   drawStatus(statusln);
  }
 }
@@ -312,24 +370,20 @@ void drawHostEntry (DrawNode *n)
 void drawUpdateEntry (DrawNode *n)
 {
  char statusln[BUF_MAX_LEN];
- char menuln[BUF_MAX_LEN];
 
  attron(n->attrs);
  mvhline(n->scrpos, 0, ' ', COLS);
  mvaddnstr(n->scrpos, 7, (char *) ((UpdNode *) n->p)->package, COLS);
  attroff(n->attrs);
  if(n->selected == TRUE) {
-  sprintf(menuln, "%s  i:Install package %s", MENU_TEXT, ((UpdNode *) n->p)->package);
   sprintf(statusln, "%s -> %s (%s %s)", ((UpdNode *) n->p)->oldver, ((UpdNode *) n->p)->newver, ((UpdNode *) n->p)->dist, ((UpdNode *) n->p)->section);
-  drawMenu(menuln);
+  drawMenu(SC_INSTALL);
   drawStatus(statusln);
  }
 }
 
 void drawSessionEntry (DrawNode *n)
 {
- char statusln[BUF_MAX_LEN];
- char menuln[BUF_MAX_LEN];
  char h[BUF_MAX_LEN];
  struct tm *tm_mtime;
 
@@ -347,8 +401,7 @@ void drawSessionEntry (DrawNode *n)
  mvaddnstr(n->scrpos, 7, h, COLS);
  attroff(n->attrs);
  if(n->selected == TRUE) {
-  sprintf(menuln, "%s  a:attach  d:dump", MENU_TEXT);
-  drawMenu(menuln);
+  drawMenu(SC_ATTACH | SC_DUMP);
 
   if (dump_screen) {
     gchar *dump = screen_get_dump((SessNode *) n->p);
@@ -593,10 +646,8 @@ void doUI (GList *hosts)
      maintainer[0] = 0;
  }
 
- attron(uicolors[UI_COLOR_MENU]);
  WINDOW *w = newwin(5, 52, LINES/2-3, (COLS-52)/2);
  box(w,0,0);
- wattroff(w, uicolors[UI_COLOR_MENU]);
 
  enableInput();
  wattron(w, uicolors[UI_COLOR_QUERY]);
@@ -863,7 +914,6 @@ void extDrawListCategory(gint atpos, gchar *category, GList *hosts)
 
 void extDrawListGroup(gint atpos, gchar *group, GList *hosts)
 {
- guint i = 0;
  GList *ho;
  DrawNode *drawnode = NULL;
 
@@ -892,7 +942,6 @@ void extDrawListGroup(gint atpos, gchar *group, GList *hosts)
 
 void extDrawListHost(gint atpos, HostNode *n)
 {
- guint i = 0;
  DrawNode *drawnode = NULL;
 
  if (n->category == C_SESSIONS) {
@@ -1078,7 +1127,7 @@ gboolean ctrlKeyLeft(GList *hosts)
 gboolean ctrlKeyRight(GList *hosts)
 {
  gboolean ret = TRUE;
- GList *dl, *dl_1;
+ GList *dl;
 
  dl = g_list_first(drawlist);
  while (dl && (((DrawNode *) dl->data)->selected != TRUE)) dl = g_list_next(dl);
@@ -1168,6 +1217,9 @@ gboolean ctrlUI (GList *hosts)
   g_usleep(10000);
 
  switch(ic) {
+ case KEY_RESIZE:
+  refscr = TRUE;
+  break;
  case KEY_HOME:
  case KEY_END:
  case KEY_UP:
@@ -1341,6 +1393,32 @@ gboolean ctrlUI (GList *hosts)
      refscr = TRUE;
 
    break;
+ case '?':
+   {
+     WINDOW *w = newwin(LINES-3, COLS, 1, 0);
+     
+     wattron(w, A_BOLD);
+     mvwaddnstr(w, 1,  2, "KEY"        , COLS - 2);
+     mvwaddnstr(w, 1, 16, "DESCRIPTION", COLS - 16);
+     wattroff(w, A_BOLD);
+
+     gint i = -1;
+     gint l = 3;
+     while(shortCuts[++i].key) {
+       mvwaddnstr(w, l,  2, shortCuts[i].key  , COLS - 2);
+       mvwaddnstr(w, l, 16, shortCuts[i].descr, COLS - 16);
+       
+       l++;
+     }
+
+     box(w,0,0);
+
+     wgetch(w);
+   
+     delwin(w);
+     refscr = TRUE;
+   }
+  break;
  default:
   break;
  }

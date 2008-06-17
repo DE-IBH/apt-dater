@@ -5,6 +5,9 @@
  */
 
 #include "apt-dater.h"
+#include "keyfiles.h"
+#include "ui.h"
+#include "stats.h"
 
 CfgFile *cfg = NULL;
 GMainLoop *loop = NULL;
