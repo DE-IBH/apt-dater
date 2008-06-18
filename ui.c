@@ -238,9 +238,9 @@ void queryString(const gchar *query, gchar *in, const gint size)
  hline(' ', COLS);
 }
 
-gboolean queryConfirm(const gchar *query)
+gboolean queryConfirm(const gchar *query, const gboolean enter_is_yes)
 {
- gchar c;
+ int c;
 
  enableInput();
 
@@ -259,7 +259,8 @@ gboolean queryConfirm(const gchar *query)
  move(LINES - 1, 0);
  hline(' ', COLS);
 
- return ((c == 'y') || (c == 'Y'));
+ return ((c == 'y') || (c == 'Y') || 
+	 (enter_is_yes == TRUE && (c == 0xd || c == KEY_ENTER)));
 }
 
 void drawCategoryEntry (DrawNode *n)
@@ -1206,10 +1207,10 @@ gboolean ctrlUI (GList *hosts)
 {
  gint ic;
  gboolean ret = TRUE;
+ gboolean retqry = FALSE;
  gboolean refscr = FALSE;
  DrawNode *n;
  static   gchar in[BUF_MAX_LEN];
- static   gchar yesno[2] = "\0";
  gchar    *qrystr = NULL;
  gchar    *pkg = NULL;
 
@@ -1287,7 +1288,8 @@ gboolean ctrlUI (GList *hosts)
    if(n->extended == TRUE) n->extended = FALSE;
 
    if (g_list_length(inhost->screens)) {
-     if (!queryConfirm("There are running sessions on this host! Continue? "))
+    if (!queryConfirm("There are running sessions on this host! Continue? ",
+		      FALSE))
        break;
    }
 
@@ -1309,7 +1311,8 @@ gboolean ctrlUI (GList *hosts)
     if(n->extended == TRUE) n->extended = FALSE;
     
     if (g_list_length(inhost->screens)) {
-      if (!queryConfirm("There are running sessions on this host! Continue? "))
+     if (!queryConfirm("There are running sessions on this host! Continue? ",
+		       FALSE))
 	break;
     }
 
@@ -1326,8 +1329,8 @@ gboolean ctrlUI (GList *hosts)
   case GROUP:
   default:
     {
-      if(((n->type == CATEGORY) && !queryConfirm("Run update for the whole category? ")) ||
-	 ((n->type == GROUP) && !queryConfirm("Run update for the whole group? ")))
+     if(((n->type == CATEGORY) && !queryConfirm("Run update for the whole category? ", FALSE)) ||
+	 ((n->type == GROUP) && !queryConfirm("Run update for the whole group? ", FALSE)))
       break;
 
       GList *ho = g_list_first(hosts);
@@ -1350,7 +1353,8 @@ gboolean ctrlUI (GList *hosts)
   if(!inhost) break;
 
   if (g_list_length(inhost->screens)) {
-    if (!queryConfirm("There are running sessions on this host! Continue? "))
+   if (!queryConfirm("There are running sessions on this host! Continue? ", 
+		     FALSE))
       break;
   }
   
@@ -1397,20 +1401,11 @@ gboolean ctrlUI (GList *hosts)
 	 break;
 	}
 
-	yesno[0] = 0;
-	queryString(qrystr, yesno, 1);
-	while(yesno[0] != 0 && g_ascii_tolower(yesno[0]) != 'y' &&
-	      g_ascii_tolower(yesno[0]) != 'n') {
-	 g_free(qrystr);
-	 qrystr = g_strdup_printf("Attach host %s session %d [Y/n] ?: ", 
-				  m->hostname, ((SessNode *)sc->data)->pid);
-	 queryString(qrystr, yesno, 1);
-	}
-
+        retqry = queryConfirm(qrystr, TRUE);
 	g_free(qrystr);
 	qrystr = NULL;
 
-	if(g_ascii_tolower(yesno[0]) == 'n') {
+	if(retqry == FALSE) {
 	 sc = g_list_next(sc);
 	 break;
 	}
@@ -1458,7 +1453,7 @@ gboolean ctrlUI (GList *hosts)
 
     /* Session already attached! */
     if (screen_is_attached(s)) {
-      if (!queryConfirm("Already attached - share session? "))
+     if (!queryConfirm("Already attached - share session? ", FALSE))
 	break;
       
       may_share = TRUE;
