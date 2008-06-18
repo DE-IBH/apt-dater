@@ -8,6 +8,7 @@
 #include "keyfiles.h"
 #include "ui.h"
 #include "stats.h"
+#include "sighandler.h"
 
 CfgFile *cfg = NULL;
 GMainLoop *loop = NULL;
@@ -53,6 +54,7 @@ int main(int argc, char **argv)
  getOldestMtime(hosts);
 
  doUI(hosts);
+ setSigHandler();
 
  loop = g_main_loop_new (NULL, FALSE);
 

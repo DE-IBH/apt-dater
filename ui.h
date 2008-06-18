@@ -25,8 +25,11 @@ typedef struct _drawnode {
 gboolean
 ctrlKeyEnter(GList *hosts);
 
-void
-doUI (GList *hosts);
+void doUI (GList *hosts);
+void refreshUI();
+gboolean ctrlUI (GList *);
+void cleanUI();
+void injectKey(int);
 
 extern gchar maintainer[48];
 

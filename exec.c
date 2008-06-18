@@ -5,6 +5,7 @@
 #include "apt-dater.h"
 #include "screen.h"
 #include "exec.h"
+#include "stats.h"
 
 gboolean ssh_cmd_refresh(HostNode *n)
 {

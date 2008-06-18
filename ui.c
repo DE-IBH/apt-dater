@@ -533,6 +533,11 @@ void refreshDraw()
  refresh();
 }
 
+void refreshUI()
+{
+ refresh();
+}
+
 void setEntryActiveStatus(DrawNode *n, gboolean active)
 {
  if(!n) return;
@@ -1214,6 +1219,13 @@ gboolean ctrlKeyPgUp()
  return (ret);
 }
 
+
+void injectKey(int ch)
+{
+ ungetch(ch);
+}
+
+
 void searchEntry() {
  gint c;
  gchar s[0x7f];
@@ -1274,9 +1286,10 @@ void searchEntry() {
  hline(' ', COLS);
 }
 
+
 gboolean ctrlUI (GList *hosts)
 {
- gint ic;
+ gint ic, hostcnt;
  gboolean ret = TRUE;
  gboolean retqry = FALSE;
  gboolean refscr = FALSE;
@@ -1448,10 +1461,33 @@ gboolean ctrlUI (GList *hosts)
   refscr = TRUE;
   break;
  case 'q':
+
+  hostcnt = 0;
+  GList *ho = g_list_first(hosts);
+
+  while(ho) {
+   HostNode *m = (HostNode *)ho->data;
+   if(m->category == C_REFRESH_REQUIRED || m->category == C_REFRESH)
+    hostcnt++;
+
+   ho = g_list_next(ho);
+  }
+
+  if(hostcnt > 0) {
+   qrystr = g_strdup_printf("There are %d %s in status refresh state,\
+ quit apt-dater? ", hostcnt, hostcnt > 1 ? "hosts" : "host");
+
+   retqry = queryConfirm(qrystr, FALSE);
+   g_free(qrystr);
+
+   if (retqry == FALSE)
+    break;
+  }
+
   ret = FALSE;
   attrset(A_NORMAL);
   cleanUI();
-  refresh();
+  refreshUI();
   refscr = FALSE;
   g_main_loop_quit (loop);
   break;
