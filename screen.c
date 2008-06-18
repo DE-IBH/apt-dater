@@ -39,8 +39,9 @@ screen_get_sessions(HostNode *n) {
     return FALSE;
 
   GDir *d = g_dir_open(sdir, 0, NULL);
-  if (!d)
-    return FALSE;
+  if (!d) {
+   return FALSE;
+  }
 
   gchar *search = g_strdup_printf(SCREEN_SOCKPRE"%s_%s_%d", n->ssh_user, n->hostname, n->ssh_port);
 
@@ -50,7 +51,7 @@ screen_get_sessions(HostNode *n) {
     
     if (g_file_test(fn, G_FILE_TEST_EXISTS)) {
       gint pid = atoi(f);
-      gchar *name = strchr(f, '.');
+      char *name = strchr(f, '.');
 
       if ((pid > 1) &&
 	  (name) &&
@@ -63,6 +64,8 @@ screen_get_sessions(HostNode *n) {
 	n->screens = g_list_prepend(n->screens, s);
       }
     }
+
+    g_free(fn);
   }
   g_dir_close(d);
 
