@@ -11,6 +11,7 @@
 #include "screen.h"
 #include "exec.h"
 #include "stats.h"
+#include "keyfiles.h"
 
 
 static GList *drawlist = NULL;
@@ -23,6 +24,7 @@ static WINDOW *win_dump = NULL;
 static gboolean dump_screen = FALSE;
 gchar maintainer[48];
 gint sc_mask = 0;
+static GCompletion* hstCompl = NULL;
 
 typedef enum {
   SC_ATTACH=1,
@@ -45,6 +47,7 @@ static struct ShortCut shortCuts[] = {
   {"up/down", "move up/down"          , FALSE, 0},
   {"q" , "quit"                       , TRUE , 0},
   {"?" , "help"                       , TRUE , 0},
+  {"/" , "search"                     , TRUE , 0},
   {"a" , "attach"                     , FALSE , SC_ATTACH},
   {"c" , "connect"                    , FALSE , SC_CONNECT},
   {"d" , "dump"                       , FALSE , SC_DUMP},
@@ -65,6 +68,10 @@ static void setMenuEntries(gint mask) {
 
     shortCuts[i].visible = mask & shortCuts[i].id;
   }
+}
+
+static gchar *compHost(gpointer p) {
+  return ((HostNode *)p)->hostname;
 }
 
 void freeDrawNode (DrawNode *n)
@@ -635,6 +642,10 @@ void doUI (GList *hosts)
 {
  initUI();
 
+ /* Create completion list. */
+ hstCompl = g_completion_new(compHost);
+ g_completion_add_items(hstCompl, hosts);
+
  /* Draw the host entries intial. */
  buildIntialDrawList(hosts);
  reorderScrpos(1);
@@ -1203,6 +1214,66 @@ gboolean ctrlKeyPgUp()
  return (ret);
 }
 
+void searchEntry() {
+ gint c;
+ gchar s[0x7f];
+ gint pos = 0;
+ const gchar *query = "Search: ";
+ const int offset = strlen(query)-1;
+
+ enableInput();
+ noecho();
+
+ attron(uicolors[UI_COLOR_QUERY]);
+ mvaddstr(LINES - 1, 0, query);
+ attroff(uicolors[UI_COLOR_QUERY]);
+
+ attron(uicolors[UI_COLOR_INPUT]);
+
+ while((c = getch())) {
+   if((c == KEY_BACKSPACE) && (strlen(s)>0)) {
+     s[--pos] = 0;
+
+     mvaddstr(LINES-1, offset+1, s);
+
+     attroff(uicolors[UI_COLOR_INPUT]);
+     hline(' ', COLS-offset-pos-1);
+     attron(uicolors[UI_COLOR_INPUT]);
+     
+   }
+   else if(iscntrl(c)) {
+     break;
+   }
+   else if(strlen(s)<sizeof(s)) {
+     s[pos++] = c;
+     s[pos] = 0;
+
+     mvaddch(LINES-1, offset+pos, c);
+
+     attroff(uicolors[UI_COLOR_INPUT]);
+     hline(' ', COLS-offset-pos-1);
+     attron(uicolors[UI_COLOR_INPUT]);
+   }
+
+   gchar *best;
+   g_completion_complete(hstCompl, s, &best);
+   if(best) {
+     attron(A_REVERSE);
+     mvaddstr(LINES-1, offset+pos+1, &best[pos]);
+     attroff(A_REVERSE);
+     
+     move(LINES-1, offset+pos+1);
+   }
+ }
+
+ attroff(uicolors[UI_COLOR_INPUT]);
+
+ disableInput();
+
+ move(LINES - 1, 0);
+ hline(' ', COLS);
+}
+
 gboolean ctrlUI (GList *hosts)
 {
  gint ic;
@@ -1506,6 +1577,9 @@ gboolean ctrlUI (GList *hosts)
      refscr = TRUE;
    }
   break;
+ case '/':
+   searchEntry();
+   break;
  default:
   break;
  }
