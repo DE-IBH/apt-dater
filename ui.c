@@ -1209,6 +1209,8 @@ gboolean ctrlUI (GList *hosts)
  gboolean refscr = FALSE;
  DrawNode *n;
  static   gchar in[BUF_MAX_LEN];
+ static   gchar yesno[2] = "\0";
+ gchar    *qrystr = NULL;
  gchar    *pkg = NULL;
 
  if(rebuilddl == TRUE) {
@@ -1388,6 +1390,31 @@ gboolean ctrlUI (GList *hosts)
        GList *sc = m->screens;
 
        while(sc) {
+	qrystr = g_strdup_printf("Attach host %s session %d [Y/n]: ", 
+				 m->hostname, ((SessNode *)sc->data)->pid);
+	if(!qrystr) {
+	 g_warning("Memory allocation failed!");
+	 break;
+	}
+
+	yesno[0] = 0;
+	queryString(qrystr, yesno, 1);
+	while(yesno[0] != 0 && g_ascii_tolower(yesno[0]) != 'y' &&
+	      g_ascii_tolower(yesno[0]) != 'n') {
+	 g_free(qrystr);
+	 qrystr = g_strdup_printf("Attach host %s session %d [Y/n] ?: ", 
+				  m->hostname, ((SessNode *)sc->data)->pid);
+	 queryString(qrystr, yesno, 1);
+	}
+
+	g_free(qrystr);
+	qrystr = NULL;
+
+	if(g_ascii_tolower(yesno[0]) == 'n') {
+	 sc = g_list_next(sc);
+	 break;
+	}
+
 	 if (!screen_is_attached((SessNode *)sc->data)) {
 	   cleanUI();
 	   screen_attach((SessNode *)sc->data, FALSE);
@@ -1397,8 +1424,10 @@ gboolean ctrlUI (GList *hosts)
 	     ho = NULL;
 	     break;
 	   }
+
 	 }
 	 sc = g_list_next(sc);
+ 
        }
 
        if(ho)
