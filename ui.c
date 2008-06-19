@@ -54,7 +54,7 @@ static struct ShortCut shortCuts[] = {
   {"g" , "refresh"                    , FALSE , SC_REFRESH},
   {"i" , "install pkg"                , FALSE , SC_INSTALL},
   {"u" , "upgrade host"               , FALSE , SC_UPGRADE},
-  {"n" , "attach next session"        , FALSE ,0},
+  {"n" , "next detached session"      , FALSE ,0},
   {"N" , "cycle detached sessions"    , FALSE ,0},
   {NULL, NULL                         , FALSE, 0},
 };
@@ -1230,7 +1230,6 @@ void searchEntry(GList *hosts) {
  gint c;
  gchar s[0xff];
  gint pos = 0;
- gchar *best = NULL;
  const gchar *query = "Search: ";
  const int offset = strlen(query)-1;
  GList *matches = NULL;
@@ -1277,7 +1276,10 @@ void searchEntry(GList *hosts) {
    attroff(uicolors[UI_COLOR_INPUT]);
 
    /* find completion matches */
-   matches = g_completion_complete(hstCompl, s, &best);
+   if(strlen(s))
+     matches = g_completion_complete(hstCompl, s, NULL);
+   else
+     matches = NULL;
 
    /* check if selected match is still valid... or get new one */
    if (matches) {
@@ -1292,7 +1294,7 @@ void searchEntry(GList *hosts) {
        attroff(A_REVERSE);
        attroff(uicolors[UI_COLOR_INPUT]);
 
-       hline(' ', COLS-offset-strlen(best)-1);
+       hline(' ', COLS-offset-strlen(&((HostNode *)selmatch->data)->hostname[pos])-1);
      }
      else
        hline(' ', COLS-offset-pos-1);
