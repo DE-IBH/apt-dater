@@ -1226,12 +1226,15 @@ void injectKey(int ch)
 }
 
 
-void searchEntry() {
+void searchEntry(GList *hosts) {
  gint c;
- gchar s[0x7f];
+ gchar s[0xff];
  gint pos = 0;
+ gchar *best = NULL;
  const gchar *query = "Search: ";
  const int offset = strlen(query)-1;
+ GList *matches = NULL;
+ GList *selmatch = NULL;
 
  enableInput();
  noecho();
@@ -1240,42 +1243,156 @@ void searchEntry() {
  mvaddstr(LINES - 1, 0, query);
  attroff(uicolors[UI_COLOR_QUERY]);
 
- attron(uicolors[UI_COLOR_INPUT]);
-
  while((c = getch())) {
-   if((c == KEY_BACKSPACE) && (strlen(s)>0)) {
-     s[--pos] = 0;
-
-     mvaddstr(LINES-1, offset+1, s);
-
-     attroff(uicolors[UI_COLOR_INPUT]);
-     hline(' ', COLS-offset-pos-1);
-     attron(uicolors[UI_COLOR_INPUT]);
-     
+   /* handle backspace */
+   if(c == KEY_BACKSPACE) {
+     if (strlen(s)>0)
+       s[--pos] = 0;
+     else
+       beep();
    }
-   else if(iscntrl(c)) {
+   /* search again */
+   else if((c == '/') || (c == '\t')) {
+     if(selmatch && matches) {
+       selmatch = g_list_next(selmatch);
+       if(!selmatch)
+	 selmatch = g_list_first(matches);
+     }
+
+     if(!selmatch)
+       beep();
+   }
+   /* abort on control key */
+   else if(iscntrl(c))
      break;
-   }
+   /* accept char */
    else if(strlen(s)<sizeof(s)) {
      s[pos++] = c;
      s[pos] = 0;
+   }
 
-     mvaddch(LINES-1, offset+pos, c);
+   /* print new search string */
+   attron(uicolors[UI_COLOR_INPUT]);
+   mvaddstr(LINES-1, offset+1, s);
+   attroff(uicolors[UI_COLOR_INPUT]);
 
-     attroff(uicolors[UI_COLOR_INPUT]);
+   /* find completion matches */
+   matches = g_completion_complete(hstCompl, s, &best);
+
+   /* check if selected match is still valid... or get new one */
+   if (matches) {
+     if(!selmatch ||
+	!g_list_find(matches, selmatch->data))
+       selmatch = g_list_first(matches);
+
+     if(selmatch) {
+       attron(uicolors[UI_COLOR_INPUT]);
+       attron(A_REVERSE);
+       mvaddstr(LINES-1, offset+pos+1, &((HostNode *)selmatch->data)->hostname[pos]);
+       attroff(A_REVERSE);
+       attroff(uicolors[UI_COLOR_INPUT]);
+
+       hline(' ', COLS-offset-strlen(best)-1);
+     }
+     else
+       hline(' ', COLS-offset-pos-1);
+
+
+     /* we have a match which is selected */
+     if(selmatch) {
+       GList *dl;
+       int i;
+       
+       /* UGLY: expand everything (so the matched host is on the drawlist) */
+       for(i=2; i>0; i--) {
+	 dl = g_list_first(drawlist);
+	 while(dl) {
+	   DrawNode *dn = (DrawNode *) dl->data;
+	   
+	   dn->extended = TRUE;
+	   
+	   dl = g_list_next(dl);
+	 }
+	 
+	 rebuildDrawList(hosts);
+       }
+       
+       /* clear selection */
+       DrawNode *n = getSelectedDrawNode();
+       if (n)
+	 setEntryActiveStatus(n, FALSE);
+       
+       /* traverse drawlist bottom up... and only expand
+	* the path to the selmatch */
+       dl = g_list_last(drawlist);
+       gint up = 0; /* 0: no expand; 2: exp. category 4: exp. group */
+       while(dl) {
+	 DrawNode *dn = (DrawNode *) dl->data;
+	 
+	 if((dn->type == HOST) && (selmatch->data == dn->p)) {
+	   up = 4;
+	   dn->selected = TRUE;
+	 }
+	 else if(dn->type == GROUP) {
+	   if(up == 4) {
+	     up = 2;
+	     dn->extended = TRUE;
+	   }
+	   else
+	     dn->extended = FALSE;
+	 }
+	 else if((dn->type == CATEGORY) &&
+		 (up == 2)) {
+	   up = 0;
+	   dn->extended = TRUE;
+	 }
+	 else
+	   dn->extended = FALSE;
+	 
+	 dl = g_list_previous(dl);
+       }
+       
+       rebuildDrawList(hosts);
+       g_list_foreach(drawlist, (GFunc) drawEntry, NULL);
+     }
+   }
+   else
      hline(' ', COLS-offset-pos-1);
-     attron(uicolors[UI_COLOR_INPUT]);
-   }
 
-   gchar *best;
-   g_completion_complete(hstCompl, s, &best);
-   if(best) {
-     attron(A_REVERSE);
-     mvaddstr(LINES-1, offset+pos+1, &best[pos]);
-     attroff(A_REVERSE);
-     
-     move(LINES-1, offset+pos+1);
+   /* print matches in status bar */
+   attron(uicolors[UI_COLOR_STATUS]);
+   move(bottomDrawLine, 0);
+   hline(' ', COLS);
+
+   if(matches) {
+     gint p = COLS;
+
+     addnstr("Hosts:", MAX(0, p));
+     p-=6;
+
+     GList *m = g_list_first(matches);
+     while(m) {
+       addnstr(" ", MAX(0, p));
+       p--;
+
+       addnstr(((HostNode *)m->data)->hostname, MAX(0, p));
+       p -= strlen(((HostNode *)m->data)->hostname);
+
+       m = g_list_next(m);
+     }
    }
+   else {
+     addnstr("Hosts: -", COLS);
+     selmatch = NULL;
+   }
+   attroff(uicolors[UI_COLOR_STATUS]);
+
+
+   /* move to cursor position */
+   move(LINES-1, offset+pos+1);
+
+
+   refresh();
  }
 
  attroff(uicolors[UI_COLOR_INPUT]);
@@ -1284,6 +1401,8 @@ void searchEntry() {
 
  move(LINES - 1, 0);
  hline(' ', COLS);
+
+ drawStatus ("");
 }
 
 
@@ -1614,7 +1733,7 @@ gboolean ctrlUI (GList *hosts)
    }
   break;
  case '/':
-   searchEntry();
+   searchEntry(hosts);
    break;
  default:
   break;
