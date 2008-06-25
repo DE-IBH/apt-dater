@@ -16,4 +16,7 @@ ssh_cmd_install(HostNode *n, const gchar *package, const gboolean detached);
 gboolean
 ssh_connect(HostNode *n, const gboolean detached);
 
+gboolean
+sftp_connect(HostNode *n);
+
 #endif /* _EXEC_H */

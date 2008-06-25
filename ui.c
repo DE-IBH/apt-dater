@@ -48,14 +48,15 @@ static struct ShortCut shortCuts[] = {
   {"q" , "quit"                       , TRUE , 0},
   {"?" , "help"                       , TRUE , 0},
   {"/" , "search"                     , TRUE , 0},
-  {"a" , "attach"                     , FALSE , SC_ATTACH},
-  {"c" , "connect"                    , FALSE , SC_CONNECT},
-  {"d" , "dump"                       , FALSE , SC_DUMP},
-  {"g" , "refresh"                    , FALSE , SC_REFRESH},
-  {"i" , "install pkg"                , FALSE , SC_INSTALL},
-  {"u" , "upgrade host"               , FALSE , SC_UPGRADE},
-  {"n" , "next detached session"      , FALSE ,0},
-  {"N" , "cycle detached sessions"    , FALSE ,0},
+  {"a" , "attach"                     , FALSE, SC_ATTACH},
+  {"c" , "connect"                    , FALSE, SC_CONNECT},
+  {"f" , "file transfer"              , FALSE, 0},
+  {"d" , "dump"                       , FALSE, SC_DUMP},
+  {"g" , "refresh"                    , FALSE, SC_REFRESH},
+  {"i" , "install pkg"                , FALSE, SC_INSTALL},
+  {"u" , "upgrade host"               , FALSE, SC_UPGRADE},
+  {"n" , "next detached session"      , FALSE, 0},
+  {"N" , "cycle detached sessions"    , FALSE, 0},
   {NULL, NULL                         , FALSE, 0},
 };
 
@@ -1737,6 +1738,18 @@ gboolean ctrlUI (GList *hosts)
  case '/':
    searchEntry(hosts);
    break;
+ case 'f':
+  n = getSelectedDrawNode();
+  if(!n) break;
+  if(n->type == HOST) {
+   if(n->extended == TRUE) n->extended = FALSE;
+
+   cleanUI();
+   sftp_connect((HostNode *) n->p);
+   initUI();
+   refscr = TRUE;
+  }
+  break;
  default:
   break;
  }

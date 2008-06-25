@@ -23,6 +23,7 @@ typedef struct _cfgfile {
  gchar *hostsfile;
  gchar *statsdir;
  gchar *ssh_cmd;
+ gchar *sftp_cmd;
  gchar *ssh_optflags;
  gchar *ssh_defuser;
  gint  ssh_defport;

@@ -88,6 +88,12 @@ CfgFile *loadConfig (char *filename)
   return (NULL);
  }
 
+ if(!(lcfg->sftp_cmd = 
+      g_key_file_get_string(keyfile, "SSH", "SFTPCmd", &error))) {
+  g_error ("%s: %s", filename, error->message);
+  return (NULL);
+ }
+
  if(!(lcfg->cmd_refresh = 
       g_key_file_get_string(keyfile, "Commands", "CmdRefresh", &error))) {
   g_error ("%s: %s", filename, error->message);

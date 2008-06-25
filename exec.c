@@ -6,6 +6,8 @@
 #include "screen.h"
 #include "exec.h"
 #include "stats.h"
+#include "parsecmd.h"
+#include <glib.h>
 
 gboolean ssh_cmd_refresh(HostNode *n)
 {
@@ -193,6 +195,44 @@ gboolean ssh_connect(HostNode *n, const gboolean detached)
  }
 
  g_free(cmd);
+ g_strfreev(argv);
+ 
+ return (r);
+}
+
+gboolean sftp_connect(HostNode *n)
+{
+ gboolean r;
+ GError *error = NULL;
+ gint argc = 0;
+ gchar **argv = NULL;
+
+
+ gchar *cmd = screen_new(n, FALSE);
+
+ cmd = g_realloc(cmd, strlen(cmd) + strlen(cfg->sftp_cmd) + 1);
+ strcat(cmd, cfg->sftp_cmd);
+
+ if (parse_cmdline(cmd, &argc, &argv, n) < 0) {
+   g_free(cmd);
+   return FALSE;
+ }
+ g_free(cmd);
+
+ cmd = g_strjoinv("+", argv);
+ g_strfreev(argv);
+
+ argv = g_strsplit(cmd, "+", 0);
+
+ r = g_spawn_sync(g_getenv ("HOME"), argv, NULL, 
+		  G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
+		  NULL, NULL, NULL, &error);
+
+ if(r == FALSE) {
+  g_warning("%s", error->message);
+  g_clear_error (&error);
+ }
+
  g_strfreev(argv);
  
  return (r);

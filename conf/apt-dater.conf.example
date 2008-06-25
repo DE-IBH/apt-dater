@@ -6,6 +6,7 @@ StatsDir=stats
 
 [SSH]
 Cmd=/usr/bin/ssh
+SFTPCmd=/usr/bin/mc /#sh:%u@%h:C/
 OptionalCmdFlags=
 DefaultUser=ibh
 DefaultPort=22
