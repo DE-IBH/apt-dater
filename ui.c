@@ -5,6 +5,8 @@
 #include <curses.h>
 #include <ctype.h>
 #include <pwd.h>
+#include <sys/types.h>
+#include <signal.h>
 #include "apt-dater.h"
 #include "ui.h"
 #include "colors.h"
@@ -33,6 +35,7 @@ typedef enum {
   SC_UPGRADE=8,
   SC_INSTALL=16,
   SC_REFRESH=32,
+  SC_KILL=64,
 } EShortCuts;
 
 struct ShortCut {
@@ -48,11 +51,12 @@ static struct ShortCut shortCuts[] = {
   {"q" , "quit"                       , TRUE , 0},
   {"?" , "help"                       , TRUE , 0},
   {"/" , "search"                     , TRUE , 0},
-  {"a" , "attach"                     , FALSE, SC_ATTACH},
-  {"c" , "connect"                    , FALSE, SC_CONNECT},
+  {"a" , "attach session"             , FALSE, SC_ATTACH},
+  {"k" , "kill session"               , FALSE, SC_KILL},
+  {"c" , "connect host"               , FALSE, SC_CONNECT},
   {"f" , "file transfer"              , FALSE, 0},
-  {"d" , "dump"                       , FALSE, SC_DUMP},
-  {"g" , "refresh"                    , FALSE, SC_REFRESH},
+  {"d" , "toggle dumps"               , FALSE, SC_DUMP},
+  {"g" , "refresh host"               , FALSE, SC_REFRESH},
   {"i" , "install pkg"                , FALSE, SC_INSTALL},
   {"u" , "upgrade host"               , FALSE, SC_UPGRADE},
   {"n" , "next detached session"      , FALSE, 0},
@@ -423,7 +427,10 @@ void drawSessionEntry (DrawNode *n)
  mvaddnstr(n->scrpos, 7, h, COLS);
  attroff(n->attrs);
  if(n->selected == TRUE) {
-  drawMenu(SC_ATTACH | SC_DUMP);
+  if (screen_is_attached((SessNode *) n->p))
+    drawMenu(SC_ATTACH | SC_DUMP);
+  else
+    drawMenu(SC_ATTACH | SC_DUMP | SC_KILL);
 
   if (dump_screen) {
     gchar *dump = screen_get_dump((SessNode *) n->p);
@@ -1263,8 +1270,12 @@ void searchEntry(GList *hosts) {
        beep();
    }
    /* abort on control key */
-   else if(iscntrl(c))
+   else if(iscntrl(c)) {
+     if((c==KEY_UP) ||
+	(c==KEY_DOWN))
+       ungetch(c);
      break;
+   }
    /* accept char */
    else if(strlen(s)<sizeof(s)) {
      s[pos++] = c;
@@ -1556,31 +1567,63 @@ gboolean ctrlUI (GList *hosts)
   break;
  case 'i':
   n = getSelectedDrawNode();
-  if(!inhost) break;
+  if(!n) break;
+  switch(n->type) {
+  case HOST:
+    n = getSelectedDrawNode();
 
-  if (g_list_length(inhost->screens)) {
-   if (!queryConfirm("There are running sessions on this host! Continue? ", 
-		     FALSE))
-      break;
-  }
+    if(n->extended == TRUE) n->extended = FALSE;
+
+    if (g_list_length(inhost->screens)) {
+      if (!queryConfirm("There are running sessions on this host! Continue? ", 
+			FALSE))
+	break;
+    }
   
-  if(!n || (n->type != UPDATE)) {
-   queryString("Install package: ", in, sizeof(in));
-    if (strlen(in)==0)
-     break;
-    pkg = in;
+    if(!n || (n->type != UPDATE)) {
+      queryString("Install package: ", in, sizeof(in));
+      if (strlen(in)==0)
+	break;
+      pkg = in;
+    }
+    else {
+      pkg = ((UpdNode *) n->p)->package;
+    }
+    cleanUI();
+    ssh_cmd_install(inhost, pkg, FALSE);
+    inhost->category = C_REFRESH_REQUIRED;
+    freeUpdates(inhost->updates);
+    inhost->updates = NULL;
+    rebuildDrawList(hosts);
+    initUI();
+    refscr = TRUE;
+    break;
+  case CATEGORY:
+  case GROUP:
+  default:
+    {
+      queryString("Install package: ", in, sizeof(in));
+      if (strlen(in)==0)
+	break;
+
+      if(((n->type == CATEGORY) && !queryConfirm("Run install for the whole category? ", FALSE)) ||
+	 ((n->type == GROUP) && !queryConfirm("Run install for the whole group? ", FALSE)))
+	break;
+
+      GList *ho = g_list_first(hosts);
+      gint cat = getCategoryNumber(incategory);
+
+      while(ho) {
+	HostNode *m = (HostNode *)ho->data;
+	if(((n->type == GROUP) && (strcmp(m->group, ingroup) == 0)) ||
+	   ((n->type == CATEGORY) && (m->category == cat)))
+	  ssh_cmd_install(m, in, TRUE);
+
+	ho = g_list_next(ho);
+      }
+    }
+    break;
   }
-  else {
-    pkg = ((UpdNode *) n->p)->package;
-  }
-  cleanUI();
-  ssh_cmd_install(inhost, pkg, FALSE);
-  inhost->category = C_REFRESH_REQUIRED;
-  freeUpdates(inhost->updates);
-  inhost->updates = NULL;
-  rebuildDrawList(hosts);
-  initUI();
-  refscr = TRUE;
   break;
  case 'q':
 
@@ -1693,6 +1736,21 @@ gboolean ctrlUI (GList *hosts)
     initUI();
   }
   refscr = TRUE;
+  break;
+ case 'k':
+  n = getSelectedDrawNode();
+  if(!inhost) break;
+  if(n->type != SESSION) break;
+
+
+  /* Session already attached! */
+  if (screen_is_attached((SessNode *) n->p))
+    break;
+  
+  if (!queryConfirm("Realy kill this session? ", FALSE))
+    break;
+  
+  kill(((SessNode *) n->p)->pid, SIGTERM);
   break;
  case 'd':
    if (!cfg->dump_screen)
