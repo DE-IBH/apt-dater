@@ -9,6 +9,10 @@
 #include "parsecmd.h"
 #include <glib.h>
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 gboolean ssh_cmd_refresh(HostNode *n)
 {
  gboolean r;

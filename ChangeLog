@@ -1,0 +1,326 @@
+------------------------------------------------------------------------
+r66 | liske | 2008-07-03 14:43:23 +0200 (Thu, 03 Jul 2008) | 2 lines
+
+Debianisize.
+
+------------------------------------------------------------------------
+r65 | liske | 2008-07-03 11:20:51 +0200 (Thu, 03 Jul 2008) | 4 lines
+
+- shortcuts changed
+- maintain GList of hold file locks and release them on quit/SIGTERM
+- fixed SIGINT handler
+
+------------------------------------------------------------------------
+r64 | liske | 2008-07-03 10:00:33 +0200 (Thu, 03 Jul 2008) | 3 lines
+
+Change apt-dater to use XDG Base Directory Specification based 
+config/stas files. Cleanup config files. Add customized screenrc.
+
+------------------------------------------------------------------------
+r63 | ellguth | 2008-07-02 08:31:39 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved Makefile to src/Makefile
+------------------------------------------------------------------------
+r62 | ellguth | 2008-07-02 08:31:38 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved ui.h to src/ui.h
+------------------------------------------------------------------------
+r61 | ellguth | 2008-07-02 08:31:36 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved stats.h to src/stats.h
+------------------------------------------------------------------------
+r60 | ellguth | 2008-07-02 08:31:35 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved sighandler.h to src/sighandler.h
+------------------------------------------------------------------------
+r59 | ellguth | 2008-07-02 08:31:34 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved screen.h to src/screen.h
+------------------------------------------------------------------------
+r58 | ellguth | 2008-07-02 08:31:33 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved parsecmd.h to src/parsecmd.h
+------------------------------------------------------------------------
+r57 | ellguth | 2008-07-02 08:31:32 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved lock.h to src/lock.h
+------------------------------------------------------------------------
+r56 | ellguth | 2008-07-02 08:31:31 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved keyfiles.h to src/keyfiles.h
+------------------------------------------------------------------------
+r55 | ellguth | 2008-07-02 08:31:31 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved extern.h to src/extern.h
+------------------------------------------------------------------------
+r54 | ellguth | 2008-07-02 08:31:30 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved exec.h to src/exec.h
+------------------------------------------------------------------------
+r53 | ellguth | 2008-07-02 08:31:30 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved colors.h to src/colors.h
+------------------------------------------------------------------------
+r52 | ellguth | 2008-07-02 08:31:28 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved apt-dater.h to src/apt-dater.h
+------------------------------------------------------------------------
+r51 | ellguth | 2008-07-02 08:31:27 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved ui.c to src/ui.c
+------------------------------------------------------------------------
+r50 | ellguth | 2008-07-02 08:31:27 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved stats.c to src/stats.c
+------------------------------------------------------------------------
+r49 | ellguth | 2008-07-02 08:31:26 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved sighandler.c to src/sighandler.c
+------------------------------------------------------------------------
+r48 | ellguth | 2008-07-02 08:31:26 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved screen.c to src/screen.c
+------------------------------------------------------------------------
+r47 | ellguth | 2008-07-02 08:31:25 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved parsecmd.c to src/parsecmd.c
+------------------------------------------------------------------------
+r46 | ellguth | 2008-07-02 08:31:24 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved lock.c to src/lock.c
+------------------------------------------------------------------------
+r45 | ellguth | 2008-07-02 08:31:24 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved keyfiles.c to src/keyfiles.c
+------------------------------------------------------------------------
+r44 | ellguth | 2008-07-02 08:31:23 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved exec.c to src/exec.c
+------------------------------------------------------------------------
+r43 | ellguth | 2008-07-02 08:31:23 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved colors.c to src/colors.c
+------------------------------------------------------------------------
+r42 | ellguth | 2008-07-02 08:31:22 +0200 (Wed, 02 Jul 2008) | 1 line
+
+Moved apt-dater.c to src/apt-dater.c
+------------------------------------------------------------------------
+r41 | ellguth | 2008-07-02 08:23:21 +0200 (Wed, 02 Jul 2008) | 3 lines
+
+Created source directory.
+
+
+------------------------------------------------------------------------
+r40 | liske | 2008-06-25 17:22:09 +0200 (Wed, 25 Jun 2008) | 4 lines
+
+Add cat/group install.
+Add kill session command.
+
+
+------------------------------------------------------------------------
+r39 | liske | 2008-06-25 16:40:50 +0200 (Wed, 25 Jun 2008) | 2 lines
+
+Added SFTP command and new cmd line parser.
+
+------------------------------------------------------------------------
+r38 | liske | 2008-06-19 14:05:58 +0200 (Thu, 19 Jun 2008) | 2 lines
+
+Removed NULL pointer derefer.
+
+------------------------------------------------------------------------
+r37 | liske | 2008-06-19 13:08:51 +0200 (Thu, 19 Jun 2008) | 2 lines
+
+Implement host search.
+
+------------------------------------------------------------------------
+r36 | ellguth | 2008-06-18 15:00:35 +0200 (Wed, 18 Jun 2008) | 4 lines
+
+- Added signal handlers to apt-dater
+- Confirmation request in the quit function added
+- Code cleanup
+
+------------------------------------------------------------------------
+r35 | liske | 2008-06-18 13:01:38 +0200 (Wed, 18 Jun 2008) | 3 lines
+
+Add search shortcut (it doesn't search anything yet, but it uses 
+g_completion to show matching hostnames ;).
+
+------------------------------------------------------------------------
+r34 | ellguth | 2008-06-18 11:01:59 +0200 (Wed, 18 Jun 2008) | 2 lines
+
+Memory leak in screen_get_sessions fixed.
+
+------------------------------------------------------------------------
+r33 | ellguth | 2008-06-18 10:28:05 +0200 (Wed, 18 Jun 2008) | 2 lines
+
+- Some modifications in queryConfirm
+
+------------------------------------------------------------------------
+r32 | ellguth | 2008-06-18 09:35:05 +0200 (Wed, 18 Jun 2008) | 2 lines
+
+Added a query function to the session cycle operation.
+
+------------------------------------------------------------------------
+r31 | liske | 2008-06-17 16:29:03 +0200 (Tue, 17 Jun 2008) | 2 lines
+
+Added n,N shortcuts.
+
+------------------------------------------------------------------------
+r30 | liske | 2008-06-17 13:42:36 +0200 (Tue, 17 Jun 2008) | 3 lines
+
+Made query maintainer configurable.
+Dump the bottom part of screens.
+
+------------------------------------------------------------------------
+r29 | liske | 2008-06-17 12:59:49 +0200 (Tue, 17 Jun 2008) | 2 lines
+
+Convert dead locking to mandatory locking.
+
+------------------------------------------------------------------------
+r28 | ellguth | 2008-06-17 12:06:01 +0200 (Tue, 17 Jun 2008) | 2 lines
+
+Added the lock function (1 bug exist)
+
+------------------------------------------------------------------------
+r27 | liske | 2008-06-17 11:50:08 +0200 (Tue, 17 Jun 2008) | 5 lines
+
+- add -Wall
+- fixed all warnings
+- build menus dynamicly
+- add help window
+
+------------------------------------------------------------------------
+r26 | liske | 2008-06-16 17:11:07 +0200 (Mon, 16 Jun 2008) | 2 lines
+
+Fix draw glitches on session dumps.
+
+------------------------------------------------------------------------
+r25 | liske | 2008-06-16 16:29:38 +0200 (Mon, 16 Jun 2008) | 3 lines
+
+Add some more colorizations.
+Query and set MAINTAINER environment variable (to be used by debtrack).
+
+------------------------------------------------------------------------
+r24 | ellguth | 2008-06-16 15:30:39 +0200 (Mon, 16 Jun 2008) | 1 line
+
+Tagged revision 23
+------------------------------------------------------------------------
+r23 | ellguth | 2008-06-16 15:20:44 +0200 (Mon, 16 Jun 2008) | 2 lines
+
+Colorize apt-dater
+
+------------------------------------------------------------------------
+r22 | liske | 2008-06-16 08:49:13 +0200 (Mon, 16 Jun 2008) | 3 lines
+
+Fixed GError handling on reading screen settings from keyfile. Add 
+d:dump action.
+
+------------------------------------------------------------------------
+r21 | liske | 2008-06-13 16:50:12 +0200 (Fri, 13 Jun 2008) | 4 lines
+
+Prevent drawlist getting behind session dump window.
+Replace LINES-2 with bottomDrawLine.
+Made sessions dumps configurable.
+
+------------------------------------------------------------------------
+r20 | liske | 2008-06-13 16:10:23 +0200 (Fri, 13 Jun 2008) | 2 lines
+
+Dump and show session screens in apt-dater.
+
+------------------------------------------------------------------------
+r19 | liske | 2008-06-13 12:34:02 +0200 (Fri, 13 Jun 2008) | 2 lines
+
+Ask user for confirmation for u+i on hosts with running sessions.
+
+------------------------------------------------------------------------
+r18 | liske | 2008-06-13 11:23:54 +0200 (Fri, 13 Jun 2008) | 2 lines
+
+Force reconnect working. Show attached/detached session state.
+
+------------------------------------------------------------------------
+r17 | ellguth | 2008-06-13 10:16:29 +0200 (Fri, 13 Jun 2008) | 3 lines
+
+- Added definitions for the host status
+
+
+------------------------------------------------------------------------
+r16 | liske | 2008-06-13 09:32:40 +0200 (Fri, 13 Jun 2008) | 2 lines
+
+Don't use broken g_stat. Pretty print session details.
+
+------------------------------------------------------------------------
+r15 | liske | 2008-06-12 17:18:13 +0200 (Thu, 12 Jun 2008) | 2 lines
+
+Made multi screen support somehow working...
+
+------------------------------------------------------------------------
+r14 | liske | 2008-06-12 13:48:27 +0200 (Thu, 12 Jun 2008) | 2 lines
+
+Added screen support on install/upgrade.
+
+------------------------------------------------------------------------
+r13 | ellguth | 2008-06-12 12:52:22 +0200 (Thu, 12 Jun 2008) | 3 lines
+
+- Fixed the QueryString bug cursor position
+
+
+------------------------------------------------------------------------
+r12 | liske | 2008-06-12 12:38:31 +0200 (Thu, 12 Jun 2008) | 2 lines
+
+Add screen support stubs.
+
+------------------------------------------------------------------------
+r11 | liske | 2008-06-10 11:31:59 +0200 (Tue, 10 Jun 2008) | 2 lines
+
+Add 'i:Install Package' menu entry.
+
+------------------------------------------------------------------------
+r10 | ellguth | 2008-05-14 08:54:02 +0200 (Wed, 14 May 2008) | 1 line
+
+
+------------------------------------------------------------------------
+r9 | ellguth | 2008-05-13 16:59:22 +0200 (Tue, 13 May 2008) | 2 lines
+
+Draw the mtime of the oldest stat file.
+
+------------------------------------------------------------------------
+r8 | ellguth | 2008-05-09 15:03:34 +0200 (Fri, 09 May 2008) | 4 lines
+
+- Added a sort funktion for groups and hosts
+- Code cleanup
+
+
+------------------------------------------------------------------------
+r7 | ellguth | 2008-05-08 14:56:46 +0200 (Thu, 08 May 2008) | 3 lines
+
+Fixed some drawing problems.
+
+
+------------------------------------------------------------------------
+r6 | ellguth | 2008-05-06 14:08:29 +0200 (Tue, 06 May 2008) | 2 lines
+
+Removed the $Log$ RCS tag.
+
+------------------------------------------------------------------------
+r5 | ellguth | 2008-05-06 14:03:56 +0200 (Tue, 06 May 2008) | 2 lines
+
+Initial revision
+
+------------------------------------------------------------------------
+r4 | ellguth | 2008-05-06 14:01:43 +0200 (Tue, 06 May 2008) | 2 lines
+
+Intial revision
+
+------------------------------------------------------------------------
+r3 | ellguth | 2008-05-06 13:33:05 +0200 (Tue, 06 May 2008) | 1 line
+
+
+------------------------------------------------------------------------
+r2 | ellguth | 2008-05-06 13:32:53 +0200 (Tue, 06 May 2008) | 1 line
+
+
+------------------------------------------------------------------------
+r1 | ellguth | 2008-05-06 13:32:48 +0200 (Tue, 06 May 2008) | 1 line
+
+
+------------------------------------------------------------------------

@@ -7,6 +7,10 @@
 #include <glib.h>
 #include <popt.h>
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 static gchar *parse_arg(const gchar *src, const HostNode *n) {
   if(!n)
     return g_strdup(src);

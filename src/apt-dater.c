@@ -11,6 +11,10 @@
 #include "sighandler.h"
 #include "lock.h"
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 CfgFile *cfg = NULL;
 GMainLoop *loop = NULL;
 gboolean rebuilddl = FALSE;

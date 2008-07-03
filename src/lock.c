@@ -9,6 +9,10 @@
 #include <sys/file.h>
 #include <errno.h>
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 static GList *lockList = NULL;
 
 static gchar *getLockFile(const gchar *hostname)

@@ -8,6 +8,10 @@
 #include "apt-dater.h"
 #include "colors.h"
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 int uicolors[UI_COLOR_MAX];
 
 #ifdef HAVE_COLOR

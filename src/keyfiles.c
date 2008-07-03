@@ -7,6 +7,10 @@
 #include "keyfiles.h"
 #include "stats.h"
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 static int cmpStringP(const void *p1, const void *p2)
 {
  return(g_ascii_strcasecmp (*(gchar * const *) p1, *(gchar * const *) p2));

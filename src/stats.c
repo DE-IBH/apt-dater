@@ -10,6 +10,10 @@
 #include "stats.h"
 #include "lock.h"
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 gchar *getStatsFile(const gchar *hostname)
 {
  GDir *dir;

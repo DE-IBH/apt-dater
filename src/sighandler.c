@@ -8,6 +8,10 @@
 #include "sighandler.h"
 #include "lock.h"
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 static volatile int sigintcnt = 0;
 
 static void sigintSigHandler(int sig)

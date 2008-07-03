@@ -15,6 +15,10 @@
 #include "stats.h"
 #include "keyfiles.h"
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 
 static GList *drawlist = NULL;
 static char *drawCategories[] = {"Updates pending", "Up to date", "Status file missing", "Refresh required", "In refresh", "Sessions", "Unknown", 0};

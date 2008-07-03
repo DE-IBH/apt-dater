@@ -1,0 +1,55 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ(2.61)
+AC_INIT(apt-dater, VERSION)
+AM_INIT_AUTOMAKE([apt-dater], VERSION)
+AC_CONFIG_SRCDIR([src/apt-dater.c])
+AC_CONFIG_HEADER([config.h])
+
+PACKAGE=apt-dater
+VERSION=0.5.0
+
+glib_module="glib-2.0 >= 2.3.6"
+PKG_CHECK_MODULES(GLIB, "$glib_module", enable_glib_=yes, enable_glib_=no)
+
+AC_SUBST(PACKAGE)
+AC_SUBST(VERSION)
+AC_SUBST(GLIB_CFLAGS)
+AC_SUBST(GLIB_LIBS)
+AC_PROG_INSTALL
+
+# Some additional definitions
+AC_DEFINE(HAVE_COLOR,1,[ Define if your curses library supports color. ])
+AC_DEFINE(HAVE_USE_DEFAULT_COLORS,1,
+	[ Define if your curses library supports function use_default_colors. ])
+AC_DEFINE(HAVE_FLOCK,1,[ Define if funtion flock avaible. ])
+
+# Checks for programs.
+AC_PROG_CC
+
+# Checks for libraries.
+AC_CHECK_LIB([curses], [initscr])
+AC_CHECK_LIB([popt], [poptParseArgvString])
+AC_CHECK_LIB([glib-2.0], [g_main_loop_run])
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS([fcntl.h stdlib.h string.h sys/file.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_C_INLINE
+AC_STRUCT_TM
+
+# Checks for library functions.
+AC_TYPE_SIGNAL
+AC_FUNC_STAT
+AC_FUNC_STRFTIME
+AC_CHECK_FUNCS([memset strchr strdup strerror])
+
+AC_CONFIG_FILES([
+Makefile
+src/Makefile
+])
+AC_OUTPUT
