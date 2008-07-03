@@ -582,6 +582,8 @@ uninstall-info: uninstall-info-recursive
 	mostlyclean-recursive pdf pdf-am ps ps-am tags tags-recursive \
 	uninstall uninstall-am uninstall-info-am
 
+changelog:
+	LANG=C svn log > ChangeLog
 
 distclean-local:
 	rm -rf *.cache *~ .project .settings .cdtproject
