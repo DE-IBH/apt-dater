@@ -9,7 +9,9 @@
 #include <sys/file.h>
 #include <errno.h>
 
-gchar *getLockFile(const gchar *hostname)
+static GList *lockList = NULL;
+
+static gchar *getLockFile(const gchar *hostname)
 {
  gchar *lockfile = NULL;
  gchar *statsfile = NULL;
@@ -42,6 +44,7 @@ int setLockForHost(HostNode *n)
  }
 
 #ifdef HAVE_FLOCK
+ lockList = g_list_prepend(lockList, n);
  r = flock(n->fdlock, LOCK_EX | LOCK_NB);
 #else
  g_warning("Can't lock to file %s because function flock() is missing!",
@@ -53,6 +56,7 @@ int setLockForHost(HostNode *n)
  g_free(lockfile);
 
  if(r == -1) {
+   lockList = g_list_remove(lockList, n);
    close(n->fdlock);
    n->fdlock = -1;
  }
@@ -71,10 +75,19 @@ int unsetLockForHost(HostNode *n)
 
 #ifdef HAVE_FLOCK
  r = flock(n->fdlock, LOCK_UN);
+ lockList = g_list_remove(lockList, n);
 #endif
 
  close(n->fdlock);
  n->fdlock = -1;
   
  return(r);
+}
+
+static void cleanupLock(gpointer data, gpointer user_data) {
+    unsetLockForHost((HostNode *)data);
+}
+
+void cleanupLocks() {
+    g_list_foreach(lockList, cleanupLock, NULL);
 }

@@ -6,24 +6,30 @@
 #include "apt-dater.h"
 #include "ui.h"
 #include "sighandler.h"
+#include "lock.h"
 
-static int sigintcnt = 0;
+static volatile int sigintcnt = 0;
 
-static void sigintSigHandler()
+static void sigintSigHandler(int sig)
 {
- injectKey('q');
-
  if (sigintcnt++ > 1) {
-  refreshUI();
   cleanUI();
 
-  /* Force exit maybe if it hangs */
+  cleanupLocks();
   exit(EXIT_FAILURE);
  }
+ else
+  g_main_loop_quit (loop);
+
+ signal(sig, sigintSigHandler);
 }
 
+static void sigtermSigHandler() {
+ cleanupLocks();
+}
 
 void setSigHandler()
 {
  signal(SIGINT, sigintSigHandler);
+ signal(SIGTERM, sigtermSigHandler);
 }

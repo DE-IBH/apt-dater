@@ -9,6 +9,7 @@
 #include "ui.h"
 #include "stats.h"
 #include "sighandler.h"
+#include "lock.h"
 
 CfgFile *cfg = NULL;
 GMainLoop *loop = NULL;
@@ -66,6 +67,7 @@ int main(int argc, char **argv)
 
  g_main_loop_unref (loop);
  cleanUI();
+ cleanupLocks();
 
  freeConfig(cfg);
  free(cfgfilename);

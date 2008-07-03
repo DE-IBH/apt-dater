@@ -50,15 +50,15 @@ static struct ShortCut shortCuts[] = {
   {"up/down", "move up/down"          , FALSE, 0},
   {"q" , "quit"                       , TRUE , 0},
   {"?" , "help"                       , TRUE , 0},
-  {"/" , "search"                     , TRUE , 0},
+  {"/" , "search host"                , TRUE , 0},
   {"a" , "attach session"             , FALSE, SC_ATTACH},
-  {"k" , "kill session"               , FALSE, SC_KILL},
+  {"K" , "kill session"               , FALSE, SC_KILL},
   {"c" , "connect host"               , FALSE, SC_CONNECT},
   {"f" , "file transfer"              , FALSE, 0},
   {"d" , "toggle dumps"               , FALSE, SC_DUMP},
   {"g" , "refresh host"               , FALSE, SC_REFRESH},
   {"i" , "install pkg"                , FALSE, SC_INSTALL},
-  {"u" , "upgrade host"               , FALSE, SC_UPGRADE},
+  {"u" , "upgrade host(s)"            , FALSE, SC_UPGRADE},
   {"n" , "next detached session"      , FALSE, 0},
   {"N" , "cycle detached sessions"    , FALSE, 0},
   {NULL, NULL                         , FALSE, 0},
@@ -1738,10 +1738,10 @@ gboolean ctrlUI (GList *hosts)
   refscr = TRUE;
   break;
  case 'k':
+  if(ic != 'K') break;
   n = getSelectedDrawNode();
   if(!inhost) break;
   if(n->type != SESSION) break;
-
 
   /* Session already attached! */
   if (screen_is_attached((SessNode *) n->p))
