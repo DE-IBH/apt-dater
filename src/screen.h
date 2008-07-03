@@ -7,7 +7,9 @@
 
 #include "apt-dater.h"
 
-#define SCREEN_BINARY  "/usr/bin/screen"
+#ifndef SCREEN_BINARY
+# define SCREEN_BINARY  "/usr/bin/screen"
+#endif
 #define SCREEN_SDFORMT "%s/S-%s"
 #define SCREEN_SOCKDIR "/var/run/screen"
 #define SCREEN_SOCKPRE "apt-dater_"

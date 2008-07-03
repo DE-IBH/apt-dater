@@ -4825,6 +4825,34 @@ _ACEOF
 fi
 
 
+# Check if `screen' install on your system
+echo -n "checking for screen... "
+if test -x /usr/bin/screen ; then
+
+cat >>confdefs.h <<\_ACEOF
+#define SCREEN_BINARY "/usr/bin/screen"
+_ACEOF
+
+	echo "/usr/bin/screen"
+elif test -x /usr/local/bin/screen; then
+
+cat >>confdefs.h <<\_ACEOF
+#define SCREEN_BINARY "/usr/local/bin/screen"
+_ACEOF
+
+	echo "/usr/local/bin/screen"
+elif test -x /bin/screen; then
+
+cat >>confdefs.h <<\_ACEOF
+#define SCREEN_BINARY "/bin/screen"
+_ACEOF
+
+	echo "/bin/screen"
+else
+	echo "not found."
+	exit 1;
+fi
+
 # Checks for library functions.
 { echo "$as_me:$LINENO: checking return type of signal handlers" >&5
 echo $ECHO_N "checking return type of signal handlers... $ECHO_C" >&6; }

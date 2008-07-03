@@ -8,11 +8,12 @@
 #include <pwd.h>
 #include <glib-2.0/glib.h>
 #include <glib-2.0/glib/gstdio.h>
-#include "screen.h"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
+#include "screen.h"
 
 static gchar *dump_fn = NULL;
 static struct passwd *pw = NULL;

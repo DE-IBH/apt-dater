@@ -42,6 +42,22 @@ AC_C_CONST
 AC_C_INLINE
 AC_STRUCT_TM
 
+# Check if `screen' install on your system
+echo -n "checking for screen... "
+if test -x /usr/bin/screen ; then
+	AC_DEFINE(SCREEN_BINARY,"/usr/bin/screen",[ Where is the command screen located. ])
+	echo "/usr/bin/screen"
+elif test -x /usr/local/bin/screen; then
+	AC_DEFINE(SCREEN_BINARY,"/usr/local/bin/screen",[ Where is the command screen located. ])
+	echo "/usr/local/bin/screen"
+elif test -x /bin/screen; then
+	AC_DEFINE(SCREEN_BINARY,"/bin/screen",[ Where is the command screen located. ])
+	echo "/bin/screen"
+else
+	echo "not found."
+	exit 1;
+fi
+
 # Checks for library functions.
 AC_TYPE_SIGNAL
 AC_FUNC_STAT
