@@ -80,10 +80,11 @@ screen_new(HostNode *n, const gboolean detached) {
     return g_strdup("");
   
   return g_strdup_printf(SCREEN_BINARY"+-%sS+"SCREEN_SOCKPRE"%s_%s_%d" \
-			 "+-t+%s@%s:%d+",
+			 "+-t+%s@%s:%d+-c+%s+",
 			 detached ? "dm" : "",
 			 n->ssh_user, n->hostname, n->ssh_port,
-			 n->ssh_user, n->hostname, n->ssh_port);
+			 n->ssh_user, n->hostname, n->ssh_port,
+			 cfg->screenrcfile);
 }
 
 static gchar *

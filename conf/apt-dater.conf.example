@@ -1,22 +1,37 @@
 # Config file of apt-dater in the form of the glib GKeyFile required
 
 [Paths]
-HostsFile=conf/hosts.conf
-StatsDir=stats
+# Default: $XDG_CONFIG_HOME/apt-dater/hosts.conf
+#HostsFile=path-to/hosts.conf
+
+# Default: $XDG_CONFIG_HOME/apt-dater/screenrc
+#ScreenrcFile=path-to/screenrc
+
+# Default: $XDG_DATA_HOME/apt-dater
+#StatsDir=path-to/stats
 
 [SSH]
+# SSH binary
 Cmd=/usr/bin/ssh
-SFTPCmd=/usr/bin/mc /#sh:%u@%h:C/
 OptionalCmdFlags=
-DefaultUser=ibh
+
+# SFTP binary
+SFTPCmd=/usr/bin/mc /#sh:%u@%h:C/
+
+DefaultUser=apt-dater
 DefaultPort=22
 
 [Commands]
-CmdRefresh=sudo apt-get -q update && sudo apt-get -q -s upgrade
-CmdUpgrade=sudo apt-get upgrade && debtrack/debtrack
-CmdInstall=sudo apt-get install %s && debtrack/debtrack
+CmdRefresh=sudo aptitude -q update && sudo apt-get -q -s upgrade && /usr/lib/debtrack/kernelinfo.sh
+CmdUpgrade=sudo aptitude upgrade
+CmdInstall=sudo aptitude install %s
 
 [Appearance]
-# Colors
-# e.g. Colors=COMPONENT FG BG
+# Colors      = (COMPONENT FG BG ';')*
+# COMPONENT ::= 'default' | 'menu' | 'status' | 'selector' | 'hoststatus' |
+#               'query' | 'input'
+# FG        ::= COLOR
+# BG        ::= COLOR
+# COLOR     ::= 'black' | 'blue' | 'cyan' | 'green' | 'magenta' | 'red' |
+#               'white' | 'yellow'
 Colors=menu brightgreen blue;status brightgreen blue;selector black red;

@@ -18,9 +18,11 @@
 #define PATH_CONFIG "conf/apt-dater.conf"
 #define STATS_MAX_LINE_LEN 1000
 #define BUF_MAX_LEN 256
+#define PROG_NAME "apt-dater"
 
 typedef struct _cfgfile {
  gchar *hostsfile;
+ gchar *screenrcfile;
  gchar *statsdir;
  gchar *ssh_cmd;
  gchar *sftp_cmd;

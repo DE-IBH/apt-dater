@@ -21,8 +21,8 @@ int main(int argc, char **argv)
  char *cfgfilename = NULL;
  GList *hosts = NULL;
 
- cfgfilename = (char *) strdup (PATH_CONFIG);
- g_set_prgname("apt-dater");
+ cfgfilename = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "apt-dater.conf");
+ g_set_prgname(PROG_NAME);
 
  while ((opts = getopt(argc, argv, "c:")) != EOF) {
   switch(opts) {
