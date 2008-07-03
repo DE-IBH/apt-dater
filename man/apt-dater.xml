@@ -49,13 +49,29 @@ and docbook-xsl in your Build-Depends control field.
     <address>
       &dhemail;
     </address>
-    <author>
-      &dhfirstname;
-      &dhsurname;
-    </author>
+    <authorgroup>
+      <author>
+        <firstname>Andre</firstname>
+        <surname>Ellguth</surname>
+	<email>ellguth@ibh.de</email>
+        <contrib>Maintainer.</contrib>
+      </author>
+      <author>
+        &dhfirstname;
+        &dhsurname;
+        &dhemail;
+	<contrib>Maintainer.</contrib>
+      </author>
+      <othercredit>
+	<firstname>Jens</firstname>
+	<surname>Haser</surname>
+	<email>j.haser@gmx.de</email>
+	<contrib>Fixed some UI glitches.</contrib>
+      </othercredit>
+    </authorgroup>
     <copyright>
       <year>2008</year>
-      <holder>&dhusername;</holder>
+      <holder>IBH IT-Service GmbH <link>http://www.ibh.net/</link></holder>
     </copyright>
     &dhdate;
   </refentryinfo>
@@ -82,49 +98,32 @@ and docbook-xsl in your Build-Depends control field.
     <para>This manual page documents briefly the
       <command>&dhpackage;</command> command.</para>
 
-    <para>This manual page was written for the &debian; distribution
-      because the original program does not have a manual page.
-      Instead, it has documentation in the &gnu;
-      <application>Info</application> format; see below.</para>
-
-    <para><command>&dhpackage;</command> is a program that...</para>
+    <para><command>&dhpackage;</command> is a program to manage package updats on a large
+      number of remote hosts using SSH.</para>
 
   </refsect1>
   <refsect1>
     <title>OPTIONS</title>
 
-    <para>These programs follow the usual &gnu; command line syntax,
-      with long options starting with two dashes (`-').  A summary of
-      options is included below.</para>
+    <para><command>&dhpackage;</command> accepts the following command parameters:</para>
 
     <variablelist>
       <varlistentry>
         <term><option>-c <replaceable>config</replaceable></option></term>
         <listitem>
-          <para>Use alternative config file. Default is $XDG_CONFIG_HOME/apt-dater/apt-dater.conf</para>
+          <para>Use alternative config file. Default is <replaceable>$XDG_CONFIG_HOME/apt-dater/apt-dater.conf</replaceable>.</para>
         </listitem>
       </varlistentry>
     </variablelist>
   </refsect1>
   <refsect1>
-    <title>SEE ALSO</title>
+    <title>ENVIRONMENT</title>
 
-    <para>aptitude (1), apt-get (1), ssh (1).</para>
+    <para><envar>MAINTAINER</envar>: The maintainer's name used by <command>debtrack</command> on the managed hosts.</para>
   </refsect1>
   <refsect1>
-    <title>AUTHOR</title>
+    <title>SEE ALSO</title>
 
-    <para>This manual page was written by &dhusername; &dhemail; for
-      the &debian; system (but may be used by others).  Permission is
-      granted to copy, distribute and/or modify this document under
-      the terms of the &gnu; General Public License, Version 2 any 
-	  later version published by the Free Software Foundation.
-    </para>
-	<para>
-	  On Debian systems, the complete text of the GNU General Public
-	  License can be found in /usr/share/common-licenses/GPL.
-	</para>
-
+    <para>aptitude(1), apt-get(1), debtrack, screen(1), ssh(1).</para>
   </refsect1>
 </refentry>
-

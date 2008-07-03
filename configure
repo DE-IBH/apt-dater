@@ -693,6 +693,7 @@ am__fastdepCC_FALSE
 CPP
 GREP
 EGREP
+XSLTPROC
 LIBOBJS
 LTLIBOBJS'
 ac_subst_files=''
@@ -4853,6 +4854,23 @@ else
 	exit 1;
 fi
 
+# Check if `xsltproc' install on your system
+echo -n "checking for xsltproc... "
+if test -x /usr/bin/xsltproc ; then
+	XSLTPROC="/usr/bin/xsltproc"
+	echo $XSLTPROC
+elif test -x /usr/local/bin/xsltproc; then
+	XSLTPROC="/usr/local/bin/xsltproc"
+	echo $XSLTPROC
+elif test -x /bin/xsltproc; then
+	XSLTPROC="/bin/xsltproc"
+	echo $XSLTPROC
+else
+	XSLTPROC="/bin/true"
+	echo "not found."
+fi
+
+
 # Checks for library functions.
 { echo "$as_me:$LINENO: checking return type of signal handlers" >&5
 echo $ECHO_N "checking return type of signal handlers... $ECHO_C" >&6; }
@@ -5338,7 +5356,7 @@ fi
 done
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile"
+ac_config_files="$ac_config_files Makefile man/Makefile src/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -5919,6 +5937,7 @@ do
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
 
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
@@ -6062,11 +6081,12 @@ am__fastdepCC_FALSE!$am__fastdepCC_FALSE$ac_delim
 CPP!$CPP$ac_delim
 GREP!$GREP$ac_delim
 EGREP!$EGREP$ac_delim
+XSLTPROC!$XSLTPROC$ac_delim
 LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 82; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 83; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

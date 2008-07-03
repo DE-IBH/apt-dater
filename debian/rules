@@ -38,7 +38,7 @@ build-stamp: config.status
 	cd src && $(MAKE)
 	
 	# Build manpage(s)
-	cd man && xsltproc -''-nonet /usr/share/xml/docbook/stylesheet/nwalsh/manpages/docbook.xsl apt-dater.xml
+	#cd man && xsltproc -''-nonet /usr/share/xml/docbook/stylesheet/nwalsh/manpages/docbook.xsl apt-dater.xml
 
 	touch $@
 

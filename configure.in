@@ -58,6 +58,23 @@ else
 	exit 1;
 fi
 
+# Check if `xsltproc' install on your system
+echo -n "checking for xsltproc... "
+if test -x /usr/bin/xsltproc ; then
+	XSLTPROC="/usr/bin/xsltproc"
+	echo $XSLTPROC
+elif test -x /usr/local/bin/xsltproc; then
+	XSLTPROC="/usr/local/bin/xsltproc"
+	echo $XSLTPROC
+elif test -x /bin/xsltproc; then
+	XSLTPROC="/bin/xsltproc"
+	echo $XSLTPROC
+else
+	XSLTPROC="/bin/true"
+	echo "not found."
+fi
+AC_SUBST(XSLTPROC)
+
 # Checks for library functions.
 AC_TYPE_SIGNAL
 AC_FUNC_STAT
@@ -66,6 +83,7 @@ AC_CHECK_FUNCS([memset strchr strdup strerror])
 
 AC_CONFIG_FILES([
 Makefile
+man/Makefile
 src/Makefile
 ])
 AC_OUTPUT

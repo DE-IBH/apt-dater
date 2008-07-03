@@ -6,16 +6,20 @@ With apt-dater you can easily update one ore more Debian hosts.
 Pre-configuration:
 
   Copy and modify the apt-dater.conf:
-    cp apt-dater.conf.example /etc/apt-dater.conf
+    cp conf/apt-dater.conf.example $HOME/.config/apt-dater/apt-dater.conf
 
   Copy and modify the hosts.conf:
-    cp hosts.conf.example path-to/hosts.conf 
+    cp conf/hosts.conf.example $HOME/.config/apt-dater/hosts.conf 
 
-Managed hosts:
+  Copy and modify the screenrc:
+    cp conf/screenrc.example $HOME/.config/apt-dater/screenrc
 
-  Create a user which will be install updates.
+Managed hosts by apt-dater:
+
+  Create a user which will be used to install updates.
   Modify the /etc/sudoers e.g.:
- 	the-user ALL = NOPASSWD: /usr/bin/apt-get, /usr/bin/aptitude 
+	Defaults env_reset,env_keep=MAINTAINER
+ 	the-user ALL=NOPASSWD: /usr/bin/apt-get, /usr/bin/aptitude 
 
 Management server:
 

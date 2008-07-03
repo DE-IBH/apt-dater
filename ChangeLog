@@ -1,4 +1,15 @@
 ------------------------------------------------------------------------
+r71 | liske | 2008-07-03 15:26:08 +0200 (Thu, 03 Jul 2008) | 2 lines
+
+Add changelog make target.
+
+------------------------------------------------------------------------
+r70 | ellguth | 2008-07-03 15:15:58 +0200 (Thu, 03 Jul 2008) | 3 lines
+
+- Added a test for the screen binary in configure.in
+
+
+------------------------------------------------------------------------
 r69 | liske | 2008-07-03 15:10:21 +0200 (Thu, 03 Jul 2008) | 2 lines
 
 Changed package building process to call configure.
