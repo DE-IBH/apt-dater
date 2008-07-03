@@ -1,0 +1,12 @@
+Source: apt-dater
+Section: unknown
+Priority: extra
+Maintainer: Thomas Liske <liske@ibh.de>
+Build-Depends: debhelper (>= 5), xsltproc, docbook-xsl
+Standards-Version: 3.7.2
+
+Package: apt-dater
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},screen
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>

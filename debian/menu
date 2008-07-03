@@ -1,0 +1,3 @@
+?package(apt-dater):needs="text" section="Apps/System" \
+  title="apt-dater" command="/usr/bin/apt-dater" \
+  longtitle="Terminal-based remote package update manager"
