@@ -1,3 +1,9 @@
+apt-dater (0.5.1-ibh0) unstable; urgency=low
+
+  * Documentation fixes.
+
+ -- Thomas Liske <liske@ibh.de>  Fri, 04 Jul 2008 14:50:34 +0200
+
 apt-dater (0.5.0-ibh0) unstable; urgency=low
 
   * Initial Release.
