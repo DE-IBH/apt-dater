@@ -1,9 +1,11 @@
 README for apt-dater
 ====================
 
-With apt-dater you can easily update one ore more Debian hosts.
+With apt-dater you can easily keep one ore more (Debian) GNU/Linux
+hosts up to date.
 
-Pre-configuration:
+
+Pre-configuration on your management server:
 
   Copy and modify the apt-dater.conf:
     cp conf/apt-dater.conf.example $HOME/.config/apt-dater/apt-dater.conf
@@ -14,20 +16,24 @@ Pre-configuration:
   Copy and modify the screenrc:
     cp conf/screenrc.example $HOME/.config/apt-dater/screenrc
 
+
 Managed hosts by apt-dater:
 
-  Create a user which will be used to install updates.
-  Modify the /etc/sudoers e.g.:
+  You need a SSH server and sudo installed. Create a user which will
+  be used to install updates (using root is NOT recommended).
+  Modify the /etc/sudoers:
+
 	Defaults env_reset,env_keep=MAINTAINER
  	the-user ALL=NOPASSWD: /usr/bin/apt-get, /usr/bin/aptitude 
+
 
 Management server:
 
   Create a user on your management server which perform updates on your
   Debian hosts.
 
-  Generate a ssh RSA or DSA keypair:
+  Generate a SSH keypair:
     ssh-keygen -t TYPE
 
-  Distribute the public key e.g.:
+  Distribute the public key(s) e.g.:
     ssh-copy-id .ssh/your-public-key managed-host

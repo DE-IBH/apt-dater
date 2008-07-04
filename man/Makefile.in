@@ -65,6 +65,7 @@ CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DPKGBPKG = @DPKGBPKG@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -336,14 +337,6 @@ uninstall-man: uninstall-man8
 
 apt-dater.8: apt-dater.xml
 	$(XSLTPROC) -''-nonet /usr/share/xml/docbook/stylesheet/nwalsh/manpages/docbook.xsl apt-dater.xml
-
-#apt_daterINSTALL-MAN:
-#	for s in `seq 1 8`; do \
-#	    for f in *.$s; do \
-#		$(INSTALL_DATA) $f $(DESTDIR)$(mandir)/man$s/$f \
-#		$(INSTALL) $i \
-#	    done \
-#	done
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

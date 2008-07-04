@@ -1,6 +1,4 @@
-SUBDIRS = 								\
-	man								\
-	src
+SUBDIRS = clients man src
 
 AUTOMAKE_OPTIONS = 							\
 	1.9								\

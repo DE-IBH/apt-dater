@@ -1,12 +1,14 @@
 Source: apt-dater
-Section: unknown
-Priority: extra
+Section: admin
+Priority: optional
 Maintainer: Thomas Liske <liske@ibh.de>
-Build-Depends: debhelper (>= 5), xsltproc, docbook-xsl, automake1.9
+Build-Depends: debhelper (>= 5), xsltproc, docbook-xsl, automake1.9, libglib2.0-dev, libncurses5-dev
 Standards-Version: 3.7.2
 
 Package: apt-dater
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends},screen
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Depends: ${shlibs:Depends}, ${misc:Depends}, screen, ssh-client
+Suggests: apt-dater-host
+Description: terminal-based remote package update manager
+ apt-dater can be used to keep your (Debian) GNU/Linux based hosts
+ up to date using SSH.

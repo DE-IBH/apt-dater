@@ -694,6 +694,7 @@ CPP
 GREP
 EGREP
 XSLTPROC
+DPKGBPKG
 LIBOBJS
 LTLIBOBJS'
 ac_subst_files=''
@@ -4826,7 +4827,7 @@ _ACEOF
 fi
 
 
-# Check if `screen' install on your system
+# Check if `screen' is installed on your system
 echo -n "checking for screen... "
 if test -x /usr/bin/screen ; then
 
@@ -4854,7 +4855,7 @@ else
 	exit 1;
 fi
 
-# Check if `xsltproc' install on your system
+# Check if `xsltproc' is installed on your system
 echo -n "checking for xsltproc... "
 if test -x /usr/bin/xsltproc ; then
 	XSLTPROC="/usr/bin/xsltproc"
@@ -4867,6 +4868,23 @@ elif test -x /bin/xsltproc; then
 	echo $XSLTPROC
 else
 	XSLTPROC="/bin/true"
+	echo "not found."
+fi
+
+
+# Check if `dpkg-buildpackage' is installed on your system
+echo -n "checking for dpkg-buildpackage... "
+if test -x /usr/bin/dpkg-buildpackage ; then
+	DPKGBPKG="/usr/bin/dpkg-buildpackage"
+	echo $DPKGBPKG
+elif test -x /usr/local/bin/dpkg-buildpackage; then
+	DPKGBPKG="/usr/local/bin/dpkg-buildpackage"
+	echo $DPKGBPKG
+elif test -x /bin/dpkg-buildpackage; then
+	DPKGBPKG="/bin/dpkg-buildpackage"
+	echo $DPKGBPKG
+else
+	DPKGBPKG="/bin/true"
 	echo "not found."
 fi
 
@@ -5356,7 +5374,7 @@ fi
 done
 
 
-ac_config_files="$ac_config_files Makefile man/Makefile src/Makefile"
+ac_config_files="$ac_config_files Makefile man/Makefile src/Makefile clients/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -5939,6 +5957,7 @@ do
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
+    "clients/Makefile") CONFIG_FILES="$CONFIG_FILES clients/Makefile" ;;
 
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
@@ -6082,11 +6101,12 @@ CPP!$CPP$ac_delim
 GREP!$GREP$ac_delim
 EGREP!$EGREP$ac_delim
 XSLTPROC!$XSLTPROC$ac_delim
+DPKGBPKG!$DPKGBPKG$ac_delim
 LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 83; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 84; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

@@ -83,7 +83,7 @@ and docbook-xsl in your Build-Depends control field.
   <refnamediv>
     <refname>&dhpackage;</refname>
 
-    <refpurpose>Terminal-based remote package update manager</refpurpose>
+    <refpurpose>terminal-based remote package update manager</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <cmdsynopsis>

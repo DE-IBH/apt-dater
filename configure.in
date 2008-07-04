@@ -42,7 +42,7 @@ AC_C_CONST
 AC_C_INLINE
 AC_STRUCT_TM
 
-# Check if `screen' install on your system
+# Check if `screen' is installed on your system
 echo -n "checking for screen... "
 if test -x /usr/bin/screen ; then
 	AC_DEFINE(SCREEN_BINARY,"/usr/bin/screen",[ Where is the command screen located. ])
@@ -58,7 +58,7 @@ else
 	exit 1;
 fi
 
-# Check if `xsltproc' install on your system
+# Check if `xsltproc' is installed on your system
 echo -n "checking for xsltproc... "
 if test -x /usr/bin/xsltproc ; then
 	XSLTPROC="/usr/bin/xsltproc"
@@ -75,6 +75,23 @@ else
 fi
 AC_SUBST(XSLTPROC)
 
+# Check if `dpkg-buildpackage' is installed on your system
+echo -n "checking for dpkg-buildpackage... "
+if test -x /usr/bin/dpkg-buildpackage ; then
+	DPKGBPKG="/usr/bin/dpkg-buildpackage"
+	echo $DPKGBPKG
+elif test -x /usr/local/bin/dpkg-buildpackage; then
+	DPKGBPKG="/usr/local/bin/dpkg-buildpackage"
+	echo $DPKGBPKG
+elif test -x /bin/dpkg-buildpackage; then
+	DPKGBPKG="/bin/dpkg-buildpackage"
+	echo $DPKGBPKG
+else
+	DPKGBPKG="/bin/true"
+	echo "not found."
+fi
+AC_SUBST(DPKGBPKG)
+
 # Checks for library functions.
 AC_TYPE_SIGNAL
 AC_FUNC_STAT
@@ -85,5 +102,6 @@ AC_CONFIG_FILES([
 Makefile
 man/Makefile
 src/Makefile
+clients/Makefile
 ])
 AC_OUTPUT
