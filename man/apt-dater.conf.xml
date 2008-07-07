@@ -1,0 +1,263 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+
+<!--
+
+Process this file with an XSLT processor: `xsltproc \
+-''-nonet /usr/share/sgml/docbook/stylesheet/xsl/nwalsh/\
+manpages/docbook.xsl manpage.dbk'.  A manual page
+<package>.<section> will be generated.  You may view the
+manual page with: nroff -man <package>.<section> | less'.  A
+typical entry in a Makefile or Makefile.am is:
+
+DB2MAN=/usr/share/sgml/docbook/stylesheet/xsl/nwalsh/\
+manpages/docbook.xsl
+XP=xsltproc -''-nonet
+
+manpage.1: manpage.dbk
+        $(XP) $(DB2MAN) $<
+    
+The xsltproc binary is found in the xsltproc package.  The
+XSL files are in docbook-xsl.  Please remember that if you
+create the nroff version in one of the debian/rules file
+targets (such as build), you will need to include xsltproc
+and docbook-xsl in your Build-Depends control field.
+
+-->
+
+  <!-- Fill in your name for FIRSTNAME and SURNAME. -->
+  <!ENTITY dhfirstname "<firstname>Andre</firstname>">
+  <!ENTITY dhsurname   "<surname>Ellguth</surname>">
+  <!-- Please adjust the date whenever revising the manpage. -->
+  <!ENTITY dhdate      "<date>Jule  7, 2008</date>">
+  <!-- SECTION should be 1-8, maybe w/ subsection other parameters are
+       allowed: see man(7), man(1). -->
+  <!ENTITY dhsection   "<manvolnum>5</manvolnum>">
+  <!ENTITY dhemail     "<email>ellguth@ibh.de</email>">
+  <!ENTITY dhusername  "Andre Ellguth">
+  <!ENTITY dhucpackage "<refentrytitle>APT-DATER</refentrytitle>">
+  <!ENTITY dhpackage   "apt-dater">
+
+  <!ENTITY debian      "<productname>Debian</productname>">
+  <!ENTITY gnu         "<acronym>GNU</acronym>">
+  <!ENTITY gpl         "&gnu; <acronym>GPL</acronym>">
+]>
+
+<refentry>
+  <refentryinfo>
+    <address>
+      &dhemail;
+    </address>
+<!--
+    <authorgroup>
+      <author>
+        <firstname>Andre</firstname>
+        <surname>Ellguth</surname>
+	<email>ellguth@ibh.de</email>
+        <contrib>Maintainer.</contrib>
+      </author>
+      <author>
+        &dhfirstname;
+        &dhsurname;
+        &dhemail;
+	<contrib>Maintainer.</contrib>
+      </author>
+      <othercredit>
+	<firstname>Jens</firstname>
+	<surname>Haser</surname>
+	<email>jens_dd@hotmail.de</email>
+	<contrib>Fixed some UI glitches.</contrib>
+      </othercredit>
+    </authorgroup>
+-->
+    <copyright>
+      <year>2008</year>
+      <holder>IBH IT-Service GmbH <ulink url="http://www.ibh.de/">http://www.ibh.de/</ulink></holder>
+    </copyright>
+    &dhdate;
+  </refentryinfo>
+  <refmeta>
+    &dhucpackage;
+
+    &dhsection;
+  </refmeta>
+  <refnamediv>
+    <refname>&dhpackage;.conf</refname>
+
+    <refpurpose>configuration file of &dhpackage;</refpurpose>
+  </refnamediv>
+  <refsynopsisdiv>
+    <variablelist>
+      <varlistentry>
+        <listitem>
+	  <para><replaceable>[Section]</replaceable></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <listitem>
+	  <para><replaceable>parameter</replaceable>=<replaceable>value</replaceable></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <listitem>
+	  <para><replaceable>parameter</replaceable>=<replaceable>value;value;...;</replaceable></para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </refsynopsisdiv>
+  <refsect1>
+    <title>DESCRIPTION</title>
+
+    <para>The file <replaceable>&dhpackage;.conf</replaceable> is the
+      configuration file for <command>&dhpackage;</command>(8).
+      <command>&dhpackage;</command>(8) is a program to manage package updats 
+      on a large number of remote hosts using SSH.
+      This man page descripes briefly the parameters of the file
+      <replaceable>&dhpackage;.conf</replaceable>. The syntax of the
+      configuration file is the syntax of the glib keyfiles.
+    </para>
+
+  </refsect1>
+  <refsect1>
+    <title>OPTIONS</title>
+
+    <para>Section <replaceable>[Paths]</replaceable></para>
+
+    <variablelist>
+      <varlistentry>
+        <term><replaceable>HostsFile</replaceable>=<replaceable>~/apt-dater/conf/hosts.conf</replaceable></term>
+        <listitem>
+          <para>The location of the file contains all host which will be managed with <command>&dhpackage;</command>.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><replaceable>StatsDir</replaceable>=<replaceable>~/apt-dater/stats</replaceable></term>
+        <listitem>
+          <para>The location of the directory which contains the status files of any host.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>Section <replaceable>[SSH]</replaceable></para>
+
+    <variablelist>
+      <varlistentry>
+        <term><replaceable>Cmd</replaceable>=<replaceable>/usr/bin/ssh</replaceable></term>
+        <listitem>
+          <para>The location of ssh-client binary.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><replaceable>SFTPCmd</replaceable></term>
+        <listitem>
+          <para>The command to initiate a file transfer e.g. <command>/usr/bin/mc /#sh:%u@%h:C/</command></para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><replaceable>OptionalCmdFlags</replaceable></term>
+        <listitem>
+          <para>Additional ssh-client command flags, which will be appended.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><replaceable>DefaultUser</replaceable></term>
+        <listitem>
+          <para>The default user which will be used for remote login.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><replaceable>DefaulPort</replaceable>=<replaceable>22</replaceable></term>
+        <listitem>
+          <para>The default port to connect to the ssh server.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>Section <replaceable>[Commands]</replaceable></para>
+    
+    <variablelist>
+      <varlistentry>
+        <term><replaceable>CmdRefresh</replaceable>=<replaceable>sudo aptitude update &amp;&amp; sudo aptitude -s -y -v upgrade</replaceable></term>
+        <listitem>
+	  <para>The command which will be used to refresh the status of the managed host.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><replaceable>CmdUpgrade</replaceable>=<replaceable>sudo aptitude upgrade</replaceable></term>
+        <listitem>
+	  <para>The command which will be used to intitate a upgrade of a managed host.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><replaceable>CmdInstall</replaceable>=<replaceable>sudo aptitude install %s</replaceable></term>
+        <listitem>
+	  <para>The command which will be used to update a single package. <replaceable>%s</replaceable> will be replaced by the name of the package.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>Section <replaceable>[Appearance]</replaceable></para>
+
+    <variablelist>
+      <varlistentry>
+        <term><replaceable>Colors</replaceable></term>
+        <listitem>
+	  <para>Set your own color style of the ui components. To highlight colors you can use the <replaceable>bright</replaceable>* keyword.
+          Example: Colors=menu brightgreen blue;status brightgreen blue;selector black red;</para>.
+	  <para>Components are:</para>
+	  <variablelist>
+	    <varlistentry><para><replaceable>default</replaceable></para></varlistentry>
+	    <varlistentry><para><replaceable>menu</replaceable></para></varlistentry>
+	    <varlistentry><para><replaceable>status</replaceable></para></varlistentry>
+	    <varlistentry><para><replaceable>selector</replaceable></para></varlistentry>
+	    <varlistentry><para><replaceable>hoststatus</replaceable></para></varlistentry>
+	    <varlistentry><para><replaceable>query</replaceable></para></varlistentry>
+	    <varlistentry><para><replaceable>input</replaceable></para></varlistentry>
+	  </variablelist>
+
+	  <para>Colors are:</para>
+	  <variablelist>
+	    <varlistentry><para><replaceable>default</replaceable></para></varlistentry>
+	    <varlistentry><para><replaceable>black</replaceable></para></varlistentry>
+	    <varlistentry><para><replaceable>cyan</replaceable></para></varlistentry>
+	    <varlistentry><para><replaceable>green</replaceable></para></varlistentry>
+	    <varlistentry><para><replaceable>magenta</replaceable></para></varlistentry>
+	    <varlistentry><para><replaceable>red</replaceable></para></varlistentry>
+	    <varlistentry><para><replaceable>white</replaceable></para></varlistentry>
+	    <varlistentry><para><replaceable>yellow</replaceable></para></varlistentry>
+	  </variablelist>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+
+  </refsect1>
+  <refsect1>
+    <title>ENVIRONMENT</title>
+
+    <para><envar>MAINTAINER</envar>: The maintainer's name used by <command>debtrack</command> on the managed hosts.</para>
+  </refsect1>
+  <refsect1>
+    <title>FILES</title>
+
+    <variablelist>
+      <varlistentry>
+	<term><replaceable>~/.config/apt-dater/apt-dater.conf</replaceable></term>
+	<listitem>
+	  <para>The configuration file of apt-dater</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><replaceable>~/.config/apt-dater/hosts.conf</replaceable></term>
+	<listitem>
+	  <para>Contains all hosts you would like to manage</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+	
+    <para>apt-dater(8), aptitude(1), apt-get(1), debtrack, screen(1), ssh(1).</para>
+  </refsect1>
+</refentry>
