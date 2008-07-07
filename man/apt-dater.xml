@@ -71,7 +71,7 @@ and docbook-xsl in your Build-Depends control field.
     </authorgroup>
     <copyright>
       <year>2008</year>
-      <holder>IBH IT-Service GmbH <ulink url="http://www.ibh.net/">http://www.ibh.net/</ulink></holder>
+      <holder>IBH IT-Service GmbH <ulink url="http://www.ibh.de/">http://www.ibh.de/</ulink></holder>
     </copyright>
     &dhdate;
   </refentryinfo>
@@ -122,8 +122,26 @@ and docbook-xsl in your Build-Depends control field.
     <para><envar>MAINTAINER</envar>: The maintainer's name used by <command>debtrack</command> on the managed hosts.</para>
   </refsect1>
   <refsect1>
-    <title>SEE ALSO</title>
+    <title>FILES</title>
 
-    <para>aptitude(1), apt-get(1), debtrack, screen(1), ssh(1).</para>
+    <variablelist>
+      <varlistentry>
+	<term><replaceable>~/.config/apt-dater/apt-dater.conf</replaceable></term>
+	<listitem>
+	  <para>The configuration file of apt-dater</para>
+	</listitem>
+      </varlistentry>
+      <varlistentry>
+	<term><replaceable>~/.config/apt-dater/hosts.conf</replaceable></term>
+	<listitem>
+	  <para>Contains all hosts you would like to manage</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </refsect1>
+  <refsect1>
+    <title>SEE ALSO</title>
+	
+    <para>apt-dater.conf(5), aptitude(1), apt-get(1), debtrack, screen(1), ssh(1).</para>
   </refsect1>
 </refentry>
