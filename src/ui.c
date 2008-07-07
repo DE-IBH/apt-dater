@@ -679,7 +679,8 @@ void doUI (GList *hosts)
      maintainer[0] = 0;
  }
 
- if (cfg->query_maintainer) {
+ if ((cfg->query_maintainer == 1) ||
+     ((cfg->query_maintainer > 1) && (m == NULL))) {
    WINDOW *w = newwin(5, 52, LINES/2-3, (COLS-52)/2);
    box(w,0,0);
 

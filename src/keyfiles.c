@@ -128,7 +128,11 @@ CfgFile *loadConfig (char *filename)
    g_clear_error(&error);
  }
 
- lcfg->query_maintainer = g_key_file_get_boolean(keyfile, "Screen", "QueryMaintainer", &error);
+ lcfg->query_maintainer = g_key_file_get_integer(keyfile, "Screen", "QueryMaintainer", &error);
+ if (error) {
+   lcfg->query_maintainer = 2;
+   g_clear_error(&error);
+ }
 
  if(!(lcfg->colors = 
      g_key_file_get_string_list(keyfile, "Appearance", "Colors", 

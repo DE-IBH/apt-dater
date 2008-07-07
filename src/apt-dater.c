@@ -4,6 +4,9 @@
  *
  */
 
+#include <glib.h>
+#include <glib/gstdio.h>
+
 #include "apt-dater.h"
 #include "keyfiles.h"
 #include "ui.h"
@@ -55,6 +58,13 @@ int main(int argc, char **argv)
   g_printerr("Error on loading config file %s\n", cfg->hostsfile);
   exit(EXIT_FAILURE);
  }
+
+ /* Test if we are the owner of the TTY or die. */
+ if(g_access("/proc/self/fd/0", R_OK|W_OK)) {
+   g_error("Cannot open your terminal /proc/self/fd/0 - please check.");
+   exit(EXIT_FAILURE);
+ }
+
 
  getOldestMtime(hosts);
 

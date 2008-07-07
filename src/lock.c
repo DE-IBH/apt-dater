@@ -35,7 +35,7 @@ int setLockForHost(HostNode *n)
  gchar *lockfile = NULL;
  
  if(!(lockfile = getLockFile(n->hostname))) {
-  g_error("Can't get the name of the lock file");
+  g_error("Can't get the name of the lock file!");
   return(EXIT_FAILURE);
  }
 
@@ -49,7 +49,14 @@ int setLockForHost(HostNode *n)
 
 #ifdef HAVE_FLOCK
  lockList = g_list_prepend(lockList, n);
- r = flock(n->fdlock, LOCK_EX | LOCK_NB);
+ do {
+   r = flock(n->fdlock, LOCK_EX | LOCK_NB);
+ } while((r==-1) && (errno == EINTR));
+
+ if((r==-1) && (errno != EWOULDBLOCK)) {
+   g_error("Failed to get lockfile %s: %s",
+	   lockfile, g_strerror(errno));
+ }
 #else
  g_warning("Can't lock to file %s because function flock() is missing!",
 	   lockfile);
