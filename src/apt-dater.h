@@ -22,6 +22,7 @@
 typedef struct _cfgfile {
  gchar *hostsfile;
  gchar *screenrcfile;
+ gchar *screentitle;
  gchar *statsdir;
  gchar *ssh_cmd;
  gchar *sftp_cmd;

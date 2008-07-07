@@ -4,9 +4,6 @@
 # Default: $XDG_CONFIG_HOME/apt-dater/hosts.conf
 #HostsFile=path-to/hosts.conf
 
-# Default: $XDG_CONFIG_HOME/apt-dater/screenrc
-#ScreenrcFile=path-to/screenrc
-
 # Default: $XDG_DATA_HOME/apt-dater
 #StatsDir=path-to/stats
 
@@ -20,6 +17,14 @@ SFTPCmd=/usr/bin/mc /#sh:%u@%h:C/
 
 DefaultUser=apt-dater
 DefaultPort=22
+
+#[Screen]
+## Default: $XDG_CONFIG_HOME/apt-dater/screenrc
+#RCFile=path-to/screenrc
+#
+## Default: %m # %u@%h:%p
+#Title=%m # %u@%h:%p
+#
 
 [Commands]
 CmdRefresh=sudo aptitude -q update && sudo apt-get -q -s upgrade && /usr/lib/debtrack/kernelinfo.sh

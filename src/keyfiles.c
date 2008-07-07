@@ -59,13 +59,17 @@ CfgFile *loadConfig (char *filename)
  if(!(lcfg->hostsfile = 
       g_key_file_get_string(keyfile, "Paths", "HostsFile", NULL)))
     lcfg->hostsfile = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.conf");
- if(!(lcfg->screenrcfile = 
-      g_key_file_get_string(keyfile, "Paths", "ScreenrcFile", NULL)))
-    lcfg->screenrcfile = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc");
  if(!(lcfg->statsdir =
       g_key_file_get_string(keyfile, "Paths", "StatsDir", NULL)))
     lcfg->statsdir = g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats");
  g_mkdir_with_parents(lcfg->statsdir, S_IRWXU | S_IRWXG | S_IRWXO);
+
+ if(!(lcfg->screenrcfile = 
+      g_key_file_get_string(keyfile, "Screen", "RCFile", NULL)))
+    lcfg->screenrcfile = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc");
+ if(!(lcfg->screentitle = 
+      g_key_file_get_string(keyfile, "Screen", "Title", NULL)))
+    lcfg->screentitle = g_strdup("%m # %u@%h:%p");
 
  if(!(lcfg->ssh_cmd = 
       g_key_file_get_string(keyfile, "SSH", "Cmd", &error))) {

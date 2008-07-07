@@ -14,6 +14,7 @@
 #endif
 
 #include "screen.h"
+#include "parsecmd.h"
 
 static gchar *dump_fn = NULL;
 static struct passwd *pw = NULL;
@@ -84,12 +85,16 @@ screen_new(HostNode *n, const gboolean detached) {
   if (!cfg->use_screen)
     return g_strdup("");
   
-  return g_strdup_printf(SCREEN_BINARY"+-%sS+"SCREEN_SOCKPRE"%s_%s_%d" \
-			 "+-t+%s@%s:%d+-c+%s+",
-			 detached ? "dm" : "",
-			 n->ssh_user, n->hostname, n->ssh_port,
-			 n->ssh_user, n->hostname, n->ssh_port,
-			 cfg->screenrcfile);
+  gchar *title = parse_string(cfg->screentitle, n);
+
+  gchar *cmd = g_strdup_printf(SCREEN_BINARY"+-%sS+"SCREEN_SOCKPRE"%s_%s_%d"	\
+			       "+-t+%s+-c+%s+",
+			       detached ? "dm" : "",
+			       n->ssh_user, n->hostname, n->ssh_port,
+			       title, cfg->screenrcfile);
+  g_free(title);
+
+  return cmd;
 }
 
 static gchar *

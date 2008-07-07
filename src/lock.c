@@ -39,9 +39,9 @@ int setLockForHost(HostNode *n)
   return(EXIT_FAILURE);
  }
 
- if(n->fdlock <= 0) {
-   if(!(n->fdlock = open(lockfile, O_CREAT|O_APPEND))) {
-     g_warning("%s: %s", lockfile, strerror(errno));
+ if(n->fdlock < 0) {
+   if((n->fdlock = open(lockfile, O_CREAT))< 0) {
+     g_error("%s: %s", lockfile, strerror(errno));
      g_free(lockfile);
      return(EXIT_FAILURE);
    }
@@ -80,7 +80,7 @@ int unsetLockForHost(HostNode *n)
 {
  int r;
 
- if(n->fdlock <= 0) {
+ if(n->fdlock < 0) {
   return(EXIT_FAILURE);
  }
 
