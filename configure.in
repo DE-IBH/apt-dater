@@ -44,7 +44,7 @@ AC_STRUCT_TM
 
 # Check if `screen' is installed on your system
 echo -n "checking for screen... "
-if test -x /usr/bin/screen ; then
+if test -x /usr/bin/screen; then
 	AC_DEFINE(SCREEN_BINARY,"/usr/bin/screen",[ Where is the command screen located. ])
 	echo "/usr/bin/screen"
 elif test -x /usr/local/bin/screen; then
@@ -74,6 +74,17 @@ else
 	echo "not found."
 fi
 AC_SUBST(XSLTPROC)
+
+# Check if `docbook-xsl' is installed on your system
+echo -n "checking for docbook-xsl... "
+if test -r /usr/share/xml/docbook/stylesheet/nwalsh/manpages/docbook.xsl ; then
+    DBXSL="/usr/share/xml/docbook/stylesheet/nwalsh/manpages/docbook.xsl"
+    echo $DBXSL
+else
+    DBXSL=
+    echo "not found."
+fi
+AC_SUBST(DBXSL)
 
 # Check if `dpkg-buildpackage' is installed on your system
 echo -n "checking for dpkg-buildpackage... "

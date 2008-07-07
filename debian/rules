@@ -67,7 +67,7 @@ install: build
 
 	# Add here commands to install the package into debian/apt-dater.
 	cd src && $(MAKE) DESTDIR=$(CURDIR)/debian/apt-dater install
-
+	mkdir -p debian/apt-dater/usr/share/pixmaps && cp images/apt-dater.xpm debian/apt-dater/usr/share/pixmaps
 
 # Build architecture-independent files here.
 binary-indep: build install

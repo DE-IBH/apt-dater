@@ -63,6 +63,7 @@ CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
+DBXSL = @DBXSL@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
 DPKGBPKG = @DPKGBPKG@
@@ -336,7 +337,7 @@ uninstall-man: uninstall-man8
 
 
 apt-dater.8: apt-dater.xml
-	$(XSLTPROC) -''-nonet /usr/share/xml/docbook/stylesheet/nwalsh/manpages/docbook.xsl apt-dater.xml
+	$(XSLTPROC) -''-nonet $(DBXSL) apt-dater.xml
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

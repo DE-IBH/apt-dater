@@ -694,6 +694,7 @@ CPP
 GREP
 EGREP
 XSLTPROC
+DBXSL
 DPKGBPKG
 LIBOBJS
 LTLIBOBJS'
@@ -4829,7 +4830,7 @@ fi
 
 # Check if `screen' is installed on your system
 echo -n "checking for screen... "
-if test -x /usr/bin/screen ; then
+if test -x /usr/bin/screen; then
 
 cat >>confdefs.h <<\_ACEOF
 #define SCREEN_BINARY "/usr/bin/screen"
@@ -4869,6 +4870,17 @@ elif test -x /bin/xsltproc; then
 else
 	XSLTPROC="/bin/true"
 	echo "not found."
+fi
+
+
+# Check if `docbook-xsl' is installed on your system
+echo -n "checking for docbook-xsl... "
+if test -r /usr/share/xml/docbook/stylesheet/nwalsh/manpages/docbook.xsl ; then
+    DBXSL="/usr/share/xml/docbook/stylesheet/nwalsh/manpages/docbook.xsl"
+    echo $DBXSL
+else
+    DBXSL=
+    echo "not found."
 fi
 
 
@@ -6101,12 +6113,13 @@ CPP!$CPP$ac_delim
 GREP!$GREP$ac_delim
 EGREP!$EGREP$ac_delim
 XSLTPROC!$XSLTPROC$ac_delim
+DBXSL!$DBXSL$ac_delim
 DPKGBPKG!$DPKGBPKG$ac_delim
 LIBOBJS!$LIBOBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 84; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 85; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

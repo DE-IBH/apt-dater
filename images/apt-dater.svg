@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="128"
+   height="128"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.44.1"
+   version="1.0"
+   sodipodi:docbase="/home/liske/src/apt-dater-0.5.0/images"
+   sodipodi:docname="apt-dater.svg"
+   inkscape:export-filename="/home/liske/src/apt-dater-0.5.0/images/apt-dater.png"
+   inkscape:export-xdpi="22.5"
+   inkscape:export-ydpi="22.5">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="black"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="1"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.96875"
+     inkscape:cx="64"
+     inkscape:cy="64"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     width="128px"
+     height="128px"
+     inkscape:window-width="925"
+     inkscape:window-height="587"
+     inkscape:window-x="170"
+     inkscape:window-y="361" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2">
+    <rect
+       style="opacity:1;fill:navy;fill-rule:evenodd;stroke:black;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1874"
+       width="128"
+       height="10"
+       x="0"
+       y="0" />
+    <rect
+       style="opacity:1;fill:navy;fill-rule:evenodd;stroke:black;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2771"
+       width="128"
+       height="10"
+       x="0"
+       y="108" />
+    <rect
+       style="opacity:1;fill:maroon;fill-rule:evenodd;stroke:black;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2800"
+       width="128"
+       height="10"
+       x="0"
+       y="10" />
+  </g>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:lime;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="-0.02734375"
+       y="115.88672"
+       id="text2776"><tspan
+         sodipodi:role="line"
+         id="tspan2778"
+         x="-0.02734375"
+         y="115.88672"
+         style="font-size:8px;font-weight:bold">0 Hosts in status...</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10.00001717px;font-style:normal;font-weight:normal;fill:lime;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="0.058592752"
+       y="7.3359556"
+       id="text2780"
+       transform="scale(1.000002,0.999998)"><tspan
+         sodipodi:role="line"
+         id="tspan2782"
+         x="0.058592752"
+         y="7.3359556"
+         style="font-size:8px;font-weight:bold">q:quit ?:help /:search</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="4.1405001"
+       y="17.445312"
+       id="text2784"><tspan
+         sodipodi:role="line"
+         id="tspan2786"
+         x="4.1405001"
+         y="17.445312"
+         style="font-size:8px;fill:white;font-weight:bold">[ ] Updates pending</tspan><tspan
+         sodipodi:role="line"
+         x="4.1405001"
+         y="27.445312"
+         id="tspan2788"
+         style="font-size:8px;fill:white;fill-opacity:1;opacity:1;font-weight:bold">[ ] Up to date</tspan><tspan
+         sodipodi:role="line"
+         x="4.1405001"
+         y="37.445312"
+         id="tspan2790"
+         style="font-size:8px;fill:white;fill-opacity:1;opacity:1;font-weight:bold">[ ] Status file missing</tspan><tspan
+         sodipodi:role="line"
+         x="4.1405001"
+         y="47.445312"
+         id="tspan2792"
+         style="font-size:8px;fill:white;fill-opacity:1;opacity:1;font-weight:bold">[ ] Refresh required</tspan><tspan
+         sodipodi:role="line"
+         x="4.1405001"
+         y="57.445312"
+         id="tspan2794"
+         style="font-size:8px;fill:white;fill-opacity:1;opacity:1;font-weight:bold">[ ] In refresh</tspan><tspan
+         sodipodi:role="line"
+         x="4.1405001"
+         y="67.445312"
+         id="tspan2796"
+         style="font-size:8px;fill:white;fill-opacity:1;opacity:1;font-weight:bold">[ ] Sessions</tspan><tspan
+         sodipodi:role="line"
+         x="4.1405001"
+         y="77.445312"
+         id="tspan2798"
+         style="font-size:8px;fill:white;fill-opacity:1;opacity:1;font-weight:bold">[ ] Unknown</tspan></text>
+  </g>
+</svg>
