@@ -73,7 +73,7 @@ and docbook-xsl in your Build-Depends control field.
 -->
     <copyright>
       <year>2008</year>
-      <holder>IBH IT-Service GmbH <ulink url="http://www.ibh.de/">http://www.ibh.de/</ulink></holder>
+      <holder>IBH IT-Service GmbH [<ulink url="http://www.ibh.de/">http://www.ibh.de/</ulink>]</holder>
     </copyright>
     &dhdate;
   </refentryinfo>
@@ -85,23 +85,23 @@ and docbook-xsl in your Build-Depends control field.
   <refnamediv>
     <refname>&dhpackage;.conf</refname>
 
-    <refpurpose>configuration file of &dhpackage;</refpurpose>
+    <refpurpose>configuration file of &dhpackage;(8)</refpurpose>
   </refnamediv>
   <refsynopsisdiv>
     <variablelist>
       <varlistentry>
         <listitem>
-	  <para><replaceable>[Section]</replaceable></para>
+	  <para><symbol>[Section]</symbol></para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <listitem>
-	  <para><replaceable>parameter</replaceable>=<replaceable>value</replaceable></para>
+	  <para><symbol>parameter</symbol>=<replaceable>value</replaceable></para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <listitem>
-	  <para><replaceable>parameter</replaceable>=<replaceable>value;value;...;</replaceable></para>
+	  <para><symbol>parameter</symbol>=<replaceable>value;value;...;</replaceable></para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -114,143 +114,216 @@ and docbook-xsl in your Build-Depends control field.
       <command>&dhpackage;</command>(8) is a program to manage package updats 
       on a large number of remote hosts using SSH.
       This man page descripes briefly the parameters of the file
-      <replaceable>&dhpackage;.conf</replaceable>. The syntax of the
-      configuration file is the syntax of the glib keyfiles.
+      <replaceable>&dhpackage;.conf</replaceable>. 
+      The default location of this file is <replaceable>$XDG_CONFIG_HOME/apt-dater/hosts.conf</replaceable>.
     </para>
-
+    <para>
+      The syntax of the configuration file is the syntax of glib keyfiles.
+    </para>
   </refsect1>
   <refsect1>
     <title>OPTIONS</title>
 
-    <para>Section <replaceable>[Paths]</replaceable></para>
+    <refsect2>
+	<title>Section <symbol>[Paths]</symbol></title>
 
     <variablelist>
       <varlistentry>
-        <term><replaceable>HostsFile</replaceable>=<replaceable>~/apt-dater/conf/hosts.conf</replaceable></term>
+        <term><symbol>HostsFile</symbol>=<replaceable>$XDG_CONFIG_HOME/apt-dater/hosts.conf</replaceable></term>
         <listitem>
-          <para>The location of the file contains all host which will be managed with <command>&dhpackage;</command>.</para>
+          <para>The location of the file contains all host which will be managed with <command>&dhpackage;</command>. (optional)</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><replaceable>StatsDir</replaceable>=<replaceable>~/apt-dater/stats</replaceable></term>
+        <term><symbol>StatsDir</symbol>=<replaceable>$XDG_DATA_HOME/apt-dater</replaceable></term>
         <listitem>
-          <para>The location of the directory which contains the status files of any host.</para>
+          <para>The location of the directory which contains the status files of any host. (optional)</para>
         </listitem>
       </varlistentry>
     </variablelist>
+    </refsect2>
 
-    <para>Section <replaceable>[SSH]</replaceable></para>
+    <refsect2>
+	<title>Section <symbol>[Screen]</symbol></title>
 
     <variablelist>
       <varlistentry>
-        <term><replaceable>Cmd</replaceable>=<replaceable>/usr/bin/ssh</replaceable></term>
+        <term><symbol>RCFile</symbol>=<replaceable>$XDG_CONFIG_HOME/apt-dater/screenrc</replaceable></term>
+        <listitem>
+          <para>Location of screen(1) config file. (optional)</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><symbol>Title</symbol>=<replaceable>%m # %u@%h:%p</replaceable></term>
+        <listitem>
+          <para>Template for screen titles using string escapes. (optional)</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+    </refsect2>
+
+    <refsect2>
+	<title>Section <symbol>[SSH]</symbol></title>
+
+    <variablelist>
+      <varlistentry>
+        <term><symbol>Cmd</symbol>=<replaceable>/usr/bin/ssh</replaceable></term>
         <listitem>
           <para>The location of ssh-client binary.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><replaceable>SFTPCmd</replaceable></term>
+        <term><symbol>SFTPCmd</symbol></term>
         <listitem>
           <para>The command to initiate a file transfer e.g. <command>/usr/bin/mc /#sh:%u@%h:C/</command></para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><replaceable>OptionalCmdFlags</replaceable></term>
+        <term><symbol>OptionalCmdFlags</symbol></term>
         <listitem>
           <para>Additional ssh-client command flags, which will be appended.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><replaceable>DefaultUser</replaceable></term>
+        <term><symbol>DefaultUser</symbol></term>
         <listitem>
           <para>The default user which will be used for remote login.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><replaceable>DefaulPort</replaceable>=<replaceable>22</replaceable></term>
+        <term><symbol>DefaulPort</symbol>=<replaceable>22</replaceable></term>
         <listitem>
           <para>The default port to connect to the ssh server.</para>
         </listitem>
       </varlistentry>
     </variablelist>
+    </refsect2>
 
-    <para>Section <replaceable>[Commands]</replaceable></para>
+    <refsect2>
+	<title>Section <symbol>[Commands]</symbol></title>
     
     <variablelist>
       <varlistentry>
-        <term><replaceable>CmdRefresh</replaceable>=<replaceable>sudo aptitude update &amp;&amp; sudo aptitude -s -y -v upgrade</replaceable></term>
+        <term><symbol>CmdRefresh</symbol>=<replaceable>sudo aptitude update &amp;&amp; sudo aptitude -s -y -v upgrade</replaceable></term>
         <listitem>
 	  <para>The command which will be used to refresh the status of the managed host.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><replaceable>CmdUpgrade</replaceable>=<replaceable>sudo aptitude upgrade</replaceable></term>
+        <term><symbol>CmdUpgrade</symbol>=<replaceable>sudo aptitude upgrade</replaceable></term>
         <listitem>
 	  <para>The command which will be used to intitate a upgrade of a managed host.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><replaceable>CmdInstall</replaceable>=<replaceable>sudo aptitude install %s</replaceable></term>
+        <term><symbol>CmdInstall</symbol>=<replaceable>sudo aptitude install %s</replaceable></term>
         <listitem>
 	  <para>The command which will be used to update a single package. <replaceable>%s</replaceable> will be replaced by the name of the package.</para>
         </listitem>
       </varlistentry>
     </variablelist>
+    </refsect2>
 
-    <para>Section <replaceable>[Appearance]</replaceable></para>
+    <refsect2>
+	<title>Section <symbol>[Appearance]</symbol></title>
 
     <variablelist>
       <varlistentry>
-        <term><replaceable>Colors</replaceable></term>
+        <term><symbol>Colors</symbol></term>
         <listitem>
 	  <para>Set your own color style of the ui components. To highlight colors you can use the <replaceable>bright</replaceable>* keyword.
           Example: Colors=menu brightgreen blue;status brightgreen blue;selector black red;</para>.
-	  <para>Components are:</para>
+   <para>Components are:</para>
 	  <variablelist>
-	    <varlistentry><para><replaceable>default</replaceable></para></varlistentry>
-	    <varlistentry><para><replaceable>menu</replaceable></para></varlistentry>
-	    <varlistentry><para><replaceable>status</replaceable></para></varlistentry>
-	    <varlistentry><para><replaceable>selector</replaceable></para></varlistentry>
-	    <varlistentry><para><replaceable>hoststatus</replaceable></para></varlistentry>
-	    <varlistentry><para><replaceable>query</replaceable></para></varlistentry>
-	    <varlistentry><para><replaceable>input</replaceable></para></varlistentry>
+	    <varlistentry><para><symbol>default</symbol></para></varlistentry>
+	    <varlistentry><para><symbol>menu</symbol></para></varlistentry>
+	    <varlistentry><para><symbol>status</symbol></para></varlistentry>
+	    <varlistentry><para><symbol>selector</symbol></para></varlistentry>
+	    <varlistentry><para><symbol>hoststatus</symbol></para></varlistentry>
+	    <varlistentry><para><symbol>query</symbol></para></varlistentry>
+	    <varlistentry><para><symbol>input</symbol></para></varlistentry>
 	  </variablelist>
 
 	  <para>Colors are:</para>
 	  <variablelist>
-	    <varlistentry><para><replaceable>default</replaceable></para></varlistentry>
-	    <varlistentry><para><replaceable>black</replaceable></para></varlistentry>
-	    <varlistentry><para><replaceable>cyan</replaceable></para></varlistentry>
-	    <varlistentry><para><replaceable>green</replaceable></para></varlistentry>
-	    <varlistentry><para><replaceable>magenta</replaceable></para></varlistentry>
-	    <varlistentry><para><replaceable>red</replaceable></para></varlistentry>
-	    <varlistentry><para><replaceable>white</replaceable></para></varlistentry>
-	    <varlistentry><para><replaceable>yellow</replaceable></para></varlistentry>
+	    <varlistentry><para><constant>default</constant></para></varlistentry>
+	    <varlistentry><para><constant>black</constant></para></varlistentry>
+	    <varlistentry><para><constant>cyan</constant></para></varlistentry>
+	    <varlistentry><para><constant>green</constant></para></varlistentry>
+	    <varlistentry><para><constant>magenta</constant></para></varlistentry>
+	    <varlistentry><para><constant>red</constant></para></varlistentry>
+	    <varlistentry><para><constant>white</constant></para></varlistentry>
+	    <varlistentry><para><constant>yellow</constant></para></varlistentry>
 	  </variablelist>
         </listitem>
       </varlistentry>
     </variablelist>
-
+    </refsect2>
   </refsect1>
+
   <refsect1>
     <title>ENVIRONMENT</title>
 
-    <para><envar>MAINTAINER</envar>: The maintainer's name used by <command>debtrack</command> on the managed hosts.</para>
+    <variablelist>
+      <varlistentry>
+	<term><envar>MAINTAINER</envar></term>
+	<listitem>The maintainer's name. If not set, the GECOS entry for the current user will be used. This environment variable is forwarded to the remote hosts and used by <command>debtrack</command>.</listitem>
+      </varlistentry>
+    </variablelist>
   </refsect1>
+
+  <refsect1>
+    <title>STRING ESCAPES</title>
+
+    <command>&dhpackage;</command>(8) provides an string escape mechanism. The escape character is '%'.
+
+    <table>
+      <title>List of supported escapes.</title>
+      <thead>
+      <tr>
+        <td>escape</td>
+	<td>replaced by</td>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>%</td>
+	<td>escape character</td>
+      </tr>
+      <tr>
+        <td>h</td>
+	<td>hostname</td>
+      </tr>
+      <tr>
+        <td>m</td>
+	<td>maintainer name</td>
+      </tr>
+      <tr>
+        <td>p</td>
+	<td>SSH port number</td>
+      </tr>
+      <tr>
+        <td>u</td>
+	<td>SSH username</td>
+      </tr>
+      </tbody>
+    </table>
+  </refsect1>
+
   <refsect1>
     <title>FILES</title>
 
     <variablelist>
       <varlistentry>
-	<term><replaceable>~/.config/apt-dater/apt-dater.conf</replaceable></term>
+	<term><replaceable>apt-dater.conf</replaceable></term>
 	<listitem>
-	  <para>The configuration file of apt-dater</para>
+	  <para>The configuration file of apt-dater.</para>
 	</listitem>
       </varlistentry>
       <varlistentry>
-	<term><replaceable>~/.config/apt-dater/hosts.conf</replaceable></term>
+	<term><replaceable>hosts.conf</replaceable></term>
 	<listitem>
-	  <para>Contains all hosts you would like to manage</para>
+	  <para>Contains all hosts you would like to manage.</para>
 	</listitem>
       </varlistentry>
     </variablelist>
@@ -258,6 +331,6 @@ and docbook-xsl in your Build-Depends control field.
   <refsect1>
     <title>SEE ALSO</title>
 	
-    <para>apt-dater(8), aptitude(1), apt-get(1), debtrack, screen(1), ssh(1).</para>
+    <para>apt-dater(8), aptitude(1), apt-get(1), debtrack, screen(1), ssh(1), <ulink url="http://www.freedesktop.org/Standards/basedir-spec">XDG Base Directory Specification</ulink>.</para>
   </refsect1>
 </refentry>

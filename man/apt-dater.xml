@@ -71,7 +71,7 @@ and docbook-xsl in your Build-Depends control field.
     </authorgroup>
     <copyright>
       <year>2008</year>
-      <holder>IBH IT-Service GmbH <ulink url="http://www.ibh.de/">http://www.ibh.de/</ulink></holder>
+      <holder>IBH IT-Service GmbH [<ulink url="http://www.ibh.de/">http://www.ibh.de/</ulink>]</holder>
     </copyright>
     &dhdate;
   </refentryinfo>

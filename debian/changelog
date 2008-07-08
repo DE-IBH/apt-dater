@@ -1,3 +1,10 @@
+apt-dater (0.5.2-ibh0) unstable; urgency=low
+
+  * Added apt-dater.conf manpage.
+  * Fixed some locking issues.
+
+ -- Thomas Liske <liske@ibh.de>  Tue, 08 Jul 2008 09:38:32 +0200
+
 apt-dater (0.5.1-ibh0) unstable; urgency=low
 
   * Documentation fixes.
