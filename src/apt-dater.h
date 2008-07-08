@@ -17,7 +17,7 @@
 
 #define STATS_MAX_LINE_LEN 1000
 #define BUF_MAX_LEN 256
-#define PROG_NAME "apt-dater"
+#define PROG_NAME PACKAGE
 
 typedef struct _cfgfile {
  gchar *hostsfile;

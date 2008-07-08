@@ -18,6 +18,15 @@
 # include "config.h"
 #endif
 
+#define VERSTEXT PACKAGE_STRING " - " __DATE__ " " __TIME__ "\n\n" \
+  "Copyright Holder: IBH IT-Service GmbH [http://www.ibh.net/]\n\n" \
+  "This program is free software; you can redistribute it and/or modify\n" \
+  "it under the terms of the GNU General Public License as published by\n" \
+  "the Free Software Foundation; either version 2 of the License, or\n" \
+  "(at your option) any later version.\n\n" \
+  "Send bug reports to " PACKAGE_BUGREPORT ".\n\n"
+
+
 CfgFile *cfg = NULL;
 GMainLoop *loop = NULL;
 gboolean rebuilddl = FALSE;
@@ -29,17 +38,22 @@ int main(int argc, char **argv)
  char *cfgfilename = NULL;
  GList *hosts = NULL;
 
- cfgfilename = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "apt-dater.conf");
- g_set_prgname(PROG_NAME);
+ cfgfilename = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PACKAGE, "apt-dater.conf");
+ g_set_prgname(PACKAGE);
+ g_set_application_name(PACKAGE_STRING);
 
- while ((opts = getopt(argc, argv, "c:")) != EOF) {
+ while ((opts = getopt(argc, argv, "c:v")) != EOF) {
   switch(opts) {
   case 'c':
    if(cfgfilename) free(cfgfilename);
    cfgfilename = (char *) strdup(optarg);
    break;
+  case 'v':
+    g_print(VERSTEXT);
+    exit(0);
+   break;
   default:
-   g_printerr("Usage: %s [-c config]\n", g_get_prgname());
+   g_printerr("Usage: %s [-c config]|[-v]\n", g_get_prgname());
    exit(EXIT_FAILURE);
   }
  }

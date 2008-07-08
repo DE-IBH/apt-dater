@@ -1,20 +1,22 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
+PACKAGE=apt-dater
+VERSION=0.5.2
+
+AC_REVISION($Revision$)
+
 AC_PREREQ(2.61)
-AC_INIT(apt-dater, VERSION)
+AC_INIT(apt-dater, 0.5.2, apt-dater@ibh.de)
 AM_INIT_AUTOMAKE([apt-dater], VERSION)
 AC_CONFIG_SRCDIR([src/apt-dater.c])
 AC_CONFIG_HEADER([config.h])
 
-PACKAGE=apt-dater
-VERSION=0.5.0
-
 glib_module="glib-2.0 >= 2.3.6"
 PKG_CHECK_MODULES(GLIB, "$glib_module", enable_glib_=yes, enable_glib_=no)
 
-AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
+AC_SUBST(PACKAGE)
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 AC_PROG_INSTALL
