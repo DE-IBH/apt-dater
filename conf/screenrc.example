@@ -29,6 +29,9 @@ bind I login on
 bind O login off
 bind } history
 
+# Sessions should stay until destroyed by pressing space
+zombie ' '
+
 # ------------------------------------------------------------------------------
 # TERMINAL SETTINGS
 # ------------------------------------------------------------------------------
@@ -55,3 +58,6 @@ termcapinfo xterm|xterms|xs|rxvt ti@:te@
 
 # Add caption line with clock, window title and window flags.
 caption always "%{b bG}%c%=%t%=%f"
+
+# Catch zmodem file transfers
+zmodem catch

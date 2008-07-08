@@ -1,0 +1,74 @@
+.\"     Title: APT\-DATER
+.\"    Author: Andre Ellguth <ellguth@ibh.de>
+.\" Generator: DocBook XSL Stylesheets v1.71.0 <http://docbook.sf.net/>
+.\"      Date: Jule  3, 2008
+.\"    Manual: 
+.\"    Source: 
+.\"
+.TH "APT\-DATER" "8" "Jule 3, 2008" "" ""
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+apt\-dater \- terminal\-based remote package update manager
+.SH "SYNOPSIS"
+.HP 10
+\fBapt\-dater\fR [\fB[\-c\ \fR\fB\fIconfig\fR\fR\fB]\fR]
+.SH "DESCRIPTION"
+.PP
+This manual page documents briefly the
+\fBapt\-dater\fR
+command.
+.PP
+\fBapt\-dater\fR
+is a program to manage package updats on a large number of remote hosts using SSH.
+.SH "OPTIONS"
+.PP
+\fBapt\-dater\fR
+accepts the following command parameters:
+.PP
+\fB\-c \fR\fB\fIconfig\fR\fR
+.RS 3n
+Use alternative config file. Default is
+\fI$XDG_CONFIG_HOME/apt\-dater/apt\-dater.conf\fR.
+.RE
+.SH "ENVIRONMENT"
+.PP
+\fBMAINTAINER\fR: The maintainer's name used by
+\fBdebtrack\fR
+on the managed hosts.
+.SH "FILES"
+.PP
+\fI~/.config/apt\-dater/apt\-dater.conf\fR
+.RS 3n
+The configuration file of apt\-dater
+.RE
+.PP
+\fI~/.config/apt\-dater/hosts.conf\fR
+.RS 3n
+Contains all hosts you would like to manage
+.RE
+.SH "SEE ALSO"
+.PP
+apt\-dater.conf(5), aptitude(1), apt\-get(1), debtrack, screen(1), ssh(1).
+.SH "AUTHORS"
+.PP
+\fBAndre Ellguth\fR <\&ellguth@ibh.de\&>
+.sp -1n
+.IP "" 3n
+Maintainer.
+.PP
+\fBThomas Liske\fR <\&liske@ibh.de\&>
+.sp -1n
+.IP "" 3n
+Maintainer.
+.PP
+\fBJens Haser\fR <\&jens_dd@hotmail.de\&>
+.sp -1n
+.IP "" 3n
+Fixed some UI glitches.
+.SH "COPYRIGHT"
+Copyright \(co 2008 IBH IT\-Service GmbH [\fIhttp://www.ibh.de/\fR]
+.br
+

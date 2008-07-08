@@ -6,6 +6,7 @@
 #include "screen.h"
 #include "keyfiles.h"
 #include "stats.h"
+#include "lock.h"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -33,6 +34,7 @@ void freeConfig (CfgFile *cfg)
 
 void freeHostNode(HostNode *n)
 {
+ unsetLockForHost(n);
  g_free(n->hostname);
  g_free(n->group);
  g_free(n->ssh_user);
@@ -207,6 +209,8 @@ GList *loadHosts (char *filename)
    hostnode->hostname = g_strdup(hostname);
    hostnode->ssh_user = *ssh_user ? g_strdup(ssh_user) : g_strdup(cfg->ssh_defuser);
    hostnode->ssh_port = ssh_port ? ssh_port : cfg->ssh_defport;
+
+   hostnode->fdlock = -1;
 
    hostnode->group = g_strdup(groups[i]);
    hostnode->updates = g_list_alloc();

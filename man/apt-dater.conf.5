@@ -1,0 +1,257 @@
+.\"     Title: APT\-DATER
+.\"    Author: 
+.\" Generator: DocBook XSL Stylesheets v1.71.0 <http://docbook.sf.net/>
+.\"      Date: Jule  7, 2008
+.\"    Manual: 
+.\"    Source: 
+.\"
+.TH "APT\-DATER" "5" "Jule 7, 2008" "" ""
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+apt\-dater.conf \- configuration file of apt\-dater
+.SH "SYNOPSIS"
+.PP
+.RS 3n
+[Section]
+.RE
+.PP
+.RS 3n
+parameter=\fIvalue\fR
+.RE
+.PP
+.RS 3n
+parameter=\fIvalue;value;...;\fR
+.RE
+.SH "DESCRIPTION"
+.PP
+The file
+\fIapt\-dater.conf\fR
+is the configuration file for
+\fBapt\-dater\fR(8).
+\fBapt\-dater\fR(8) is a program to manage package updats on a large number of remote hosts using SSH. This man page descripes briefly the parameters of the file
+\fIapt\-dater.conf\fR. The default location of this file is
+\fI$XDG_CONFIG_HOME/apt\-dater/hosts.conf\fR.
+.PP
+The syntax of the configuration file is the syntax of glib keyfiles.
+.SH "OPTIONS"
+.SS "Section [Paths]"
+.PP
+HostsFile=\fI$XDG_CONFIG_HOME/apt\-dater/hosts.conf\fR
+.RS 3n
+The location of the file contains all host which will be managed with
+\fBapt\-dater\fR. (optional)
+.RE
+.PP
+StatsDir=\fI$XDG_DATA_HOME/apt\-dater\fR
+.RS 3n
+The location of the directory which contains the status files of any host. (optional)
+.RE
+.SS "Section [Screen]"
+.PP
+RCFile=\fI$XDG_CONFIG_HOME/apt\-dater/screenrc\fR
+.RS 3n
+Location of screen(1) config file. (optional)
+.RE
+.PP
+Title=\fI%m # %u@%h:%p\fR
+.RS 3n
+Template for screen titles using string escapes. (optional)
+.RE
+.SS "Section [SSH]"
+.PP
+Cmd=\fI/usr/bin/ssh\fR
+.RS 3n
+The location of ssh\-client binary.
+.RE
+.PP
+SFTPCmd
+.RS 3n
+The command to initiate a file transfer e.g.
+\fB/usr/bin/mc /#sh:%u@%h:C/\fR
+.RE
+.PP
+OptionalCmdFlags
+.RS 3n
+Additional ssh\-client command flags, which will be appended.
+.RE
+.PP
+DefaultUser
+.RS 3n
+The default user which will be used for remote login.
+.RE
+.PP
+DefaulPort=\fI22\fR
+.RS 3n
+The default port to connect to the ssh server.
+.RE
+.SS "Section [Commands]"
+.PP
+CmdRefresh=\fIsudo aptitude update && sudo aptitude \-s \-y \-v upgrade\fR
+.RS 3n
+The command which will be used to refresh the status of the managed host.
+.RE
+.PP
+CmdUpgrade=\fIsudo aptitude upgrade\fR
+.RS 3n
+The command which will be used to intitate a upgrade of a managed host.
+.RE
+.PP
+CmdInstall=\fIsudo aptitude install %s\fR
+.RS 3n
+The command which will be used to update a single package.
+\fI%s\fR
+will be replaced by the name of the package.
+.RE
+.SS "Section [Appearance]"
+.PP
+Colors
+.RS 3n
+Set your own color style of the ui components. To highlight colors you can use the
+\fIbright\fR* keyword. Example: Colors=menu brightgreen blue;status brightgreen blue;selector black red;
+.sp
+.
+   Components are:
+.RS 3n
+.PP
+.RS 3n
+default
+.RE
+.PP
+.RS 3n
+menu
+.RE
+.PP
+.RS 3n
+status
+.RE
+.PP
+.RS 3n
+selector
+.RE
+.PP
+.RS 3n
+hoststatus
+.RE
+.PP
+.RS 3n
+query
+.RE
+.PP
+.RS 3n
+input
+.RE
+.RE
+.IP "" 3n
+Colors are:
+.RS 3n
+.PP
+.RS 3n
+\fBdefault\fR
+.RE
+.PP
+.RS 3n
+\fBblack\fR
+.RE
+.PP
+.RS 3n
+\fBcyan\fR
+.RE
+.PP
+.RS 3n
+\fBgreen\fR
+.RE
+.PP
+.RS 3n
+\fBmagenta\fR
+.RE
+.PP
+.RS 3n
+\fBred\fR
+.RE
+.PP
+.RS 3n
+\fBwhite\fR
+.RE
+.PP
+.RS 3n
+\fByellow\fR
+.RE
+.RE
+.RE
+.SH "ENVIRONMENT"
+.PP
+\fBMAINTAINER\fR
+.RS 3n
+The maintainer's name. If not set, the GECOS entry for the current user will be used. This environment variable is forwarded to the remote hosts and used by \fBdebtrack\fR..RE
+.SH "STRING ESCAPES"
+\fBapt\-dater\fR(8) provides an string escape mechanism. The escape character is '%'.
+
+    .PP
+.B Table\ 1.\ List of supported escapes.
+.sp -1n
+.TS
+allbox tab(:);
+l l.
+T{
+escape
+T}:T{
+replaced by
+T}
+.T&
+l l
+l l
+l l
+l l
+l l.
+T{
+%
+T}:T{
+escape character
+T}
+T{
+h
+T}:T{
+hostname
+T}
+T{
+m
+T}:T{
+maintainer name
+T}
+T{
+p
+T}:T{
+SSH port number
+T}
+T{
+u
+T}:T{
+SSH username
+T}
+.TE
+.sp
+.SH "FILES"
+.PP
+\fIapt\-dater.conf\fR
+.RS 3n
+The configuration file of apt\-dater.
+.RE
+.PP
+\fIhosts.conf\fR
+.RS 3n
+Contains all hosts you would like to manage.
+.RE
+.SH "SEE ALSO"
+.PP
+apt\-dater(8), aptitude(1), apt\-get(1), debtrack, screen(1), ssh(1),
+[1]\&\fIXDG Base Directory Specification\fR.
+.SH "COPYRIGHT"
+Copyright \(co 2008 IBH IT\-Service GmbH [\fIhttp://www.ibh.de/\fR]
+.br
+.SH "REFERENCES"
+.TP 3
+1.\ XDG Base Directory Specification
+\%http://www.freedesktop.org/Standards/basedir\-spec

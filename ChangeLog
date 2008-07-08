@@ -1,4 +1,51 @@
 ------------------------------------------------------------------------
+r82 | ellguth | 2008-07-07 17:33:14 +0200 (Mon, 07 Jul 2008) | 3 lines
+
+Added the apt-dater.conf(5) man page.
+
+
+------------------------------------------------------------------------
+r81 | liske | 2008-07-07 17:11:34 +0200 (Mon, 07 Jul 2008) | 2 lines
+
+Added missing clients/Makefile.am.
+
+------------------------------------------------------------------------
+r80 | liske | 2008-07-07 17:04:07 +0200 (Mon, 07 Jul 2008) | 5 lines
+
+- changed screen config options
+- fixed lock.c error handling
+- add %m (=>MAINTAINER) to parse_string function
+
+
+------------------------------------------------------------------------
+r79 | ellguth | 2008-07-07 16:32:44 +0200 (Mon, 07 Jul 2008) | 2 lines
+
+Some modifications of apt-dater.xml.
+
+------------------------------------------------------------------------
+r78 | liske | 2008-07-07 15:59:54 +0200 (Mon, 07 Jul 2008) | 2 lines
+
+add pixmap
+
+------------------------------------------------------------------------
+r77 | liske | 2008-07-07 09:38:04 +0200 (Mon, 07 Jul 2008) | 4 lines
+
+- config keyword QueryMaintainer changed: 0:no 1:yes 2:if env. not set
+- verbose error message if lock failes due a real error in lock.c
+- bailout if the TTY is not accessible (i.e. after su)
+
+------------------------------------------------------------------------
+r76 | liske | 2008-07-04 15:09:59 +0200 (Fri, 04 Jul 2008) | 2 lines
+
+Build apt-dater-host from debian/control.
+
+------------------------------------------------------------------------
+r75 | liske | 2008-07-04 11:36:56 +0200 (Fri, 04 Jul 2008) | 3 lines
+
+Create clients directory with debian package for Debian 
+based apt-dater'ed hosts.
+
+------------------------------------------------------------------------
 r74 | ellguth | 2008-07-04 08:53:34 +0200 (Fri, 04 Jul 2008) | 2 lines
 
 Changed author information
