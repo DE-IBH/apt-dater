@@ -79,8 +79,8 @@ AC_SUBST(XSLTPROC)
 
 # Check if `docbook-xsl' is installed on your system
 echo -n "checking for docbook-xsl... "
-if test -r /usr/share/xml/docbook/stylesheet/nwalsh/manpages/docbook.xsl ; then
-    DBXSL="/usr/share/xml/docbook/stylesheet/nwalsh/manpages/docbook.xsl"
+if test -d /usr/share/xml/docbook/stylesheet/nwalsh ; then
+    DBXSL="/usr/share/xml/docbook/stylesheet/nwalsh"
     echo $DBXSL
 else
     DBXSL=

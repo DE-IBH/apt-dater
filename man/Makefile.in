@@ -45,8 +45,10 @@ CONFIG_CLEAN_FILES =
 SOURCES =
 DIST_SOURCES =
 man5dir = $(mandir)/man5
-am__installdirs = "$(DESTDIR)$(man5dir)" "$(DESTDIR)$(man8dir)"
+am__installdirs = "$(DESTDIR)$(man5dir)" "$(DESTDIR)$(man8dir)" \
+	"$(DESTDIR)$(manhdir)"
 man8dir = $(mandir)/man8
+manhdir = $(mandir)/manh
 NROFF = nroff
 MANS = $(man_MANS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -134,7 +136,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-man_MANS = apt-dater.8 apt-dater.conf.5
+man_MANS = apt-dater.8 apt-dater.html apt-dater.conf.5 apt-dater.conf.html
 EXTRA_DIST = $(man_MANS)
 all: all-am
 
@@ -259,6 +261,51 @@ uninstall-man8:
 	  echo " rm -f '$(DESTDIR)$(man8dir)/$$inst'"; \
 	  rm -f "$(DESTDIR)$(man8dir)/$$inst"; \
 	done
+install-manh: $(manh_MANS) $(man_MANS)
+	@$(NORMAL_INSTALL)
+	test -z "$(manhdir)" || $(mkdir_p) "$(DESTDIR)$(manhdir)"
+	@list='$(manh_MANS) $(dist_manh_MANS) $(nodist_manh_MANS)'; \
+	l2='$(man_MANS) $(dist_man_MANS) $(nodist_man_MANS)'; \
+	for i in $$l2; do \
+	  case "$$i" in \
+	    *.h*) list="$$list $$i" ;; \
+	  esac; \
+	done; \
+	for i in $$list; do \
+	  if test -f $(srcdir)/$$i; then file=$(srcdir)/$$i; \
+	  else file=$$i; fi; \
+	  ext=`echo $$i | sed -e 's/^.*\\.//'`; \
+	  case "$$ext" in \
+	    h*) ;; \
+	    *) ext='h' ;; \
+	  esac; \
+	  inst=`echo $$i | sed -e 's/\\.[0-9a-z]*$$//'`; \
+	  inst=`echo $$inst | sed -e 's/^.*\///'`; \
+	  inst=`echo $$inst | sed '$(transform)'`.$$ext; \
+	  echo " $(INSTALL_DATA) '$$file' '$(DESTDIR)$(manhdir)/$$inst'"; \
+	  $(INSTALL_DATA) "$$file" "$(DESTDIR)$(manhdir)/$$inst"; \
+	done
+uninstall-manh:
+	@$(NORMAL_UNINSTALL)
+	@list='$(manh_MANS) $(dist_manh_MANS) $(nodist_manh_MANS)'; \
+	l2='$(man_MANS) $(dist_man_MANS) $(nodist_man_MANS)'; \
+	for i in $$l2; do \
+	  case "$$i" in \
+	    *.h*) list="$$list $$i" ;; \
+	  esac; \
+	done; \
+	for i in $$list; do \
+	  ext=`echo $$i | sed -e 's/^.*\\.//'`; \
+	  case "$$ext" in \
+	    h*) ;; \
+	    *) ext='h' ;; \
+	  esac; \
+	  inst=`echo $$i | sed -e 's/\\.[0-9a-z]*$$//'`; \
+	  inst=`echo $$inst | sed -e 's/^.*\///'`; \
+	  inst=`echo $$inst | sed '$(transform)'`.$$ext; \
+	  echo " rm -f '$(DESTDIR)$(manhdir)/$$inst'"; \
+	  rm -f "$(DESTDIR)$(manhdir)/$$inst"; \
+	done
 tags: TAGS
 TAGS:
 
@@ -297,7 +344,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(MANS)
 installdirs:
-	for dir in "$(DESTDIR)$(man5dir)" "$(DESTDIR)$(man8dir)"; do \
+	for dir in "$(DESTDIR)$(man5dir)" "$(DESTDIR)$(man8dir)" "$(DESTDIR)$(manhdir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
 	done
 install: install-am
@@ -348,7 +395,7 @@ install-exec-am:
 
 install-info: install-info-am
 
-install-man: install-man5 install-man8
+install-man: install-man5 install-man8 install-manh
 
 installcheck-am:
 
@@ -370,24 +417,27 @@ ps-am:
 
 uninstall-am: uninstall-info-am uninstall-man
 
-uninstall-man: uninstall-man5 uninstall-man8
+uninstall-man: uninstall-man5 uninstall-man8 uninstall-manh
 
 .PHONY: all all-am check check-am clean clean-generic distclean \
 	distclean-generic distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-exec \
 	install-exec-am install-info install-info-am install-man \
-	install-man5 install-man8 install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	install-man5 install-man8 install-manh install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
 	pdf-am ps ps-am uninstall uninstall-am uninstall-info-am \
-	uninstall-man uninstall-man5 uninstall-man8
+	uninstall-man uninstall-man5 uninstall-man8 uninstall-manh
 
 
-apt-dater.8: apt-dater.xml
-	$(XSLTPROC) -''-nonet $(DBXSL) apt-dater.xml
+%.html: %.xml
+	$(XSLTPROC) -o $@ -''-nonet $(DBXSL)/html/docbook.xsl $<
 
-apt-dater.conf.5: apt-dater.conf.xml
-	$(XSLTPROC) -''-nonet $(DBXSL) apt-dater.conf.xml
+%.5: %.xml
+	$(XSLTPROC) -''-nonet $(DBXSL)/manpages/docbook.xsl $<
+
+%.8: %.xml
+	$(XSLTPROC) -''-nonet $(DBXSL)/manpages/docbook.xsl $<
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
