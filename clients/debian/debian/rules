@@ -24,7 +24,7 @@ build-stamp: configure-stamp
 	dh_testdir
 
 	# Add here commands to compile the package.
-	cp ../../README .
+	#cp ../../README .
 
 	touch $@
 
@@ -45,7 +45,7 @@ install: build
 	dh_installdirs
 
 	# Add here commands to install the package into debian/apt-dater-host.
-	#$(MAKE) DESTDIR=$(CURDIR)/debian/apt-dater-host install
+	$(MAKE) DESTDIR=$(CURDIR)/debian/apt-dater-host install
 
 
 # Build architecture-independent files here.
@@ -53,11 +53,11 @@ binary-indep: build install
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs 
-	dh_installdocs README
+	dh_installdocs ../../README
 #	dh_installexamples
 #	dh_install
 #	dh_installmenu
-#	dh_installdebconf	
+	dh_installdebconf	
 #	dh_installlogrotate
 #	dh_installemacsen
 #	dh_installpam

@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# Paths
+CONFIG="/etc/apt-dater-host.conf"
+LIBPATH="/usr/lib/apt-dater-host"
+
+# use C locale
+unset LANG
+
+# bailout if config file is missing
+if test ! -r "$CONFIG"; then
+    echo "Could not read config file $CONFIG!" 1>&2
+    exit 1
+fi
+
+# include files
+. "$CONFIG"
+. "$LIBPATH/apt-dater-host.sh"
+
+# get command
+CMD="$1"
+shift
+
+# process command
+case "$CMD" in
+    refresh)
+	do_refresh
+	;;
+    upgrade)
+	do_upgrade
+	;;
+    install)
+	do_install_$@
+	;;
+    *)
+	echo "Invalid command '$CMD'!" 1>& 2
+	exit 1
+	;;
+esac

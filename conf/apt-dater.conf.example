@@ -26,10 +26,13 @@ DefaultPort=22
 #Title=%m # %u@%h:%p
 #
 
+# These values requires apt-dater-host to be installed on the target host.
+# You could call apt/aptitude directly (see apt-dater-host source),
+# but this is not recommended.
 [Commands]
-CmdRefresh=sudo aptitude -q update && sudo apt-get -q -s upgrade && /usr/lib/debtrack/kernelinfo.sh
-CmdUpgrade=sudo aptitude upgrade
-CmdInstall=sudo aptitude install %s
+CmdRefresh=apt-dater-host refresh
+CmdUpgrade=apt-dater-host upgrade
+CmdInstall=apt-dater-host install %s
 
 [Appearance]
 # Colors      = (COMPONENT FG BG ';')*
