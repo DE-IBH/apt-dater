@@ -30,7 +30,7 @@ case "$CMD" in
 	do_upgrade
 	;;
     install)
-	do_install_$@
+	do_install $@
 	;;
     *)
 	echo "Invalid command '$CMD'!" 1>& 2
