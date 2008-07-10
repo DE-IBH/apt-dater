@@ -2,7 +2,6 @@ Source: apt-dater
 Section: admin
 Priority: optional
 Maintainer: Thomas Liske <liske@ibh.de>
-Homepage: http://www.ibh.de/go/apt-dater
 Build-Depends: debhelper (>= 5), xsltproc, docbook-xsl, automake1.9, libglib2.0-dev, libncurses5-dev
 Standards-Version: 3.7.2
 
@@ -13,6 +12,7 @@ Suggests: apt-dater-host
 Description: terminal-based remote package update manager
  apt-dater can be used to keep your (Debian) GNU/Linux based hosts
  up to date using SSH.
+Homepage: http://www.ibh.de/go/apt-dater
 
 Package: apt-dater-host
 Architecture: all
@@ -22,3 +22,4 @@ Description: package for hosts managed by apt-dater
  up to date using SSH.
  .
  This package should be installed on the managed hosts.
+Homepage: http://www.ibh.de/go/apt-dater

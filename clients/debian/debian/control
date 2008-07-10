@@ -2,7 +2,6 @@ Source: apt-dater
 Section: admin
 Priority: optional
 Maintainer: Thomas Liske <liske@ibh.de>
-Homepage: http://www.ibh.de/go/apt-dater
 Build-Depends: debhelper (>= 5)
 Standards-Version: 3.7.2
 
@@ -14,3 +13,4 @@ Description: package for hosts managed by apt-dater
  up to date using SSH.
  .
  This package should be installed on the managed hosts.
+Homepage: http://www.ibh.de/go/apt-dater
