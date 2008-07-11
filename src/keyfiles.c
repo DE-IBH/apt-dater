@@ -24,9 +24,12 @@ void freeConfig (CfgFile *cfg)
  g_free(cfg->ssh_cmd);
  g_free(cfg->ssh_optflags);
  g_free(cfg->ssh_defuser);
+ g_free(cfg->sftp_cmd);
  g_free(cfg->cmd_refresh);
  g_free(cfg->cmd_upgrade);
  g_free(cfg->cmd_install);
+ g_free(cfg->screenrcfile);
+ g_free(cfg->screentitle);
  g_strfreev(cfg->colors);
 
  g_free(cfg);
