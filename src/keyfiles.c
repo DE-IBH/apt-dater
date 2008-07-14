@@ -12,6 +12,48 @@
 # include "config.h"
 #endif
 
+
+int chkForInitialConfig(const gchar *cfgdir, const gchar *cfgfile)
+{
+ FILE *fp = NULL;
+ gchar *pathtofile = NULL;
+
+ if(g_file_test (cfgfile, G_FILE_TEST_IS_REGULAR|G_FILE_TEST_EXISTS) == FALSE) {
+  if(g_file_test(cfgdir, G_FILE_TEST_IS_DIR) == FALSE) {
+   if(g_mkdir_with_parents (cfgdir, 0700)) return(1);
+
+   /* Create a example hosts.conf */
+   pathtofile = g_strdup_printf("%s/hosts.conf", cfgdir);
+   if(!pathtofile) g_error("Out of memory\n");
+   fp = fopen(pathtofile, "w");
+   g_message("Creating file %s", pathtofile);
+   g_free(pathtofile);
+   if(!fp) return(1);
+   fwrite(hosts_conf, sizeof(hosts_conf)-1, 1, fp);
+   fclose(fp);
+
+   /* Create a the example screenrc */
+   pathtofile = g_strdup_printf("%s/screenrc", cfgdir);
+   if(!pathtofile) g_error("Out of memory\n");
+   fp = fopen(pathtofile, "w");
+   g_message("Creating file %s", pathtofile);
+   g_free(pathtofile);
+   if(!fp) return(1);
+   fwrite(screenrc, sizeof(screenrc)-1, 1, fp);
+   fclose(fp);
+  }
+
+  fp = fopen(cfgfile, "w");
+  if(!fp) return(1);
+  
+  g_message("Creating file %s", cfgfile);
+  fwrite(apt_dater_conf, sizeof(apt_dater_conf)-1, 1, fp);
+  fclose(fp);
+ }
+
+ return(0);
+}
+
 static int cmpStringP(const void *p1, const void *p2)
 {
  return(g_ascii_strcasecmp (*(gchar * const *) p1, *(gchar * const *) p2));

@@ -4,5 +4,8 @@
 #  Hosts=([OptionalUser@]host.domain[:OptionalPort];)*
 #
 
-[example.com]
-Hosts=host1.example.com;foo@host2.example.com;bar@host3.example.com:1234;
+[localdomain]
+Hosts=localhost;
+
+[IBH]
+Hosts=example1.ibh.net;example2.ibh.net;test@example3.ibh.net:62222;

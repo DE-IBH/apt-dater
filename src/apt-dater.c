@@ -36,11 +36,21 @@ int main(int argc, char **argv)
 {
  char opts;
  char *cfgfilename = NULL;
+ char *cfgdirname = NULL;
  GList *hosts = NULL;
 
- cfgfilename = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PACKAGE, "apt-dater.conf");
+
+ cfgdirname = g_strdup_printf("%s/%s", g_get_user_config_dir(), PACKAGE);
+ if(!cfgdirname) g_error("Out of memory\n");
+
+ cfgfilename = g_strdup_printf("%s/%s", cfgdirname, CFGFILENAME);
+ if(!cfgfilename) g_error("Out of memory\n");
+
  g_set_prgname(PACKAGE);
  g_set_application_name(PACKAGE_STRING);
+
+ if(chkForInitialConfig(cfgdirname, cfgfilename))
+  g_warning("Failed to create initial configuration file %s.", cfgfilename);
 
  while ((opts = getopt(argc, argv, "c:v")) != EOF) {
   switch(opts) {
@@ -57,11 +67,7 @@ int main(int argc, char **argv)
    exit(EXIT_FAILURE);
   }
  }
-
- if(!cfgfilename) {
-  g_printerr("Out of memory\n");
-  exit(EXIT_FAILURE);
- }
+ if(!cfgfilename) g_error("Out of memory\n");
 
  if(!(cfg = (CfgFile *) loadConfig(cfgfilename))) {
   g_printerr("Error on loading config file %s\n", cfgfilename);
@@ -99,6 +105,7 @@ int main(int argc, char **argv)
 
  freeConfig(cfg);
  free(cfgfilename);
+ free(cfgdirname);
 
  exit(EXIT_SUCCESS);
 }
