@@ -36,6 +36,8 @@ build-stamp: config.status
 
 	# Add here commands to compile the package.
 	cd src && $(MAKE)
+
+	$(MAKE) changelog || true
 	
 	# Build manpage(s)
 	#cd man && xsltproc -''-nonet /usr/share/xml/docbook/stylesheet/nwalsh/manpages/docbook.xsl apt-dater.xml
