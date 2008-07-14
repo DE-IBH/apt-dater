@@ -30,7 +30,7 @@ bind O login off
 bind } history
 
 # Sessions should stay until destroyed by pressing space
-zombie ' '
+zombie 'x'
 
 # ------------------------------------------------------------------------------
 # TERMINAL SETTINGS
