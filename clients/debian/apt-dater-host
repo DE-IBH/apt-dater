@@ -8,8 +8,6 @@ my $GETROOT = 'sudo';
 
 eval `cat "$CFGFILE"` if (-r $CFGFILE);
 
-print "$DPKGTOOL - $GETROOT\n";exit;
-
 my $CMD = shift;
 
 delete($ENV{'LANG'});
