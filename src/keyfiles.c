@@ -258,8 +258,7 @@ GList *loadHosts (char *filename)
    hostnode->fdlock = -1;
 
    hostnode->group = g_strdup(groups[i]);
-   hostnode->updates = g_list_alloc();
-   hostnode->category = getUpdatesFromStat(hostnode->hostname, hostnode->updates, &hostnode->status);
+   hostnode->category = getUpdatesFromStat(hostnode->hostname, &hostnode->updates, &hostnode->status);
 
    if(hostnode->category != C_UPDATES_PENDING) {
     g_list_free(hostnode->updates);

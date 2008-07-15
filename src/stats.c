@@ -84,14 +84,9 @@ gboolean removeStatsFile(const gchar *hostname)
 
 void refreshStatsOfNode(gpointer n)
 {
- ((HostNode *) n)->updates = g_list_alloc();
  ((HostNode *) n)->category = getUpdatesFromStat(((HostNode *) n)->hostname, 
-						 ((HostNode *) n)->updates,
+						 &((HostNode *) n)->updates,
 						 &(((HostNode *) n)->status));
- if(((HostNode *) n)->category != C_UPDATES_PENDING) {
-  g_list_free(((HostNode *) n)->updates);
-  ((HostNode *) n)->updates = NULL;
- }
 
  unsetLockForHost((HostNode *) n);
 
@@ -157,7 +152,11 @@ gboolean setStatsFileFromIOC(GIOChannel *ioc, GIOCondition condition,
 }
 
 
-Category getUpdatesFromStat(gchar *hostname, GList *updates, guint *stat)
+gint cmpUpdates(gconstpointer a, gconstpointer b) {
+    return strcmp(((UpdNode *)a)->package, ((UpdNode *)b)->package);
+}
+
+Category getUpdatesFromStat(gchar *hostname, GList **updates, guint *stat)
 {
  gchar *statsfile;
  char line[STATS_MAX_LINE_LEN];
@@ -169,7 +168,6 @@ Category getUpdatesFromStat(gchar *hostname, GList *updates, guint *stat)
  FILE  *fp;
  UpdNode *updnode = NULL;
  Category category = C_UNKNOW;
- gint i = 0;
  gint cnt_upgraded, cnt_newly_installed, cnt_remove, cnt_not_upgraded;
  gint status;
 
@@ -186,47 +184,52 @@ Category getUpdatesFromStat(gchar *hostname, GList *updates, guint *stat)
  cnt_upgraded = cnt_newly_installed = cnt_remove = cnt_not_upgraded = -1;
  *stat = 0;
 
+ if(*updates) {
+    g_list_free(*updates);
+    *updates = NULL;
+ }
+
  while(fgets(line, STATS_MAX_LINE_LEN, fp)) {
   line[strlen(line) - 1] = 0;
-
-  if (sscanf((gchar *) line, "%d upgraded, %d newly installed, %d to remove and %d not upgraded.", &cnt_upgraded, &cnt_newly_installed, &cnt_remove, &cnt_not_upgraded)) continue;
 
   if (sscanf((gchar *) line, "KERNELINFO: %d", &status)) {
    switch(status){
    case 1:
-    *stat = *stat | 2;
+    *stat = *stat | HOST_STATUS_KERNELNOTMATCH;
     break;
    case 2:
-    *stat = *stat | 4;
+    *stat = *stat | HOST_STATUS_KERNELSELFBUILD;
     break;
    }
    continue;
   }
+  
+  if(!strncmp("STATUS: ", line, 8)) {
+    gchar **argv = g_strsplit(&line[8], "|", 0);
+    
+    /* ignore invalid lines */
+    if(!argv[0] || !argv[1] || !argv[2]) {
+	continue;
+    }
+    
+    switch(argv[2][0]) {
+	case 'u':
+	    updnode = g_new0(UpdNode, 1);
+	    updnode->package = g_strdup(argv[0]);
+	    updnode->oldver = g_strdup(argv[1]);
+	    updnode->newver = g_strdup(argv[3]);
 
-  if  (!strcmp(line,"The following packages have been kept back:")) {
-   *stat = *stat | 1;
-   continue;
-  }
+	    *updates = g_list_insert_sorted(*updates, updnode, cmpUpdates);
 
-  *package = *oldver = *newver = *section = *dist = 0;
-  sscanf((gchar *) line, "Inst %s [%[a-zA-Z0-9-+.:~]] (%s %[a-zA-Z0-9-+.]:%[a-zA-Z0-9-+.])", package, oldver, newver, section, dist);
+    	    category = C_UPDATES_PENDING;
+	    break;
+	case 'h':
+	    *stat = *stat | HOST_STATUS_PKGKEPTBACK;
+	    break;
+    }
+    g_strfreev(argv);
 
-  if(*package) {
-   updnode = g_new0(UpdNode, 1);
-   updnode->package = g_strdup(package);
-   updnode->oldver = g_strdup(oldver);
-   updnode->newver = g_strdup(newver);
-   updnode->section = g_strdup(section);
-   updnode->dist = g_strdup(dist);
-
-   if(!i) {
-    updates->data = updnode;
-    i++;
-   }
-   else
-    updates = g_list_append(updates, updnode);
-
-   category = C_UPDATES_PENDING;
+    continue;
   }
  }
 
