@@ -201,16 +201,18 @@ Category getUpdatesFromStat(gchar *hostname, GList **updates, guint *stat)
     gchar **argv = g_strsplit(&line[8], "|", 0);
     
     /* ignore invalid lines */
-    if(!argv[0] || !argv[1] || !argv[2]) {
+    if(!argv[0] || !argv[1] || !argv[2])
 	continue;
-    }
     
     switch(argv[2][0]) {
 	case 'u':
 	    updnode = g_new0(UpdNode, 1);
 	    updnode->package = g_strdup(argv[0]);
 	    updnode->oldver = g_strdup(argv[1]);
-	    updnode->newver = g_strdup(argv[3]);
+	    if (strlen(argv[2]) > 3)
+		updnode->newver = g_strdup(&argv[2][2]);
+	    else
+		updnode->newver = g_strdup("???");
 
 	    *updates = g_list_insert_sorted(*updates, updnode, cmpUpdates);
 
