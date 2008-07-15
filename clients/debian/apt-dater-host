@@ -1,15 +1,14 @@
 #!/usr/bin/perl -w
 
 use strict;
-use AppConfig qw/:argcount/;;
 
-my $cfgfile = '/etc/apt-dater-host.conf';
-my $config = AppConfig->new();
-$config->define(
-    'DPKGTOOL' => { ARGCOUNT => ARGCOUNT_ONE, DEFAULT => 'aptitude' },
-    'GETROOT' => { ARGCOUNT => ARGCOUNT_ONE, DEFAULT => 'sudo' },
-);
-$config->file($cfgfile);
+my $CFGFILE = '/etc/apt-dater-host.conf';
+my $DPKGTOOL = 'aptitude';
+my $GETROOT = 'sudo';
+
+eval `cat "$CFGFILE"` if (-r $CFGFILE);
+
+print "$DPKGTOOL - $GETROOT\n";exit;
 
 my $CMD = shift;
 
@@ -42,15 +41,26 @@ else {
 
 
 sub do_refresh() {
-    system($config->get('GETROOT')." ".$config->get('DPKGTOOL')." update");
+    system("$GETROOT $DPKGTOOL update");
 }
 
 sub do_status() {
+    # retrieve lsb informations
+    open(HLSB, "lsb_release -a 2> /dev/null |") or die "Can't fork: $!\n";
+    my %lsb;
+    while(<HLSB>) {
+	chomp;
+
+	$lsb{$1}=$2 if (/^(Distributor ID|Release|Codename):\s+(\S.+)$/);
+    }
+    close(HLSB);
+    print "LSBREL: $lsb{'Distributor ID'}|$lsb{'Release'}|$lsb{'Codename'}\n";
+
     # get packages which might be upgraded
     my %updates;
     my %holds;
     my $pos = 0;
-    open(HAPT, $config->get('GETROOT')." apt-get -q -s upgrade |") or die "Can't fork: $!\n";
+    open(HAPT, "$GETROOT apt-get -q -s upgrade |") or die "Can't fork: $!\n";
     while(<HAPT>) {
 	chomp;
 	
@@ -98,15 +108,14 @@ sub do_status() {
 	else {
 	    $status{$1} = substr($3, 0, 1);
 	}
-	
-	$status{$1} .= substr($5, 0, 1);
+#	$status{$1} .= substr($5, 0, 1);
     }
     close(HDPKG);
     
     foreach my $pkg (keys %installed) {
 	print "STATUS: $pkg|$installed{$pkg}|$status{$pkg}";
 	if (exists($updates{$pkg})) {
-	    print "|$updates{$pkg}" ;
+	    print "=$updates{$pkg}" ;
 	}
 	
 	print "\n";
@@ -114,11 +123,11 @@ sub do_status() {
 }
 
 sub do_upgrade() {
-    system($config->get('GETROOT')." ".$config->get('DPKGTOOL')." upgrade");
+    system("$GETROOT $DPKGTOOL upgrade");
 }
 
 sub do_install() {
-    system($config->get('GETROOT')." ".$config->get('DPKGTOOL')." install ".join(' ', @_));
+    system("$GETROOT $DPKGTOOL install ".join(' ', @_));
 }
 
 sub do_kernel() {

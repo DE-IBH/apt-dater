@@ -152,7 +152,7 @@ gboolean setStatsFileFromIOC(GIOChannel *ioc, GIOCondition condition,
 }
 
 
-gint cmpUpdates(gconstpointer a, gconstpointer b) {
+static gint cmpUpdates(gconstpointer a, gconstpointer b) {
     return strcmp(((UpdNode *)a)->package, ((UpdNode *)b)->package);
 }
 
