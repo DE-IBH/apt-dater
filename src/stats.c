@@ -160,15 +160,9 @@ Category getUpdatesFromStat(gchar *hostname, GList **updates, guint *stat)
 {
  gchar *statsfile;
  char line[STATS_MAX_LINE_LEN];
- char package[BUF_MAX_LEN];
- char oldver[BUF_MAX_LEN];
- char newver[BUF_MAX_LEN];
- char section[BUF_MAX_LEN];
- char dist[BUF_MAX_LEN];
  FILE  *fp;
  UpdNode *updnode = NULL;
  Category category = C_UNKNOW;
- gint cnt_upgraded, cnt_newly_installed, cnt_remove, cnt_not_upgraded;
  gint status;
 
  if(!(statsfile = getStatsFile(hostname))) {
@@ -181,7 +175,6 @@ Category getUpdatesFromStat(gchar *hostname, GList **updates, guint *stat)
   return(category);
  }
 
- cnt_upgraded = cnt_newly_installed = cnt_remove = cnt_not_upgraded = -1;
  *stat = 0;
 
  if(*updates) {
@@ -221,7 +214,6 @@ Category getUpdatesFromStat(gchar *hostname, GList **updates, guint *stat)
 
 	    *updates = g_list_insert_sorted(*updates, updnode, cmpUpdates);
 
-    	    category = C_UPDATES_PENDING;
 	    break;
 	case 'h':
 	    *stat = *stat | HOST_STATUS_PKGKEPTBACK;
@@ -233,10 +225,11 @@ Category getUpdatesFromStat(gchar *hostname, GList **updates, guint *stat)
   }
  }
 
- if(cnt_upgraded == 0) {
+ if(g_list_length(*updates))
+  category = C_UPDATES_PENDING;
+ else
   category = C_UP_TO_DATE;
- }
-
+  
  fclose(fp);
  g_free(statsfile);
 

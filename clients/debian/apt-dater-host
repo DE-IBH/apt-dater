@@ -63,7 +63,8 @@ sub do_status() {
 	chomp;
 	
 	if($pos == 0) {
-	    $pos++ if (/^The following packages have been kept back/);
+	    $pos=1 if (/^The following packages have been kept back/);
+	    $pos=2 if (/^The following packages will be upgraded:/);
 	    next;
 	}
 
@@ -82,8 +83,8 @@ sub do_status() {
 		}
 	    }
 	}
-	
-	$updates{$1} = $2 if (/^Inst (\S+) \[.+\] \((\S+)/);
+
+	$updates{$1} = $2 if (/^Inst (\S+) \[.+\] \((\S+) /);
     }
     close(HAPT);
 
