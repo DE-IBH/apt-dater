@@ -1,0 +1,117 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+my $CFGFILE = '/etc/apt-dater-host.conf';
+my $GETROOT = 'sudo';
+
+eval `cat "$CFGFILE"` if (-r $CFGFILE);
+
+my $CMD = shift;
+
+delete($ENV{'LANG'});
+
+die "Don't call this script directly!\n" unless (defined($CMD));
+die "Invalid command '$CMD'!\n" unless ($CMD=~/^(refresh|status|upgrade|install|kernel)$/);
+
+if ($CMD eq 'refresh') {
+    &do_status;
+    &do_kernel;
+}
+elsif ($CMD eq 'status') {
+    &do_status;
+    &do_kernel;
+}
+elsif ($CMD eq 'upgrade') {
+    &do_upgrade;
+}
+elsif ($CMD eq 'install') {
+    &do_install(@_);
+}
+elsif ($CMD eq 'kernel') {
+    &do_kernel;
+}
+else {
+    die "Internal error!\n";
+}
+
+sub do_status() {
+    # retrieve lsb informations
+    open(HLSB, "lsb_release -a 2> /dev/null |") or die "Can't fork: $!\n";
+    my %lsb;
+    while(<HLSB>) {
+	chomp;
+
+	$lsb{$1}=$2 if (/^(Distributor ID|Release|Codename):\s+(\S.+)$/);
+    }
+    close(HLSB);
+    print "LSBREL: $lsb{'Distributor ID'}|$lsb{'Release'}|$lsb{'Codename'}\n";
+
+    # get packages which might be upgraded
+    my %updates;
+    open(HAPT, "$GETROOT rug --terse list-updates |") or die "Can't fork: $!\n";
+    while(<HAPT>) {
+	chomp;
+
+	$updates{$1} = $2 if (/^.*\|.*\|.*\|([^|]+)\|([^|]+)\|/);
+    }
+    close(HAPT);
+
+    # get version of installed packages
+    my %installed;
+    my %status;
+    open(HDPKG, "$GETROOT rpm -qa --qf '%{NAME}|%{VERSION}|\n' |") or die "Can't fork: $!\n";
+    while(<HDPKG>) {
+	chomp;
+
+	next unless (/^(\S+)\|\S+\|/);
+
+	print;
+	  
+	if($updates{$1}) {
+	    print 'u=', $updates{$1};
+	}
+	else {
+	    print 'i';
+	}
+
+	print "\n";
+    }
+    close(HDPKG);
+}
+
+sub do_upgrade() {
+    system("$GETROOT rug update");
+}
+
+sub do_install() {
+    system("$GETROOT rug install ".join(' ', @_));
+}
+
+sub do_kernel() {
+    return;
+#    my $infostr = 'KERNELINFO:';
+#    my $verfile = '/proc/version';
+#
+#    unless(-r $verfile) {
+#	print "$infostr 9\n";
+#	return;
+#    }
+#
+#    unless(`cat /proc/version` =~ /^\S+ \S+ \S+ \(Debian ([^\)]+)\)/) {
+#	print "$infostr 2\n";
+#	return;
+#    }
+#    my $vers = $1;
+#
+#    my $reboot = 0;
+#    open(HDPKG, "dpkg-query -W -f='\${Version} \${Status;20} \${Maintainer}\n' 'linux-image*' | grep 'install ok installed Debian Kernel Team'|") or die "Could not fork: $!\n";
+#    while(<HDPKG>) {
+#	next unless (/^(\S+)\s/);
+#	
+#	$reboot=1 if (system("dpkg", "--compare-versions", $vers, "lt", $1) >> 8);
+#    }
+#    close(HDPKG);
+#
+#    print "$infostr $reboot\n";
+}
