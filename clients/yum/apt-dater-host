@@ -95,29 +95,92 @@ sub do_install() {
 }
 
 sub do_kernel() {
-    return;
-#    my $infostr = 'KERNELINFO:';
-#    my $verfile = '/proc/version';
-#
-#    unless(-r $verfile) {
-#	print "$infostr 9\n";
-#	return;
-#    }
-#
-#    unless(`cat /proc/version` =~ /^\S+ \S+ \S+ \(Debian ([^\)]+)\)/) {
-#	print "$infostr 2\n";
-#	return;
-#    }
-#    my $vers = $1;
-#
-#    my $reboot = 0;
-#    open(HDPKG, "dpkg-query -W -f='\${Version} \${Status;20} \${Maintainer}\n' 'linux-image*' | grep 'install ok installed Debian Kernel Team'|") or die "Could not fork: $!\n";
-#    while(<HDPKG>) {
-#	next unless (/^(\S+)\s/);
-#	
-#	$reboot=1 if (system("dpkg", "--compare-versions", $vers, "lt", $1) >> 8);
-#    }
-#    close(HDPKG);
-#
-#    print "$infostr $reboot\n";
+    my $infostr = 'KERNELINFO:';
+    my $version = `uname -r`;
+    chomp($version);
+
+    my $add = '';
+    $add = "-$1" if($version =~ /([a-z]+)$/);
+
+    my $pos = 0;
+
+    my $kinstalled;
+    my %distri;
+    open(HKERNEL, "$GETROOT yum list 'kernel*' |") or die "Can't fork: $!\n";
+    while(<HKERNEL>) {
+	chomp;
+	
+	if(/^Installed Packages/) {
+	    $pos = 1;
+	    next;
+	}
+	
+	if(/^Available Packages/) {
+	    $pos = 2;
+	    next;
+	}
+
+	if(($pos == 1) && /^(\S+$add\.\S+)\s+(\S+)\s/) {
+	    my $ver = $2;
+	    $distri{$ver.substr($add,1)} = 1;
+	    
+	    if(!$kinstalled) {
+	        $kinstalled = $ver;
+	    }
+	    else {
+	        $kinstalled = $ver if(&versioncmp($kinstalled, $ver) < 0);
+	    }
+	}
+    }
+    close(HKERNEL);
+
+    unless($distri{$version}) {
+	print "$infostr 2\n";
+	return;
+    }
+
+    unless($kinstalled.substr($add, 1) cmp $version) {
+	print "$infostr 0\n";
+	return;
+    }
+    print "$infostr 1\n";
+}
+
+##
+# Taken from Sort::Versions 1.4
+# Copyright (c) 1996, Kenneth J. Albanowski.
+##
+sub versioncmp() {
+    my @A = ($_[0] =~ /([-.]|\d+|[^-.\d]+)/g);
+    my @B = ($_[1] =~ /([-.]|\d+|[^-.\d]+)/g);
+
+    my ($A, $B);
+    while (@A and @B) {
+	$A = shift @A;
+	$B = shift @B;
+	if ($A eq '-' and $B eq '-') {
+	    next;
+	} elsif ( $A eq '-' ) {
+	    return -1;
+	} elsif ( $B eq '-') {
+	    return 1;
+	} elsif ($A eq '.' and $B eq '.') {
+	    next;
+	} elsif ( $A eq '.' ) {
+	    return -1;
+	} elsif ( $B eq '.' ) {
+	    return 1;
+	} elsif ($A =~ /^\d+$/ and $B =~ /^\d+$/) {
+	    if ($A =~ /^0/ || $B =~ /^0/) {
+		return $A cmp $B if $A cmp $B;
+	    } else {
+		return $A <=> $B if $A <=> $B;
+	    }
+	} else {
+	    $A = uc $A;
+	    $B = uc $B;
+	    return $A cmp $B if $A cmp $B;
+	}	
+    }
+    @A <=> @B;
 }
