@@ -135,15 +135,15 @@ sub do_kernel() {
     close(HKERNEL);
 
     unless($distri{$version}) {
-	print "$infostr 2\n";
+	print "$infostr 2 $version\n";
 	return;
     }
 
     unless($kinstalled.substr($add, 1) cmp $version) {
-	print "$infostr 0\n";
+	print "$infostr 0 $version\n";
 	return;
     }
-    print "$infostr 1\n";
+    print "$infostr 1 $version\n";
 }
 
 ##

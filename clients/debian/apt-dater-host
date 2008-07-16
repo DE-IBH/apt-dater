@@ -132,14 +132,16 @@ sub do_install() {
 sub do_kernel() {
     my $infostr = 'KERNELINFO:';
     my $verfile = '/proc/version';
+    my $version = `uname -r`;
+    chomp($version);
 
     unless(-r $verfile) {
-	print "$infostr 9\n";
+	print "$infostr 9 $version\n";
 	return;
     }
 
     unless(`cat /proc/version` =~ /^\S+ \S+ \S+ \(Debian ([^\)]+)\)/) {
-	print "$infostr 2\n";
+	print "$infostr 2 $version\n";
 	return;
     }
     my $vers = $1;
@@ -153,5 +155,5 @@ sub do_kernel() {
     }
     close(HDPKG);
 
-    print "$infostr $reboot\n";
+    print "$infostr $reboot $version\n";
 }

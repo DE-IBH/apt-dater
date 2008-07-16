@@ -79,7 +79,7 @@ interactive.
 
 The result line has the following format:
 
-    KERNELINFO: ${Code}
+    KERNELINFO: ${Code} ${Release}
 
 The following codes are supported:
     0 - The running kernel is the latest distri kernel. No reboot required.
@@ -87,6 +87,8 @@ The following codes are supported:
         installed. A reboot is recommended.
     2 - No distri kernel is running.
     9 - Unknown.
+
+The release field should be the output of `uname -r`.
 
 
 Example
@@ -106,4 +108,4 @@ STATUS: iceweasel-l10n-de|2.0.0.3+debian-1etch1|i
 STATUS: mutt|1.5.17+20080114-1~bpo40+1|u=1.5.18-2~bpo40+1
 STATUS: libperl5.8|5.8.8-7etch3|i
 STATUS: autoconf|2.61-4|i
-KERNELINFO: 2
+KERNELINFO: 2 2.6.18-028stab053.5-openvz
