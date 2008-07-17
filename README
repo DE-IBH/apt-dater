@@ -1,39 +1,56 @@
 README for apt-dater
 ====================
 
-With apt-dater you can easily keep one ore more (Debian) GNU/Linux
-hosts up to date.
+apt-dater provides an ncurses frontend for managing package updates on a large
+number of remote hosts using SSH. It supports Debian-based managed hosts as
+well as rug (e.g. openSUSE) and yum (e.g. CentOS) based systems.
 
+Prepare the managed hosts by apt-dater:
 
-Pre-configuration on your management server:
+ You need a SSH server and sudo installed. Create a user which will be used to
+ install updates (using root is NOT recommended).
 
-  Copy and modify the apt-dater.conf:
-    cp conf/apt-dater.conf.example $HOME/.config/apt-dater/apt-dater.conf
+ Debian based system
 
-  Copy and modify the hosts.conf:
-    cp conf/hosts.conf.example $HOME/.config/apt-dater/hosts.conf 
-
-  Copy and modify the screenrc:
-    cp conf/screenrc.example $HOME/.config/apt-dater/screenrc
-
-
-Managed hosts by apt-dater:
-
-  You need a SSH server and sudo installed. Create a user which will
-  be used to install updates (using root is NOT recommended).
   Modify the /etc/sudoers:
 
-	Defaults env_reset,env_keep=MAINTAINER
- 	the-user ALL=NOPASSWD: /usr/bin/apt-get, /usr/bin/aptitude 
+   the-user ALL=NOPASSWD: /usr/bin/apt-get, /usr/bin/aptitude
 
+  Copy the PERL script apt-dater-host from the $SRC/clients/debian directory to
+  a path on the managed host which are listed in the $PATH variable.
+
+ yum based system (e.g. CentOS,...)
+
+  Modify the /etc/sudoers:
+
+   the-user ALL=NOPASSWD: /usr/bin/yum
+
+  Copy the PERL script apt-dater-host from the $SRC/clients/yum directory to
+  a path on the managed host which are listed in the $PATH variable.
+
+ rug based system (e.g. openSUSE,...)
+
+  Modify the /etc/sudoers:
+
+   the-user ALL=NOPASSWD: /usr/bin/rug
+
+  Copy the PERL script apt-dater-host from the $SRC/clients/rug directory to a
+  path on the managed host which are listed in the $PATH variable.
 
 Management server:
 
-  Create a user on your management server which perform updates on your
-  Debian hosts.
+ Beginning with version 0.5.5 the initial configuration files will be
+ automatically created after the first startup of apt-dater.
+ You just have to modify the file $HOME/.config/apt-dater/apt-dater.conf and
+ the $HOME/.config/apt-dater/hosts.conf.
 
-  Generate a SSH keypair:
-    ssh-keygen -t TYPE
+ Create a user on your management server which perform updates on your Debian
+ hosts.
 
-  Distribute the public key(s) e.g.:
-    ssh-copy-id .ssh/your-public-key managed-host
+ Generate a SSH keypair:
+
+  ssh-keygen -t TYPE
+
+ Distribute the public key(s) e.g.:
+
+  ssh-copy-id .ssh/your-public-key managed-host
