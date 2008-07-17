@@ -91,7 +91,7 @@ sub do_status() {
     # get version of installed packages
     my %installed;
     my %status;
-    open(HDPKG, "dpkg-query --show -f '\${Package} \${Version} \${Status}\\n' |") or die "Can't fork: $!\n";
+    open(HDPKG, "dpkg-query --show --showformat='\${Package} \${Version} \${Status}\\n' |") or die "Can't fork: $!\n";
     while(<HDPKG>) {
 	chomp;
 
