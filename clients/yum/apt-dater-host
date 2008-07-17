@@ -26,7 +26,7 @@ elsif ($CMD eq 'upgrade') {
     &do_upgrade;
 }
 elsif ($CMD eq 'install') {
-    &do_install(@_);
+    &do_install(@ARGV);
 }
 elsif ($CMD eq 'kernel') {
     &do_kernel;
