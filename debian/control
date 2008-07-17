@@ -16,7 +16,7 @@ Homepage: http://www.ibh.de/go/apt-dater
 
 Package: apt-dater-host
 Architecture: all
-Depends: ssh-server, sudo, lsb-release, ${perl:Depends}
+Depends: ssh, sudo, lsb-release, ${perl:Depends}
 Suggests: debtrack
 Description: package for hosts managed by apt-dater
  apt-dater can be used to keep your (Debian) GNU/Linux based hosts
