@@ -84,9 +84,7 @@ gboolean removeStatsFile(const gchar *hostname)
 
 void refreshStatsOfNode(gpointer n)
 {
- ((HostNode *) n)->category = getUpdatesFromStat(((HostNode *) n)->hostname, 
-						 &((HostNode *) n)->updates,
-						 &(((HostNode *) n)->status));
+ getUpdatesFromStat(((HostNode *) n));
 
  unsetLockForHost((HostNode *) n);
 
@@ -109,7 +107,7 @@ gboolean setStatsFileFromIOC(GIOChannel *ioc, GIOCondition condition,
 
  statsfile = getStatsFileName(((HostNode *) n)->hostname);
 
- if (condition & (G_IO_HUP | G_IO_PRI))
+ if (condition & (G_IO_HUP | G_IO_PRI | G_IO_IN))
   {
    buf = (gchar *) g_malloc0 (g_io_channel_get_buffer_size (ioc) + 1);
 
@@ -125,6 +123,7 @@ gboolean setStatsFileFromIOC(GIOChannel *ioc, GIOCondition condition,
      break;
 
     fwrite(buf, sizeof(gchar), bytes, fp);
+    fflush(fp);
 
     r = TRUE;
    }
@@ -156,53 +155,81 @@ static gint cmpUpdates(gconstpointer a, gconstpointer b) {
     return strcmp(((UpdNode *)a)->package, ((UpdNode *)b)->package);
 }
 
-Category getUpdatesFromStat(gchar *hostname, GList **updates, guint *stat)
+gboolean getUpdatesFromStat(HostNode *n)
 {
  gchar *statsfile;
  char line[STATS_MAX_LINE_LEN];
+ char buf[256];
  FILE  *fp;
  UpdNode *updnode = NULL;
- Category category = C_UNKNOW;
- gint status;
+ gint status, i;
+ gchar **argv = NULL;
 
- if(!(statsfile = getStatsFile(hostname))) {
-  category = C_NO_STATS;
-  return(category);
+ if(!n) return (FALSE);
+
+ if(!(statsfile = getStatsFile(n->hostname))) {
+  n->category = C_NO_STATS;
+  return (TRUE);
  }
 
  if(!(fp = (FILE *) g_fopen(statsfile, "r"))) {
+  n->category = C_UNKNOW;
   g_free(statsfile);
-  return(category);
+  return (TRUE);
  }
 
- *stat = 0;
+ n->status = 0;
 
- if(*updates) {
-    g_list_free(*updates);
-    *updates = NULL;
+ if(n->updates) {
+    g_list_free(n->updates);
+    n->updates = NULL;
+ }
+ if(n->lsb_distributor) {
+  g_free(n->lsb_distributor);
+  n->lsb_distributor = NULL;
+ }
+ if(n->lsb_release) {
+  g_free(n->lsb_release);
+  n->lsb_release = NULL;
+ }
+ if(n->lsb_codename) {
+  g_free(n->lsb_codename);
+  n->lsb_codename = NULL;
+ }
+ if(n->kernelrel) {
+  g_free(n->kernelrel);
+  n->kernelrel = NULL;
  }
 
  while(fgets(line, STATS_MAX_LINE_LEN, fp)) {
   line[strlen(line) - 1] = 0;
 
-  if (sscanf((gchar *) line, "KERNELINFO: %d", &status)) {
+  if (sscanf((gchar *) line, "KERNELINFO: %d %255s", &status, buf)) {
+   n->kernelrel = g_strdup(buf);
    switch(status){
    case 1:
-    *stat = *stat | HOST_STATUS_KERNELNOTMATCH;
+    n->status = n->status | HOST_STATUS_KERNELNOTMATCH;
     break;
    case 2:
-    *stat = *stat | HOST_STATUS_KERNELSELFBUILD;
+    n->status = n->status | HOST_STATUS_KERNELSELFBUILD;
     break;
    }
    continue;
   }
   
   if(!strncmp("STATUS: ", line, 8)) {
-    gchar **argv = g_strsplit(&line[8], "|", 0);
+    argv = g_strsplit(&line[8], "|", 0);
+
+    if(!argv) continue;
+
+    i=0;
+    while(argv[i]) i++;
     
     /* ignore invalid lines */
-    if(!argv[0] || !argv[1] || !argv[2])
-	continue;
+    if(i < 3) {
+     g_strfreev(argv);
+     continue;     
+    }
     
     switch(argv[2][0]) {
 	case 'u':
@@ -214,28 +241,51 @@ Category getUpdatesFromStat(gchar *hostname, GList **updates, guint *stat)
 	    else
 		updnode->newver = g_strdup("???");
 
-	    *updates = g_list_insert_sorted(*updates, updnode, cmpUpdates);
+	    n->updates = g_list_insert_sorted(n->updates, updnode, cmpUpdates);
 
 	    break;
 	case 'h':
-	    *stat = *stat | HOST_STATUS_PKGKEPTBACK;
+	    n->status = n->status | HOST_STATUS_PKGKEPTBACK;
 	    break;
     }
     g_strfreev(argv);
 
     continue;
   }
+
+  if(!strncmp("LSBREL: ", line, 8)) {
+   argv = g_strsplit(&line[8], "|", 0);
+
+   if(!argv) continue;
+   
+   i=0;
+   while(argv[i]) i++;
+   
+   /* ignore invalid lines */
+   if(i < 3) {
+    g_strfreev(argv);
+    continue;     
+   }
+
+   if(strlen(argv[0]) > 0) {
+    n->lsb_distributor = g_strdup(argv[0]);
+    n->lsb_release = g_strdup(argv[1]);
+    n->lsb_codename = g_strdup(argv[2]);
+   }
+
+   g_strfreev(argv);
+  }
  }
 
- if(g_list_length(*updates))
-  category = C_UPDATES_PENDING;
+ if(g_list_length(n->updates))
+  n->category = C_UPDATES_PENDING;
  else
-  category = C_UP_TO_DATE;
+  n->category = C_UP_TO_DATE;
   
  fclose(fp);
  g_free(statsfile);
 
- return(category);
+ return(TRUE);
 }
 
 
@@ -245,9 +295,6 @@ void freeUpdNode(UpdNode *n)
   g_free(n->package);
   g_free(n->oldver);
   g_free(n->newver);
-  g_free(n->section);
-  g_free(n->dist);
-
   g_free(n);
  }
 }

@@ -83,6 +83,10 @@ void freeHostNode(HostNode *n)
  g_free(n->hostname);
  g_free(n->group);
  g_free(n->ssh_user);
+ g_free(n->lsb_distributor);
+ g_free(n->lsb_release);
+ g_free(n->lsb_codename);
+ g_free(n->kernelrel);
  freeUpdates(n->updates);
 }
 
@@ -258,7 +262,7 @@ GList *loadHosts (char *filename)
    hostnode->fdlock = -1;
 
    hostnode->group = g_strdup(groups[i]);
-   hostnode->category = getUpdatesFromStat(hostnode->hostname, &hostnode->updates, &hostnode->status);
+   getUpdatesFromStat(hostnode);
 
    if(hostnode->category != C_UPDATES_PENDING) {
     g_list_free(hostnode->updates);

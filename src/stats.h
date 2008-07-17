@@ -16,7 +16,7 @@ gboolean setStatsFileFromIOC(GIOChannel *, GIOCondition, gpointer);
 gchar *getStatsFileName(const gchar *);
 gchar *getStatsFile(const gchar *);
 gboolean removeStatsFile(const gchar *);
-Category getUpdatesFromStat(gchar *, GList **, guint *);
+gboolean getUpdatesFromStat(HostNode *);
 void refreshStatsOfNode(gpointer);
 
 #endif /* _STATS_H */

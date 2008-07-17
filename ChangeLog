@@ -1,4 +1,59 @@
 ------------------------------------------------------------------------
+r119 | liske | 2008-07-16 11:13:41 +0200 (Wed, 16 Jul 2008) | 3 lines
+
+Made apt-dater-host for rug supporting the KERNELINFO:-line. Add `uname 
+-r` ouput to KERNELINFO:-line.
+
+------------------------------------------------------------------------
+r118 | liske | 2008-07-16 10:03:19 +0200 (Wed, 16 Jul 2008) | 3 lines
+
+Add KERNELINFO: line to apt-dater-host for yum. Add README about 
+apt-daterhost.
+
+------------------------------------------------------------------------
+r117 | liske | 2008-07-15 17:20:40 +0200 (Tue, 15 Jul 2008) | 2 lines
+
+Fixed stats result parsing to changed apt-dater-host output format.
+
+------------------------------------------------------------------------
+r116 | ellguth | 2008-07-15 17:11:54 +0200 (Tue, 15 Jul 2008) | 2 lines
+
+Fix some bugs in apt-dater-host and stats.c
+
+------------------------------------------------------------------------
+r115 | ellguth | 2008-07-15 16:33:27 +0200 (Tue, 15 Jul 2008) | 2 lines
+
+Client support for rug/rpm based systems (SuSE,etc...)
+
+------------------------------------------------------------------------
+r114 | liske | 2008-07-15 15:39:08 +0200 (Tue, 15 Jul 2008) | 2 lines
+
+Removed debug output.
+
+------------------------------------------------------------------------
+r113 | liske | 2008-07-15 15:16:17 +0200 (Tue, 15 Jul 2008) | 3 lines
+
+Add apt-dater-host script for yum based (CentOS etc.) GNU/Linux 
+distris.
+
+------------------------------------------------------------------------
+r112 | liske | 2008-07-15 12:46:57 +0200 (Tue, 15 Jul 2008) | 2 lines
+
+Changed apt-dater's parsing of apt-dater-host output to reflect recent changes.
+
+------------------------------------------------------------------------
+r111 | liske | 2008-07-15 11:36:42 +0200 (Tue, 15 Jul 2008) | 4 lines
+
+Rewrite apt-dater-host as a perl script providing more generic output. 
+apt-dater's parsing routines must still be changed to work with the new 
+output.
+
+------------------------------------------------------------------------
+r109 | ellguth | 2008-07-14 15:44:40 +0200 (Mon, 14 Jul 2008) | 2 lines
+
+Changes for the new release 0.5.4.
+
+------------------------------------------------------------------------
 r106 | ellguth | 2008-07-14 15:16:29 +0200 (Mon, 14 Jul 2008) | 4 lines
 
 Added line breaks in keyfiles.h

@@ -8,6 +8,10 @@
 #include "stats.h"
 #include "parsecmd.h"
 #include <glib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -50,10 +54,12 @@ gboolean ssh_cmd_refresh(HostNode *n)
  if(r == TRUE) {
   iocstdout = g_io_channel_unix_new (standard_output);
 
+  g_io_channel_set_flags(iocstdout, G_IO_FLAG_NONBLOCK, &error);
+
   g_io_channel_set_buffer_size (iocstdout, 8192);
 
   g_io_add_watch_full (iocstdout, G_PRIORITY_DEFAULT,
-		       G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL, 
+		       G_IO_PRI | G_IO_HUP | G_IO_ERR | G_IO_NVAL | G_IO_IN, 
 		       setStatsFileFromIOC, n, refreshStatsOfNode);
  }
 

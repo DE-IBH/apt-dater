@@ -43,8 +43,6 @@ typedef struct _update {
  gchar *package;
  gchar *oldver;
  gchar *newver;
- gchar *section;
- gchar *dist;
 } UpdNode;
 
 typedef struct _session {
@@ -78,6 +76,10 @@ typedef struct _hostnode {
  GList     *updates;
  GList     *screens;
  gint      fdlock;
+ gchar     *lsb_distributor;
+ gchar     *lsb_release;
+ gchar     *lsb_codename;
+ gchar     *kernelrel;
 } HostNode;
 
 struct mapping_t

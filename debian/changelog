@@ -1,3 +1,17 @@
+apt-dater (0.5.5-ibh1) unstable; urgency=low
+
+  * Added lsb-release as debian package dependency
+  * Check if the LSBREL status information is empty 
+
+ -- Andre Ellguth <ellguth@ibh.de>  Wed, 16 Jul 2008 16:58:32 +0200
+
+apt-dater (0.5.5-ibh0) unstable; urgency=low
+
+  * Added support for rug, yum based distributions.
+  * New additional informations (lsb_release, kernel release).
+
+ -- Andre Ellguth <ellguth@ibh.de>  Wed, 16 Jul 2008 16:58:32 +0200
+
 apt-dater (0.5.4-ibh0) unstable; urgency=low
 
   * New upstream version

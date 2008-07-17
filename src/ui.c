@@ -327,6 +327,7 @@ void drawHostEntry (DrawNode *n)
 {
  char statusln[BUF_MAX_LEN];
  gint mask = 0;
+ char *hostentry;
 
  attron(n->attrs);
  mvhline(n->scrpos, 0, ' ', COLS);
@@ -348,8 +349,23 @@ void drawHostEntry (DrawNode *n)
  else
   addch(' ');
  addstr("] ");
- addnstr((char *) ((HostNode *) n->p)->hostname, COLS);
+
+ if(((HostNode *) n->p)->lsb_distributor) {
+  hostentry = g_strdup_printf("%s (%s %s %s; %s)", 
+			      ((HostNode *) n->p)->hostname,
+			      ((HostNode *) n->p)->lsb_distributor, 
+			      ((HostNode *) n->p)->lsb_release,
+			      ((HostNode *) n->p)->lsb_codename,
+			      ((HostNode *) n->p)->kernelrel);
+  
+  addnstr((char *) hostentry, COLS);
+  g_free(hostentry);
+ } else {
+  addnstr((char *) ((HostNode *) n->p)->hostname, COLS);
+ }
+
  attroff(n->attrs);
+
 
  if(n->selected == TRUE) {
   switch(((HostNode *) n->p)->category) {
@@ -406,7 +422,7 @@ void drawUpdateEntry (DrawNode *n)
  mvaddnstr(n->scrpos, 7, (char *) ((UpdNode *) n->p)->package, COLS);
  attroff(n->attrs);
  if(n->selected == TRUE) {
-  sprintf(statusln, "%s -> %s (%s %s)", ((UpdNode *) n->p)->oldver, ((UpdNode *) n->p)->newver, ((UpdNode *) n->p)->dist, ((UpdNode *) n->p)->section);
+  sprintf(statusln, "%s -> %s", ((UpdNode *) n->p)->oldver, ((UpdNode *) n->p)->newver);
   drawMenu(SC_INSTALL);
   drawStatus(statusln);
  }
