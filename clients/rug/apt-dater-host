@@ -66,6 +66,7 @@ sub do_status() {
 
 	next unless (/^(\S+)\|\S+\|/);
 
+	print "STATUS: ";
 	print;
 	  
 	if($updates{$1}) {
