@@ -61,6 +61,16 @@ sub do_status() {
     }
     close(HAPT);
 
+    # get packages which are obsolete (extra - no downloadable version available)
+    my %extras;
+    open(HYUM, "$GETROOT yum list extras |") or die "Can't fork: $!\n";
+    while(<HYUM>) {
+	chomp;
+
+	$extras{$1} = $2 if (/^(\S+)\s+(\S+)\s+(\S+)/);
+    }
+    close(HYUM);
+
     # get version of installed packages
     my %installed;
     my %status;
@@ -73,6 +83,9 @@ sub do_status() {
 		
 	if($updates{$1}) {
 	    $status{$1} = 'u';
+	}
+	elsif($extras{$1}) {
+	    $status{$1} = 'x';
 	}
 	else {
 	    $status{$1} = substr($3, 0, 1);
