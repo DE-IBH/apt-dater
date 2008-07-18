@@ -7,6 +7,17 @@ package management interface for several GNU/Linux distributions.
 Hosts managed by apt-dater musst have the apt-dater-host command in
 the search path.
 
+User interactive commands (see below) will be shown to the user
+unfiltered. Non-user interactive commands are parse by apt-dater.
+
+Non-user interactive sessions should start with the protocol version:
+
+    ADPROTO: ${ProtoVersion}
+
+The current protocol version is 0.1. Example:
+
+    ADPROTO: 0.1
+
 
 Calling syntax
 ==============

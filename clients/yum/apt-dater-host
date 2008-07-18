@@ -8,6 +8,7 @@ my $GETROOT = 'sudo';
 eval `cat "$CFGFILE"` if (-r $CFGFILE);
 
 my $CMD = shift;
+my $ADPROTO = '0.1';
 
 delete($ENV{'LANG'});
 
@@ -15,10 +16,12 @@ die "Don't call this script directly!\n" unless (defined($CMD));
 die "Invalid command '$CMD'!\n" unless ($CMD=~/^(refresh|status|upgrade|install|kernel)$/);
 
 if ($CMD eq 'refresh') {
+    print "ADPROTO: $ADPROTO\n";
     &do_status;
     &do_kernel;
 }
 elsif ($CMD eq 'status') {
+    print "ADPROTO: $ADPROTO\n";
     &do_status;
     &do_kernel;
 }
@@ -29,6 +32,7 @@ elsif ($CMD eq 'install') {
     &do_install(@ARGV);
 }
 elsif ($CMD eq 'kernel') {
+    print "ADPROTO: $ADPROTO\n";
     &do_kernel;
 }
 else {
