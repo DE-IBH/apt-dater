@@ -151,7 +151,7 @@ sub do_kernel() {
     while(<HDPKG>) {
 	next unless (/^(\S+)\s/);
 	
-	$reboot=1 if (system("dpkg", "--compare-versions", $vers, "lt", $1) >> 8);
+	$reboot=1 unless (system("dpkg", "--compare-versions", $vers, "lt", $1) >> 8);
     }
     close(HDPKG);
 
