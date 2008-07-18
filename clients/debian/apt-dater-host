@@ -1,5 +1,8 @@
 #!/usr/bin/perl -w
 
+use AptPkg::Config '$_config';
+use AptPkg::System '$_system';
+use AptPkg::Cache;
 use strict;
 
 my $CFGFILE = '/etc/apt-dater-host.conf';
@@ -47,6 +50,18 @@ sub do_refresh() {
 }
 
 sub do_status() {
+    # initialise the global config object with the default values and
+    # setup the $_system object
+    $_config->init;
+    $_system = $_config->system;
+
+    # supress cache building messages
+    $_config->{quiet} = 2;
+
+    # set up the cache
+    my $cache = AptPkg::Cache->new;
+    my $policy = $cache->policy;
+
     # retrieve lsb informations
     open(HLSB, "lsb_release -a 2> /dev/null |") or die "Can't fork: $!\n";
     my %lsb;
@@ -110,8 +125,22 @@ sub do_status() {
 	}
 	else {
 	    $status{$1} = substr($3, 0, 1);
+	    
+	    if ($status{$1} eq 'i') {
+		my $p = $cache->{$1};
+		if ($p) {
+		    if (my $available = $p->{VersionList}) {
+			my $extra = 1;
+			for my $v (@$available) {
+			    for my $f (map $_->{File}, @{$v->{FileList}}) {
+				$extra = 0 unless ($f->{FileName} eq '/var/lib/dpkg/status');
+			    }
+			}
+			$status{$1} = 'x' if($extra);
+		    }
+		}
+	    }
 	}
-#	$status{$1} .= substr($5, 0, 1);
     }
     close(HDPKG);
     
