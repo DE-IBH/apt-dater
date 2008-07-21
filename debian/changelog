@@ -1,3 +1,9 @@
+apt-dater (0.5.7-ibh1) unstable; urgency=medium
+
+  * Fixed a bug in apt-dater-host which let it die on Debian Etch.
+
+ -- Thomas Liske <liske@ibh.de>  Mon, 21 Jul 2008 19:31:06 +0200
+
 apt-dater (0.5.7-ibh0) unstable; urgency=low
 
   * Fixed some bugs in the status file detection.
