@@ -2,8 +2,7 @@ TODO
 ====
 
  - make apt-dater-host package available for more Linux
-   distributions (non dpkg based)
- - retrieve and view installed packages and distributions
-   (output of lsb-release -a)
+   distributions (non apt/dpkg based)
  - fix UI glitches or better rewrite the code
- - daemonize it one day
+ - change UI to show all informations gathered from the clients
+ - add filters to search for certain distri/package/... versions

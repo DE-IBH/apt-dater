@@ -1,4 +1,87 @@
 ------------------------------------------------------------------------
+r139 | ellguth | 2008-07-21 15:59:25 +0200 (Mon, 21 Jul 2008) | 2 lines
+
+Some changes for the scrolling function in the help page.
+
+------------------------------------------------------------------------
+r138 | liske | 2008-07-21 15:34:27 +0200 (Mon, 21 Jul 2008) | 2 lines
+
+Add status flags in front of host lines.
+
+------------------------------------------------------------------------
+r137 | liske | 2008-07-21 13:13:18 +0200 (Mon, 21 Jul 2008) | 4 lines
+
+Check if a hosts stats file contians valid lines, mark the host as 
+unkown if failed.
+Add 'extra packages installed' flag to UI.
+
+------------------------------------------------------------------------
+r136 | liske | 2008-07-18 16:41:34 +0200 (Fri, 18 Jul 2008) | 2 lines
+
+Add obsolete package support for yum-based apt-dater-host.
+
+------------------------------------------------------------------------
+r135 | liske | 2008-07-18 16:31:51 +0200 (Fri, 18 Jul 2008) | 3 lines
+
+Add detection of obsolete packages (packages which are not downloadable 
+any more) for apt-dater-host on Debian using libapt-pkg-perl.
+
+------------------------------------------------------------------------
+r134 | liske | 2008-07-18 13:46:03 +0200 (Fri, 18 Jul 2008) | 2 lines
+
+Fixed file naming glitch.
+
+------------------------------------------------------------------------
+r133 | liske | 2008-07-18 13:44:45 +0200 (Fri, 18 Jul 2008) | 2 lines
+
+Add apt-dater-host protocol version scheme.
+
+------------------------------------------------------------------------
+r132 | liske | 2008-07-18 13:23:27 +0200 (Fri, 18 Jul 2008) | 3 lines
+
+Fixed kernel version compare expression for reboot flag in 
+debian/apt-dater-host.
+
+------------------------------------------------------------------------
+r130 | ellguth | 2008-07-17 15:31:37 +0200 (Thu, 17 Jul 2008) | 3 lines
+
+* Fixed a bug in the lock function.
+
+
+------------------------------------------------------------------------
+r129 | liske | 2008-07-17 13:53:41 +0200 (Thu, 17 Jul 2008) | 3 lines
+
+Made apt-dater-host depend on ssh-server or ssh to work on Debian 
+Sarge hosts.
+
+------------------------------------------------------------------------
+r128 | liske | 2008-07-17 13:50:49 +0200 (Thu, 17 Jul 2008) | 2 lines
+
+Added missing 'STATUS: ' string on apt-dater-host for rug.
+
+------------------------------------------------------------------------
+r127 | ellguth | 2008-07-17 13:35:56 +0200 (Thu, 17 Jul 2008) | 2 lines
+
+Replaced ssh-server with ssh in the apt-dater-host dependencies.
+
+------------------------------------------------------------------------
+r126 | ellguth | 2008-07-17 13:24:20 +0200 (Thu, 17 Jul 2008) | 2 lines
+
+Small change in apt-dater-host for the backward compatibility. 
+
+------------------------------------------------------------------------
+r123 | liske | 2008-07-17 08:30:34 +0200 (Thu, 17 Jul 2008) | 2 lines
+
+Fixed 'apt-dater-host install' to work.
+
+------------------------------------------------------------------------
+r121 | ellguth | 2008-07-17 08:18:37 +0200 (Thu, 17 Jul 2008) | 4 lines
+
+* Added support for yum and rug based systems.
+* Added the lsb release and kernel release info.
+
+
+------------------------------------------------------------------------
 r119 | liske | 2008-07-16 11:13:41 +0200 (Wed, 16 Jul 2008) | 3 lines
 
 Made apt-dater-host for rug supporting the KERNELINFO:-line. Add `uname 
