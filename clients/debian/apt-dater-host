@@ -60,7 +60,6 @@ sub do_status() {
 
     # set up the cache
     my $cache = AptPkg::Cache->new;
-    my $policy = $cache->policy;
 
     # retrieve lsb informations
     open(HLSB, "lsb_release -a 2> /dev/null |") or die "Can't fork: $!\n";
