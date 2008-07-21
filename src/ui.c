@@ -68,6 +68,20 @@ static struct ShortCut shortCuts[] = {
   {NULL, NULL                         , FALSE, 0},
 };
 
+struct HostFlag {
+  gint flag;
+  gchar *code;
+  gchar *descr;
+};
+
+static const struct HostFlag hostFlags[] = {
+  {HOST_STATUS_PKGKEPTBACK    ,  "H", "packages kept back"},
+  {HOST_STATUS_PKGEXTRA       ,  "X", "extra packages installed"},
+  {HOST_STATUS_KERNELNOTMATCH ,  "R", "running Kernel is not the latest"},
+  {HOST_STATUS_KERNELSELFBUILD,  "K", "a selfbuilt kernel is running"},
+  {0                          , NULL, NULL},
+};
+
 static void setMenuEntries(gint mask) {
   mask |= sc_mask;
   gint i = -1;
@@ -331,16 +345,27 @@ void drawHostEntry (DrawNode *n)
 
  attron(n->attrs);
  mvhline(n->scrpos, 0, ' ', COLS);
- if (((HostNode *) n->p)->status & (HOST_STATUS_PKGKEPTBACK |
-				    HOST_STATUS_PKGEXTRA |
-				    HOST_STATUS_KERNELNOTMATCH |
-				    HOST_STATUS_KERNELSELFBUILD)) {
-  attron(uicolors[UI_COLOR_HOSTSTATUS]);
-  mvaddstr(n->scrpos, 1, "!");
-  attroff(uicolors[UI_COLOR_HOSTSTATUS]);
- } else if (((HostNode *) n->p)->status & HOST_STATUS_LOCKED) {
+
+ if (((HostNode *) n->p)->status & HOST_STATUS_LOCKED) {
   attron(uicolors[UI_COLOR_HOSTSTATUS]);
   mvaddstr(n->scrpos, 1, "L");
+  attroff(uicolors[UI_COLOR_HOSTSTATUS]);
+ }
+ else {
+  move(n->scrpos, 1);
+  attron(uicolors[UI_COLOR_HOSTSTATUS]);
+
+  if (((HostNode *) n->p)->status & HOST_STATUS_PKGKEPTBACK)
+   addstr("H");
+
+  if (((HostNode *) n->p)->status & HOST_STATUS_PKGEXTRA)
+   addstr("X");
+
+  if (((HostNode *) n->p)->status & HOST_STATUS_KERNELNOTMATCH)
+   addstr("R");
+  else if (((HostNode *) n->p)->status & HOST_STATUS_KERNELSELFBUILD)
+   addstr("K");
+
   attroff(uicolors[UI_COLOR_HOSTSTATUS]);
  }
  mvaddstr(n->scrpos, 4, " [");
@@ -400,14 +425,6 @@ void drawHostEntry (DrawNode *n)
    break;
   }
 
-  if (((HostNode *) n->p)->status & HOST_STATUS_PKGKEPTBACK) 
-   strcat(statusln," - packages kept back");
-  if (((HostNode *) n->p)->status & HOST_STATUS_PKGEXTRA) 
-   strcat(statusln," - extra packages installed");
-  if (((HostNode *) n->p)->status & HOST_STATUS_KERNELNOTMATCH) 
-   strcat(statusln," - running Kernel is not the latest");
-  if (((HostNode *) n->p)->status & HOST_STATUS_KERNELSELFBUILD) 
-   strcat(statusln," - a selfbuilt kernel is running");
   if (((HostNode *) n->p)->status & HOST_STATUS_LOCKED) 
    strcat(statusln," - host locked by another process");
   drawMenu(mask);
@@ -1794,14 +1811,29 @@ gboolean ctrlUI (GList *hosts)
  case '?':
    {
      WINDOW *w = newwin(LINES-3, COLS, 1, 0);
-     
+     gint l = 1;
+
      wattron(w, A_BOLD);
-     mvwaddnstr(w, 1,  2, "KEY"        , COLS - 2);
-     mvwaddnstr(w, 1, 16, "DESCRIPTION", COLS - 16);
+     mvwaddnstr(w, l  ,  2, "FLAG"       , COLS - 2);
+     mvwaddnstr(w, l++, 16, "DESCRIPTION", COLS - 16);
      wattroff(w, A_BOLD);
 
      gint i = -1;
-     gint l = 3;
+     while(hostFlags[++i].flag) {
+       mvwaddnstr(w, l,  2, hostFlags[i].code  , COLS - 2);
+       mvwaddnstr(w, l, 16, hostFlags[i].descr, COLS - 16);
+
+       l++;
+     }
+     l++;
+
+     
+     wattron(w, A_BOLD);
+     mvwaddnstr(w, l  ,  2, "KEY"        , COLS - 2);
+     mvwaddnstr(w, l++, 16, "DESCRIPTION", COLS - 16);
+     wattroff(w, A_BOLD);
+
+     i = -1;
      while(shortCuts[++i].key) {
        mvwaddnstr(w, l,  2, shortCuts[i].key  , COLS - 2);
        mvwaddnstr(w, l, 16, shortCuts[i].descr, COLS - 16);
@@ -1811,7 +1843,19 @@ gboolean ctrlUI (GList *hosts)
 
      box(w,0,0);
 
-     wgetch(w);
+     do {
+       gint c = wgetch(w);
+
+       if(c == KEY_UP) {
+         wscrl(w, 1);
+	 continue;
+       }
+       
+       if (c == KEY_DOWN) {
+         wscrl(w, -1);
+	 continue;
+       }
+     } while(0);
    
      delwin(w);
      refscr = TRUE;
