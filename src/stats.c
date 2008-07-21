@@ -201,6 +201,7 @@ gboolean getUpdatesFromStat(HostNode *n)
   n->kernelrel = NULL;
  }
 
+ int linesok = 0;
  while(fgets(line, STATS_MAX_LINE_LEN, fp)) {
   line[strlen(line) - 1] = 0;
 
@@ -214,6 +215,7 @@ gboolean getUpdatesFromStat(HostNode *n)
     n->status = n->status | HOST_STATUS_KERNELSELFBUILD;
     break;
    }
+   linesok++;
    continue;
   }
   
@@ -239,7 +241,7 @@ gboolean getUpdatesFromStat(HostNode *n)
 	    if (strlen(argv[2]) > 3)
 		updnode->newver = g_strdup(&argv[2][2]);
 	    else
-		updnode->newver = g_strdup("???");
+		updnode->newver = g_strdup("?");
 
 	    n->updates = g_list_insert_sorted(n->updates, updnode, cmpUpdates);
 
@@ -247,9 +249,13 @@ gboolean getUpdatesFromStat(HostNode *n)
 	case 'h':
 	    n->status = n->status | HOST_STATUS_PKGKEPTBACK;
 	    break;
+	case 'x':
+	    n->status = n->status | HOST_STATUS_PKGEXTRA;
+	    break;
     }
     g_strfreev(argv);
 
+    linesok++;
     continue;
   }
 
@@ -274,13 +280,20 @@ gboolean getUpdatesFromStat(HostNode *n)
    }
 
    g_strfreev(argv);
+
+   linesok++;
+   continue;     
   }
  }
 
- if(g_list_length(n->updates))
-  n->category = C_UPDATES_PENDING;
+ if(linesok>5) {
+   if(g_list_length(n->updates))
+    n->category = C_UPDATES_PENDING;
+   else
+    n->category = C_UP_TO_DATE;
+ }
  else
-  n->category = C_UP_TO_DATE;
+    n->category = C_UNKNOW;
   
  fclose(fp);
  g_free(statsfile);

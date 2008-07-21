@@ -332,6 +332,7 @@ void drawHostEntry (DrawNode *n)
  attron(n->attrs);
  mvhline(n->scrpos, 0, ' ', COLS);
  if (((HostNode *) n->p)->status & (HOST_STATUS_PKGKEPTBACK |
+				    HOST_STATUS_PKGEXTRA |
 				    HOST_STATUS_KERNELNOTMATCH |
 				    HOST_STATUS_KERNELSELFBUILD)) {
   attron(uicolors[UI_COLOR_HOSTSTATUS]);
@@ -401,6 +402,8 @@ void drawHostEntry (DrawNode *n)
 
   if (((HostNode *) n->p)->status & HOST_STATUS_PKGKEPTBACK) 
    strcat(statusln," - packages kept back");
+  if (((HostNode *) n->p)->status & HOST_STATUS_PKGEXTRA) 
+   strcat(statusln," - extra packages installed");
   if (((HostNode *) n->p)->status & HOST_STATUS_KERNELNOTMATCH) 
    strcat(statusln," - running Kernel is not the latest");
   if (((HostNode *) n->p)->status & HOST_STATUS_KERNELSELFBUILD) 
