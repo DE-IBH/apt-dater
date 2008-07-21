@@ -1811,6 +1811,7 @@ gboolean ctrlUI (GList *hosts)
  case '?':
    {
      WINDOW *w = newwin(LINES-3, COLS, 1, 0);
+     scrollok(w, TRUE);
      gint l = 1;
 
      wattron(w, A_BOLD);
@@ -1841,21 +1842,16 @@ gboolean ctrlUI (GList *hosts)
        l++;
      }
 
-     box(w,0,0);
-
+     keypad(w, TRUE);
+     gint c;
      do {
-       gint c = wgetch(w);
+      c = wgetch(w);
 
-       if(c == KEY_UP) {
-         wscrl(w, 1);
-	 continue;
-       }
+       if(c == KEY_UP) wscrl(w, 1);
        
-       if (c == KEY_DOWN) {
-         wscrl(w, -1);
-	 continue;
-       }
-     } while(0);
+       if (c == KEY_DOWN) wscrl(w, -1);
+       wrefresh(w);
+     } while(c == KEY_UP || c == KEY_DOWN);
    
      delwin(w);
      refscr = TRUE;
