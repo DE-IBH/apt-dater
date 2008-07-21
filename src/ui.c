@@ -75,10 +75,10 @@ struct HostFlag {
 };
 
 static const struct HostFlag hostFlags[] = {
-  {HOST_STATUS_PKGKEPTBACK    ,  "H", "packages kept back"},
-  {HOST_STATUS_PKGEXTRA       ,  "X", "extra packages installed"},
-  {HOST_STATUS_KERNELNOTMATCH ,  "R", "running Kernel is not the latest"},
-  {HOST_STATUS_KERNELSELFBUILD,  "K", "a selfbuilt kernel is running"},
+  {HOST_STATUS_PKGKEPTBACK    ,  "H", "some packages are kept back"},
+  {HOST_STATUS_PKGEXTRA       ,  "X", "extra packages are installed"},
+  {HOST_STATUS_KERNELNOTMATCH ,  "R", "running kernel is not the latest (reboot required)"},
+  {HOST_STATUS_KERNELSELFBUILD,  "K", "a selfbuild kernel is running"},
   {0                          , NULL, NULL},
 };
 
@@ -355,16 +355,13 @@ void drawHostEntry (DrawNode *n)
   move(n->scrpos, 1);
   attron(uicolors[UI_COLOR_HOSTSTATUS]);
 
-  if (((HostNode *) n->p)->status & HOST_STATUS_PKGKEPTBACK)
-   addstr("H");
-
-  if (((HostNode *) n->p)->status & HOST_STATUS_PKGEXTRA)
-   addstr("X");
-
-  if (((HostNode *) n->p)->status & HOST_STATUS_KERNELNOTMATCH)
-   addstr("R");
-  else if (((HostNode *) n->p)->status & HOST_STATUS_KERNELSELFBUILD)
-   addstr("K");
+  gint i = 0;
+  while(hostFlags[i].flag) {
+    if (((HostNode *) n->p)->status & hostFlags[i].flag)
+      addstr(hostFlags[i].code);
+      
+    i++;
+  }
 
   attroff(uicolors[UI_COLOR_HOSTSTATUS]);
  }
