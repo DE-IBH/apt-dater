@@ -1480,10 +1480,13 @@ gboolean ctrlUI (GList *hosts)
  if(ic == ERR)
   g_usleep(10000);
 
+
  switch(tolower(ic)) {
+#ifdef KEY_RESIZE
  case KEY_RESIZE:
   refscr = TRUE;
   break;
+#endif
  case KEY_HOME:
  case KEY_END:
  case KEY_UP:
