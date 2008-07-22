@@ -1666,37 +1666,6 @@ gboolean ctrlUI (GList *hosts)
     break;
   }
   break;
- case 'q':
-
-  hostcnt = 0;
-  GList *ho = g_list_first(hosts);
-
-  while(ho) {
-   HostNode *m = (HostNode *)ho->data;
-   if(m->category == C_REFRESH_REQUIRED || m->category == C_REFRESH)
-    hostcnt++;
-
-   ho = g_list_next(ho);
-  }
-
-  if(hostcnt > 0) {
-   qrystr = g_strdup_printf("There are %d %s in status refresh state,\
- quit apt-dater? ", hostcnt, hostcnt > 1 ? "hosts" : "host");
-
-   retqry = queryConfirm(qrystr, FALSE);
-   g_free(qrystr);
-
-   if (retqry == FALSE)
-    break;
-  }
-
-  ret = FALSE;
-  attrset(A_NORMAL);
-  cleanUI();
-  refreshUI();
-  refscr = FALSE;
-  g_main_loop_quit (loop);
-  break;
  case 'n':
    {
      GList *ho = g_list_first(hosts);
@@ -1862,9 +1831,43 @@ gboolean ctrlUI (GList *hosts)
    refscr = TRUE;
   }
   break;
+ case 'q':
+
+  hostcnt = 0;
+  GList *ho = g_list_first(hosts);
+
+  while(ho) {
+   HostNode *m = (HostNode *)ho->data;
+   if(m->category == C_REFRESH_REQUIRED || m->category == C_REFRESH)
+    hostcnt++;
+
+   ho = g_list_next(ho);
+  }
+
+  if(hostcnt > 0) {
+   qrystr = g_strdup_printf("There are %d %s in status refresh state,\
+ quit apt-dater? ", hostcnt, hostcnt > 1 ? "hosts" : "host");
+
+   retqry = queryConfirm(qrystr, FALSE);
+   g_free(qrystr);
+
+   if (retqry == FALSE)
+    break;
+  }
+
+  ret = FALSE;
+  attrset(A_NORMAL);
+  cleanUI();
+  refreshUI();
+  refscr = FALSE;
+  g_main_loop_quit (loop);
+  break;
+
  default:
   break;
- }
+ } /* switch (tolower(ic)) */
+
+
  if(refscr == TRUE) {
   getOldestMtime(hosts);
   refreshDraw();
