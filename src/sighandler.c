@@ -16,20 +16,28 @@ static volatile int sigintcnt = 0;
 
 static void sigintSigHandler(int sig)
 {
- if (sigintcnt++ > 1) {
-  cleanUI();
+ switch(sig) {
+  case SIGINT:
+   if (sigintcnt++ > 1) {
+    cleanUI();
 
-  cleanupLocks();
-  exit(EXIT_FAILURE);
- }
- else
-  g_main_loop_quit (loop);
+    cleanupLocks();
+    exit(EXIT_FAILURE);
+   }
+   else {
+    cleanUI();
+    refreshUI();
+    g_main_loop_quit (loop);
+   }
 
- signal(sig, sigintSigHandler);
+   break;
+ } /* switch(sig) */
 }
 
 static void sigtermSigHandler() {
- cleanupLocks();
+ cleanUI();
+ refreshUI();
+ g_main_loop_quit (loop);
 }
 
 void setSigHandler()

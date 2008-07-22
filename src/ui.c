@@ -157,7 +157,8 @@ void disableInput() {
  noecho();
  curs_set(0);
  leaveok(stdscr, TRUE);
- nodelay(stdscr, TRUE);
+ /* To slow down the idle process. */
+ timeout(100);
 }
 
 void enableInput() {
@@ -198,6 +199,7 @@ void drawMenu (gint mask)
 
  gint i=-1;
  gint p=COLS;
+
  while(shortCuts[++i].key) {
    if(!shortCuts[i].visible)
      continue;
@@ -1460,7 +1462,8 @@ void searchEntry(GList *hosts) {
 
 gboolean ctrlUI (GList *hosts)
 {
- gint ic, hostcnt;
+ gint     hostcnt;
+ int      ic;
  gboolean ret = TRUE;
  gboolean retqry = FALSE;
  gboolean refscr = FALSE;
@@ -1475,11 +1478,6 @@ gboolean ctrlUI (GList *hosts)
  }
 
  ic = getch();
-
- /* To slow down the idle process. */
- if(ic == ERR)
-  g_usleep(10000);
-
 
  switch(tolower(ic)) {
 #ifdef KEY_RESIZE

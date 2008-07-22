@@ -27,6 +27,7 @@ ctrlKeyEnter(GList *hosts);
 
 void doUI (GList *hosts);
 void refreshUI();
+void refreshDraw();
 gboolean ctrlUI (GList *);
 void cleanUI();
 void injectKey(int);
