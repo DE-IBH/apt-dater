@@ -165,7 +165,7 @@ void enableInput() {
  echo();
  curs_set(1);
  leaveok(stdscr, FALSE);
- nodelay(stdscr, FALSE);
+ timeout(-1);
 }
 
 void initUI ()
@@ -1477,8 +1477,7 @@ gboolean ctrlUI (GList *hosts)
   refscr = TRUE;
  }
 
- ic = getch();
-
+ if((ic = getch()) == -1) refresh();
 
  switch(tolower(ic)) {
 #ifdef KEY_RESIZE
@@ -1871,8 +1870,6 @@ gboolean ctrlUI (GList *hosts)
   getOldestMtime(hosts);
   refreshDraw();
  }
-
- doupdate();
 
  return (ret);
 }
