@@ -1479,6 +1479,7 @@ gboolean ctrlUI (GList *hosts)
 
  ic = getch();
 
+
  switch(tolower(ic)) {
 #ifdef KEY_RESIZE
  case KEY_RESIZE:
@@ -1870,5 +1871,8 @@ gboolean ctrlUI (GList *hosts)
   getOldestMtime(hosts);
   refreshDraw();
  }
+
+ doupdate();
+
  return (ret);
 }
