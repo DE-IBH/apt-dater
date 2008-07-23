@@ -28,44 +28,47 @@ static HostNode *inhost = NULL;
 static gint bottomDrawLine;
 static WINDOW *win_dump = NULL;
 static gboolean dump_screen = FALSE;
-gchar maintainer[48];
-gint sc_mask = 0;
+gchar  maintainer[48];
+gint   sc_mask = 0;
 static GCompletion* hstCompl = NULL;
+//static int sc[SC_MAX];
 
-typedef enum {
-  SC_ATTACH=1,
-  SC_CONNECT=2,
-  SC_DUMP=4,
-  SC_UPGRADE=8,
-  SC_INSTALL=16,
-  SC_REFRESH=32,
-  SC_KILL=64,
-} EShortCuts;
 
 struct ShortCut {
-  gchar *key;
-  gchar *descr;
-  gboolean visible;
-  EShortCuts id;
+ EShortCuts sc;
+ int keycode;
+ gchar *key;
+ gchar *descr;
+ gboolean visible;
+ EVisKeyMask id;
 };
 
 static struct ShortCut shortCuts[] = {
-  {"left/right", "expand/shrink node" , FALSE, 0},
-  {"up/down", "move up/down"          , FALSE, 0},
-  {"q" , "quit"                       , TRUE , 0},
-  {"?" , "help"                       , TRUE , 0},
-  {"/" , "search host"                , TRUE , 0},
-  {"a" , "attach session"             , FALSE, SC_ATTACH},
-  {"K" , "kill session"               , FALSE, SC_KILL},
-  {"c" , "connect host"               , FALSE, SC_CONNECT},
-  {"f" , "file transfer"              , FALSE, 0},
-  {"d" , "toggle dumps"               , FALSE, SC_DUMP},
-  {"g" , "refresh host"               , FALSE, SC_REFRESH},
-  {"i" , "install pkg"                , FALSE, SC_INSTALL},
-  {"u" , "upgrade host(s)"            , FALSE, SC_UPGRADE},
-  {"n" , "next detached session"      , FALSE, 0},
-  {"N" , "cycle detached sessions"    , FALSE, 0},
-  {NULL, NULL                         , FALSE, 0},
+ {SC_KEY_LEFT, KEY_LEFT, "<Left>", "shrink node" , FALSE, 0},
+ {SC_KEY_RIGHT, KEY_RIGHT, "<Right>", "expand node" , FALSE, 0},
+ {SC_KEY_SPACE, ' ', "<Space>", "shrink/expand node" , FALSE, 0},
+ {SC_KEY_RETURN, 13, "<Return>", "shrink/expand node" , FALSE, 0},
+ {SC_KEY_UP, KEY_UP, "<Up>", "move up" , FALSE, 0},
+ {SC_KEY_DOWN, KEY_DOWN, "<Down>", "move down" , FALSE, 0},
+ {SC_KEY_HOME, KEY_HOME, "<Home>", "move to the top" , FALSE, 0},
+ {SC_KEY_END, KEY_END, "<End>", "move to the end" , FALSE, 0},
+ {SC_KEY_PPAGE, KEY_PPAGE, "<PageUp>", "previous page" , FALSE, 0},
+ {SC_KEY_NPAGE, KEY_NPAGE, "<PageDown>", "next page" , FALSE, 0},
+ {SC_KEY_PLUS, '+', "+", "shrink/expand node" , FALSE, 0},
+ {SC_KEY_QUIT, 'q', "q" , "quit" , TRUE , 0},
+ {SC_KEY_HELP, '?', "?" , "help" , TRUE , 0},
+ {SC_KEY_FIND, '/', "/" , "search host" , TRUE , 0},
+ {SC_KEY_ATTACH, 'a', "a" , "attach session" , FALSE, VK_ATTACH},
+ {SC_KEY_KILLSESS, 'K', "K" , "kill session" , FALSE, VK_KILL},
+ {SC_KEY_CONNECT, 'c', "c" , "connect host" , FALSE, VK_CONNECT},
+ {SC_KEY_FILETRANS, 'f', "f" , "file transfer" , FALSE, 0},
+ {SC_KEY_TOGGLEDUMPS, 'd', "d" , "toggle dumps" , FALSE, VK_DUMP},
+ {SC_KEY_REFRESH, 'g', "g" , "refresh host" , FALSE, VK_REFRESH},
+ {SC_KEY_INSTALL, 'i', "i" , "install pkg" , FALSE, VK_INSTALL},
+ {SC_KEY_UPGRADE, 'u', "u" , "upgrade host(s)" , FALSE, VK_UPGRADE},
+ {SC_KEY_NEXTSESS, 'n', "n" , "next detached session" , FALSE, 0},
+ {SC_KEY_CYCLESESS, 'N', "N" , "cycle detached sessions" , FALSE, 0},
+ {SC_MAX, 0, NULL, NULL, FALSE, 0},
 };
 
 struct HostFlag {
@@ -158,7 +161,7 @@ void disableInput() {
  curs_set(0);
  leaveok(stdscr, TRUE);
  /* To slow down the idle process. */
- timeout(100);
+ timeout(200);
 }
 
 void enableInput() {
@@ -167,6 +170,18 @@ void enableInput() {
  leaveok(stdscr, FALSE);
  timeout(-1);
 }
+
+
+/*
+static void initShortCuts()
+{
+ int i;
+
+ for(i = 0; shortCuts[i].key; i++)
+  sc[shortCuts[i].sc] = i;
+}
+*/
+
 
 void initUI ()
 {
@@ -182,6 +197,7 @@ void initUI ()
 
  bottomDrawLine = LINES-2;
 }
+
 
 void cleanUI ()
 {
@@ -314,7 +330,7 @@ void drawCategoryEntry (DrawNode *n)
  if(n->selected == TRUE) {
   sprintf(statusln, "%d %s in status \"%s\"", n->elements, n->elements > 1 || n->elements == 0 ? "Hosts" : "Host", (char *) n->p);
 
-  drawMenu(SC_REFRESH);
+  drawMenu(VK_REFRESH);
   drawStatus(statusln);
  }
 }
@@ -334,7 +350,7 @@ void drawGroupEntry (DrawNode *n)
  if(n->selected == TRUE) {
   sprintf(statusln, "%d %s is in status \"%s\"", n->elements, n->elements > 1 || n->elements == 0 ? "Hosts" : "Host", incategory);
 
-  drawMenu(SC_REFRESH);
+  drawMenu(VK_REFRESH);
   drawStatus(statusln);
  }
 }
@@ -395,31 +411,31 @@ void drawHostEntry (DrawNode *n)
  if(n->selected == TRUE) {
   switch(((HostNode *) n->p)->category) {
   case C_UPDATES_PENDING:
-   mask = SC_CONNECT | SC_UPGRADE | SC_REFRESH | SC_INSTALL;
+   mask = VK_CONNECT | VK_UPGRADE | VK_REFRESH | VK_INSTALL;
    sprintf(statusln, "%d %s required", n->elements, n->elements > 1 || n->elements == 0 ? "Updates" : "Update");
    break;
   case C_UP_TO_DATE:
-   mask = SC_CONNECT | SC_REFRESH | SC_INSTALL;
+   mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
    sprintf(statusln, "No update required");
    break;
   case C_NO_STATS:
-   mask = SC_CONNECT | SC_REFRESH | SC_INSTALL;
+   mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
    sprintf(statusln, "Statusfile is missing");
    break;
   case C_REFRESH_REQUIRED:
-   mask = SC_CONNECT | SC_REFRESH | SC_INSTALL;
+   mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
    sprintf(statusln, "Refresh required");
    break;
   case C_REFRESH:
    sprintf(statusln, "In refresh");
    break;
   case C_SESSIONS:
-   mask = SC_ATTACH;
+   mask = VK_ATTACH;
    sprintf(statusln, "%d session%s running", g_list_length(((HostNode *) n->p)->screens),
 	   (g_list_length(((HostNode *) n->p)->screens)==1?"":"s"));
    break;
   default:
-   mask = SC_CONNECT | SC_REFRESH | SC_INSTALL;
+   mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
    sprintf(statusln, "Status is unknown");
    break;
   }
@@ -442,7 +458,7 @@ void drawUpdateEntry (DrawNode *n)
  attroff(n->attrs);
  if(n->selected == TRUE) {
   sprintf(statusln, "%s -> %s", ((UpdNode *) n->p)->oldver, ((UpdNode *) n->p)->newver);
-  drawMenu(SC_INSTALL);
+  drawMenu(VK_INSTALL);
   drawStatus(statusln);
  }
 }
@@ -467,9 +483,9 @@ void drawSessionEntry (DrawNode *n)
  attroff(n->attrs);
  if(n->selected == TRUE) {
   if (screen_is_attached((SessNode *) n->p))
-    drawMenu(SC_ATTACH | SC_DUMP);
+    drawMenu(VK_ATTACH | VK_DUMP);
   else
-    drawMenu(SC_ATTACH | SC_DUMP | SC_KILL);
+    drawMenu(VK_ATTACH | VK_DUMP | VK_KILL);
 
   if (dump_screen) {
     gchar *dump = screen_get_dump((SessNode *) n->p);
@@ -693,6 +709,7 @@ void buildIntialDrawList(GList *hosts)
 void doUI (GList *hosts)
 {
  initUI();
+ /* initShortCuts(); */
 
  /* Create completion list. */
  hstCompl = g_completion_new(compHost);
@@ -1462,114 +1479,130 @@ void searchEntry(GList *hosts) {
 
 gboolean ctrlUI (GList *hosts)
 {
- gint     hostcnt;
- int      ic;
- gboolean ret = TRUE;
- gboolean retqry = FALSE;
- gboolean refscr = FALSE;
- DrawNode *n;
- static   gchar in[BUF_MAX_LEN];
- gchar    *qrystr = NULL;
- gchar    *pkg = NULL;
+ gint       hostcnt;
+ int        ic, i;
+ gboolean   ret = TRUE;
+ gboolean   retqry = FALSE;
+ gboolean   refscr = FALSE;
+ DrawNode   *n;
+ static     gchar in[BUF_MAX_LEN];
+ gchar      *qrystr = NULL;
+ gchar      *pkg = NULL;
+ EShortCuts sc = SC_MAX;
 
  if(rebuilddl == TRUE) {
   rebuildDrawList(hosts);
   refscr = TRUE;
  }
 
- if((ic = getch()) == -1) refresh();
+ if((ic = getch()) == -1)
+  refresh();
+ else 
+  for(i = 0; shortCuts[i].keycode; i++) 
+   if(shortCuts[i].keycode == tolower(ic)) sc = shortCuts[i].sc;
 
- switch(tolower(ic)) {
 #ifdef KEY_RESIZE
- case KEY_RESIZE:
-  refscr = TRUE;
-  break;
+ if(ic == KEY_RESIZE) refscr = TRUE;
 #endif
- case KEY_HOME:
- case KEY_END:
- case KEY_UP:
- case KEY_DOWN:
-  refscr = ctrlKeyUpDown(ic);
-  break;
- case KEY_PPAGE:
-  refscr = ctrlKeyPgUp();
-  break;
- case KEY_NPAGE:
-  refscr = ctrlKeyPgDown();
-  break;
- case KEY_LEFT:
-  refscr = ctrlKeyLeft(hosts);
-  break;
- case KEY_RIGHT:
-  refscr = ctrlKeyRight(hosts);
-  break;
- case '+':
- case ' ':
- case 13:
-  refscr = ctrlKeyEnter(hosts);
-  break;
- case 'g':
-  n = getSelectedDrawNode();
-  if(!n) break;
-  if(n->type == HOST) {
-   if(n->extended == TRUE) n->extended = FALSE;
-   ((HostNode *) n->p)->category = C_REFRESH_REQUIRED;
-   rebuildDrawList(hosts);
-   refscr = TRUE;
-  }
-  else
-   if(n->type == GROUP) {
+
+ if(sc != SC_MAX) {
+  switch(sc) {
+
+  case SC_KEY_HOME:
+  case SC_KEY_END:
+  case SC_KEY_UP:
+  case SC_KEY_DOWN:
+   refscr = ctrlKeyUpDown(ic);
+   break; /* case SC_KEY_DOWN */
+
+  case SC_KEY_PPAGE:
+   refscr = ctrlKeyPgUp();
+   break; /* case SC_KEY_PPAGE */
+
+  case SC_KEY_NPAGE:
+   refscr = ctrlKeyPgDown();
+   break; /* case SC_KEY_NPAGE */
+
+  case SC_KEY_LEFT:
+   refscr = ctrlKeyLeft(hosts);
+   break; /* case SC_KEY_LEFT */
+
+  case SC_KEY_RIGHT:
+   refscr = ctrlKeyRight(hosts);
+   break; /* case SC_KEY_RIGHT */
+
+  case SC_KEY_PLUS:
+  case SC_KEY_SPACE:
+  case SC_KEY_RETURN:
+   refscr = ctrlKeyEnter(hosts);
+   break; /* case SC_KEY_RETURN */
+
+  case SC_KEY_REFRESH:
+   n = getSelectedDrawNode();
+   if(!n) break;
+   if(n->type == HOST) {
     if(n->extended == TRUE) n->extended = FALSE;
-    if(drawCategories[getCategoryNumber(incategory)]) {
-     setHostsCategory(hosts, getCategoryNumber(incategory), ingroup, 
-		      (Category) C_REFRESH_REQUIRED);
-     rebuildDrawList(hosts);
-     refscr = TRUE;
-    }
+    ((HostNode *) n->p)->category = C_REFRESH_REQUIRED;
+    rebuildDrawList(hosts);
+    refscr = TRUE;
    }
    else
-    if(n->type == CATEGORY) {
+    if(n->type == GROUP) {
      if(n->extended == TRUE) n->extended = FALSE;
      if(drawCategories[getCategoryNumber(incategory)]) {
-      setHostsCategory(hosts, getCategoryNumber(incategory), NULL, (Category) C_REFRESH_REQUIRED);
+      setHostsCategory(hosts, getCategoryNumber(incategory), ingroup, 
+		       (Category) C_REFRESH_REQUIRED);
       rebuildDrawList(hosts);
       refscr = TRUE;
      }
     }
-  break;
- case 'c':
-  n = getSelectedDrawNode();
-  if(!n) break;
-  if(n->type == HOST) {
-   if(n->extended == TRUE) n->extended = FALSE;
+    else
+     if(n->type == CATEGORY) {
+      if(n->extended == TRUE) n->extended = FALSE;
+      if(drawCategories[getCategoryNumber(incategory)]) {
+       setHostsCategory(hosts, getCategoryNumber(incategory), NULL, 
+			(Category) C_REFRESH_REQUIRED);
+       rebuildDrawList(hosts);
+       refscr = TRUE;
+      }
+     }
+   break; /* case SC_KEY_REFRESH */
 
-   if (g_list_length(inhost->screens)) {
-    if (!queryConfirm("There are running sessions on this host! Continue? ",
-		      FALSE))
-       break;
+  case SC_KEY_CONNECT:
+   n = getSelectedDrawNode();
+   if(!n) break;
+   if(n->type == HOST) {
+    if(n->extended == TRUE) n->extended = FALSE;
+
+    if (g_list_length(inhost->screens)) {
+     if (!queryConfirm("There are running sessions on this host! Continue? [y/N]: ",
+		       FALSE))
+      break;
+    }
+
+    dump_screen = FALSE;
+    cleanUI();
+    ssh_connect((HostNode *) n->p, FALSE);
+    ((HostNode *) n->p)->category = C_REFRESH_REQUIRED;
+    freeUpdates(((HostNode *) n->p)->updates);
+    ((HostNode *) n->p)->updates = NULL;
+    rebuildDrawList(hosts);
+    initUI();
+    refscr = TRUE;
    }
+   break; /* case SC_KEY_CONNECT */
 
-   cleanUI();
-   ssh_connect((HostNode *) n->p, FALSE);
-   ((HostNode *) n->p)->category = C_REFRESH_REQUIRED;
-   freeUpdates(((HostNode *) n->p)->updates);
-   ((HostNode *) n->p)->updates = NULL;
-   rebuildDrawList(hosts);
-   initUI();
-   refscr = TRUE;
-  }
-  break;
- case 'u':
-  n = getSelectedDrawNode();
-  if(!n) break;
-  switch(n->type) {
-  case HOST:
+  case SC_KEY_UPGRADE:
+   n = getSelectedDrawNode();
+   if(!n) break;
+   switch(n->type) {
+   case HOST:
     if(n->extended == TRUE) n->extended = FALSE;
     
     if (g_list_length(inhost->screens)) {
-     if (!queryConfirm("There are running sessions on this host! Continue? ",
+     if (!queryConfirm("There are running sessions on this host! Continue? [y/N]: ",
 		       FALSE))
-	break;
+      break;
     }
 
     cleanUI();
@@ -1581,53 +1614,70 @@ gboolean ctrlUI (GList *hosts)
     initUI();
     refscr = TRUE;
     break;
-  case CATEGORY:
-  case GROUP:
-  default:
+   case CATEGORY:
+   case GROUP:
+   default:
     {
-     if(((n->type == CATEGORY) && !queryConfirm("Run update for the whole category? ", FALSE)) ||
-	 ((n->type == GROUP) && !queryConfirm("Run update for the whole group? ", FALSE)))
+     if(((n->type == CATEGORY) && !queryConfirm("Run update for the whole category? [y/N]: ", FALSE)) ||
+	((n->type == GROUP) && !queryConfirm("Run update for the whole group? [y/N]: ", FALSE)))
       break;
 
-      GList *ho = g_list_first(hosts);
-      gint cat = getCategoryNumber(incategory);
+     GList *ho = g_list_first(hosts);
+     gint cat = getCategoryNumber(incategory);
 
-      while(ho) {
-	HostNode *m = (HostNode *)ho->data;
-	if(((n->type == GROUP) && (strcmp(m->group, ingroup) == 0)) ||
-	   ((n->type == CATEGORY) && (m->category == cat)))
-	  ssh_cmd_upgrade(m, TRUE);
+     while(ho) {
+      HostNode *m = (HostNode *)ho->data;
+      if(((n->type == GROUP) && (strcmp(m->group, ingroup) == 0)) ||
+	 ((n->type == CATEGORY) && (m->category == cat)))
+       ssh_cmd_upgrade(m, TRUE);
 
-	ho = g_list_next(ho);
-      }
+      ho = g_list_next(ho);
+     }
     }
     break;
-  }
-  break;
- case 'i':
-  n = getSelectedDrawNode();
-  if(!n) break;
-  switch(n->type) {
-  case HOST:
-    n = getSelectedDrawNode();
+   }
+   break; /* case SC_KEY_UPGRADE */
 
+  case SC_KEY_INSTALL:
+   n = getSelectedDrawNode();
+   if(!n) break;
+   switch(n->type) {
+   case UPDATE:
+    if(n->p) {
+     pkg = ((UpdNode *) n->p)->package;
+    
+     qrystr = g_strdup_printf("Install package `%s' [y/N]: ", pkg);
+     if(!qrystr) break;
+     retqry = queryConfirm(qrystr, FALSE);
+     g_free(qrystr);
+     qrystr = NULL;
+     
+     if(retqry == TRUE) {
+      cleanUI();
+      ssh_cmd_install(inhost, pkg, FALSE);
+      inhost->category = C_REFRESH_REQUIRED;
+      freeUpdates(inhost->updates);
+      inhost->updates = NULL;
+      rebuildDrawList(hosts);
+      initUI();
+      refscr = TRUE;
+     }
+    }
+    break;
+   case HOST:
     if(n->extended == TRUE) n->extended = FALSE;
 
     if (g_list_length(inhost->screens)) {
-      if (!queryConfirm("There are running sessions on this host! Continue? ", 
-			FALSE))
-	break;
+     if (!queryConfirm("There are running sessions on this host! Continue? [y/N]: ", 
+		       FALSE))
+      break;
     }
   
-    if(!n || (n->type != UPDATE)) {
-      queryString("Install package: ", in, sizeof(in));
-      if (strlen(in)==0)
-	break;
-      pkg = in;
-    }
-    else {
-      pkg = ((UpdNode *) n->p)->package;
-    }
+    queryString("Install package: ", in, sizeof(in));
+    if (strlen(in)==0)
+     break;
+    pkg = in;
+
     cleanUI();
     ssh_cmd_install(inhost, pkg, FALSE);
     inhost->category = C_REFRESH_REQUIRED;
@@ -1637,233 +1687,243 @@ gboolean ctrlUI (GList *hosts)
     initUI();
     refscr = TRUE;
     break;
-  case CATEGORY:
-  case GROUP:
-  default:
+   case CATEGORY:
+   case GROUP:
+   default:
     {
-      queryString("Install package: ", in, sizeof(in));
-      if (strlen(in)==0)
-	break;
+     queryString("Install package: ", in, sizeof(in));
+     if (strlen(in)==0)
+      break;
 
-      if(((n->type == CATEGORY) && !queryConfirm("Run install for the whole category? ", FALSE)) ||
-	 ((n->type == GROUP) && !queryConfirm("Run install for the whole group? ", FALSE)))
-	break;
+     if(((n->type == CATEGORY) && !queryConfirm("Run install for the whole category? [y/N]: ", FALSE)) ||
+	((n->type == GROUP) && !queryConfirm("Run install for the whole group? [y/N]: ", FALSE)))
+      break;
 
-      GList *ho = g_list_first(hosts);
-      gint cat = getCategoryNumber(incategory);
-
-      while(ho) {
-	HostNode *m = (HostNode *)ho->data;
-	if(((n->type == GROUP) && (strcmp(m->group, ingroup) == 0)) ||
-	   ((n->type == CATEGORY) && (m->category == cat)))
-	  ssh_cmd_install(m, in, TRUE);
-
-	ho = g_list_next(ho);
-      }
-    }
-    break;
-  }
-  break;
- case 'n':
-   {
      GList *ho = g_list_first(hosts);
+     gint cat = getCategoryNumber(incategory);
 
      while(ho) {
-       HostNode *m = (HostNode *)ho->data;
+      HostNode *m = (HostNode *)ho->data;
+      if(((n->type == GROUP) && (strcmp(m->group, ingroup) == 0)) ||
+	 ((n->type == CATEGORY) && (m->category == cat)))
+       ssh_cmd_install(m, in, TRUE);
 
-       GList *sc = m->screens;
+      ho = g_list_next(ho);
+     }
+    }
+    break;
+   }
+   break; /* case SC_KEY_INSTALL */
 
-       while(sc) {
-	qrystr = g_strdup_printf("Attach host %s session %d [Y/n]: ", 
-				 m->hostname, ((SessNode *)sc->data)->pid);
-	if(!qrystr) {
-	 g_warning("Memory allocation failed!");
-	 break;
-	}
+  case SC_KEY_NEXTSESS:
+   {
+    GList *ho = g_list_first(hosts);
 
-        retqry = queryConfirm(qrystr, TRUE);
-	g_free(qrystr);
-	qrystr = NULL;
+    while(ho) {
+     HostNode *m = (HostNode *)ho->data;
 
-	if(retqry == FALSE) {
-	 sc = g_list_next(sc);
-	 break;
-	}
+     GList *sc = m->screens;
 
-	 if (!screen_is_attached((SessNode *)sc->data)) {
-	   cleanUI();
-	   screen_attach((SessNode *)sc->data, FALSE);
-	   initUI();
+     while(sc) {
+      qrystr = g_strdup_printf("Attach host %s session %d [Y/n]: ", 
+			       m->hostname, ((SessNode *)sc->data)->pid);
+      if(!qrystr) {
+       g_warning("Memory allocation failed!");
+       break;
+      }
 
-	   if(ic != 'N') {
-	     ho = NULL;
-	     break;
-	   }
+      retqry = queryConfirm(qrystr, TRUE);
+      g_free(qrystr);
+      qrystr = NULL;
 
-	 }
-	 sc = g_list_next(sc);
- 
+      if(retqry == FALSE) {
+       sc = g_list_next(sc);
+       break;
+      }
+
+      if (!screen_is_attached((SessNode *)sc->data)) {
+       cleanUI();
+       screen_attach((SessNode *)sc->data, FALSE);
+       initUI();
+
+       if(ic != 'N') {
+	ho = NULL;
+	break;
        }
 
-       if(ho)
-	 ho = g_list_next(ho);
       }
-   }
-   break;
- case 'a':
-  n = getSelectedDrawNode();
-  if(!inhost) break;
+      sc = g_list_next(sc);
+ 
+     }
 
-  SessNode *s = NULL;
+     if(ho)
+      ho = g_list_next(ho);
+    }
+   }
+   break; /* case SC_KEY_NEXTSESS */
+
+  case SC_KEY_ATTACH:
+   n = getSelectedDrawNode();
+   if(!inhost) break;
+
+   SessNode *s = NULL;
   
-  if(!n || (n->type != SESSION)) {
+   if(!n || (n->type != SESSION)) {
     GList *l = g_list_first(inhost->screens);
     if (l)
-      s = l->data;
-  }
-  else {
+     s = l->data;
+   }
+   else {
     s = (SessNode *) n->p;
-  }
+   }
 
-  if(!s)
+   if(!s)
     break;
 
-  {
+   {
     gboolean may_share = FALSE;
 
     /* Session already attached! */
     if (screen_is_attached(s)) {
-     if (!queryConfirm("Already attached - share session? ", FALSE))
-	break;
+     if (!queryConfirm("Already attached - share session? [y/N]: ", FALSE))
+      break;
       
-      may_share = TRUE;
+     may_share = TRUE;
     }
 
+    dump_screen = FALSE;
     cleanUI();
     screen_attach(s, may_share);
     initUI();
-  }
-  refscr = TRUE;
-  break;
- case 'k':
-  if(ic != 'K') break;
-  n = getSelectedDrawNode();
-  if(!inhost) break;
-  if(n->type != SESSION) break;
+   }
+   refscr = TRUE;
+   break; /* case SC_KEY_ATTACH */
 
-  /* Session already attached! */
-  if (screen_is_attached((SessNode *) n->p))
+  case SC_KEY_KILLSESS:
+   if(ic != 'K') break;
+   n = getSelectedDrawNode();
+   if(!inhost) break;
+   if(n->type != SESSION) break;
+
+   /* Session already attached! */
+   if (screen_is_attached((SessNode *) n->p))
     break;
   
-  if (!queryConfirm("Realy kill this session? ", FALSE))
+   if (!queryConfirm("Realy kill this session? [y/N]: ", FALSE))
     break;
   
-  kill(((SessNode *) n->p)->pid, SIGTERM);
-  break;
- case 'd':
+   kill(((SessNode *) n->p)->pid, SIGTERM);
+   break; /* case SC_KEY_KILLSESS */
+
+  case SC_KEY_TOGGLEDUMPS:
    if (!cfg->dump_screen)
-     break;
+    break;
    dump_screen = !dump_screen;
 
    if(getSelectedDrawNode()->type != SESSION) {
-     if(dump_screen)
-       mvaddstr(LINES - 1, 0, "Session dumps enabled.");
-     else
-       mvaddstr(LINES - 1, 0, "Session dumps disabled.");
+    if(dump_screen)
+     mvaddstr(LINES - 1, 0, "Session dumps enabled.");
+    else
+     mvaddstr(LINES - 1, 0, "Session dumps disabled.");
    }
    else
-     refscr = TRUE;
+    refscr = TRUE;
 
-   break;
- case '?':
+   break; /* case SC_KEY_TOGGLEDUMPS */
+
+  case SC_KEY_HELP:
    {
-     WINDOW *w = newwin(LINES-3, COLS, 1, 0);
-     gint l = 0;
+    WINDOW *w = newwin(LINES-3, COLS, 1, 0);
+    gint l = 0;
 
-     wattron(w, A_BOLD);
-     mvwaddnstr(w, l  ,  2, "FLAG"       , COLS - 2);
-     mvwaddnstr(w, l++, 16, "DESCRIPTION", COLS - 16);
-     wattroff(w, A_BOLD);
+    wattron(w, A_BOLD);
+    mvwaddnstr(w, l  ,  2, "FLAG"       , COLS - 2);
+    mvwaddnstr(w, l++, 16, "DESCRIPTION", COLS - 16);
+    wattroff(w, A_BOLD);
 
-     gint i = -1;
-     while(hostFlags[++i].flag) {
-       mvwaddnstr(w, l,  2, hostFlags[i].code  , COLS - 2);
-       mvwaddnstr(w, l, 16, hostFlags[i].descr, COLS - 16);
+    gint i = -1;
+    while(hostFlags[++i].flag) {
+     mvwaddnstr(w, l,  2, hostFlags[i].code  , COLS - 2);
+     mvwaddnstr(w, l, 16, hostFlags[i].descr, COLS - 16);
 
-       l++;
-     }
      l++;
+    }
+    l++;
 
      
-     wattron(w, A_BOLD);
-     mvwaddnstr(w, l  ,  2, "KEY"        , COLS - 2);
-     mvwaddnstr(w, l++, 16, "DESCRIPTION", COLS - 16);
-     wattroff(w, A_BOLD);
+    wattron(w, A_BOLD);
+    mvwaddnstr(w, l  ,  2, "KEY"        , COLS - 2);
+    mvwaddnstr(w, l++, 16, "DESCRIPTION", COLS - 16);
+    wattroff(w, A_BOLD);
 
-     i = -1;
-     while(shortCuts[++i].key) {
-       mvwaddnstr(w, l,  2, shortCuts[i].key  , COLS - 2);
-       mvwaddnstr(w, l, 16, shortCuts[i].descr, COLS - 16);
+    i = -1;
+    while(shortCuts[++i].key) {
+     mvwaddnstr(w, l,  2, shortCuts[i].key  , COLS - 2);
+     mvwaddnstr(w, l, 16, shortCuts[i].descr, COLS - 16);
        
-       l++;
-     }
+     l++;
+    }
 
-     wgetch(w);
+    wgetch(w);
    
-     delwin(w);
-     refscr = TRUE;
+    delwin(w);
+    refscr = TRUE;
    }
-  break;
- case '/':
+   break; /* case SC_KEY_HELP */
+
+  case SC_KEY_FIND:
    searchEntry(hosts);
    break;
- case 'f':
-  n = getSelectedDrawNode();
-  if(!n) break;
-  if(n->type == HOST) {
-   if(n->extended == TRUE) n->extended = FALSE;
 
+  case SC_KEY_FILETRANS:
+   n = getSelectedDrawNode();
+   if(!n) break;
+   if(n->type == HOST) {
+    if(n->extended == TRUE) n->extended = FALSE;
+
+    cleanUI();
+    sftp_connect((HostNode *) n->p);
+    initUI();
+    refscr = TRUE;
+   }
+   break; /* case SC_KEY_FILETRANS */
+
+  case SC_KEY_QUIT:
+
+   hostcnt = 0;
+   GList *ho = g_list_first(hosts);
+
+   while(ho) {
+    HostNode *m = (HostNode *)ho->data;
+    if(m->category == C_REFRESH_REQUIRED || m->category == C_REFRESH)
+     hostcnt++;
+
+    ho = g_list_next(ho);
+   }
+
+   if(hostcnt > 0) {
+    qrystr = g_strdup_printf("There are %d %s in status refresh state,\
+ quit apt-dater? [y/N]: ", hostcnt, hostcnt > 1 ? "hosts" : "host");
+
+    retqry = queryConfirm(qrystr, FALSE);
+    g_free(qrystr);
+
+    if (retqry == FALSE)
+     break;
+   }
+
+   ret = FALSE;
+   attrset(A_NORMAL);
    cleanUI();
-   sftp_connect((HostNode *) n->p);
-   initUI();
-   refscr = TRUE;
-  }
-  break;
- case 'q':
+   refreshUI();
+   refscr = FALSE;
+   g_main_loop_quit (loop);
+   break; /* case SC_KEY_QUIT */
 
-  hostcnt = 0;
-  GList *ho = g_list_first(hosts);
-
-  while(ho) {
-   HostNode *m = (HostNode *)ho->data;
-   if(m->category == C_REFRESH_REQUIRED || m->category == C_REFRESH)
-    hostcnt++;
-
-   ho = g_list_next(ho);
-  }
-
-  if(hostcnt > 0) {
-   qrystr = g_strdup_printf("There are %d %s in status refresh state,\
- quit apt-dater? ", hostcnt, hostcnt > 1 ? "hosts" : "host");
-
-   retqry = queryConfirm(qrystr, FALSE);
-   g_free(qrystr);
-
-   if (retqry == FALSE)
-    break;
-  }
-
-  ret = FALSE;
-  attrset(A_NORMAL);
-  cleanUI();
-  refreshUI();
-  refscr = FALSE;
-  g_main_loop_quit (loop);
-  break;
-
- default:
-  break;
- } /* switch (tolower(ic)) */
+  default:
+   break;
+  } /* switch (sc) */
+ }
 
 
  if(refscr == TRUE) {
