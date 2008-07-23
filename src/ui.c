@@ -2016,40 +2016,59 @@ gboolean ctrlUI (GList *hosts)
 
   case SC_KEY_HELP:
    {
-    WINDOW *w = newwin(LINES-3, COLS, 1, 0);
+    WINDOW *wp = newpad(BUF_MAX_LEN+SC_MAX, COLS);
     gint l = 0;
+    int  wic = 0, pminrow = 0, kcquit = 'q';
+    
+    keypad(wp, TRUE);
 
-    wattron(w, A_BOLD);
-    mvwaddnstr(w, l  ,  2, "FLAG"       , COLS - 2);
-    mvwaddnstr(w, l++, 16, "DESCRIPTION", COLS - 16);
-    wattroff(w, A_BOLD);
+    wattron(wp, A_BOLD);
+    mvwaddnstr(wp, l  ,  2, "FLAG"       , COLS - 2);
+    mvwaddnstr(wp, l++, 16, "DESCRIPTION", COLS - 16);
+    wattroff(wp, A_BOLD);
 
     gint i = -1;
     while(hostFlags[++i].flag) {
-     mvwaddch  (w, l,  2, hostFlags[i].code[0]);
-     mvwaddnstr(w, l, 16, hostFlags[i].descr, COLS - 16);
-
+     mvwaddch  (wp, l,  2, hostFlags[i].code[0]);
+     mvwaddnstr(wp, l, 16, hostFlags[i].descr, COLS - 16);
      l++;
     }
     l++;
-
      
-    wattron(w, A_BOLD);
-    mvwaddnstr(w, l  ,  2, "KEY"        , COLS - 2);
-    mvwaddnstr(w, l++, 16, "DESCRIPTION", COLS - 16);
-    wattroff(w, A_BOLD);
+    wattron(wp, A_BOLD);
+    mvwaddnstr(wp, l  ,  2, "KEY"        , COLS - 2);
+    mvwaddnstr(wp, l++, 16, "DESCRIPTION", COLS - 16);
+    wattroff(wp, A_BOLD);
 
     i = -1;
     while(shortCuts[++i].key) {
-     mvwaddnstr(w, l,  2, shortCuts[i].key  , COLS - 2);
-     mvwaddnstr(w, l, 16, shortCuts[i].descr, COLS - 16);
+     mvwaddnstr(wp, l,  2, shortCuts[i].key  , COLS - 2);
+     mvwaddnstr(wp, l, 16, shortCuts[i].descr, COLS - 16);
        
      l++;
     }
 
-    wgetch(w);
+
+    for(i = 0; shortCuts[i].key; i++)
+     if(shortCuts[i].sc == SC_KEY_QUIT) kcquit = shortCuts[i].keycode;
+
+    pminrow = 0;
+    prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
+    while((wic = tolower(wgetch(wp))) != kcquit) {
+     if(wic == KEY_UP && pminrow)
+      pminrow--;
+     else if(wic == KEY_DOWN && pminrow <= l-LINES+3)
+      pminrow++;
+#ifdef KEY_RESIZE     
+     else if(wic == KEY_RESIZE) {
+      refscr = TRUE;
+      break;
+     }
+#endif
+     prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
+    }
    
-    delwin(w);
+    delwin(wp);
     refscr = TRUE;
    }
    break; /* case SC_KEY_HELP */

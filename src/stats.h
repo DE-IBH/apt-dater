@@ -18,5 +18,6 @@ gchar *getStatsFile(const gchar *);
 gboolean removeStatsFile(const gchar *);
 gboolean getUpdatesFromStat(HostNode *);
 void refreshStatsOfNode(gpointer);
+void freePackages(GList *);
 
 #endif /* _STATS_H */
