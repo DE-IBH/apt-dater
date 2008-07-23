@@ -19,6 +19,9 @@
 # include "config.h"
 #endif
 
+#ifdef HAVE_TCLLIB
+#include <tcl.h>
+#endif
 
 static GList *drawlist = NULL;
 static char *drawCategories[] = {"Updates pending", "Up to date", "Status file missing", "Refresh required", "In refresh", "Sessions", "Unknown", 0};
@@ -29,10 +32,44 @@ static gint bottomDrawLine;
 static WINDOW *win_dump = NULL;
 static gboolean dump_screen = FALSE;
 gchar  maintainer[48];
+#ifdef HAVE_TCLLIB
+gchar  filterexp[0x1ff];
+#endif
 gint   sc_mask = 0;
 static GCompletion* hstCompl = NULL;
-//static int sc[SC_MAX];
 
+#ifdef HAVE_TCLLIB
+typedef enum {
+    TCLM_STRING,
+    TCLM_INT,
+    TCLM_PKGLIST,
+    TCLM_FLAGS,
+} ETCLMAPING;
+
+struct TCLMapping {
+    gchar *name;
+    ETCLMAPING type;
+    gint offset;
+};
+
+static HostNode tclmbase;
+static struct TCLMapping tclmap[] = {
+    {"cat", TCLM_INT, (gint)&(tclmbase.category)},
+    {"group", TCLM_STRING, (gint)&(tclmbase.group)},
+    {"hostname", TCLM_STRING, (gint)&(tclmbase.hostname)},
+    {"kernel", TCLM_STRING, (gint)&(tclmbase.kernelrel)},
+    {"lsb_cname", TCLM_STRING, (gint)&(tclmbase.lsb_codename)},
+    {"lsb_distri", TCLM_STRING, (gint)&(tclmbase.lsb_distributor)},
+    {"lsb_rel", TCLM_STRING, (gint)&(tclmbase.lsb_release)},
+
+    {"extras", TCLM_PKGLIST, (gint)&(tclmbase.updates)},
+    {"flags", TCLM_FLAGS, 0},
+    {"installed", TCLM_PKGLIST, (gint)&(tclmbase.updates)},
+    {"updates", TCLM_PKGLIST, (gint)&(tclmbase.updates)},
+
+    {NULL, 0, 0},
+};
+#endif
 
 struct ShortCut {
  EShortCuts sc;
@@ -58,10 +95,13 @@ static struct ShortCut shortCuts[] = {
  {SC_KEY_QUIT, 'q', "q" , "quit" , TRUE , 0},
  {SC_KEY_HELP, '?', "?" , "help" , TRUE , 0},
  {SC_KEY_FIND, '/', "/" , "search host" , TRUE , 0},
+#ifdef HAVE_TCLLIB
+ {SC_KEY_FILTER, 'f', "f" , "filter hosts" , FALSE, 0},
+#endif
  {SC_KEY_ATTACH, 'a', "a" , "attach session" , FALSE, VK_ATTACH},
  {SC_KEY_KILLSESS, 'K', "K" , "kill session" , FALSE, VK_KILL},
  {SC_KEY_CONNECT, 'c', "c" , "connect host" , FALSE, VK_CONNECT},
- {SC_KEY_FILETRANS, 'f', "f" , "file transfer" , FALSE, 0},
+ {SC_KEY_FILETRANS, 't', "f" , "file transfer" , FALSE, 0},
  {SC_KEY_TOGGLEDUMPS, 'd', "d" , "toggle dumps" , FALSE, VK_DUMP},
  {SC_KEY_REFRESH, 'g', "g" , "refresh host" , FALSE, VK_REFRESH},
  {SC_KEY_INSTALL, 'i', "i" , "install pkg" , FALSE, VK_INSTALL},
@@ -757,6 +797,115 @@ void doUI (GList *hosts)
    refreshDraw();
  }
 }
+
+#ifdef HAVE_TCLLIB
+
+void filterHosts (GList *hosts)
+{
+ gint i, j;
+ gint first;
+ WINDOW *w = newwin(LINES-3, COLS, 2, 0);
+
+ wattron(w, uicolors[UI_COLOR_QUERY]);
+ mvwaddstr(w, 1, 0, "Scalars:");
+ wattroff(w, uicolors[UI_COLOR_QUERY]);
+
+ waddstr(w, "\n");
+
+ first = 1;
+ for(i=0; tclmap[i].name; i++) {
+   if((tclmap[i].type != TCLM_STRING) &&
+      (tclmap[i].type != TCLM_INT))
+     continue;
+
+   if(!first)
+    waddstr(w, ", ");
+   else
+    first = 0;
+    
+   waddstr(w, tclmap[i].name);
+ }
+  
+ waddstr(w, "\n\n");
+ 
+ wattron(w, uicolors[UI_COLOR_QUERY]);
+ waddstr(w, "Arrays:");
+ wattroff(w, uicolors[UI_COLOR_QUERY]);
+ 
+ waddstr(w, "\n");
+
+ first = 1;
+ for(i=0; tclmap[i].name; i++) {
+   if((tclmap[i].type != TCLM_PKGLIST) &&
+      (tclmap[i].type != TCLM_FLAGS))
+     continue;
+
+   if(!first)
+    waddstr(w, ", ");
+   else
+    first = 0;
+    
+   waddstr(w, tclmap[i].name);
+ }
+ 
+ waddstr(w, "\n\n");
+
+ wattron(w, uicolors[UI_COLOR_QUERY]);
+ waddstr(w, "Enter filter expression:");
+ wattroff(w, uicolors[UI_COLOR_QUERY]);
+ waddstr(w, "\n");
+   
+ enableInput();
+ wattron(w, uicolors[UI_COLOR_INPUT]);
+
+ for(i = strlen(filterexp)-1; i>=0; i--)
+   ungetch(filterexp[i]);
+   
+ wgetnstr(w, filterexp, sizeof(filterexp));
+ disableInput();
+
+ wattroff(w, uicolors[UI_COLOR_INPUT]);
+
+ delwin(w);
+ refreshDraw();
+
+ Tcl_Interp *interp = Tcl_CreateInterp();
+ GList *l = hosts;
+ while(l) {
+    HostNode *n = (HostNode *)l->data;
+ 
+    for(i=0; tclmap[i].name; i++) {
+      switch(tclmap[i].type) {
+        case TCLM_STRING:
+          Tcl_SetVar(interp, tclmap[i].name, (gchar *)(n+tclmap[i].offset), 0);
+	  break;
+	case TCLM_INT:
+	  {
+	    gchar *h = g_strdup_printf("%d", (gint)(n+tclmap[i].offset));
+            Tcl_SetVar(interp, tclmap[i].name, h, 0);
+	    g_free(h);
+	  }
+	  break;
+	case TCLM_PKGLIST:
+	  break;
+	case TCLM_FLAGS:
+	  Tcl_UnsetVar(interp, "flags", 0);
+
+          for(j=0; hostFlags[j].code; j++) {
+	    if(n->status & hostFlags[j].flag)
+	      Tcl_SetVar2(interp, "flags", hostFlags[j].code, hostFlags[j].code, 0);
+	  }
+	  break;
+	default:
+	  g_warning("Internal error: unkown TCL maping type!\n");
+      }
+    }
+ 
+    l = g_list_next(l);
+ }
+ Tcl_DeleteInterp(interp);
+}
+#endif
 
 gboolean ctrlKeyUpDown(int ic)
 {
@@ -1874,6 +2023,12 @@ gboolean ctrlUI (GList *hosts)
   case SC_KEY_FIND:
    searchEntry(hosts);
    break;
+
+#ifdef HAVE_TCLLIB
+  case SC_KEY_FILTER:
+   filterHosts(hosts);
+   break;
+#endif
 
   case SC_KEY_FILETRANS:
    n = getSelectedDrawNode();
