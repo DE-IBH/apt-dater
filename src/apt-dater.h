@@ -41,9 +41,10 @@ typedef struct _cfgfile {
 
 typedef struct _update {
  gchar *package;
- gchar *oldver;
- gchar *newver;
-} UpdNode;
+ gchar *version;
+ gint flag;
+ gchar *data;
+} PkgNode;
 
 typedef struct _session {
   gint pid;
@@ -57,14 +58,18 @@ typedef enum {
  C_REFRESH_REQUIRED = 3,
  C_REFRESH = 4,
  C_SESSIONS = 5,
- C_UNKNOW = 6
+#ifdef HAVE_TCLLIB
+ C_FILTERED =6,
+#endif
+ C_UNKNOW = 7,
 } Category;
 
-#define HOST_STATUS_PKGKEPTBACK      1
-#define HOST_STATUS_PKGEXTRA         2
-#define HOST_STATUS_KERNELNOTMATCH   4
-#define HOST_STATUS_KERNELSELFBUILD  8
-#define HOST_STATUS_LOCKED          16
+#define HOST_STATUS_PKGUPDATE        1
+#define HOST_STATUS_PKGKEPTBACK      2
+#define HOST_STATUS_PKGEXTRA         4
+#define HOST_STATUS_KERNELNOTMATCH   8
+#define HOST_STATUS_KERNELSELFBUILD 16
+#define HOST_STATUS_LOCKED          32
 
 typedef struct _hostnode {
  gchar     *hostname;
@@ -74,7 +79,10 @@ typedef struct _hostnode {
  guint     status;
  gboolean  keptback;
  Category  category;
- GList     *updates;
+ GList     *packages;
+ gint      nupdates;
+ gint      nholds;
+ gint      nextras;
  GList     *screens;
  gint      fdlock;
  gchar     *lsb_distributor;

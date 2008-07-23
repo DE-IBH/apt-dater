@@ -24,7 +24,18 @@
 #endif
 
 static GList *drawlist = NULL;
-static char *drawCategories[] = {"Updates pending", "Up to date", "Status file missing", "Refresh required", "In refresh", "Sessions", "Unknown", 0};
+static char *drawCategories[] = {
+    "Updates pending",
+    "Up to date",
+    "Status file missing",
+    "Refresh required",
+    "In refresh",
+    "Sessions",
+#ifdef HAVE_TCLLIB
+    "Filtered",
+#endif
+    "Unknown",
+    NULL};
 static gchar *incategory = NULL;
 static gchar *ingroup = NULL;
 static HostNode *inhost = NULL;
@@ -42,8 +53,7 @@ static GCompletion* hstCompl = NULL;
 typedef enum {
     TCLM_STRING,
     TCLM_INT,
-    TCLM_PKGLIST,
-    TCLM_FLAGS,
+    TCLM_IGNORE,
 } ETCLMAPING;
 
 struct TCLMapping {
@@ -52,20 +62,21 @@ struct TCLMapping {
     gint offset;
 };
 
-static HostNode tclmbase;
-static struct TCLMapping tclmap[] = {
-    {"cat", TCLM_INT, (gint)&(tclmbase.category)},
-    {"group", TCLM_STRING, (gint)&(tclmbase.group)},
-    {"hostname", TCLM_STRING, (gint)&(tclmbase.hostname)},
-    {"kernel", TCLM_STRING, (gint)&(tclmbase.kernelrel)},
-    {"lsb_cname", TCLM_STRING, (gint)&(tclmbase.lsb_codename)},
-    {"lsb_distri", TCLM_STRING, (gint)&(tclmbase.lsb_distributor)},
-    {"lsb_rel", TCLM_STRING, (gint)&(tclmbase.lsb_release)},
+const static HostNode tclmbase;
+const static struct TCLMapping tclmap[] = {
+    {"cat", TCLM_INT, (gint)&(tclmbase.category)-(gint)&tclmbase},
+    {"group", TCLM_STRING, (gint)&(tclmbase.group)-(gint)&tclmbase},
+    {"hostname", TCLM_STRING, (gint)&(tclmbase.hostname)-(gint)&tclmbase},
+    {"kernel", TCLM_STRING, (gint)&(tclmbase.kernelrel)-(gint)&tclmbase},
+    {"lsb_cname", TCLM_STRING, (gint)&(tclmbase.lsb_codename)-(gint)&tclmbase},
+    {"lsb_distri", TCLM_STRING, (gint)&(tclmbase.lsb_distributor)-(gint)&tclmbase},
+    {"lsb_rel", TCLM_STRING, (gint)&(tclmbase.lsb_release)-(gint)&tclmbase},
 
-    {"extras", TCLM_PKGLIST, (gint)&(tclmbase.updates)},
-    {"flags", TCLM_FLAGS, 0},
-    {"installed", TCLM_PKGLIST, (gint)&(tclmbase.updates)},
-    {"updates", TCLM_PKGLIST, (gint)&(tclmbase.updates)},
+    {"extras", TCLM_IGNORE, 0},
+    {"flags", TCLM_IGNORE, 0},
+    {"holds", TCLM_IGNORE, 0},
+    {"installed", TCLM_IGNORE, 0},
+    {"updates", TCLM_IGNORE, 0},
 
     {NULL, 0, 0},
 };
@@ -118,10 +129,10 @@ struct HostFlag {
 };
 
 static const struct HostFlag hostFlags[] = {
-  {HOST_STATUS_PKGKEPTBACK    ,  "H", "some packages are kept back"},
-  {HOST_STATUS_PKGEXTRA       ,  "X", "extra packages are installed"},
+  {HOST_STATUS_PKGKEPTBACK    ,  "h", "some packages are kept back"},
+  {HOST_STATUS_PKGEXTRA       ,  "x", "extra packages are installed"},
   {HOST_STATUS_KERNELNOTMATCH ,  "R", "running kernel is not the latest (reboot required)"},
-  {HOST_STATUS_KERNELSELFBUILD,  "K", "a selfbuild kernel is running"},
+  {HOST_STATUS_KERNELSELFBUILD,  "k", "a selfbuild kernel is running"},
   {0                          , NULL, NULL},
 };
 
@@ -416,7 +427,9 @@ void drawHostEntry (DrawNode *n)
   gint i = 0;
   while(hostFlags[i].flag) {
     if (((HostNode *) n->p)->status & hostFlags[i].flag)
-      addstr(hostFlags[i].code);
+      addch(hostFlags[i].code[0]);
+    else
+      addch(' ');
       
     i++;
   }
@@ -494,10 +507,10 @@ void drawUpdateEntry (DrawNode *n)
 
  attron(n->attrs);
  mvhline(n->scrpos, 0, ' ', COLS);
- mvaddnstr(n->scrpos, 7, (char *) ((UpdNode *) n->p)->package, COLS);
+ mvaddnstr(n->scrpos, 7, (char *) ((PkgNode *) n->p)->package, COLS);
  attroff(n->attrs);
  if(n->selected == TRUE) {
-  sprintf(statusln, "%s -> %s", ((UpdNode *) n->p)->oldver, ((UpdNode *) n->p)->newver);
+  sprintf(statusln, "%s -> %s", ((PkgNode *) n->p)->version, ((PkgNode *) n->p)->data);
   drawMenu(VK_INSTALL);
   drawStatus(statusln);
  }
@@ -836,8 +849,7 @@ void filterHosts (GList *hosts)
 
  first = 1;
  for(i=0; tclmap[i].name; i++) {
-   if((tclmap[i].type != TCLM_PKGLIST) &&
-      (tclmap[i].type != TCLM_FLAGS))
+   if(tclmap[i].type != TCLM_IGNORE)
      continue;
 
    if(!first)
@@ -882,25 +894,45 @@ void filterHosts (GList *hosts)
 	case TCLM_INT:
 	  {
 	    gchar *h = g_strdup_printf("%d", (gint)(n+tclmap[i].offset));
-            Tcl_SetVar(interp, tclmap[i].name, h, 0);
+          Tcl_SetVar(interp, tclmap[i].name, h, 0);
 	    g_free(h);
 	  }
 	  break;
-	case TCLM_PKGLIST:
-	  break;
-	case TCLM_FLAGS:
-	  Tcl_UnsetVar(interp, "flags", 0);
-
-          for(j=0; hostFlags[j].code; j++) {
-	    if(n->status & hostFlags[j].flag)
-	      Tcl_SetVar2(interp, "flags", hostFlags[j].code, hostFlags[j].code, 0);
-	  }
+	case TCLM_IGNORE:
 	  break;
 	default:
 	  g_warning("Internal error: unkown TCL maping type!\n");
       }
     }
- 
+
+    Tcl_UnsetVar(interp, "updates", 0);
+    Tcl_UnsetVar(interp, "installed", 0);
+    Tcl_UnsetVar(interp, "extras", 0);
+    Tcl_UnsetVar(interp, "holds", 0);
+    GList *p = n->packages;
+    while(p) {
+      Tcl_SetVar2(interp, "installed", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->version, 0);
+
+      if( ((PkgNode *)p->data)->flag & HOST_STATUS_PKGUPDATE)
+        Tcl_SetVar2(interp, "updates", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->data, 0);
+
+      if( ((PkgNode *)p->data)->flag & HOST_STATUS_PKGKEPTBACK)
+        Tcl_SetVar2(interp, "holds", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->data, 0);
+
+      if( ((PkgNode *)p->data)->flag & HOST_STATUS_PKGEXTRA)
+        Tcl_SetVar2(interp, "extras", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->version, 0);
+	
+      p = g_list_next(p);
+    }
+    
+    Tcl_UnsetVar(interp, "flags", 0);
+    for(i=0; hostFlags[i].code; j++) {
+      if(n->status & hostFlags[i].flag)
+        Tcl_SetVar2(interp, "flags", hostFlags[i].code, hostFlags[i].code, 0);
+    }
+
+    /* TODO: apply filter... */
+
     l = g_list_next(l);
  }
  Tcl_DeleteInterp(interp);
@@ -986,8 +1018,8 @@ gboolean compDrawNodes(DrawNode* n1, DrawNode* n2)
    return(TRUE);
   break;
  case UPDATE:
-  if (!g_strcasecmp(((UpdNode *) n1->p)->package,
-		    ((UpdNode *) n2->p)->package)) return(TRUE);
+  if (!g_strcasecmp(((PkgNode *) n1->p)->package,
+		    ((PkgNode *) n2->p)->package)) return(TRUE);
   break;
  case SESSION:
   if (((SessNode *) n1->p)->pid ==
@@ -1166,7 +1198,7 @@ void extDrawListGroup(gint atpos, gchar *group, GList *hosts)
    drawnode->selected = FALSE;
    drawnode->scrpos = 0;
    if (((HostNode *) ho->data)->category != C_SESSIONS)
-     drawnode->elements = g_list_length(((HostNode *) ho->data)->updates);
+     drawnode->elements = ((HostNode *) ho->data)->nupdates;
    else
      drawnode->elements = g_list_length(((HostNode *) ho->data)->screens);
    drawnode->attrs = A_NORMAL;
@@ -1197,18 +1229,20 @@ void extDrawListHost(gint atpos, HostNode *n)
  }
       
 
- GList *upd = g_list_first(n->updates);
+ GList *upd = g_list_first(n->packages);
 
  while(upd) {
-  drawnode = g_new0(DrawNode, 1);
-  drawnode->p = ((UpdNode *) upd->data);
-  drawnode->type = UPDATE;
-  drawnode->extended = FALSE;
-  drawnode->selected = FALSE;
-  drawnode->scrpos = 0;
-  drawnode->elements = 0;
-  drawnode->attrs = A_BOLD;
-  drawlist = g_list_insert(drawlist, drawnode, ++atpos);
+  if(((PkgNode *) upd->data)->flag & HOST_STATUS_PKGUPDATE) {
+    drawnode = g_new0(DrawNode, 1);
+    drawnode->p = ((PkgNode *) upd->data);
+    drawnode->type = UPDATE;
+    drawnode->extended = FALSE;
+    drawnode->selected = FALSE;
+    drawnode->scrpos = 0;
+    drawnode->elements = 0;
+    drawnode->attrs = A_BOLD;
+    drawlist = g_list_insert(drawlist, drawnode, ++atpos);
+  }
   upd = g_list_next(upd);
  }
  reorderScrpos(1);
@@ -1733,8 +1767,8 @@ gboolean ctrlUI (GList *hosts)
     cleanUI();
     ssh_connect((HostNode *) n->p, FALSE);
     ((HostNode *) n->p)->category = C_REFRESH_REQUIRED;
-    freeUpdates(((HostNode *) n->p)->updates);
-    ((HostNode *) n->p)->updates = NULL;
+    freePackages(((HostNode *) n->p)->packages);
+    ((HostNode *) n->p)->packages = NULL;
     rebuildDrawList(hosts);
     initUI();
     refscr = TRUE;
@@ -1757,8 +1791,8 @@ gboolean ctrlUI (GList *hosts)
     cleanUI();
     ssh_cmd_upgrade((HostNode *) n->p, FALSE);
     ((HostNode *) n->p)->category = C_REFRESH_REQUIRED;
-    freeUpdates(((HostNode *) n->p)->updates);
-    ((HostNode *) n->p)->updates = NULL;
+    freePackages(((HostNode *) n->p)->packages);
+    ((HostNode *) n->p)->packages = NULL;
     rebuildDrawList(hosts);
     initUI();
     refscr = TRUE;
@@ -1793,7 +1827,7 @@ gboolean ctrlUI (GList *hosts)
    switch(n->type) {
    case UPDATE:
     if(n->p) {
-     pkg = ((UpdNode *) n->p)->package;
+     pkg = ((PkgNode *) n->p)->package;
     
      qrystr = g_strdup_printf("Install package `%s' [y/N]: ", pkg);
      if(!qrystr) break;
@@ -1805,8 +1839,8 @@ gboolean ctrlUI (GList *hosts)
       cleanUI();
       ssh_cmd_install(inhost, pkg, FALSE);
       inhost->category = C_REFRESH_REQUIRED;
-      freeUpdates(inhost->updates);
-      inhost->updates = NULL;
+      freePackages(inhost->packages);
+      inhost->packages = NULL;
       rebuildDrawList(hosts);
       initUI();
       refscr = TRUE;
@@ -1830,8 +1864,8 @@ gboolean ctrlUI (GList *hosts)
     cleanUI();
     ssh_cmd_install(inhost, pkg, FALSE);
     inhost->category = C_REFRESH_REQUIRED;
-    freeUpdates(inhost->updates);
-    inhost->updates = NULL;
+    freePackages(inhost->packages);
+    inhost->packages = NULL;
     rebuildDrawList(hosts);
     initUI();
     refscr = TRUE;
@@ -1992,7 +2026,7 @@ gboolean ctrlUI (GList *hosts)
 
     gint i = -1;
     while(hostFlags[++i].flag) {
-     mvwaddnstr(w, l,  2, hostFlags[i].code  , COLS - 2);
+     mvwaddch  (w, l,  2, hostFlags[i].code[0]);
      mvwaddnstr(w, l, 16, hostFlags[i].descr, COLS - 16);
 
      l++;

@@ -87,7 +87,7 @@ void freeHostNode(HostNode *n)
  g_free(n->lsb_release);
  g_free(n->lsb_codename);
  g_free(n->kernelrel);
- freeUpdates(n->updates);
+ freePackages(n->packages);
 }
 
 CfgFile *loadConfig (char *filename)
@@ -265,8 +265,8 @@ GList *loadHosts (char *filename)
    getUpdatesFromStat(hostnode);
 
    if(hostnode->category != C_UPDATES_PENDING) {
-    g_list_free(hostnode->updates);
-    hostnode->updates = NULL;
+    g_list_free(hostnode->packages);
+    hostnode->packages = NULL;
    }
 
    hosts = g_list_append(hosts, hostnode);

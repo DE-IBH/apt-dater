@@ -151,8 +151,8 @@ gboolean setStatsFileFromIOC(GIOChannel *ioc, GIOCondition condition,
 }
 
 
-static gint cmpUpdates(gconstpointer a, gconstpointer b) {
-    return strcmp(((UpdNode *)a)->package, ((UpdNode *)b)->package);
+static gint cmpPackages(gconstpointer a, gconstpointer b) {
+    return strcmp(((PkgNode *)a)->package, ((PkgNode *)b)->package);
 }
 
 gboolean getUpdatesFromStat(HostNode *n)
@@ -161,7 +161,7 @@ gboolean getUpdatesFromStat(HostNode *n)
  char line[STATS_MAX_LINE_LEN];
  char buf[256];
  FILE  *fp;
- UpdNode *updnode = NULL;
+ PkgNode *pkgnode = NULL;
  gint status, i;
  gchar **argv = NULL;
 
@@ -180,9 +180,9 @@ gboolean getUpdatesFromStat(HostNode *n)
 
  n->status = 0;
 
- if(n->updates) {
-    g_list_free(n->updates);
-    n->updates = NULL;
+ if(n->packages) {
+    g_list_free(n->packages);
+    n->packages = NULL;
  }
  if(n->lsb_distributor) {
   g_free(n->lsb_distributor);
@@ -233,24 +233,30 @@ gboolean getUpdatesFromStat(HostNode *n)
      continue;     
     }
     
+    pkgnode = g_new0(PkgNode, 1);
+    pkgnode->package = g_strdup(argv[0]);
+    pkgnode->version = g_strdup(argv[1]);
+
+    n->packages = g_list_insert_sorted(n->packages, pkgnode, cmpPackages);
+     
+    if (strlen(argv[2]) > 3)
+	pkgnode->data = g_strdup(&argv[2][2]);
+
     switch(argv[2][0]) {
 	case 'u':
-	    updnode = g_new0(UpdNode, 1);
-	    updnode->package = g_strdup(argv[0]);
-	    updnode->oldver = g_strdup(argv[1]);
-	    if (strlen(argv[2]) > 3)
-		updnode->newver = g_strdup(&argv[2][2]);
-	    else
-		updnode->newver = g_strdup("?");
-
-	    n->updates = g_list_insert_sorted(n->updates, updnode, cmpUpdates);
-
+	    n->status = n->status | HOST_STATUS_PKGUPDATE;
+	    pkgnode->flag = HOST_STATUS_PKGUPDATE;
+	    n->nupdates++;
 	    break;
 	case 'h':
 	    n->status = n->status | HOST_STATUS_PKGKEPTBACK;
+	    pkgnode->flag = HOST_STATUS_PKGKEPTBACK;
+	    n->nholds++;
 	    break;
 	case 'x':
 	    n->status = n->status | HOST_STATUS_PKGEXTRA;
+	    pkgnode->flag = HOST_STATUS_PKGEXTRA;
+	    n->nextras++;
 	    break;
     }
     g_strfreev(argv);
@@ -287,7 +293,7 @@ gboolean getUpdatesFromStat(HostNode *n)
  }
 
  if(linesok>5) {
-   if(g_list_length(n->updates))
+   if(n->status & HOST_STATUS_PKGUPDATE)
     n->category = C_UPDATES_PENDING;
    else
     n->category = C_UP_TO_DATE;
@@ -302,22 +308,23 @@ gboolean getUpdatesFromStat(HostNode *n)
 }
 
 
-void freeUpdNode(UpdNode *n)
+void freePkgNode(PkgNode *n)
 {
  if(n) {
   g_free(n->package);
-  g_free(n->oldver);
-  g_free(n->newver);
+  g_free(n->version);
+  if(n->data)
+   g_free(n->data);
   g_free(n);
  }
 }
 
 
-void freeUpdates(GList *updates)
+void freePackages(GList *packages)
 {
- if(updates) {
-  g_list_foreach (updates, (GFunc) freeUpdNode, NULL);
-  g_list_free(updates);
+ if(packages) {
+  g_list_foreach (packages, (GFunc) freePkgNode, NULL);
+  g_list_free(packages);
  }
 }
 
@@ -347,9 +354,9 @@ gboolean refreshStats(GList *hosts)
     /* We don't got the lock. */
     if(rsetlck == -1) {
      n->status|= HOST_STATUS_LOCKED;
-     if(n->updates) {
-      freeUpdates(n->updates);
-      n->updates = NULL;
+     if(n->packages) {
+      freePackages(n->packages);
+      n->packages = NULL;
      }
     }
     /* We got the lock. */
@@ -361,8 +368,8 @@ gboolean refreshStats(GList *hosts)
       n->category = C_REFRESH;
       rebuilddl = TRUE;
 
-      freeUpdates(n->updates);
-      n->updates = NULL;
+      freePackages(n->packages);
+      n->packages = NULL;
 
       if(ssh_cmd_refresh(n) == FALSE) {
        n->category = C_NO_STATS;
