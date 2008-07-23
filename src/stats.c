@@ -300,7 +300,7 @@ gboolean getUpdatesFromStat(HostNode *n)
  }
  else
     n->category = C_UNKNOW;
-  
+
  fclose(fp);
  g_free(statsfile);
 

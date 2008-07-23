@@ -1,3 +1,12 @@
+apt-dater (0.5.8-ibh0) unstable; urgency=medium
+
+  * Terminal resize handler works now correctly.
+  * Added the scrolling function to the help page.
+  * Global definition of control and function keys.
+  * Preparations for TCL host filters.
+
+ -- Andre Ellguth <ellguth@ibh.de>  Wed, 23 Jul 2008 16:16:58 +0200
+
 apt-dater (0.5.7-ibh1) unstable; urgency=medium
 
   * Fixed a bug in apt-dater-host which let it die on Debian Etch.

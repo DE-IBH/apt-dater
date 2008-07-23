@@ -2057,8 +2057,12 @@ gboolean ctrlUI (GList *hosts)
     while((wic = tolower(wgetch(wp))) != kcquit) {
      if(wic == KEY_UP && pminrow)
       pminrow--;
-     else if(wic == KEY_DOWN && pminrow <= l-LINES+3)
+     else if(wic == KEY_DOWN && pminrow < l-LINES+4)
       pminrow++;
+     else if(wic == KEY_HOME)
+      pminrow=0;
+     else if(wic == KEY_END)
+      pminrow=l-LINES+4;
 #ifdef KEY_RESIZE     
      else if(wic == KEY_RESIZE) {
       refscr = TRUE;

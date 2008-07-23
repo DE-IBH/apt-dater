@@ -59,9 +59,11 @@ typedef enum {
  C_REFRESH = 4,
  C_SESSIONS = 5,
 #ifdef HAVE_TCLLIB
- C_FILTERED =6,
-#endif
+ C_FILTERED = 6,
  C_UNKNOW = 7,
+#else
+ C_UNKNOW = 6,
+#endif
 } Category;
 
 #define HOST_STATUS_PKGUPDATE        1
