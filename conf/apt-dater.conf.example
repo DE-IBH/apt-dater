@@ -43,3 +43,7 @@ CmdInstall=apt-dater-host install %s
 # COLOR     ::= 'black' | 'blue' | 'cyan' | 'green' | 'magenta' | 'red' |
 #               'white' | 'yellow'
 Colors=menu brightgreen blue;status brightgreen blue;selector black red;
+
+# Predefined host filter.
+#[TCLFilter]
+#FilterExp=return [expr [string compare $lsb_distri \"Debian\"] == 0 && $lsb_rel < 3.1]

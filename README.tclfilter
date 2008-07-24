@@ -1,0 +1,64 @@
+TCL Filter
+==========
+
+Since version 0.5.9, apt-dater can be configured with TCL filter support.
+This feature is disabled by default, enable it with configure:
+
+    $ ./configure --enable-tclfilter
+
+You need a recent TCL version installed to succeed, the Debian packages have
+TCL filter support enabled.
+
+
+Usage
+=====
+
+TCL filters can be used to group hosts by your own filter definition. For each
+host configured, apt-dater evals your TCL filter and adds the host to the category
+"Filtered" in the main screen if the return value is non-zero.
+
+If you have a large number of hosts, it becomes hard i.e. to find out which hosts
+have a certain package installed/running an obsolete release... . TCL filter helps
+to filter alle hosts by such conditions.
+
+
+Variables
+=========
+
+Before evaluating a TCL filter expression for a host, apt-dater sets the following
+variables in the TCL environment:
+
+ -------------+-------------------------------------------------------
+  Variable    | Description
+ -------------+-------------------------------------------------------
+  $cat        | category index (0=Updates pending, 1=Up to date, ...)
+  $group      | name of the group the hosts belongs to
+  $hostname   | hostname
+  $kernel     | kernel release (uname -r)
+  $lsb_cname  | "Codename"-field of lsb_release -a
+  $lsb_distri | "Release"-field of lsb_release -a
+  $lsb_rel    | "Distributer ID"-field of lsb_release -a
+  $extras     | array of extra packages
+  $flags      | array of host flags (h x R K)
+  $holds      | array of packages hold back
+  $installed  | array of installed packages
+  $updates    | array of packages w/ update available
+ -------------+-------------------------------------------------------
+
+The filter has the full power of TCL.
+
+
+Examples
+========
+
+Filter all Debian hosts:
+
+ return [expr [string compare $lsb_distri "Debian"] == 0]
+
+Filter all Debian hosts running a release older than Etch:
+
+ return [expr [string compare $lsb_distri "Debian"] == 0 && $lsb_rel < 4.0]
+
+Filter add hosts which have bind installed:
+
+ return [llength [array names installed "bind*"]]

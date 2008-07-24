@@ -56,29 +56,44 @@ typedef enum {
     TCLM_IGNORE,
 } ETCLMAPING;
 
+typedef enum {
+    TCLMK_CATEGORY,
+    TCLMK_GROUP,
+    TCLMK_HOSTNAME,
+    TCLMK_KERNEL,
+    TCLMK_LSBCNAME,
+    TCLMK_LSBDISTRI,
+    TCLMK_LSBREL,
+
+    TCLMK_EXTRAS,
+    TCLMK_FLAGS,
+    TCLMK_HOLDS,
+    TCLMK_INSTALLED,
+    TCLMK_UPDATES,
+} ETCLMAPKEYS;
+
 struct TCLMapping {
+    gint code;
     gchar *name;
     ETCLMAPING type;
-    gint offset;
 };
 
-const static HostNode tclmbase;
 const static struct TCLMapping tclmap[] = {
-    {"cat", TCLM_INT, (gint)&(tclmbase.category)-(gint)&tclmbase},
-    {"group", TCLM_STRING, (gint)&(tclmbase.group)-(gint)&tclmbase},
-    {"hostname", TCLM_STRING, (gint)&(tclmbase.hostname)-(gint)&tclmbase},
-    {"kernel", TCLM_STRING, (gint)&(tclmbase.kernelrel)-(gint)&tclmbase},
-    {"lsb_cname", TCLM_STRING, (gint)&(tclmbase.lsb_codename)-(gint)&tclmbase},
-    {"lsb_distri", TCLM_STRING, (gint)&(tclmbase.lsb_distributor)-(gint)&tclmbase},
-    {"lsb_rel", TCLM_STRING, (gint)&(tclmbase.lsb_release)-(gint)&tclmbase},
+    {TCLMK_CATEGORY , "cat"       , TCLM_INT},
+    {TCLMK_GROUP    , "group"     , TCLM_STRING},
+    {TCLMK_HOSTNAME , "hostname"  , TCLM_STRING},
+    {TCLMK_KERNEL   , "kernel"    , TCLM_STRING},
+    {TCLMK_LSBCNAME , "lsb_cname" , TCLM_STRING},
+    {TCLMK_LSBDISTRI, "lsb_distri", TCLM_STRING},
+    {TCLMK_LSBREL   , "lsb_rel"   , TCLM_STRING},
 
-    {"extras", TCLM_IGNORE, 0},
-    {"flags", TCLM_IGNORE, 0},
-    {"holds", TCLM_IGNORE, 0},
-    {"installed", TCLM_IGNORE, 0},
-    {"updates", TCLM_IGNORE, 0},
+    {TCLMK_EXTRAS   , "extras"    , TCLM_IGNORE},
+    {TCLMK_FLAGS    , "flags"     , TCLM_IGNORE},
+    {TCLMK_HOLDS    , "holds"     , TCLM_IGNORE},
+    {TCLMK_INSTALLED, "installed" , TCLM_IGNORE},
+    {TCLMK_UPDATES  , "updates"   , TCLM_IGNORE},
 
-    {NULL, 0, 0},
+    {0              ,         NULL,           0},
 };
 #endif
 
@@ -244,7 +259,10 @@ void initUI ()
 
  bottomDrawLine = LINES-2;
 #ifdef FEAT_TCLFILTER
- filterexp[0] = 0;
+ if(cfg->filterexp)
+  strcpy(filterexp, cfg->filterexp);
+ else
+  filterexp[0] = 0;
 #endif
 }
 
@@ -1563,12 +1581,42 @@ void applyFilter(GList *hosts) {
     for(i=0; tclmap[i].name; i++) {
       switch(tclmap[i].type) {
         case TCLM_STRING:
-          Tcl_SetVar(interp, tclmap[i].name, (gchar *)(n+tclmap[i].offset), 0);
+	  switch(tclmap[i].code) {
+	    case TCLMK_GROUP:
+        	Tcl_SetVar(interp, tclmap[i].name, n->group, 0);
+		break;
+	    case TCLMK_HOSTNAME:
+        	Tcl_SetVar(interp, tclmap[i].name, n->hostname, 0);
+		break;
+	    case TCLMK_KERNEL:
+        	Tcl_SetVar(interp, tclmap[i].name, n->kernelrel, 0);
+		break;
+	    case TCLMK_LSBCNAME:
+        	Tcl_SetVar(interp, tclmap[i].name, n->lsb_codename, 0);
+		break;
+	    case TCLMK_LSBDISTRI:
+        	Tcl_SetVar(interp, tclmap[i].name, n->lsb_distributor, 0);
+		break;
+	    case TCLMK_LSBREL:
+        	Tcl_SetVar(interp, tclmap[i].name, n->lsb_release, 0);
+		break;
+	    default:
+		g_warning("Internal error: unhandled TCL TCLM_STRING maping!\n");
+	  }
 	  break;
 	case TCLM_INT:
 	  {
-	    gchar *h = g_strdup_printf("%d", (gint)(n+tclmap[i].offset));
-          Tcl_SetVar(interp, tclmap[i].name, h, 0);
+	    gchar *h = NULL;
+
+	    switch(tclmap[i].code) {
+		case TCLMK_CATEGORY:
+		    h = g_strdup_printf("%d", n->category);
+		    break;
+		default:
+		    g_warning("Internal error: unhandled TCL TCLM_INT maping!\n");
+	    }
+
+	    Tcl_SetVar(interp, tclmap[i].name, h, 0);
 	    g_free(h);
 	  }
 	  break;
@@ -1605,6 +1653,8 @@ void applyFilter(GList *hosts) {
         Tcl_SetVar2(interp, "flags", hostFlags[i].code, hostFlags[i].code, 0);
     }
 
+    Tcl_ResetResult(interp);
+    interp->errorLine = 0;
     Tcl_Eval(interp, filterexp);
     if(interp->errorLine)
      filtered = FALSE;
@@ -1676,8 +1726,8 @@ static void filterHosts(GList *hosts)
  
  waddstr(w, "\n");
 
- waddstr(w, "return [expr [string compare $lsb_distri \"Debian\"] < 0]\n");
- waddstr(w, "return [expr [string compare $lsb_distri \"Debian\"] && $lsb_rel < 3.1]\n");
+ waddstr(w, "return [expr [string compare $lsb_distri \"Debian\"] == 0]\n");
+ waddstr(w, "return [expr [string compare $lsb_distri \"Debian\"] == 0 && $lsb_rel < 4.0]\n");
  waddstr(w, "return [llength [array names installed \"bind*\"]]\n");
 
  waddstr(w, "\n");

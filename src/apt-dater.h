@@ -41,6 +41,9 @@ typedef struct _cfgfile {
  gboolean dump_screen;
  gboolean query_maintainer;
  gchar **colors;
+#ifdef FEAT_TCLFILTER
+ gchar *filterexp;
+#endif
 } CfgFile;
 
 typedef struct _update {
