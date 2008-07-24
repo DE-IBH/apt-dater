@@ -25,6 +25,6 @@ apt_dater_SOURCES =			\
 	ui.c				\
 	ui.h
 
-apt_dater_LDADD = $(GLIB_LIBS)
+apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS)
 
-#apt_dater_CFLAGS=-I. -I$(top_srcdir) $(INCLUDES)
+AM_CFLAGS = $(TCL_CFLAGS)

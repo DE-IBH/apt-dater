@@ -70,6 +70,7 @@ void refreshDraw();
 gboolean ctrlUI (GList *);
 void cleanUI();
 void injectKey(int);
+void applyFilter(GList *hosts);
 
 extern gchar maintainer[48];
 

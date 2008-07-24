@@ -1,4 +1,68 @@
 ------------------------------------------------------------------------
+r157 | ellguth | 2008-07-23 16:25:51 +0200 (Wed, 23 Jul 2008) | 2 lines
+
+Changes for the new release 0.5.8.
+
+------------------------------------------------------------------------
+r156 | ellguth | 2008-07-23 15:45:45 +0200 (Wed, 23 Jul 2008) | 2 lines
+
+Content of the initial configuration files moved from keyfiles.h to keyfiles.c.
+
+------------------------------------------------------------------------
+r155 | ellguth | 2008-07-23 15:29:08 +0200 (Wed, 23 Jul 2008) | 3 lines
+
+Added the scrolling function to the help page.
+
+
+------------------------------------------------------------------------
+r154 | liske | 2008-07-23 14:56:21 +0200 (Wed, 23 Jul 2008) | 2 lines
+
+More changed for the TCL filter interface.
+
+------------------------------------------------------------------------
+r153 | liske | 2008-07-23 13:34:31 +0200 (Wed, 23 Jul 2008) | 2 lines
+
+Preparations for TCL host filters (protecteded inside ifdef's).
+
+------------------------------------------------------------------------
+r152 | ellguth | 2008-07-23 11:55:38 +0200 (Wed, 23 Jul 2008) | 4 lines
+
+Global definition of control and function keys.
+Fixed a bug in the install function if you've selected a package.
+
+
+------------------------------------------------------------------------
+r151 | ellguth | 2008-07-22 21:04:49 +0200 (Tue, 22 Jul 2008) | 2 lines
+
+Removed the nodelay function (replaced with timeout(-1)).
+
+------------------------------------------------------------------------
+r150 | ellguth | 2008-07-22 17:02:27 +0200 (Tue, 22 Jul 2008) | 2 lines
+
+Added a final doupdate() to the ctrlUI function.
+
+------------------------------------------------------------------------
+r149 | ellguth | 2008-07-22 14:36:47 +0200 (Tue, 22 Jul 2008) | 3 lines
+
+Fixed the the curses screen cleanup for the SIGINT and the SIGTERM signal handler.
+Terminal resize handler works now correctly.
+
+------------------------------------------------------------------------
+r148 | ellguth | 2008-07-22 08:32:06 +0200 (Tue, 22 Jul 2008) | 2 lines
+
+Some code movement.
+
+------------------------------------------------------------------------
+r146 | liske | 2008-07-21 19:32:33 +0200 (Mon, 21 Jul 2008) | 2 lines
+
+Release version 0.5.7-ibh1.
+
+------------------------------------------------------------------------
+r145 | liske | 2008-07-21 19:28:26 +0200 (Mon, 21 Jul 2008) | 2 lines
+
+Fixed apt-dater-host to run on Debian Etch. 
+
+------------------------------------------------------------------------
 r143 | ellguth | 2008-07-21 16:50:40 +0200 (Mon, 21 Jul 2008) | 2 lines
 
 Edited the changelog for the release 0.5.7.

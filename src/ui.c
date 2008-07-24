@@ -19,7 +19,7 @@
 # include "config.h"
 #endif
 
-#ifdef HAVE_TCLLIB
+#ifdef FEAT_TCLFILTER
 #include <tcl.h>
 #endif
 
@@ -31,7 +31,7 @@ static char *drawCategories[] = {
     "Refresh required",
     "In refresh",
     "Sessions",
-#ifdef HAVE_TCLLIB
+#ifdef FEAT_TCLFILTER
     "Filtered",
 #endif
     "Unknown",
@@ -43,13 +43,13 @@ static gint bottomDrawLine;
 static WINDOW *win_dump = NULL;
 static gboolean dump_screen = FALSE;
 gchar  maintainer[48];
-#ifdef HAVE_TCLLIB
+#ifdef FEAT_TCLFILTER
 gchar  filterexp[0x1ff];
 #endif
 gint   sc_mask = 0;
 static GCompletion* hstCompl = NULL;
 
-#ifdef HAVE_TCLLIB
+#ifdef FEAT_TCLFILTER
 typedef enum {
     TCLM_STRING,
     TCLM_INT,
@@ -106,7 +106,7 @@ static struct ShortCut shortCuts[] = {
  {SC_KEY_QUIT, 'q', "q" , "quit" , TRUE , 0},
  {SC_KEY_HELP, '?', "?" , "help" , TRUE , 0},
  {SC_KEY_FIND, '/', "/" , "search host" , TRUE , 0},
-#ifdef HAVE_TCLLIB
+#ifdef FEAT_TCLFILTER
  {SC_KEY_FILTER, 'f', "f" , "filter hosts" , FALSE, 0},
 #endif
  {SC_KEY_ATTACH, 'a', "a" , "attach session" , FALSE, VK_ATTACH},
@@ -201,7 +201,14 @@ guint getHostGrpCatCnt(GList *hosts, gchar *group, Category category)
  ho = g_list_first(hosts);
 
  while(ho) {
-  if((((HostNode *) ho->data)->category == category) && (!g_strcasecmp(((HostNode *) ho->data)->group, group))) cnt++;
+#ifdef FEAT_TCLFILTER
+  if(category == C_FILTERED) {
+    if((((HostNode *) ho->data)->filtered) && (!g_strcasecmp(((HostNode *) ho->data)->group, group))) cnt++;
+  }
+  else
+#endif
+   if((((HostNode *) ho->data)->category == category) && (!g_strcasecmp(((HostNode *) ho->data)->group, group))) cnt++;
+
   ho = g_list_next(ho);
  }
  return(cnt);
@@ -223,17 +230,6 @@ void enableInput() {
 }
 
 
-/*
-static void initShortCuts()
-{
- int i;
-
- for(i = 0; shortCuts[i].key; i++)
-  sc[shortCuts[i].sc] = i;
-}
-*/
-
-
 void initUI ()
 {
  initscr();
@@ -247,6 +243,9 @@ void initUI ()
  refresh();
 
  bottomDrawLine = LINES-2;
+#ifdef FEAT_TCLFILTER
+ filterexp[0] = 0;
+#endif
 }
 
 
@@ -677,7 +676,13 @@ guint getHostCatCnt(GList *hosts, Category category)
 
  ho = g_list_first(hosts);
  while(ho) {
-  if(((HostNode *) ho->data)->category == category) cnt++;
+#ifdef FEAT_TCLFILTER
+  if(category == C_FILTERED) {
+    if(((HostNode *) ho->data)->filtered) cnt++;
+  }
+  else
+#endif
+    if(((HostNode *) ho->data)->category == category) cnt++;
   ho = g_list_next(ho);
  }
  return(cnt);
@@ -810,134 +815,6 @@ void doUI (GList *hosts)
    refreshDraw();
  }
 }
-
-#ifdef HAVE_TCLLIB
-
-void filterHosts (GList *hosts)
-{
- gint i, j;
- gint first;
- WINDOW *w = newwin(LINES-3, COLS, 2, 0);
-
- wattron(w, uicolors[UI_COLOR_QUERY]);
- mvwaddstr(w, 1, 0, "Scalars:");
- wattroff(w, uicolors[UI_COLOR_QUERY]);
-
- waddstr(w, "\n");
-
- first = 1;
- for(i=0; tclmap[i].name; i++) {
-   if((tclmap[i].type != TCLM_STRING) &&
-      (tclmap[i].type != TCLM_INT))
-     continue;
-
-   if(!first)
-    waddstr(w, ", ");
-   else
-    first = 0;
-    
-   waddstr(w, tclmap[i].name);
- }
-  
- waddstr(w, "\n\n");
- 
- wattron(w, uicolors[UI_COLOR_QUERY]);
- waddstr(w, "Arrays:");
- wattroff(w, uicolors[UI_COLOR_QUERY]);
- 
- waddstr(w, "\n");
-
- first = 1;
- for(i=0; tclmap[i].name; i++) {
-   if(tclmap[i].type != TCLM_IGNORE)
-     continue;
-
-   if(!first)
-    waddstr(w, ", ");
-   else
-    first = 0;
-    
-   waddstr(w, tclmap[i].name);
- }
- 
- waddstr(w, "\n\n");
-
- wattron(w, uicolors[UI_COLOR_QUERY]);
- waddstr(w, "Enter filter expression:");
- wattroff(w, uicolors[UI_COLOR_QUERY]);
- waddstr(w, "\n");
-   
- enableInput();
- wattron(w, uicolors[UI_COLOR_INPUT]);
-
- for(i = strlen(filterexp)-1; i>=0; i--)
-   ungetch(filterexp[i]);
-   
- wgetnstr(w, filterexp, sizeof(filterexp));
- disableInput();
-
- wattroff(w, uicolors[UI_COLOR_INPUT]);
-
- delwin(w);
- refreshDraw();
-
- Tcl_Interp *interp = Tcl_CreateInterp();
- GList *l = hosts;
- while(l) {
-    HostNode *n = (HostNode *)l->data;
- 
-    for(i=0; tclmap[i].name; i++) {
-      switch(tclmap[i].type) {
-        case TCLM_STRING:
-          Tcl_SetVar(interp, tclmap[i].name, (gchar *)(n+tclmap[i].offset), 0);
-	  break;
-	case TCLM_INT:
-	  {
-	    gchar *h = g_strdup_printf("%d", (gint)(n+tclmap[i].offset));
-          Tcl_SetVar(interp, tclmap[i].name, h, 0);
-	    g_free(h);
-	  }
-	  break;
-	case TCLM_IGNORE:
-	  break;
-	default:
-	  g_warning("Internal error: unkown TCL maping type!\n");
-      }
-    }
-
-    Tcl_UnsetVar(interp, "updates", 0);
-    Tcl_UnsetVar(interp, "installed", 0);
-    Tcl_UnsetVar(interp, "extras", 0);
-    Tcl_UnsetVar(interp, "holds", 0);
-    GList *p = n->packages;
-    while(p) {
-      Tcl_SetVar2(interp, "installed", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->version, 0);
-
-      if( ((PkgNode *)p->data)->flag & HOST_STATUS_PKGUPDATE)
-        Tcl_SetVar2(interp, "updates", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->data, 0);
-
-      if( ((PkgNode *)p->data)->flag & HOST_STATUS_PKGKEPTBACK)
-        Tcl_SetVar2(interp, "holds", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->data, 0);
-
-      if( ((PkgNode *)p->data)->flag & HOST_STATUS_PKGEXTRA)
-        Tcl_SetVar2(interp, "extras", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->version, 0);
-	
-      p = g_list_next(p);
-    }
-    
-    Tcl_UnsetVar(interp, "flags", 0);
-    for(i=0; hostFlags[i].code; j++) {
-      if(n->status & hostFlags[i].flag)
-        Tcl_SetVar2(interp, "flags", hostFlags[i].code, hostFlags[i].code, 0);
-    }
-
-    /* TODO: apply filter... */
-
-    l = g_list_next(l);
- }
- Tcl_DeleteInterp(interp);
-}
-#endif
 
 gboolean ctrlKeyUpDown(int ic)
 {
@@ -1159,22 +1036,29 @@ void extDrawListCategory(gint atpos, gchar *category, GList *hosts)
  ho = g_list_first(hosts);
 
  while(ho) {
-  if(((HostNode *) ho->data)->category == i) {
+  if(
+#ifdef FEAT_TCLFILTER
+     (i == C_FILTERED) ||
+#endif
+     (((HostNode *) ho->data)->category == i)
+    ) {
    if((drawnode) && (!g_strcasecmp(drawnode->p, 
 				   ((HostNode *) ho->data)->group))) {
     ho = g_list_next(ho);
     continue;
    }
-   drawnode = g_new0(DrawNode, 1);
-   drawnode->p = (((HostNode *) ho->data)->group);
-   drawnode->type = GROUP;
-   drawnode->extended = FALSE;
-   drawnode->selected = FALSE;
-   drawnode->scrpos = 0;
-   drawnode->elements = getHostGrpCatCnt(hosts, 
-					 ((HostNode *) ho->data)->group, i);
-   drawnode->attrs = A_NORMAL;
-   drawlist = g_list_insert(drawlist, drawnode, ++atpos);
+   gint elements = getHostGrpCatCnt(hosts, ((HostNode *) ho->data)->group, i);
+   if(elements) {
+     drawnode = g_new0(DrawNode, 1);
+     drawnode->p = (((HostNode *) ho->data)->group);
+     drawnode->type = GROUP;
+     drawnode->extended = FALSE;
+     drawnode->selected = FALSE;
+     drawnode->scrpos = 0;
+     drawnode->elements = elements;
+     drawnode->attrs = A_NORMAL;
+     drawlist = g_list_insert(drawlist, drawnode, ++atpos);
+   }
   }
   ho = g_list_next(ho);
  }
@@ -1190,7 +1074,12 @@ void extDrawListGroup(gint atpos, gchar *group, GList *hosts)
 
  while(ho) {
   if(!g_strcasecmp(((HostNode *) ho->data)->group, group) && 
-     drawCategories[((HostNode *) ho->data)->category] == incategory) {
+     (
+#ifdef FEAT_TCLFILTER
+      (incategory == drawCategories[C_FILTERED] && ((HostNode *) ho->data)->filtered) ||
+#endif
+      (drawCategories[((HostNode *) ho->data)->category] == incategory)
+     )) {
    drawnode = g_new0(DrawNode, 1);
    drawnode->p = ((HostNode *) ho->data);
    drawnode->type = HOST;
@@ -1659,6 +1548,163 @@ void searchEntry(GList *hosts) {
  drawStatus ("");
 }
 
+#ifdef FEAT_TCLFILTER
+void applyFilter(GList *hosts) {
+ if(!strlen(filterexp)) return;
+
+ gint i;
+ gboolean filtered;
+ Tcl_Interp *interp = Tcl_CreateInterp();
+ GList *l = hosts;
+
+ while(l) {
+    HostNode *n = (HostNode *)l->data;
+ 
+    for(i=0; tclmap[i].name; i++) {
+      switch(tclmap[i].type) {
+        case TCLM_STRING:
+          Tcl_SetVar(interp, tclmap[i].name, (gchar *)(n+tclmap[i].offset), 0);
+	  break;
+	case TCLM_INT:
+	  {
+	    gchar *h = g_strdup_printf("%d", (gint)(n+tclmap[i].offset));
+          Tcl_SetVar(interp, tclmap[i].name, h, 0);
+	    g_free(h);
+	  }
+	  break;
+	case TCLM_IGNORE:
+	  break;
+	default:
+	  g_warning("Internal error: unkown TCL maping type!\n");
+      }
+    }
+
+    Tcl_UnsetVar(interp, "updates", 0);
+    Tcl_UnsetVar(interp, "installed", 0);
+    Tcl_UnsetVar(interp, "extras", 0);
+    Tcl_UnsetVar(interp, "holds", 0);
+    GList *p = n->packages;
+    while(p) {
+      Tcl_SetVar2(interp, "installed", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->version, 0);
+
+      if( ((PkgNode *)p->data)->flag & HOST_STATUS_PKGUPDATE)
+        Tcl_SetVar2(interp, "updates", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->data, 0);
+
+      if( ((PkgNode *)p->data)->flag & HOST_STATUS_PKGKEPTBACK)
+        Tcl_SetVar2(interp, "holds", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->data, 0);
+
+      if( ((PkgNode *)p->data)->flag & HOST_STATUS_PKGEXTRA)
+        Tcl_SetVar2(interp, "extras", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->version, 0);
+	
+      p = g_list_next(p);
+    }
+    
+    Tcl_UnsetVar(interp, "flags", 0);
+    for(i=0; hostFlags[i].code; i++) {
+      if(n->status & hostFlags[i].flag)
+        Tcl_SetVar2(interp, "flags", hostFlags[i].code, hostFlags[i].code, 0);
+    }
+
+    Tcl_Eval(interp, filterexp);
+    if(interp->errorLine)
+     filtered = FALSE;
+    else
+     filtered = atoi(interp->result) > 0;
+     
+    if(filtered != n->filtered) {
+      n->filtered = filtered;
+      rebuilddl = TRUE;
+    }
+
+    l = g_list_next(l);
+ }
+ Tcl_DeleteInterp(interp);
+}
+
+static void filterHosts(GList *hosts)
+{
+ gint i;
+ gint first;
+ WINDOW *w = newwin(LINES-3, COLS, 2, 0);
+
+ wattron(w, uicolors[UI_COLOR_QUERY]);
+ mvwaddstr(w, 1, 0, "Scalars:");
+ wattroff(w, uicolors[UI_COLOR_QUERY]);
+
+ waddstr(w, "\n");
+
+ first = 1;
+ for(i=0; tclmap[i].name; i++) {
+   if((tclmap[i].type != TCLM_STRING) &&
+      (tclmap[i].type != TCLM_INT))
+     continue;
+
+   if(!first)
+    waddstr(w, ", ");
+   else
+    first = 0;
+    
+   waddstr(w, tclmap[i].name);
+ }
+  
+ waddstr(w, "\n\n");
+ 
+ wattron(w, uicolors[UI_COLOR_QUERY]);
+ waddstr(w, "Arrays:");
+ wattroff(w, uicolors[UI_COLOR_QUERY]);
+ 
+ waddstr(w, "\n");
+
+ first = 1;
+ for(i=0; tclmap[i].name; i++) {
+   if(tclmap[i].type != TCLM_IGNORE)
+     continue;
+
+   if(!first)
+    waddstr(w, ", ");
+   else
+    first = 0;
+    
+   waddstr(w, tclmap[i].name);
+ }
+ 
+ waddstr(w, "\n\n");
+
+ wattron(w, uicolors[UI_COLOR_QUERY]);
+ waddstr(w, "Examples:");
+ wattroff(w, uicolors[UI_COLOR_QUERY]);
+ 
+ waddstr(w, "\n");
+
+ waddstr(w, "return [expr [string compare $lsb_distri \"Debian\"] < 0]\n");
+ waddstr(w, "return [expr [string compare $lsb_distri \"Debian\"] && $lsb_rel < 3.1]\n");
+ waddstr(w, "return [llength [array names installed \"bind*\"]]\n");
+
+ waddstr(w, "\n");
+
+ wattron(w, uicolors[UI_COLOR_QUERY]);
+ waddstr(w, "Enter filter expression:");
+ wattroff(w, uicolors[UI_COLOR_QUERY]);
+ waddstr(w, "\n");
+   
+ enableInput();
+ wattron(w, uicolors[UI_COLOR_INPUT]);
+
+ for(i = strlen(filterexp)-1; i>=0; i--)
+   ungetch(filterexp[i]);
+   
+ wgetnstr(w, filterexp, sizeof(filterexp));
+ disableInput();
+
+ wattroff(w, uicolors[UI_COLOR_INPUT]);
+
+ delwin(w);
+ refreshDraw();
+
+ applyFilter(hosts);
+}
+#endif
+
 
 gboolean ctrlUI (GList *hosts)
 {
@@ -2081,9 +2127,12 @@ gboolean ctrlUI (GList *hosts)
    searchEntry(hosts);
    break;
 
-#ifdef HAVE_TCLLIB
+#ifdef FEAT_TCLFILTER
   case SC_KEY_FILTER:
    filterHosts(hosts);
+
+   rebuildDrawList(hosts);
+   refscr = TRUE;
    break;
 #endif
 

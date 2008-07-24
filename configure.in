@@ -44,6 +44,120 @@ AC_C_CONST
 AC_C_INLINE
 AC_STRUCT_TM
 
+# Check for TCL
+AC_MSG_CHECKING(--enable-tclfilter argument)
+AC_ARG_ENABLE(tclfilter,
+	[  --enable-tclfilter      Include Tcl interpreter.], ,
+	[enable_tclfilter="no"])
+AC_MSG_RESULT($enable_tclfilter)
+
+if test "$enable_tclfilter" = "yes"; then
+
+  dnl on FreeBSD tclsh is a silly script, look for tclsh8.[420]
+  AC_MSG_CHECKING(--with-tclsh argument)
+  AC_ARG_WITH(tclsh, [  --with-tclsh=PATH       which tclsh to use (default: tclsh8.0)],
+	tclsh_name="$withval"; AC_MSG_RESULT($tclsh_name),
+	tclsh_name="tclsh8.4"; AC_MSG_RESULT(no))
+  AC_PATH_PROG(cv_path_tcl, $tclsh_name)
+  AC_SUBST(cv_path_tcl)
+
+  dnl when no specific version specified, also try 8.2 and 8.0
+  if test "X$cv_path_tcl" = "X" -a $tclsh_name = "tclsh8.4"; then
+    tclsh_name="tclsh8.2"
+    AC_PATH_PROG(cv_path_tcl, $tclsh_name)
+  fi
+  if test "X$cv_path_tcl" = "X" -a $tclsh_name = "tclsh8.2"; then
+    tclsh_name="tclsh8.0"
+    AC_PATH_PROG(cv_path_tcl, $tclsh_name)
+  fi
+  dnl still didn't find it, try without version number
+  if test "X$cv_path_tcl" = "X"; then
+    tclsh_name="tclsh"
+    AC_PATH_PROG(cv_path_tcl, $tclsh_name)
+  fi
+  if test "X$cv_path_tcl" != "X"; then
+    AC_MSG_CHECKING(Tcl version)
+    if echo 'exit [[expr [info tclversion] < 8.0]]' | $cv_path_tcl - ; then
+      tclver=`echo 'puts [[info tclversion]]' | $cv_path_tcl -`
+      AC_MSG_RESULT($tclver - OK);
+      tclloc=`echo 'set l [[info library]];set i [[string last lib $l]];incr i -2;puts [[string range $l 0 $i]]' | $cv_path_tcl -`
+
+      AC_MSG_CHECKING(for location of Tcl include)
+      if test "x$MACOSX" != "xyes"; then
+	tclinc="$tclloc/include $tclloc/include/tcl $tclloc/include/tcl$tclver /usr/local/include /usr/include"
+      else
+	dnl For Mac OS X 10.3, use the OS-provided framework location
+	tclinc="/System/Library/Frameworks/Tcl.framework/Headers"
+      fi
+      for try in $tclinc; do
+	if test -f "$try/tcl.h"; then
+	  AC_MSG_RESULT($try/tcl.h)
+	  TCL_INC=$try
+	  break
+	fi
+      done
+      if test -z "$TCL_INC"; then
+	AC_MSG_RESULT(<not found>)
+	SKIP_TCL=YES
+      fi
+      if test -z "$SKIP_TCL"; then
+	AC_MSG_CHECKING(for location of tclConfig.sh script)
+	if test "x$MACOSX" != "xyes"; then
+	  tclcnf=`echo $tclinc | sed s/include/lib/g`
+	else
+	  dnl For Mac OS X 10.3, use the OS-provided framework location
+	  tclcnf="/System/Library/Frameworks/Tcl.framework"
+	fi
+	for try in $tclcnf; do
+	  if test -f $try/tclConfig.sh; then
+	    AC_MSG_RESULT($try/tclConfig.sh)
+	    . $try/tclConfig.sh
+	    dnl use eval, because tcl 8.2 includes ${TCL_DBGX}
+	    TCL_LIBS=`eval echo "$TCL_LIB_SPEC $TCL_LIBS"`
+	    dnl Use $TCL_DEFS for -D_THREAD_SAFE et al.  But only use the
+	    dnl "-D_ABC" items.  Watch out for -DFOO=long\ long.
+	    TCL_DEFS=`echo $TCL_DEFS | sed -e 's/\\\\ /\\\\X/g' | tr ' ' '\012' | sed -e '/^-[[^D]]/d' -e '/-D[[^_]]/d' -e 's/-D_/ -D_/' | tr '\012' ' ' | sed -e 's/\\\\X/\\\\ /g'`
+	    break
+	  fi
+	done
+	if test -z "$TCL_LIBS"; then
+	  AC_MSG_RESULT(<not found>)
+	  AC_MSG_CHECKING(for Tcl library by myself)
+	  tcllib=`echo $tclinc | sed s/include/lib/g`
+	  for ext in .so .a ; do
+	    for ver in "" $tclver ; do
+	      for try in $tcllib ; do
+		trylib=tcl$ver$ext
+		if test -f $try/lib$trylib ; then
+		  AC_MSG_RESULT($try/lib$trylib)
+		  TCL_LIBS="-L$try -ltcl$ver -ldl -lm"
+		  if test "`(uname) 2>/dev/null`" = SunOS &&
+					 uname -r | grep '^5' >/dev/null; then
+		    TCL_LIBS="$TCL_LIBS -R $try"
+		  fi
+		  break 3
+		fi
+	      done
+	    done
+	  done
+	  if test -z "$TCL_LIBS"; then
+	    AC_MSG_RESULT(<not found>)
+	    SKIP_TCL=YES
+	  fi
+	fi
+	if test -z "$SKIP_TCL"; then
+	  AC_DEFINE(FEAT_TCLFILTER, 1, [ Define if you want TCL filter support included. ])
+	  TCL_CFLAGS="-I$TCL_INC $TCL_DEFS"
+	fi
+      fi
+    else
+      AC_MSG_RESULT(too old; need Tcl version 8.0 or later)
+    fi
+  fi
+fi
+AC_SUBST(TCL_CFLAGS)
+AC_SUBST(TCL_LIBS)
+
 # Check if `screen' is installed on your system
 echo -n "checking for screen... "
 if test -x /usr/bin/screen; then

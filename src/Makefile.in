@@ -53,7 +53,7 @@ am_apt_dater_OBJECTS = apt-dater.$(OBJEXT) colors.$(OBJEXT) \
 	stats.$(OBJEXT) ui.$(OBJEXT)
 apt_dater_OBJECTS = $(am_apt_dater_OBJECTS)
 am__DEPENDENCIES_1 =
-apt_dater_DEPENDENCIES = $(am__DEPENDENCIES_1)
+apt_dater_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -113,6 +113,8 @@ PKG_CONFIG = @PKG_CONFIG@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+TCL_CFLAGS = @TCL_CFLAGS@
+TCL_LIBS = @TCL_LIBS@
 VERSION = @VERSION@
 XSLTPROC = @XSLTPROC@
 ac_ct_CC = @ac_ct_CC@
@@ -125,6 +127,7 @@ am__tar = @am__tar@
 am__untar = @am__untar@
 bindir = @bindir@
 build_alias = @build_alias@
+cv_path_tcl = @cv_path_tcl@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
@@ -174,7 +177,8 @@ apt_dater_SOURCES = \
 	ui.c				\
 	ui.h
 
-apt_dater_LDADD = $(GLIB_LIBS)
+apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS)
+AM_CFLAGS = $(TCL_CFLAGS)
 all: all-am
 
 .SUFFIXES:
@@ -433,8 +437,6 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
 	uninstall-am uninstall-binPROGRAMS uninstall-info-am
 
-
-#apt_dater_CFLAGS=-I. -I$(top_srcdir) $(INCLUDES)
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -386,6 +386,10 @@ gboolean refreshStats(GList *hosts)
   ho = g_list_next(ho);
  }
 
+#ifdef FEAT_TCLFILTER
+ applyFilter(hosts);
+#endif
+
  return(r);
 }
 

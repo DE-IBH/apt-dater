@@ -20,6 +20,10 @@
 #define PROG_NAME PACKAGE
 #define CFGFILENAME "apt-dater.conf"
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 typedef struct _cfgfile {
  gchar *hostsfile;
  gchar *screenrcfile;
@@ -58,7 +62,7 @@ typedef enum {
  C_REFRESH_REQUIRED = 3,
  C_REFRESH = 4,
  C_SESSIONS = 5,
-#ifdef HAVE_TCLLIB
+#ifdef FEAT_TCLFILTER
  C_FILTERED = 6,
  C_UNKNOW = 7,
 #else
@@ -80,6 +84,7 @@ typedef struct _hostnode {
  gint      ssh_port;
  guint     status;
  gboolean  keptback;
+ gboolean  filtered;
  Category  category;
  GList     *packages;
  gint      nupdates;
