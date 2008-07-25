@@ -151,6 +151,27 @@ gboolean setStatsFileFromIOC(GIOChannel *ioc, GIOCondition condition,
 }
 
 
+void freePkgNode(PkgNode *n)
+{
+ if(n) {
+  g_free(n->package);
+  g_free(n->version);
+  if(n->data)
+   g_free(n->data);
+  g_free(n);
+ }
+}
+
+
+static void freePackages(HostNode *n)
+{
+ if(n && n->packages) {
+  g_list_foreach(n->packages, (GFunc) freePkgNode, NULL);
+  g_list_free(n->packages);
+ }
+}
+
+
 static gint cmpPackages(gconstpointer a, gconstpointer b) {
     return strcmp(((PkgNode *)a)->package, ((PkgNode *)b)->package);
 }
@@ -179,11 +200,12 @@ gboolean getUpdatesFromStat(HostNode *n)
  }
 
  n->status = 0;
+ n->nupdates = 0;
+ n->nextras = 0;
+ n->nholds = 0;
 
- if(n->packages) {
-    g_list_free(n->packages);
-    n->packages = NULL;
- }
+ freePackages(n);
+
  if(n->lsb_distributor) {
   g_free(n->lsb_distributor);
   n->lsb_distributor = NULL;
@@ -308,27 +330,6 @@ gboolean getUpdatesFromStat(HostNode *n)
 }
 
 
-void freePkgNode(PkgNode *n)
-{
- if(n) {
-  g_free(n->package);
-  g_free(n->version);
-  if(n->data)
-   g_free(n->data);
-  g_free(n);
- }
-}
-
-
-void freePackages(GList *packages)
-{
- if(packages) {
-  g_list_foreach (packages, (GFunc) freePkgNode, NULL);
-  g_list_free(packages);
- }
-}
-
-
 gboolean refreshStats(GList *hosts)
 {
  GList *ho;
@@ -354,10 +355,7 @@ gboolean refreshStats(GList *hosts)
     /* We don't got the lock. */
     if(rsetlck == -1) {
      n->status|= HOST_STATUS_LOCKED;
-     if(n->packages) {
-      freePackages(n->packages);
-      n->packages = NULL;
-     }
+     freePackages(n);
     }
     /* We got the lock. */
     else if (rsetlck == 0) {
@@ -368,8 +366,7 @@ gboolean refreshStats(GList *hosts)
       n->category = C_REFRESH;
       rebuilddl = TRUE;
 
-      freePackages(n->packages);
-      n->packages = NULL;
+      freePackages(n);
 
       if(ssh_cmd_refresh(n) == FALSE) {
        n->category = C_NO_STATS;

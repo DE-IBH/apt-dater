@@ -482,7 +482,7 @@ void drawHostEntry (DrawNode *n)
   switch(((HostNode *) n->p)->category) {
   case C_UPDATES_PENDING:
    mask = VK_CONNECT | VK_UPGRADE | VK_REFRESH | VK_INSTALL;
-   sprintf(statusln, "%d %s required", n->elements, n->elements > 1 || n->elements == 0 ? "Updates" : "Update");
+   sprintf(statusln, "%d %s required", ((HostNode *) n->p)->nupdates, ((HostNode *) n->p)->nupdates > 1 || ((HostNode *) n->p)->nupdates == 0 ? "Updates" : "Update");
    break;
   case C_UP_TO_DATE:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
@@ -518,16 +518,27 @@ void drawHostEntry (DrawNode *n)
  }
 }
 
-void drawUpdateEntry (DrawNode *n)
+void drawPackageEntry (DrawNode *n)
 {
  char statusln[BUF_MAX_LEN];
 
  attron(n->attrs);
  mvhline(n->scrpos, 0, ' ', COLS);
- mvaddnstr(n->scrpos, 7, (char *) ((PkgNode *) n->p)->package, COLS);
+
+ if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGUPDATE)
+   mvaddstr(n->scrpos, 7, "u:");
+ else if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGKEPTBACK)
+   mvaddstr(n->scrpos, 7, "h:");
+ else if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGEXTRA)
+   mvaddstr(n->scrpos, 7, "x:");
+
+ mvaddnstr(n->scrpos, 10, (char *) ((PkgNode *) n->p)->package, COLS-10);
  attroff(n->attrs);
  if(n->selected == TRUE) {
-  sprintf(statusln, "%s -> %s", ((PkgNode *) n->p)->version, ((PkgNode *) n->p)->data);
+  if(((PkgNode *) n->p)->data)
+    sprintf(statusln, "%s -> %s", ((PkgNode *) n->p)->version, ((PkgNode *) n->p)->data);
+  else
+    sprintf(statusln, "%s", ((PkgNode *) n->p)->version);
   drawMenu(VK_INSTALL);
   drawStatus(statusln);
  }
@@ -618,8 +629,8 @@ void drawEntry (DrawNode *n)
  case HOST:
   drawHostEntry(n);
   break;
- case UPDATE:
-  drawUpdateEntry(n);
+ case PKG:
+  drawPackageEntry(n);
   break;
  case SESSION:
   drawSessionEntry(n);
@@ -912,7 +923,7 @@ gboolean compDrawNodes(DrawNode* n1, DrawNode* n2)
 		    ((HostNode *)(n2->p))->hostname))
    return(TRUE);
   break;
- case UPDATE:
+ case PKG:
   if (!g_strcasecmp(((PkgNode *) n1->p)->package,
 		    ((PkgNode *) n2->p)->package)) return(TRUE);
   break;
@@ -1105,7 +1116,7 @@ void extDrawListGroup(gint atpos, gchar *group, GList *hosts)
    drawnode->selected = FALSE;
    drawnode->scrpos = 0;
    if (((HostNode *) ho->data)->category != C_SESSIONS)
-     drawnode->elements = ((HostNode *) ho->data)->nupdates;
+     drawnode->elements = ((HostNode *) ho->data)->nupdates + ((HostNode *) ho->data)->nholds + ((HostNode *) ho->data)->nextras;
    else
      drawnode->elements = g_list_length(((HostNode *) ho->data)->screens);
    drawnode->attrs = A_NORMAL;
@@ -1137,16 +1148,13 @@ void extDrawListHost(gint atpos, HostNode *n)
       
 
  GList *upd = g_list_first(n->packages);
-
  while(upd) {
-  if(((PkgNode *) upd->data)->flag & HOST_STATUS_PKGUPDATE) {
+  if((((PkgNode *) upd->data)->flag & HOST_STATUS_PKGUPDATE) ||
+     (((PkgNode *) upd->data)->flag & HOST_STATUS_PKGKEPTBACK) ||
+     (((PkgNode *) upd->data)->flag & HOST_STATUS_PKGEXTRA)) {
     drawnode = g_new0(DrawNode, 1);
+    drawnode->type = PKG;
     drawnode->p = ((PkgNode *) upd->data);
-    drawnode->type = UPDATE;
-    drawnode->extended = FALSE;
-    drawnode->selected = FALSE;
-    drawnode->scrpos = 0;
-    drawnode->elements = 0;
     drawnode->attrs = A_BOLD;
     drawlist = g_list_insert(drawlist, drawnode, ++atpos);
   }
@@ -1863,8 +1871,6 @@ gboolean ctrlUI (GList *hosts)
     cleanUI();
     ssh_connect((HostNode *) n->p, FALSE);
     ((HostNode *) n->p)->category = C_REFRESH_REQUIRED;
-    freePackages(((HostNode *) n->p)->packages);
-    ((HostNode *) n->p)->packages = NULL;
     rebuildDrawList(hosts);
     initUI();
     refscr = TRUE;
@@ -1887,8 +1893,6 @@ gboolean ctrlUI (GList *hosts)
     cleanUI();
     ssh_cmd_upgrade((HostNode *) n->p, FALSE);
     ((HostNode *) n->p)->category = C_REFRESH_REQUIRED;
-    freePackages(((HostNode *) n->p)->packages);
-    ((HostNode *) n->p)->packages = NULL;
     rebuildDrawList(hosts);
     initUI();
     refscr = TRUE;
@@ -1921,7 +1925,7 @@ gboolean ctrlUI (GList *hosts)
    n = getSelectedDrawNode();
    if(!n) break;
    switch(n->type) {
-   case UPDATE:
+   case PKG:
     if(n->p) {
      pkg = ((PkgNode *) n->p)->package;
     
@@ -1935,8 +1939,6 @@ gboolean ctrlUI (GList *hosts)
       cleanUI();
       ssh_cmd_install(inhost, pkg, FALSE);
       inhost->category = C_REFRESH_REQUIRED;
-      freePackages(inhost->packages);
-      inhost->packages = NULL;
       rebuildDrawList(hosts);
       initUI();
       refscr = TRUE;
@@ -1960,8 +1962,6 @@ gboolean ctrlUI (GList *hosts)
     cleanUI();
     ssh_cmd_install(inhost, pkg, FALSE);
     inhost->category = C_REFRESH_REQUIRED;
-    freePackages(inhost->packages);
-    inhost->packages = NULL;
     rebuildDrawList(hosts);
     initUI();
     refscr = TRUE;

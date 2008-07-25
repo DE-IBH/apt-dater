@@ -49,7 +49,7 @@ static char screenrc[] = "# -------------------------------------------------"
  "-----\n\n# Remove some stupid / dangerous key bindings\nbind ^k\n#bind L\nb"
  "ind ^\\\n# Make them better\nbind \\\\ quit\nbind K kill\nbind I login on\n"
  "bind O login off\nbind } history\n\n# Sessions should stay until destroyed "
- "by pressing space\nzombie \'x\'\n\n# --------------------------------------"
+ "by pressing q\nzombie \'q\'\n\n# --------------------------------------"
  "----------------------------------------\n# TERMINAL SETTINGS\n# ----------"
  "--------------------------------------------------------------------\n\n# T"
  "he vt100 description does not mention \"dl\". *sigh*\ntermcapinfo vt100 dl="
@@ -130,19 +130,6 @@ void freeConfig (CfgFile *cfg)
  g_strfreev(cfg->colors);
 
  g_free(cfg);
-}
-
-void freeHostNode(HostNode *n)
-{
- unsetLockForHost(n);
- g_free(n->hostname);
- g_free(n->group);
- g_free(n->ssh_user);
- g_free(n->lsb_distributor);
- g_free(n->lsb_release);
- g_free(n->lsb_codename);
- g_free(n->kernelrel);
- freePackages(n->packages);
 }
 
 CfgFile *loadConfig (char *filename)
@@ -320,11 +307,6 @@ GList *loadHosts (char *filename)
 
    hostnode->group = g_strdup(groups[i]);
    getUpdatesFromStat(hostnode);
-
-   if(hostnode->category != C_UPDATES_PENDING) {
-    g_list_free(hostnode->packages);
-    hostnode->packages = NULL;
-   }
 
    hosts = g_list_append(hosts, hostnode);
 

@@ -8,7 +8,7 @@ typedef enum {
  CATEGORY,
  GROUP,
  HOST,
- UPDATE,
+ PKG,
  SESSION,
 } DrawType;
 
