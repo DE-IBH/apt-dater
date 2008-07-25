@@ -111,7 +111,8 @@ static struct ShortCut shortCuts[] = {
  {SC_KEY_LEFT, KEY_LEFT, "<Left>", "shrink node" , FALSE, 0},
  {SC_KEY_RIGHT, KEY_RIGHT, "<Right>", "expand node" , FALSE, 0},
  {SC_KEY_SPACE, ' ', "<Space>", "shrink/expand node" , FALSE, 0},
- {SC_KEY_RETURN, 13, "<Return>", "shrink/expand node" , FALSE, 0},
+ {SC_KEY_RETURN, KEY_RETURN, "<Return>", "shrink/expand node" , FALSE, 0},
+ {SC_KEY_ENTER, KEY_ENTER, "<Enter>", "shrink/expand node" , FALSE, 0},
  {SC_KEY_UP, KEY_UP, "<Up>", "move up" , FALSE, 0},
  {SC_KEY_DOWN, KEY_DOWN, "<Down>", "move down" , FALSE, 0},
  {SC_KEY_HOME, KEY_HOME, "<Home>", "move to the top" , FALSE, 0},
@@ -151,6 +152,59 @@ static const struct HostFlag hostFlags[] = {
   {HOST_STATUS_KERNELSELFBUILD,  "k", "a selfbuild kernel is running"},
   {0                          , NULL, NULL},
 };
+
+
+static gboolean getnLine(WINDOW *win, gchar *str, gint maxlen)
+{
+ gint cpos = 0, slen = 0, i;
+ int  ch = 0, cy, cx;
+ gboolean dobeep;
+
+ if(!str || !win || !maxlen) return (FALSE);
+ memset (str, 0, maxlen);
+
+ enableInput();
+ keypad(win, TRUE);
+ noecho();
+ while(ch != KEY_RETURN && ch != KEY_ENTER) {
+  getyx(win, cy, cx);
+  ch = wgetch(win);
+  dobeep = TRUE;
+
+  if((isascii(ch) && isprint(ch))) {
+   if(slen < maxlen) {
+    str[cpos] = ch;
+    waddch(win, str[cpos++]);
+    slen++;
+    dobeep = FALSE;
+   }
+  } else {
+
+   switch(ch) {
+   case KEY_RETURN:
+   case KEY_ENTER:
+    continue;
+   case KEY_BACKSPACE:
+    if(slen > 0 && cpos > 0) {
+     str[--cpos] = 0;
+     wmove(win, cy, --cx);
+     wdelch(win);
+     dobeep = FALSE;
+    }
+   } /* switch(ch) */
+
+  }
+
+  if(dobeep == TRUE) beep();
+
+  wrefresh(win);
+ }
+ 
+ disableInput();
+
+ return(TRUE);
+}
+
 
 static void setMenuEntries(gint mask) {
   mask |= sc_mask;
@@ -340,7 +394,8 @@ void queryString(const gchar *query, gchar *in, const gint size)
  for(i = strlen(in)-1; i>=0; i--)
   ungetch(in[i]);
 
- getnstr(in, size);
+ /* getnstr(in, size); */
+ getnLine(stdscr, in, size);
  disableInput();
 
  attroff(uicolors[UI_COLOR_INPUT]);
@@ -348,6 +403,7 @@ void queryString(const gchar *query, gchar *in, const gint size)
  move(LINES - 1, 0);
  hline(' ', COLS);
 }
+
 
 gboolean queryConfirm(const gchar *query, const gboolean enter_is_yes)
 {
@@ -1824,6 +1880,7 @@ gboolean ctrlUI (GList *hosts)
 
   case SC_KEY_PLUS:
   case SC_KEY_SPACE:
+  case SC_KEY_ENTER:
   case SC_KEY_RETURN:
    refscr = ctrlKeyEnter(hosts);
    break; /* case SC_KEY_RETURN */
@@ -1932,12 +1989,19 @@ gboolean ctrlUI (GList *hosts)
    case PKG:
     if(n->p) {
      pkg = ((PkgNode *) n->p)->package;
-    
-     qrystr = g_strdup_printf("Install package `%s' [y/N]: ", pkg);
-     if(!qrystr) break;
-     retqry = queryConfirm(qrystr, FALSE);
-     g_free(qrystr);
-     qrystr = NULL;
+
+     if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGUPDATE) {
+      qrystr = g_strdup_printf("Install package `%s' [y/N]: ", pkg);
+      if(!qrystr) break;
+      retqry = queryConfirm(qrystr, FALSE);
+      g_free(qrystr);
+      qrystr = NULL;
+     } else {
+      queryString("Install package: ", in, sizeof(in));
+      if (strlen(in)==0) break;
+      pkg = in;
+      retqry = TRUE;
+     }
      
      if(retqry == TRUE) {
       cleanUI();

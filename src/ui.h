@@ -33,6 +33,7 @@ typedef enum {
  SC_KEY_NPAGE,
  SC_KEY_SPACE,
  SC_KEY_RETURN,
+ SC_KEY_ENTER,
  SC_KEY_PLUS,
  SC_KEY_QUIT,
  SC_KEY_HELP,
@@ -71,10 +72,16 @@ gboolean ctrlUI (GList *);
 void cleanUI();
 void injectKey(int);
 void applyFilter(GList *hosts);
+void disableInput();
+void enableInput();
 
 #include "apt-dater.h"
 
 extern gchar maintainer[48];
 extern gchar *drawCategories[];
+
+#ifndef KEY_RETURN
+# define KEY_RETURN 13
+#endif
 
 #endif /* _UI_H */
