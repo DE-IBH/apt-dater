@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 
  loop = g_main_loop_new (NULL, FALSE);
 
- g_timeout_add_seconds(1, (GSourceFunc) refreshStats, hosts);
+ g_timeout_add(1000, (GSourceFunc) refreshStats, hosts);
  
  if(report)
   g_idle_add ((GSourceFunc) ctrlReport, hosts);
