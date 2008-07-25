@@ -30,8 +30,10 @@ static char apt_dater_conf[] = "# Config file of apt-dater in the form of the"
  " COLOR\n# BG        ::= COLOR\n# COLOR     ::= \'black\' | \'blue\' | \'cya"
  "n\' | \'green\' | \'magenta\' | \'red\' |\n#               \'white\' | \'ye"
  "llow\'\nColors=menu brightgreen blue;status brightgreen blue;selector black"
- " red;\n\n# Predefined host filter.\n#[TCLFilter]\n"
- "#FilterExp=return [expr [string compare $lsb_distri \"Debian\"] == 0 && $lsb_rel < 3.1]\n";
+ " red;\n\n#[TCLFilter]\n#Predefined filter expression on startup.\n#FilterEx"
+ "p=return [expr [string compare $lsb_distri \"Debian\"] == 0 && $lsb_rel < 4"
+ ".0]\n#Load this TCL file on startup in the same context as the FilterExp.\n"
+ "#FilterFile=/patch/to/file.tcl\n";
 
 static char hosts_conf[] = "# Syntax:\n#\n#  [Customer Name]\n#  Hosts=([Opti"
  "onalUser@]host.domain[:OptionalPort];)*\n#\n\n[Localdomain]\nHosts=localhos"
@@ -238,7 +240,10 @@ CfgFile *loadConfig (char *filename)
   g_message ("%s: %s", filename, error->message);
  }
 
+#ifdef FEAT_TCLFILTER
  lcfg->filterexp = g_key_file_get_string(keyfile, "TCLFilter", "FilterExp", NULL);
+ lcfg->filterfile = g_key_file_get_string(keyfile, "TCLFilter", "FilterFile", NULL);
+#endif
 
  g_clear_error(&error);
  g_key_file_free(keyfile);

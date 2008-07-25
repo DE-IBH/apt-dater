@@ -43,6 +43,7 @@ typedef struct _cfgfile {
  gchar **colors;
 #ifdef FEAT_TCLFILTER
  gchar *filterexp;
+ gchar *filterfile;
 #endif
 } CfgFile;
 

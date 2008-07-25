@@ -48,6 +48,7 @@ gchar  filterexp[0x1ff];
 #endif
 gint   sc_mask = 0;
 static GCompletion* hstCompl = NULL;
+static Tcl_Interp *tcl_interp;
 
 #ifdef FEAT_TCLFILTER
 typedef enum {
@@ -258,12 +259,6 @@ void initUI ()
  refresh();
 
  bottomDrawLine = LINES-2;
-#ifdef FEAT_TCLFILTER
- if(cfg->filterexp)
-  strcpy(filterexp, cfg->filterexp);
- else
-  filterexp[0] = 0;
-#endif
 }
 
 
@@ -795,8 +790,19 @@ void buildIntialDrawList(GList *hosts)
 
 void doUI (GList *hosts)
 {
+#ifdef FEAT_TCLFILTER
+ /* Prepare TCL interpreter */
+ if(cfg->filterexp)
+  strcpy(filterexp, cfg->filterexp);
+ else
+  filterexp[0] = 0;
+
+ tcl_interp = Tcl_CreateInterp();
+ if(cfg->filterfile)
+   Tcl_EvalFile(tcl_interp, cfg->filterfile);
+#endif
+
  initUI();
- /* initShortCuts(); */
 
  /* Create completion list. */
  hstCompl = g_completion_new(compHost);
@@ -1580,7 +1586,6 @@ void applyFilter(GList *hosts) {
 
  gint i;
  gboolean filtered;
- Tcl_Interp *interp = Tcl_CreateInterp();
  GList *l = hosts;
 
  while(l) {
@@ -1591,22 +1596,22 @@ void applyFilter(GList *hosts) {
         case TCLM_STRING:
 	  switch(tclmap[i].code) {
 	    case TCLMK_GROUP:
-        	Tcl_SetVar(interp, tclmap[i].name, n->group, 0);
+        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->group, 0);
 		break;
 	    case TCLMK_HOSTNAME:
-        	Tcl_SetVar(interp, tclmap[i].name, n->hostname, 0);
+        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->hostname, 0);
 		break;
 	    case TCLMK_KERNEL:
-        	Tcl_SetVar(interp, tclmap[i].name, n->kernelrel, 0);
+        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->kernelrel, 0);
 		break;
 	    case TCLMK_LSBCNAME:
-        	Tcl_SetVar(interp, tclmap[i].name, n->lsb_codename, 0);
+        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->lsb_codename, 0);
 		break;
 	    case TCLMK_LSBDISTRI:
-        	Tcl_SetVar(interp, tclmap[i].name, n->lsb_distributor, 0);
+        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->lsb_distributor, 0);
 		break;
 	    case TCLMK_LSBREL:
-        	Tcl_SetVar(interp, tclmap[i].name, n->lsb_release, 0);
+        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->lsb_release, 0);
 		break;
 	    default:
 		g_warning("Internal error: unhandled TCL TCLM_STRING maping!\n");
@@ -1624,7 +1629,7 @@ void applyFilter(GList *hosts) {
 		    g_warning("Internal error: unhandled TCL TCLM_INT maping!\n");
 	    }
 
-	    Tcl_SetVar(interp, tclmap[i].name, h, 0);
+	    Tcl_SetVar(tcl_interp, tclmap[i].name, h, 0);
 	    g_free(h);
 	  }
 	  break;
@@ -1635,39 +1640,39 @@ void applyFilter(GList *hosts) {
       }
     }
 
-    Tcl_UnsetVar(interp, "updates", 0);
-    Tcl_UnsetVar(interp, "installed", 0);
-    Tcl_UnsetVar(interp, "extras", 0);
-    Tcl_UnsetVar(interp, "holds", 0);
+    Tcl_UnsetVar(tcl_interp, "updates", 0);
+    Tcl_UnsetVar(tcl_interp, "installed", 0);
+    Tcl_UnsetVar(tcl_interp, "extras", 0);
+    Tcl_UnsetVar(tcl_interp, "holds", 0);
     GList *p = n->packages;
     while(p) {
-      Tcl_SetVar2(interp, "installed", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->version, 0);
+      Tcl_SetVar2(tcl_interp, "installed", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->version, 0);
 
       if( ((PkgNode *)p->data)->flag & HOST_STATUS_PKGUPDATE)
-        Tcl_SetVar2(interp, "updates", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->data, 0);
+        Tcl_SetVar2(tcl_interp, "updates", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->data, 0);
 
       if( ((PkgNode *)p->data)->flag & HOST_STATUS_PKGKEPTBACK)
-        Tcl_SetVar2(interp, "holds", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->data, 0);
+        Tcl_SetVar2(tcl_interp, "holds", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->data, 0);
 
       if( ((PkgNode *)p->data)->flag & HOST_STATUS_PKGEXTRA)
-        Tcl_SetVar2(interp, "extras", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->version, 0);
+        Tcl_SetVar2(tcl_interp, "extras", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->version, 0);
 	
       p = g_list_next(p);
     }
     
-    Tcl_UnsetVar(interp, "flags", 0);
+    Tcl_UnsetVar(tcl_interp, "flags", 0);
     for(i=0; hostFlags[i].code; i++) {
       if(n->status & hostFlags[i].flag)
-        Tcl_SetVar2(interp, "flags", hostFlags[i].code, hostFlags[i].code, 0);
+        Tcl_SetVar2(tcl_interp, "flags", hostFlags[i].code, hostFlags[i].code, 0);
     }
 
-    Tcl_ResetResult(interp);
-    interp->errorLine = 0;
-    Tcl_Eval(interp, filterexp);
-    if(interp->errorLine)
+    Tcl_ResetResult(tcl_interp);
+    tcl_interp->errorLine = 0;
+    Tcl_Eval(tcl_interp, filterexp);
+    if(tcl_interp->errorLine)
      filtered = FALSE;
     else
-     filtered = atoi(interp->result) > 0;
+     filtered = atoi(tcl_interp->result) > 0;
      
     if(filtered != n->filtered) {
       n->filtered = filtered;
@@ -1676,7 +1681,6 @@ void applyFilter(GList *hosts) {
 
     l = g_list_next(l);
  }
- Tcl_DeleteInterp(interp);
 }
 
 static void filterHosts(GList *hosts)

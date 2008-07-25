@@ -29,8 +29,8 @@ bind I login on
 bind O login off
 bind } history
 
-# Sessions should stay until destroyed by pressing space
-zombie 'x'
+# Sessions should stay until destroyed by pressing q
+zombie 'q'
 
 # ------------------------------------------------------------------------------
 # TERMINAL SETTINGS
