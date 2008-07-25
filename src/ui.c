@@ -1161,7 +1161,7 @@ void extDrawListHost(gint atpos, HostNode *n)
     drawnode = g_new0(DrawNode, 1);
     drawnode->type = PKG;
     drawnode->p = ((PkgNode *) upd->data);
-    drawnode->attrs = A_BOLD;
+    drawnode->attrs = (((PkgNode *) upd->data)->flag & HOST_STATUS_PKGUPDATE) ? A_BOLD : A_NORMAL;
     drawlist = g_list_insert(drawlist, drawnode, ++atpos);
   }
   upd = g_list_next(upd);

@@ -174,7 +174,9 @@ static void freePackages(HostNode *n)
 
 
 static gint cmpPackages(gconstpointer a, gconstpointer b) {
-    return strcmp(((PkgNode *)a)->package, ((PkgNode *)b)->package);
+ return((((PkgNode *)a)->flag != ((PkgNode *)b)->flag) ? 
+	((PkgNode *)a)->flag - ((PkgNode *)b)->flag : 
+	g_ascii_strcasecmp(((PkgNode *)a)->package, ((PkgNode *)b)->package));
 }
 
 gboolean getUpdatesFromStat(HostNode *n)
@@ -259,9 +261,7 @@ gboolean getUpdatesFromStat(HostNode *n)
     pkgnode = g_new0(PkgNode, 1);
     pkgnode->package = g_strdup(argv[0]);
     pkgnode->version = g_strdup(argv[1]);
-
-    n->packages = g_list_insert_sorted(n->packages, pkgnode, cmpPackages);
-     
+   
     if (strlen(argv[2]) > 3)
 	pkgnode->data = g_strdup(&argv[2][2]);
 
@@ -283,6 +283,8 @@ gboolean getUpdatesFromStat(HostNode *n)
 	    break;
     }
     g_strfreev(argv);
+
+    n->packages = g_list_insert_sorted(n->packages, pkgnode, cmpPackages);
 
     linesok++;
     continue;
