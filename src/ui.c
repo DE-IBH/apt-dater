@@ -24,7 +24,7 @@
 #endif
 
 static GList *drawlist = NULL;
-static char *drawCategories[] = {
+gchar *drawCategories[] = {
     "Updates pending",
     "Up to date",
     "Status file missing",

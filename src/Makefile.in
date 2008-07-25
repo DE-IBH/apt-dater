@@ -49,8 +49,8 @@ binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_apt_dater_OBJECTS = apt-dater.$(OBJEXT) colors.$(OBJEXT) \
 	exec.$(OBJEXT) keyfiles.$(OBJEXT) lock.$(OBJEXT) \
-	parsecmd.$(OBJEXT) screen.$(OBJEXT) sighandler.$(OBJEXT) \
-	stats.$(OBJEXT) ui.$(OBJEXT)
+	parsecmd.$(OBJEXT) report.$(OBJEXT) screen.$(OBJEXT) \
+	sighandler.$(OBJEXT) stats.$(OBJEXT) ui.$(OBJEXT)
 apt_dater_OBJECTS = $(am_apt_dater_OBJECTS)
 am__DEPENDENCIES_1 =
 apt_dater_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
@@ -168,6 +168,8 @@ apt_dater_SOURCES = \
 	lock.h				\
 	parsecmd.c			\
 	parsecmd.h			\
+	report.c			\
+	report.h			\
 	screen.c			\
 	screen.h			\
 	sighandler.c			\
@@ -251,6 +253,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/keyfiles.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lock.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parsecmd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/report.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/screen.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sighandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stats.Po@am__quote@

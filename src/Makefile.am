@@ -16,6 +16,8 @@ apt_dater_SOURCES =			\
 	lock.h				\
 	parsecmd.c			\
 	parsecmd.h			\
+	report.c			\
+	report.h			\
 	screen.c			\
 	screen.h			\
 	sighandler.c			\

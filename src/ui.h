@@ -72,6 +72,9 @@ void cleanUI();
 void injectKey(int);
 void applyFilter(GList *hosts);
 
+#include "apt-dater.h"
+
 extern gchar maintainer[48];
+extern gchar *drawCategories[];
 
 #endif /* _UI_H */

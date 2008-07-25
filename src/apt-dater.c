@@ -13,6 +13,7 @@
 #include "stats.h"
 #include "sighandler.h"
 #include "lock.h"
+#include "report.h"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -38,7 +39,7 @@ int main(int argc, char **argv)
  char *cfgfilename = NULL;
  char *cfgdirname = NULL;
  GList *hosts = NULL;
-
+ gboolean report = FALSE;
 
  cfgdirname = g_strdup_printf("%s/%s", g_get_user_config_dir(), PACKAGE);
  if(!cfgdirname) g_error("Out of memory\n");
@@ -52,7 +53,7 @@ int main(int argc, char **argv)
  if(chkForInitialConfig(cfgdirname, cfgfilename))
   g_warning("Failed to create initial configuration file %s.", cfgfilename);
 
- while ((opts = getopt(argc, argv, "c:v")) != EOF) {
+ while ((opts = getopt(argc, argv, "c:vr")) != EOF) {
   switch(opts) {
   case 'c':
    if(cfgfilename) free(cfgfilename);
@@ -62,8 +63,11 @@ int main(int argc, char **argv)
     g_print(VERSTEXT);
     exit(0);
    break;
+  case 'r':
+    report = TRUE;
+    break;
   default:
-   g_printerr("Usage: %s [-c config]|[-v]\n", g_get_prgname());
+   g_printerr("Usage: %s [-(c config|v|r)]\n", g_get_prgname());
    exit(EXIT_FAILURE);
   }
  }
@@ -79,22 +83,30 @@ int main(int argc, char **argv)
   exit(EXIT_FAILURE);
  }
 
- /* Test if we are the owner of the TTY or die. */
- if(g_access("/proc/self/fd/0", R_OK|W_OK)) {
-   g_error("Cannot open your terminal /proc/self/fd/0 - please check.");
-   exit(EXIT_FAILURE);
+
+ if(!report) {
+   /* Test if we are the owner of the TTY or die. */
+   if(g_access("/proc/self/fd/0", R_OK|W_OK)) {
+     g_error("Cannot open your terminal /proc/self/fd/0 - please check.");
+     exit(EXIT_FAILURE);
+   }
+
+   getOldestMtime(hosts);
+
+   doUI(hosts);
+   setSigHandler();
  }
-
-
- getOldestMtime(hosts);
-
- doUI(hosts);
- setSigHandler();
+ else
+   initReport(hosts);
 
  loop = g_main_loop_new (NULL, FALSE);
 
- g_timeout_add(1000, (GSourceFunc) refreshStats, hosts);
- g_idle_add ((GSourceFunc) ctrlUI, hosts);
+ g_timeout_add_seconds(1, (GSourceFunc) refreshStats, hosts);
+ 
+ if(report)
+  g_idle_add ((GSourceFunc) ctrlReport, hosts);
+ else
+  g_idle_add ((GSourceFunc) ctrlUI, hosts);
 
  /* Startup the main loop */
  g_main_loop_run (loop);
