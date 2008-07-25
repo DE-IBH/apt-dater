@@ -168,6 +168,7 @@ static void freePackages(HostNode *n)
  if(n && n->packages) {
   g_list_foreach(n->packages, (GFunc) freePkgNode, NULL);
   g_list_free(n->packages);
+  n->packages = NULL;
  }
 }
 
