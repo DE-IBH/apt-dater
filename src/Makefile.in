@@ -53,7 +53,8 @@ am_apt_dater_OBJECTS = apt-dater.$(OBJEXT) colors.$(OBJEXT) \
 	sighandler.$(OBJEXT) stats.$(OBJEXT) ui.$(OBJEXT)
 apt_dater_OBJECTS = $(am_apt_dater_OBJECTS)
 am__DEPENDENCIES_1 =
-apt_dater_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+apt_dater_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -99,6 +100,8 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBXML2_CFLAGS = @LIBXML2_CFLAGS@
+LIBXML2_LIBS = @LIBXML2_LIBS@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 OBJEXT = @OBJEXT@
@@ -153,7 +156,6 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-INCLUDES = $(GLIB_CFLAGS)
 apt_dater_SOURCES = \
 	apt-dater.c			\
 	apt-dater.h			\
@@ -179,8 +181,8 @@ apt_dater_SOURCES = \
 	ui.c				\
 	ui.h
 
-apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS)
-AM_CFLAGS = $(TCL_CFLAGS)
+apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS)
+INCLUDES = $(GLIB_CFLAGS) $(TCL_CFLAGS) $(LIBXML2_CFLAGS)
 all: all-am
 
 .SUFFIXES:

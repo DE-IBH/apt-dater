@@ -15,10 +15,25 @@ AC_CONFIG_HEADER([config.h])
 glib_module="glib-2.0 >= 2.3.6"
 PKG_CHECK_MODULES(GLIB, "$glib_module", enable_glib_=yes, enable_glib_=no)
 
+AC_MSG_CHECKING(--enable-xmlreport argument)
+AC_ARG_ENABLE(xmlreport,
+	[  --enable-xmlreport      Include XML reports.], [enable_xmlreport="yes"],
+	[enable_xmlreport="no"])
+AC_MSG_RESULT($enable_xmlreport)
+if test "$enable_xmlreport" = "yes"; then
+    PKG_CHECK_MODULES(LIBXML2, "libxml-2.0", skip_xmlreport=no, skip_xmlreport=yes)
+
+    if test "$skip_xmlreport" = "no"; then
+	AC_DEFINE(FEAT_XMLREPORT, 1, [ Define if you want XMP report support included. ])
+    fi
+fi
+
 AC_SUBST(VERSION)
 AC_SUBST(PACKAGE)
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
+AC_SUBST(LIBXML2_CFLAGS)
+AC_SUBST(LIBXML2_LIBS)
 AC_PROG_INSTALL
 
 # Some additional definitions

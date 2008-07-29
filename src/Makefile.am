@@ -1,5 +1,3 @@
-INCLUDES = $(GLIB_CFLAGS)
-
 bin_PROGRAMS = apt-dater
 
 apt_dater_SOURCES =			\
@@ -27,6 +25,6 @@ apt_dater_SOURCES =			\
 	ui.c				\
 	ui.h
 
-apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS)
+apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS)
 
-AM_CFLAGS = $(TCL_CFLAGS)
+INCLUDES = $(GLIB_CFLAGS) $(TCL_CFLAGS) $(LIBXML2_CFLAGS)

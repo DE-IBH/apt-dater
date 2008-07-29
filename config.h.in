@@ -3,6 +3,9 @@
 /* Define if you want TCL filter support included. */
 #undef FEAT_TCLFILTER
 
+/* Define if you want XMP report support included. */
+#undef FEAT_XMLREPORT
+
 /* Define if your curses library supports color. */
 #undef HAVE_COLOR
 
