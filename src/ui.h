@@ -2,6 +2,7 @@
 #ifndef _UI_H
 #define _UI_H
 
+#include <curses.h>
 #include <glib-2.0/glib.h>
 
 typedef enum {
@@ -81,7 +82,26 @@ extern gchar maintainer[48];
 extern gchar *drawCategories[];
 
 #ifndef KEY_RETURN
-# define KEY_RETURN 13
+# define KEY_RETURN   13
 #endif
+#ifndef KEY_ESC
+# define KEY_ESC      27
+#endif
+#ifndef KEY_FWWORD
+# define KEY_FWWORD  102
+#endif
+#ifndef KEY_BWWORD
+# define KEY_BWWORD   98
+#endif
+#ifndef KEY_KILLEOW
+# define KEY_KILLEOW 100
+#endif
+#ifndef KEY_KILLBOW
+# define KEY_KILLBOW  23
+#endif
+
+#define ctrl(c)             ((c)-'@')
+#define remln(cols)         hline(' ', cols);
+#define mvremln(y, x, cols) mvhline(y, x, ' ', cols);
 
 #endif /* _UI_H */

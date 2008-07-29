@@ -2,7 +2,6 @@
  *
  */
 
-#include <curses.h>
 #include <ctype.h>
 #include <pwd.h>
 #include <sys/types.h>
@@ -48,7 +47,10 @@ gchar  filterexp[0x1ff];
 #endif
 gint   sc_mask = 0;
 static GCompletion* hstCompl = NULL;
-static Tcl_Interp *tcl_interp;
+
+#ifdef FEAT_TCLFILTER
+static Tcl_Interp *tcl_interp = NULL;
+#endif
 
 #ifdef FEAT_TCLFILTER
 typedef enum {
@@ -154,14 +156,17 @@ static const struct HostFlag hostFlags[] = {
 };
 
 
-static gboolean getnLine(WINDOW *win, gchar *str, gint maxlen)
+static gboolean getnLine(WINDOW *win, gchar *str, gint n, gboolean usews)
 {
- gint cpos = 0, slen = 0, i;
- int  ch = 0, cy, cx;
+ gint     cpos = 0, slen = 0, i;
+ int      ch = 0, cy, cx;
+ gchar    *modstr = NULL;
  gboolean dobeep;
 
- if(!str || !win || !maxlen) return (FALSE);
- memset (str, 0, maxlen);
+ if(!str || !win || !n) return (FALSE);
+
+ modstr = g_malloc0(n+1);
+ if(!modstr) return(FALSE);
 
  enableInput();
  keypad(win, TRUE);
@@ -171,11 +176,19 @@ static gboolean getnLine(WINDOW *win, gchar *str, gint maxlen)
   ch = wgetch(win);
   dobeep = TRUE;
 
-  if((isascii(ch) && isprint(ch))) {
-   if(slen < maxlen) {
-    str[cpos] = ch;
-    waddch(win, str[cpos++]);
-    slen++;
+  if((isascii(ch) && isprint(ch)) || (ch == '\t' && usews == TRUE)) {
+   if(slen < n) {
+    if(cpos == slen) {
+     modstr[cpos] = ch;
+     waddch(win, modstr[cpos++]);
+     slen++;
+    } else {
+     bcopy(&modstr[cpos], &modstr[cpos+1], slen-cpos);
+     modstr[cpos] = ch;
+     winsch(win, modstr[cpos++]);
+     wmove(win, cy, ++cx);
+     slen++;
+    }
     dobeep = FALSE;
    }
   } else {
@@ -186,11 +199,65 @@ static gboolean getnLine(WINDOW *win, gchar *str, gint maxlen)
     continue;
    case KEY_BACKSPACE:
     if(slen > 0 && cpos > 0) {
-     str[--cpos] = 0;
-     wmove(win, cy, --cx);
-     wdelch(win);
+     if(cpos == slen) modstr[--cpos] = 0;
+     else {
+      g_strlcpy(&modstr[cpos-1], &modstr[cpos], slen-cpos+1);
+      cpos--;
+     }
+     mvwdelch(win, cy, --cx);
+     slen = strlen(modstr);
      dobeep = FALSE;
     }
+    break;
+   case KEY_DC:
+    if(slen > 0 && cpos < slen) {
+     dobeep = FALSE;
+     g_strlcpy(&modstr[cpos], &modstr[cpos+1], slen-cpos+1);
+     wdelch(win);
+     slen = strlen(modstr);
+    }
+    break;
+   case KEY_LEFT:
+    if(cpos > 0) {
+     cpos--;
+     wmove(win, cy, --cx);
+     dobeep = FALSE;
+    }
+    break;
+   case KEY_RIGHT:
+    if(cpos < slen && slen > 0) {
+     cpos++;
+     wmove(win, cy, ++cx);
+     dobeep = FALSE;
+    }
+    break;
+   case ctrl('U'): /* Delete line */
+    cx+=(slen-cpos);
+    for(i=slen;i > 0;i--)
+     mvwdelch(win, cy, --cx);
+    memset(modstr, 0, n);
+    cpos=0;
+    dobeep = FALSE;
+    break;
+   case ctrl('A'):
+   case KEY_HOME:
+    cx-=cpos;
+    cpos = 0;
+    wmove(win, cy, cx);
+    dobeep = FALSE;
+    break;
+   case ctrl('E'):
+   case KEY_END:
+    cx+=(slen-cpos);
+    cpos = slen;
+    wmove(win, cy, cx);
+    dobeep = FALSE;
+    break;
+   case KEY_ESC: /* Abort */
+   case ctrl('G'):
+    disableInput();
+    g_free(modstr);
+    return(FALSE);
    } /* switch(ch) */
 
   }
@@ -201,6 +268,9 @@ static gboolean getnLine(WINDOW *win, gchar *str, gint maxlen)
  }
  
  disableInput();
+
+ memcpy(str, modstr, n+1);
+ g_free(modstr);
 
  return(TRUE);
 }
@@ -328,7 +398,7 @@ void drawMenu (gint mask)
 
  attron(uicolors[UI_COLOR_MENU]);
  move(0,0);
- hline(' ',COLS);
+ remln(COLS);
 
  gint i=-1;
  gint p=COLS;
@@ -364,7 +434,7 @@ void drawStatus (char *str)
 
  attron(uicolors[UI_COLOR_STATUS]);
  move(bottomDrawLine, 0);
- hline( ' ', COLS);
+ remln(COLS);
  if(str) {
   addnstr(str, COLS);
  }
@@ -377,9 +447,11 @@ void drawStatus (char *str)
  attroff(uicolors[UI_COLOR_STATUS]);
 }
 
-void queryString(const gchar *query, gchar *in, const gint size)
+gboolean queryString(const gchar *query, gchar *in, const gint size)
 {
  gint i;
+ gboolean r;
+ gint maxsize;
 
  enableInput();
 
@@ -394,14 +466,16 @@ void queryString(const gchar *query, gchar *in, const gint size)
  for(i = strlen(in)-1; i>=0; i--)
   ungetch(in[i]);
 
- /* getnstr(in, size); */
- getnLine(stdscr, in, size);
+ maxsize = size < (COLS-1 - strlen(query)) ? size : COLS-1 - strlen(query);
+ r = getnLine(stdscr, in, maxsize, FALSE);
  disableInput();
 
  attroff(uicolors[UI_COLOR_INPUT]);
 
  move(LINES - 1, 0);
- hline(' ', COLS);
+ remln(COLS);
+
+ return(r);
 }
 
 
@@ -424,7 +498,7 @@ gboolean queryConfirm(const gchar *query, const gboolean enter_is_yes)
  disableInput();
 
  move(LINES - 1, 0);
- hline(' ', COLS);
+ remln(COLS);
 
  return ((c == 'y') || (c == 'Y') || 
 	 (enter_is_yes == TRUE && (c == 0xd || c == KEY_ENTER)));
@@ -435,7 +509,7 @@ void drawCategoryEntry (DrawNode *n)
  char statusln[BUF_MAX_LEN];
 
  attron(n->attrs); 
- mvhline(n->scrpos, 0, ' ', COLS);
+ mvremln(n->scrpos, 0, COLS);
 
  mvaddstr(n->scrpos, 0, " [");
  if(n->elements > 0)
@@ -459,7 +533,7 @@ void drawGroupEntry (DrawNode *n)
  char statusln[BUF_MAX_LEN];
 
  attron(n->attrs);
- mvhline(n->scrpos, 0, ' ', COLS); 
+ mvremln(n->scrpos, 0, COLS); 
  mvaddstr(n->scrpos, 2, " [");
  addch(n->elements > 0 && n->extended == FALSE ? '+' : '-');
  addstr("] ");
@@ -481,7 +555,7 @@ void drawHostEntry (DrawNode *n)
  char *hostentry;
 
  attron(n->attrs);
- mvhline(n->scrpos, 0, ' ', COLS);
+ mvremln(n->scrpos, 0, COLS);
 
  if (((HostNode *) n->p)->status & HOST_STATUS_LOCKED) {
   attron(uicolors[UI_COLOR_HOSTSTATUS]);
@@ -574,7 +648,7 @@ void drawPackageEntry (DrawNode *n)
  char statusln[BUF_MAX_LEN];
 
  attron(n->attrs);
- mvhline(n->scrpos, 0, ' ', COLS);
+ mvremln(n->scrpos, 0, COLS);
 
  if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGUPDATE)
    mvaddstr(n->scrpos, 7, "u:");
@@ -610,7 +684,7 @@ void drawSessionEntry (DrawNode *n)
 
 
  attron(n->attrs);
- mvhline(n->scrpos, 0, ' ', COLS);
+ mvremln(n->scrpos, 0, COLS);
  mvaddnstr(n->scrpos, 7, h, COLS);
  attroff(n->attrs);
  if(n->selected == TRUE) {
@@ -1517,16 +1591,16 @@ void searchEntry(GList *hosts) {
        selmatch = g_list_first(matches);
 
      if(selmatch) {
-       attron(uicolors[UI_COLOR_INPUT]);
-       attron(A_REVERSE);
-       mvaddstr(LINES-1, offset+pos+1, &((HostNode *)selmatch->data)->hostname[pos]);
-       attroff(A_REVERSE);
-       attroff(uicolors[UI_COLOR_INPUT]);
-
-       hline(' ', COLS-offset-strlen(&((HostNode *)selmatch->data)->hostname[pos])-1);
+      attron(uicolors[UI_COLOR_INPUT]);
+      attron(A_REVERSE);
+      mvaddstr(LINES-1, offset+pos+1, &((HostNode *)selmatch->data)->hostname[pos]);
+      attroff(A_REVERSE);
+      attroff(uicolors[UI_COLOR_INPUT]);
+      
+      remln(COLS-offset-strlen(&((HostNode *)selmatch->data)->hostname[pos])-1);
      }
      else
-       hline(' ', COLS-offset-pos-1);
+      remln(COLS-offset-pos-1);
 
 
      /* we have a match which is selected */
@@ -1588,12 +1662,12 @@ void searchEntry(GList *hosts) {
      }
    }
    else
-     hline(' ', COLS-offset-pos-1);
+    remln(COLS-offset-pos-1);
 
    /* print matches in status bar */
    attron(uicolors[UI_COLOR_STATUS]);
    move(bottomDrawLine, 0);
-   hline(' ', COLS);
+   remln(COLS);
 
    if(matches) {
      gint p = COLS;
@@ -1631,7 +1705,7 @@ void searchEntry(GList *hosts) {
  disableInput();
 
  move(LINES - 1, 0);
- hline(' ', COLS);
+ remln(COLS);
 
  drawStatus ("");
 }
@@ -1644,9 +1718,11 @@ void applyFilter(GList *hosts) {
  gboolean filtered;
  GList *l = hosts;
 
+ Tcl_Preserve(tcl_interp);
+ 
  while(l) {
     HostNode *n = (HostNode *)l->data;
- 
+
     for(i=0; tclmap[i].name; i++) {
       switch(tclmap[i].type) {
         case TCLM_STRING:
@@ -1736,7 +1812,9 @@ void applyFilter(GList *hosts) {
     }
 
     l = g_list_next(l);
- }
+ } /* while */
+
+ Tcl_Release(tcl_interp);
 }
 
 static void filterHosts(GList *hosts)
@@ -1997,7 +2075,7 @@ gboolean ctrlUI (GList *hosts)
       g_free(qrystr);
       qrystr = NULL;
      } else {
-      queryString("Install package: ", in, sizeof(in));
+      if(queryString("Install package: ", in, sizeof(in)-1) == FALSE) break;
       if (strlen(in)==0) break;
       pkg = in;
       retqry = TRUE;
@@ -2022,7 +2100,7 @@ gboolean ctrlUI (GList *hosts)
       break;
     }
   
-    queryString("Install package: ", in, sizeof(in));
+    if(queryString("Install package: ", in, sizeof(in)-1) == FALSE) break;
     if (strlen(in)==0)
      break;
     pkg = in;
@@ -2038,7 +2116,7 @@ gboolean ctrlUI (GList *hosts)
    case GROUP:
    default:
     {
-     queryString("Install package: ", in, sizeof(in));
+     if(queryString("Install package: ", in, sizeof(in)-1) == FALSE) break;
      if (strlen(in)==0)
       break;
 
@@ -2290,6 +2368,11 @@ gboolean ctrlUI (GList *hosts)
     if (retqry == FALSE)
      break;
    }
+
+#ifdef FEAT_TCLFILTER
+   if(tcl_interp) Tcl_DeleteInterp(tcl_interp);
+#endif
+   if(hstCompl) g_completion_free (hstCompl);
 
    ret = FALSE;
    attrset(A_NORMAL);
