@@ -156,17 +156,17 @@ static const struct HostFlag hostFlags[] = {
 };
 
 
-static gboolean getnLine(WINDOW *win, gchar *str, gint n, gboolean usews)
+static int getnLine(WINDOW *win, gchar *str, gint n, gboolean usews)
 {
  gint     cpos = 0, slen = 0, i;
  int      ch = 0, cy, cx;
  gchar    *modstr = NULL;
  gboolean dobeep;
 
- if(!str || !win || !n) return (FALSE);
+ if(!str || !win || !n) return (0);
 
  modstr = g_malloc0(n+1);
- if(!modstr) return(FALSE);
+ if(!modstr) return(0);
 
  enableInput();
  keypad(win, TRUE);
@@ -257,7 +257,7 @@ static gboolean getnLine(WINDOW *win, gchar *str, gint n, gboolean usews)
    case ctrl('G'):
     disableInput();
     g_free(modstr);
-    return(FALSE);
+    return(0);
    } /* switch(ch) */
 
   }
@@ -272,7 +272,7 @@ static gboolean getnLine(WINDOW *win, gchar *str, gint n, gboolean usews)
  memcpy(str, modstr, n+1);
  g_free(modstr);
 
- return(TRUE);
+ return(ch);
 }
 
 
@@ -467,7 +467,7 @@ gboolean queryString(const gchar *query, gchar *in, const gint size)
   ungetch(in[i]);
 
  maxsize = size < (COLS-1 - strlen(query)) ? size : COLS-1 - strlen(query);
- r = getnLine(stdscr, in, maxsize, FALSE);
+ r = getnLine(stdscr, in, maxsize, FALSE) == 0 ? FALSE : TRUE;
  disableInput();
 
  attroff(uicolors[UI_COLOR_INPUT]);
@@ -1819,7 +1819,7 @@ void applyFilter(GList *hosts) {
 
 static void filterHosts(GList *hosts)
 {
- gint i;
+ gint i, r;
  gint first;
  WINDOW *w = newwin(LINES-3, COLS, 2, 0);
 
@@ -1889,7 +1889,8 @@ static void filterHosts(GList *hosts)
  for(i = strlen(filterexp)-1; i>=0; i--)
    ungetch(filterexp[i]);
    
- wgetnstr(w, filterexp, sizeof(filterexp));
+ r = getnLine(w, filterexp, sizeof(filterexp)-1, FALSE);
+
  disableInput();
 
  wattroff(w, uicolors[UI_COLOR_INPUT]);
@@ -1897,7 +1898,7 @@ static void filterHosts(GList *hosts)
  delwin(w);
  refreshDraw();
 
- applyFilter(hosts);
+ if(r) applyFilter(hosts);
 }
 #endif
 
@@ -2370,7 +2371,7 @@ gboolean ctrlUI (GList *hosts)
    }
 
 #ifdef FEAT_TCLFILTER
-   if(tcl_interp) Tcl_DeleteInterp(tcl_interp);
+   if (!Tcl_InterpDeleted(tcl_interp)) Tcl_DeleteInterp(tcl_interp);
 #endif
    if(hstCompl) g_completion_free (hstCompl);
 
