@@ -1,4 +1,9 @@
 ------------------------------------------------------------------------
+r171 | liske | 2008-07-29 15:59:55 +0200 (Tue, 29 Jul 2008) | 2 lines
+
+Enable XML reports for building .deb packages by default.
+
+------------------------------------------------------------------------
 r170 | liske | 2008-07-29 15:36:36 +0200 (Tue, 29 Jul 2008) | 2 lines
 
 Use libxml2 to create XML based reports of host stats.
