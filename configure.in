@@ -217,23 +217,6 @@ else
 fi
 AC_SUBST(DBXSL)
 
-# Check if `dpkg-buildpackage' is installed on your system
-echo -n "checking for dpkg-buildpackage... "
-if test -x /usr/bin/dpkg-buildpackage ; then
-	DPKGBPKG="/usr/bin/dpkg-buildpackage"
-	echo $DPKGBPKG
-elif test -x /usr/local/bin/dpkg-buildpackage; then
-	DPKGBPKG="/usr/local/bin/dpkg-buildpackage"
-	echo $DPKGBPKG
-elif test -x /bin/dpkg-buildpackage; then
-	DPKGBPKG="/bin/dpkg-buildpackage"
-	echo $DPKGBPKG
-else
-	DPKGBPKG="/bin/true"
-	echo "not found."
-fi
-AC_SUBST(DPKGBPKG)
-
 # Checks for library functions.
 AC_TYPE_SIGNAL
 AC_FUNC_STAT

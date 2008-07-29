@@ -62,7 +62,6 @@ CYGPATH_W = @CYGPATH_W@
 DBXSL = @DBXSL@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
-DPKGBPKG = @DPKGBPKG@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -135,6 +134,7 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 EXTRA_DIST = debian-pkg
+DPKGBPKG = @DPKGBPKG@
 all: all-am
 
 .SUFFIXES:
