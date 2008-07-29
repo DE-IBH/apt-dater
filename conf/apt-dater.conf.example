@@ -10,7 +10,7 @@
 [SSH]
 # SSH binary
 Cmd=/usr/bin/ssh
-OptionalCmdFlags=
+OptionalCmdFlags=-t
 
 # SFTP binary
 SFTPCmd=/usr/bin/mc /#sh:%u@%h:C/
