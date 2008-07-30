@@ -88,7 +88,9 @@ typedef struct _hostnode {
  gint      ssh_port;
  guint     status;
  gboolean  keptback;
+#ifdef FEAT_TCLFILTER
  gboolean  filtered;
+#endif
  Category  category;
  GList     *packages;
  gint      nupdates;

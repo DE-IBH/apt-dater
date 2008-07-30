@@ -82,8 +82,10 @@ static void reportHost(gpointer data, gpointer lgroup) {
   /* Begin host element. */  
   xmlTextWriterStartElement(writer, "host");
   xmlTextWriterWriteAttribute(writer, "hostname", n->hostname);
+#ifdef FEAT_TCLFILTER
   if(n->filtered)
     xmlTextWriterWriteAttribute(writer, "filtered", "1");
+#endif
 
   /* Status */
   xmlTextWriterStartElement(writer, "status");
