@@ -1,0 +1,33 @@
+XML Report
+==========
+
+Since version 0.6.0, apt-dater can be compiled with XML report support.
+This feature is disabled by default, enable it with configure:
+
+    $ ./configure --enable-xmlreport
+
+You need libxml2 installed to succeed, the Debian packages have
+XML report support enabled.
+
+
+Usage
+=====
+
+To create a XML report, start apt-dater with command line parameter -r:
+
+ $ apt-dater -r > report.xml
+
+This will refresh all hosts and reports the hosts status as XML
+formated output. This output can be formated to your needs using a
+XSLT program. You could find examples in the xmlreport directory.
+To process the XML file you could use xsltproc:
+
+ $ xsltproc xmlreport/overview.xsl report.xml
+
+You could do anything with the results XML file.
+
+
+XML Structure
+=============
+
+TODO
