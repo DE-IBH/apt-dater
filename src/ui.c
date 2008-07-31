@@ -131,7 +131,7 @@ static struct ShortCut shortCuts[] = {
  {SC_KEY_ATTACH, 'a', "a" , "attach session" , FALSE, VK_ATTACH},
  {SC_KEY_KILLSESS, 'K', "K" , "kill session" , FALSE, VK_KILL},
  {SC_KEY_CONNECT, 'c', "c" , "connect host" , FALSE, VK_CONNECT},
- {SC_KEY_FILETRANS, 't', "f" , "file transfer" , FALSE, 0},
+ {SC_KEY_FILETRANS, 't', "t" , "file transfer" , FALSE, 0},
  {SC_KEY_TOGGLEDUMPS, 'd', "d" , "toggle dumps" , FALSE, VK_DUMP},
  {SC_KEY_REFRESH, 'g', "g" , "refresh host" , FALSE, VK_REFRESH},
  {SC_KEY_INSTALL, 'i', "i" , "install pkg" , FALSE, VK_INSTALL},
@@ -389,6 +389,8 @@ void initUI ()
 void cleanUI ()
 {
  clear();
+ refresh();
+ clear();
  endwin();
 }
 
@@ -423,14 +425,16 @@ void drawMenu (gint mask)
  attroff(uicolors[UI_COLOR_MENU]);
 }
 
-void drawStatus (char *str)
+void drawStatus (char *str, gboolean drawoldest)
 {
  char strmtime[30];
  struct tm *tm_mtime;
  int mtime_pos;
 
- tm_mtime = localtime(&oldest_st_mtime);
- strftime(strmtime, sizeof(strmtime), " Oldest: %D %H:%M", tm_mtime);
+ if(drawoldest == TRUE) {
+  tm_mtime = localtime(&oldest_st_mtime);
+  strftime(strmtime, sizeof(strmtime), " Oldest: %D %H:%M", tm_mtime);
+ }
 
  attron(uicolors[UI_COLOR_STATUS]);
  move(bottomDrawLine, 0);
@@ -439,10 +443,12 @@ void drawStatus (char *str)
   addnstr(str, COLS);
  }
 
- mtime_pos = COLS - strlen(strmtime) - 1;
+ if(drawoldest == TRUE) {
+  mtime_pos = COLS - strlen(strmtime) - 1;
 
- move(bottomDrawLine, mtime_pos);
- addnstr(strmtime, COLS-mtime_pos);
+  move(bottomDrawLine, mtime_pos);
+  addnstr(strmtime, COLS-mtime_pos);
+ }
 
  attroff(uicolors[UI_COLOR_STATUS]);
 }
@@ -524,7 +530,7 @@ void drawCategoryEntry (DrawNode *n)
   sprintf(statusln, "%d %s in status \"%s\"", n->elements, n->elements > 1 || n->elements == 0 ? "Hosts" : "Host", (char *) n->p);
 
   drawMenu(VK_REFRESH);
-  drawStatus(statusln);
+  drawStatus(statusln, TRUE);
  }
 }
 
@@ -544,7 +550,7 @@ void drawGroupEntry (DrawNode *n)
   sprintf(statusln, "%d %s is in status \"%s\"", n->elements, n->elements > 1 || n->elements == 0 ? "Hosts" : "Host", incategory);
 
   drawMenu(VK_REFRESH);
-  drawStatus(statusln);
+  drawStatus(statusln, TRUE);
  }
 }
 
@@ -639,7 +645,7 @@ void drawHostEntry (DrawNode *n)
    strcat(statusln," - host locked by another process");
   drawMenu(mask);
 
-  drawStatus(statusln);
+  drawStatus(statusln, TRUE);
  }
 }
 
@@ -665,7 +671,7 @@ void drawPackageEntry (DrawNode *n)
   else
     sprintf(statusln, "%s", ((PkgNode *) n->p)->version);
   drawMenu(VK_INSTALL);
-  drawStatus(statusln);
+  drawStatus(statusln, TRUE);
  }
 }
 
@@ -703,15 +709,15 @@ void drawSessionEntry (DrawNode *n)
 	wrefresh(win_dump);
       }
 
-      drawStatus("Running session:");
+      drawStatus("Running session:", TRUE);
 
       g_free(dump);
     }
     else
-      drawStatus("Could not read session dump.");
+     drawStatus("Could not read session dump.", TRUE);
   }
   else
-    drawStatus("");
+   drawStatus("", TRUE);
  }
 }
 
@@ -1537,6 +1543,8 @@ void searchEntry(GList *hosts) {
  enableInput();
  noecho();
 
+ memset(s, 0, sizeof(s));
+
  attron(uicolors[UI_COLOR_QUERY]);
  mvaddstr(LINES - 1, 0, query);
  attroff(uicolors[UI_COLOR_QUERY]);
@@ -1561,10 +1569,8 @@ void searchEntry(GList *hosts) {
        beep();
    }
    /* abort on control key */
-   else if(iscntrl(c)) {
-     if((c==KEY_UP) ||
-	(c==KEY_DOWN))
-       ungetch(c);
+   else if(iscntrl(c) || c==KEY_LEFT || c==KEY_DOWN) {
+     if((c==KEY_UP) || (c==KEY_DOWN)) ungetch(c);
      break;
    }
    /* accept char */
@@ -1665,40 +1671,37 @@ void searchEntry(GList *hosts) {
     remln(COLS-offset-pos-1);
 
    /* print matches in status bar */
-   attron(uicolors[UI_COLOR_STATUS]);
-   move(bottomDrawLine, 0);
-   remln(COLS);
 
    if(matches) {
-     gint p = COLS;
+     gint dssize = COLS+1;
+     gchar *dsstr = NULL;
 
-     addnstr("Hosts:", MAX(0, p));
-     p-=6;
+     dsstr = g_malloc0(dssize);
+     if(!dsstr) break;
+
+     g_strlcat(dsstr, "Hosts:", dssize);
 
      GList *m = g_list_first(matches);
      while(m) {
-       addnstr(" ", MAX(0, p));
-       p--;
+      g_strlcat(dsstr, " ", dssize);
 
-       addnstr(((HostNode *)m->data)->hostname, MAX(0, p));
-       p -= strlen(((HostNode *)m->data)->hostname);
-
-       m = g_list_next(m);
+      g_strlcat(dsstr, ((HostNode *)m->data)->hostname, dssize);
+      m = g_list_next(m);
      }
+
+     drawStatus(dsstr, FALSE);
+     g_free(dsstr);
    }
    else {
-     addnstr("Hosts: -", COLS);
+     drawStatus("Hosts: -", FALSE);
      selmatch = NULL;
    }
-   attroff(uicolors[UI_COLOR_STATUS]);
-
 
    /* move to cursor position */
    move(LINES-1, offset+pos+1);
 
-
    refresh();
- }
+ } /* while((c = getch())) */
 
  attroff(uicolors[UI_COLOR_INPUT]);
 
@@ -1707,7 +1710,7 @@ void searchEntry(GList *hosts) {
  move(LINES - 1, 0);
  remln(COLS);
 
- drawStatus ("");
+ drawStatus ("", TRUE);
 }
 
 #ifdef FEAT_TCLFILTER
@@ -2322,6 +2325,7 @@ gboolean ctrlUI (GList *hosts)
 
   case SC_KEY_FIND:
    searchEntry(hosts);
+   refscr = TRUE;
    break;
 
 #ifdef FEAT_TCLFILTER
