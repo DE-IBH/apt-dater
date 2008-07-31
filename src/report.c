@@ -69,14 +69,15 @@ static void reportPackage(gpointer data, gpointer user_data) {
 static void reportHost(gpointer data, gpointer lgroup) {
   HostNode *n = (HostNode *)data;
   
-  if(*(gpointer *)lgroup != n->group) {
-    if(*(gpointer *)lgroup)
+  if(*(char **)lgroup == NULL ||
+     strcmp(*(char **)lgroup, n->group)) {
+    if(*(char **)lgroup)
 	xmlTextWriterEndElement(writer);
 
     xmlTextWriterStartElement(writer, "group");
     xmlTextWriterWriteAttribute(writer, "name", n->group);
     
-    *(gpointer *)lgroup = n->group;
+    *(char **)lgroup = n->group;
   }
 
   /* Begin host element. */  
@@ -129,7 +130,7 @@ static void reportHost(gpointer data, gpointer lgroup) {
 
 gboolean ctrlReport(GList *hosts) {
   gint torefresh = 0;
-  gpointer lgroup = NULL;
+  char *lgroup = NULL;
   
   g_usleep(G_USEC_PER_SEC);
   
