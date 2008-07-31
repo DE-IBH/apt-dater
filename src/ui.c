@@ -156,7 +156,7 @@ static const struct HostFlag hostFlags[] = {
 };
 
 
-static int getnLine(WINDOW *win, gchar *str, gint n, gboolean usews)
+int getnLine(WINDOW *win, gchar *str, gint n, gboolean usews)
 {
  gint     cpos = 0, slen = 0, i;
  int      ch = 0, cy, cx;
@@ -295,6 +295,15 @@ void freeDrawNode (DrawNode *n)
 {
  g_free(n);
 }
+
+
+void cleanBetween()
+{
+ gint i;
+ 
+ for(i=1; i < bottomDrawLine;i++) mvremln(i, 0, COLS);
+}
+
 
 DrawNode *getSelectedDrawNode()
 {
@@ -453,6 +462,15 @@ void drawStatus (char *str, gboolean drawoldest)
  attroff(uicolors[UI_COLOR_STATUS]);
 }
 
+
+void drawQuery (const char *str)
+{
+ attron(uicolors[UI_COLOR_QUERY]);
+ mvaddstr(LINES - 1, 0, str);
+ attroff(uicolors[UI_COLOR_QUERY]);
+}
+
+
 gboolean queryString(const gchar *query, gchar *in, const gint size)
 {
  gint i;
@@ -461,9 +479,7 @@ gboolean queryString(const gchar *query, gchar *in, const gint size)
 
  enableInput();
 
- attron(uicolors[UI_COLOR_QUERY]);
- mvaddstr(LINES - 1, 0, query);
- attroff(uicolors[UI_COLOR_QUERY]);
+ drawQuery(query);
 
  move(LINES - 1, strlen(query));
 
@@ -491,9 +507,7 @@ gboolean queryConfirm(const gchar *query, const gboolean enter_is_yes)
 
  enableInput();
 
- attron(uicolors[UI_COLOR_QUERY]);
- mvaddstr(LINES - 1, 0, query);
- attroff(uicolors[UI_COLOR_QUERY]);
+ drawQuery(query);
 
  move(LINES - 1, strlen(query));
 
@@ -1533,7 +1547,7 @@ void injectKey(int ch)
 
 void searchEntry(GList *hosts) {
  gint c;
- gchar s[0xff];
+ gchar s[BUF_MAX_LEN];
  gint pos = 0;
  const gchar *query = "Search: ";
  const int offset = strlen(query)-1;
@@ -1545,9 +1559,7 @@ void searchEntry(GList *hosts) {
 
  memset(s, 0, sizeof(s));
 
- attron(uicolors[UI_COLOR_QUERY]);
- mvaddstr(LINES - 1, 0, query);
- attroff(uicolors[UI_COLOR_QUERY]);
+ drawQuery(query);
 
  while((c = getch())) {
    /* handle backspace */
@@ -1620,7 +1632,7 @@ void searchEntry(GList *hosts) {
 	 while(dl) {
 	   DrawNode *dn = (DrawNode *) dl->data;
 	   
-	   dn->extended = TRUE;
+	   if(dn->type != HOST) dn->extended = TRUE;
 	   
 	   dl = g_list_next(dl);
 	 }
@@ -1663,6 +1675,7 @@ void searchEntry(GList *hosts) {
 	 dl = g_list_previous(dl);
        }
        
+       cleanBetween();
        rebuildDrawList(hosts);
        g_list_foreach(drawlist, (GFunc) drawEntry, NULL);
      }
@@ -2251,9 +2264,9 @@ gboolean ctrlUI (GList *hosts)
 
    if(getSelectedDrawNode()->type != SESSION) {
     if(dump_screen)
-     mvaddstr(LINES - 1, 0, "Session dumps enabled.");
+     drawQuery("Session dumps enabled.");
     else
-     mvaddstr(LINES - 1, 0, "Session dumps disabled.");
+     drawQuery("Session dumps disabled.");
    }
    else
     refscr = TRUE;
