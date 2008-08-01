@@ -6,7 +6,7 @@
 
   <xsl:output method="text"/>
 
-  <xsl:template match="/apt-dater">
+  <xsl:template match="/report">
     <xsl:text>apt-dater host overview
 =======================
 </xsl:text>
