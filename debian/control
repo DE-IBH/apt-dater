@@ -7,8 +7,8 @@ Standards-Version: 3.7.2
 
 Package: apt-dater
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, screen, ssh-client
-Suggests: apt-dater-host
+Depends: ${shlibs:Depends}, ${misc:Depends}, screen, ssh-client | ssh
+Suggests: apt-dater-host, xsltproc
 Description: terminal-based remote package update manager
  apt-dater can be used to keep your (Debian) GNU/Linux based hosts
  up to date using SSH.
