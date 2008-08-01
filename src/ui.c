@@ -129,7 +129,6 @@ static struct ShortCut shortCuts[] = {
  {SC_KEY_FILTER, 'f', "f" , "filter hosts" , FALSE, 0},
 #endif
  {SC_KEY_ATTACH, 'a', "a" , "attach session" , FALSE, VK_ATTACH},
- {SC_KEY_KILLSESS, 'K', "K" , "kill session" , FALSE, VK_KILL},
  {SC_KEY_CONNECT, 'c', "c" , "connect host" , FALSE, VK_CONNECT},
  {SC_KEY_FILETRANS, 't', "t" , "file transfer" , FALSE, 0},
  {SC_KEY_TOGGLEDUMPS, 'd', "d" , "toggle dumps" , FALSE, VK_DUMP},
@@ -708,10 +707,7 @@ void drawSessionEntry (DrawNode *n)
  mvaddnstr(n->scrpos, 7, h, COLS);
  attroff(n->attrs);
  if(n->selected == TRUE) {
-  if (screen_is_attached((SessNode *) n->p))
-    drawMenu(VK_ATTACH | VK_DUMP);
-  else
-    drawMenu(VK_ATTACH | VK_DUMP | VK_KILL);
+  drawMenu(VK_ATTACH | VK_DUMP);
 
   if (dump_screen) {
     gchar *dump = screen_get_dump((SessNode *) n->p);
@@ -2240,22 +2236,6 @@ gboolean ctrlUI (GList *hosts)
    }
    refscr = TRUE;
    break; /* case SC_KEY_ATTACH */
-
-  case SC_KEY_KILLSESS:
-   if(ic != 'K') break;
-   n = getSelectedDrawNode();
-   if(!inhost) break;
-   if(n->type != SESSION) break;
-
-   /* Session already attached! */
-   if (screen_is_attached((SessNode *) n->p))
-    break;
-  
-   if (!queryConfirm("Realy kill this session? [y/N]: ", FALSE))
-    break;
-  
-   kill(((SessNode *) n->p)->pid, SIGTERM);
-   break; /* case SC_KEY_KILLSESS */
 
   case SC_KEY_TOGGLEDUMPS:
    if (!cfg->dump_screen)
