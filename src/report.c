@@ -145,7 +145,8 @@ gboolean ctrlReport(GList *hosts) {
   
   if(torefresh == 0) {
     /* Create root node. */
-    xmlTextWriterStartElement(writer, "apt-dater");
+    xmlTextWriterStartElement(writer, "report");
+    xmlTextWriterWriteFormatElement(writer, "timestamp", "%d", time(NULL));
 
     /* Put node stats to file. */
     g_list_foreach(hosts, reportHost, &lgroup);

@@ -1,0 +1,39 @@
+<!-- Root element -->
+<!ELEMENT report (group*)>
+<!ATTLIST report timestamp CDATA #REQUIRED>
+
+<!-- Group of host nodes -->
+<!ELEMENT group (host*)>
+<!ATTLIST group name CDATA #REQUIRED>
+
+<!-- Host node -->
+<!ELEMENT host (status,ssh,kernel,lsb,packages)>
+<!ATTLIST host hostname CDATA #REQUIRED>
+
+<!-- Host apt-dater status -->
+<!ELEMENT status (#PCDATA)>
+<!ATTLIST status status CDATA #REQUIRED>
+
+<!-- SSH parameter -->
+<!ELEMENT ssh (user,port)>
+<!ELEMENT user (#PCDATA)>
+<!ELEMENT port (#PCDATA)>
+
+<!-- Kernel version -->
+<!ELEMENT kernel (#PCDATA)>
+<!ATTLIST kernel reboot CDATA #IMPLIED>
+
+<!-- LSB release info -->
+<!ELEMENT lsb (distri?,release?,codename?)>
+<!ELEMENT distri (#PCDATA)>
+<!ELEMENT release (#PCDATA)>
+<!ELEMENT codename (#PCDATA)>
+
+<!-- Package list -->
+<!ELEMENT packages (pkg)>
+<!ELEMENT pkg EMPTY>
+<!ATTLIST pkg name CDATA #REQUIRED
+	      version CDATA #REQUIRED
+	      hasupdate CDATA #IMPLIED
+	      onhold CDATA #IMPLIED
+	      data CDATA #IMPLIED>
