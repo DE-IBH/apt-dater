@@ -1,4 +1,83 @@
 ------------------------------------------------------------------------
+r186 | liske | 2008-08-05 09:32:52 +0200 (Tue, 05 Aug 2008) | 2 lines
+
+Detect if GLIB supports g_timeout_add_seconds and use it if possible.
+
+------------------------------------------------------------------------
+r185 | liske | 2008-08-05 09:18:39 +0200 (Tue, 05 Aug 2008) | 2 lines
+
+Beep and revert input when searching for hosts and entering an unknown one.
+
+------------------------------------------------------------------------
+r184 | liske | 2008-08-01 16:01:47 +0200 (Fri, 01 Aug 2008) | 3 lines
+
+Add extra-pkgs.xsl example file.
+Add xsltproc to "Suggests:" for apt-dater Debian package.
+
+------------------------------------------------------------------------
+r183 | liske | 2008-08-01 14:42:23 +0200 (Fri, 01 Aug 2008) | 2 lines
+
+Remove "Kill Session" shortcut. Screen already has a kill feature.
+
+------------------------------------------------------------------------
+r182 | liske | 2008-08-01 14:22:48 +0200 (Fri, 01 Aug 2008) | 2 lines
+
+Fixed example XSLT to match renamed root element.
+
+------------------------------------------------------------------------
+r181 | liske | 2008-08-01 12:48:53 +0200 (Fri, 01 Aug 2008) | 2 lines
+
+Change XML report root element and add a DTD.
+
+------------------------------------------------------------------------
+r180 | ellguth | 2008-07-31 16:16:28 +0200 (Thu, 31 Jul 2008) | 3 lines
+
+Fixed some UI glitches in the function searchEntry.
+New function to modify the query line (drawQuery).
+
+------------------------------------------------------------------------
+r179 | liske | 2008-07-31 12:54:23 +0200 (Thu, 31 Jul 2008) | 2 lines
+
+Add a XML report example and a small README.
+
+------------------------------------------------------------------------
+r178 | ellguth | 2008-07-31 11:40:03 +0200 (Thu, 31 Jul 2008) | 4 lines
+
+Initialize the search input buffer s with nulls in the function searchEntry.
+Replaced all ugly modifications of the status line with the drawStatus function.
+
+
+------------------------------------------------------------------------
+r177 | liske | 2008-07-31 11:16:30 +0200 (Thu, 31 Jul 2008) | 3 lines
+
+BUGFIX: hosts of the same group must be in the same group XML tag in 
+xmlreports
+
+------------------------------------------------------------------------
+r176 | liske | 2008-07-30 14:28:57 +0200 (Wed, 30 Jul 2008) | 4 lines
+
+Small build-fixes:
+ - debian/control: build-dep should contain libpopt-dev
+ - #ifdef 'filtered' in HostNode struct.
+
+------------------------------------------------------------------------
+r174 | ellguth | 2008-07-29 16:43:59 +0200 (Tue, 29 Jul 2008) | 2 lines
+
+Preperation for release 0.6.0.
+
+------------------------------------------------------------------------
+r173 | ellguth | 2008-07-29 16:29:23 +0200 (Tue, 29 Jul 2008) | 2 lines
+
+Added the -t switch for the parameter OptionalCmdFlags.
+
+------------------------------------------------------------------------
+r172 | ellguth | 2008-07-29 16:25:16 +0200 (Tue, 29 Jul 2008) | 4 lines
+
+Using the getnLine function to define the TCL filter.
+Read the RELTEST before release a new version of apt-dater.
+
+
+------------------------------------------------------------------------
 r171 | liske | 2008-07-29 15:59:55 +0200 (Tue, 29 Jul 2008) | 2 lines
 
 Enable XML reports for building .deb packages by default.
