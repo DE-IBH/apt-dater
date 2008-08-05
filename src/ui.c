@@ -1587,19 +1587,29 @@ void searchEntry(GList *hosts) {
      s[pos] = 0;
    }
 
-   /* print new search string */
-   attron(uicolors[UI_COLOR_INPUT]);
-   mvaddstr(LINES-1, offset+1, s);
-   attroff(uicolors[UI_COLOR_INPUT]);
-
    /* find completion matches */
    if(strlen(s))
      matches = g_completion_complete(hstCompl, s, NULL);
    else
      matches = NULL;
 
+   /* nothing was found, revert last pressed key */
+   if(!matches && (pos > 0)) {
+     beep();
+     s[--pos] = 0;
+
+     if(pos>0)
+       matches = g_completion_complete(hstCompl, s, NULL);
+   }
+   /* print new search string */
+   else {
+     attron(uicolors[UI_COLOR_INPUT]);
+     mvaddstr(LINES-1, offset+1, s);
+     attroff(uicolors[UI_COLOR_INPUT]);
+   }
+
    /* check if selected match is still valid... or get new one */
-   if (matches) {
+   if(matches) {
      if(!selmatch ||
 	!g_list_find(matches, selmatch->data))
        selmatch = g_list_first(matches);
