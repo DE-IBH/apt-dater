@@ -15,6 +15,9 @@
 /* Define if funtion flock avaible. */
 #undef HAVE_FLOCK
 
+/* Define if your GLIB supports the g_timeout_add_seconds call. */
+#undef HAVE_GLIB_TIMEOUT_ADD_SECONDS
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 

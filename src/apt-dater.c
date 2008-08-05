@@ -112,7 +112,11 @@ int main(int argc, char **argv)
 
  loop = g_main_loop_new (NULL, FALSE);
 
+#ifdef HAVE_GLIB_TIMEOUT_ADD_SECONDS
+ g_timeout_add_seconds(1, (GSourceFunc) refreshStats, hosts);
+#else
  g_timeout_add(1000, (GSourceFunc) refreshStats, hosts);
+#endif
  
 #ifdef FEAT_XMLREPORT
  if(report)
