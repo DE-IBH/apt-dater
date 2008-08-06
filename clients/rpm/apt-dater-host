@@ -1,0 +1,156 @@
+#!/usr/bin/perl -w
+
+use strict;
+
+my $CMD = shift;
+my $ADPROTO = '0.1';
+
+delete($ENV{'LANG'});
+
+die "Don't call this script directly!\n" unless (defined($CMD));
+die "Invalid command '$CMD'!\n" unless ($CMD=~/^(refresh|status|upgrade|install|kernel)$/);
+
+if ($CMD eq 'refresh') {
+    print "ADPROTO: $ADPROTO\n";
+    &do_status;
+    &do_kernel;
+}
+elsif ($CMD eq 'status') {
+    print "ADPROTO: $ADPROTO\n";
+    &do_status;
+    &do_kernel;
+}
+elsif ($CMD eq 'upgrade') {
+    &do_upgrade;
+}
+elsif ($CMD eq 'install') {
+    &do_install(@ARGV);
+}
+elsif ($CMD eq 'kernel') {
+    print "ADPROTO: $ADPROTO\n";
+    &do_kernel;
+}
+else {
+    die "Internal error!\n";
+}
+
+sub do_status() {
+    # retrieve lsb informations
+    open(HLSB, "lsb_release -a 2> /dev/null |") or die "Can't fork: $!\n";
+    my %lsb;
+    while(<HLSB>) {
+	chomp;
+
+	$lsb{$1}=$2 if (/^(Distributor ID|Release|Codename):\s+(\S.*)$/);
+    }
+    close(HLSB);
+    print "LSBREL: $lsb{'Distributor ID'}|$lsb{'Release'}|$lsb{'Codename'}\n";
+
+    # get version of installed packages
+    my %installed;
+    my %status;
+    open(HDPKG, "rpm -qa --qf '%{NAME}\t%{VERSION}\ti\n' |") or die "Can't fork: $!\n";
+    while(<HDPKG>) {
+	chomp;
+
+	next unless (/^(\S+)\s+(\S+)\s+(\S+)/);
+	$installed{$1} = $2 ;
+	$status{$1} = substr($3, 0, 1);
+    }
+    close(HDPKG);
+    
+    foreach my $pkg (keys %installed) {
+	print "STATUS: $pkg|$installed{$pkg}|$status{$pkg}\n";
+    }
+}
+
+sub do_upgrade() {
+    # not implemented
+}
+
+sub do_install() {
+    # not implemented
+}
+
+sub do_kernel() {
+    my $infostr = 'KERNELINFO:';
+    my $version = `uname -r`;
+    chomp($version);
+
+    my $ver = $version;
+    my $rel = '';
+    my $add = '';
+    $add = $1 if($version =~ /([a-z]+)$/);
+    ($ver, $rel) = ($1, $2) if($version =~ /(.+)-([^-]+)$add$/);
+
+    $add = "-$add" if($add);
+
+    my $kinstalled;
+    my $distri = 0;
+    open(HKERNEL, "rpm -q --whatprovides kernel$add --qf '%{NAME}\t%{VERSION}\t%{RELEASE}\n' |") or die "Can't fork: $!\n";
+    while(<HKERNEL>) {
+	if(/^\S+\s+(\S+)\s+(\S+)/) {
+	    if($ver eq $1) {
+		$distri = 1;
+		
+		if(!$kinstalled) {
+		    $kinstalled = $2;
+		}
+		else {
+		    $kinstalled = $2 if(&versioncmp($kinstalled, $2) < 0);
+		}
+	    }
+	}
+    }
+    close(HKERNEL);
+
+    unless($distri) {
+	print "$infostr 2 $version\n";
+	return;
+    }
+
+    unless($kinstalled cmp $rel) {
+	print "$infostr 0 $version\n";
+	return;
+    }
+    print "$infostr 1 $version\n";
+}
+
+##
+# Taken from Sort::Versions 1.4
+# Copyright (c) 1996, Kenneth J. Albanowski.
+##
+sub versioncmp() {
+    my @A = ($_[0] =~ /([-.]|\d+|[^-.\d]+)/g);
+    my @B = ($_[1] =~ /([-.]|\d+|[^-.\d]+)/g);
+
+    my ($A, $B);
+    while (@A and @B) {
+	$A = shift @A;
+	$B = shift @B;
+	if ($A eq '-' and $B eq '-') {
+	    next;
+	} elsif ( $A eq '-' ) {
+	    return -1;
+	} elsif ( $B eq '-') {
+	    return 1;
+	} elsif ($A eq '.' and $B eq '.') {
+	    next;
+	} elsif ( $A eq '.' ) {
+	    return -1;
+	} elsif ( $B eq '.' ) {
+	    return 1;
+	} elsif ($A =~ /^\d+$/ and $B =~ /^\d+$/) {
+	    if ($A =~ /^0/ || $B =~ /^0/) {
+		return $A cmp $B if $A cmp $B;
+	    } else {
+		return $A <=> $B if $A <=> $B;
+	    }
+	} else {
+	    $A = uc $A;
+	    $B = uc $B;
+	    return $A cmp $B if $A cmp $B;
+	}	
+    }
+    @A <=> @B;
+}
