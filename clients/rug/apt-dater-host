@@ -46,7 +46,7 @@ sub do_status() {
     while(<HLSB>) {
 	chomp;
 
-	$lsb{$1}=$2 if (/^(Distributor ID|Release|Codename):\s+(\S.+)$/);
+	$lsb{$1}=$2 if (/^(Distributor ID|Release|Codename):\s+(\S.*)$/);
     }
     close(HLSB);
     print "LSBREL: $lsb{'Distributor ID'}|$lsb{'Release'}|$lsb{'Codename'}\n";
