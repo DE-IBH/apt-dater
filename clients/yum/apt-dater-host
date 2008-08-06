@@ -57,7 +57,7 @@ sub do_status() {
     while(<HAPT>) {
 	chomp;
 
-	$updates{$1} = $2 if (/^(\S+)\s+(\S+)\s+(\S+)/);
+	$updates{$1} = $2 if (/^(\S+)\s+(\d\S*)\s+(\S+)/);
     }
     close(HAPT);
 
@@ -67,7 +67,7 @@ sub do_status() {
     while(<HYUM>) {
 	chomp;
 
-	$extras{$1} = $2 if (/^(\S+)\s+(\S+)\s+(\S+)/);
+	$extras{$1} = $2 if (/^(\S+)\s+(\d\S*)\s+(\S+)/);
     }
     close(HYUM);
 
@@ -78,7 +78,7 @@ sub do_status() {
     while(<HDPKG>) {
 	chomp;
 
-	next unless (/^(\S+)\s+(\S+)\s+(\S+)/);
+	next unless (/^(\S+)\s+(\d\S*)\s+(\S+)/);
 	$installed{$1} = $2 ;
 		
 	if($updates{$1}) {
@@ -137,7 +137,7 @@ sub do_kernel() {
 	    next;
 	}
 
-	if(($pos == 1) && /^(\S+$add\.\S+)\s+(\S+)\s/) {
+	if(($pos == 1) && /^(\S+$add\.\S+)\s+(\d\S*)\s/) {
 	    my $ver = $2;
 	    $distri{$ver.substr($add,1)} = 1;
 	    
