@@ -1,4 +1,26 @@
 ------------------------------------------------------------------------
+r191 | liske | 2008-08-06 15:44:07 +0200 (Wed, 06 Aug 2008) | 2 lines
+
+Changed regex to match package lines better.
+
+------------------------------------------------------------------------
+r190 | liske | 2008-08-06 12:36:54 +0200 (Wed, 06 Aug 2008) | 3 lines
+
+Add RPM only apt-dater-host script. This could only be used to query 
+installed packages, running kernel.
+
+------------------------------------------------------------------------
+r189 | liske | 2008-08-06 11:51:27 +0200 (Wed, 06 Aug 2008) | 3 lines
+
+Don't require the "Release" field of `lsb_release -a` be longer than 1 
+char.
+
+------------------------------------------------------------------------
+r187 | ellguth | 2008-08-05 11:15:54 +0200 (Tue, 05 Aug 2008) | 2 lines
+
+Preperation for release 0.6.1.
+
+------------------------------------------------------------------------
 r186 | liske | 2008-08-05 09:32:52 +0200 (Tue, 05 Aug 2008) | 2 lines
 
 Detect if GLIB supports g_timeout_add_seconds and use it if possible.

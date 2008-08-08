@@ -1,3 +1,10 @@
+apt-dater (0.6.2-ibh0) unstable; urgency=low
+
+  * Fixed 2 bugs in the dump screen function.
+  * Add RPM only apt-dater-host script.
+  
+ -- Andre Ellguth <ellguth@ibh.de>  Fri, 08 Aug 2008 15:19:47 +0200
+
 apt-dater (0.6.1-ibh0) unstable; urgency=low
 
   * Fixed some bugs in the search function
