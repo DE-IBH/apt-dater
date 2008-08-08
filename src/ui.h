@@ -75,6 +75,7 @@ void injectKey(int);
 void applyFilter(GList *hosts);
 void disableInput();
 void enableInput();
+void reorderScrpos(guint);
 
 #include "apt-dater.h"
 

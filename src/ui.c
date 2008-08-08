@@ -791,27 +791,29 @@ void refreshDraw()
      if (!win_dump) {
        bottomDrawLine = LINES/2;
 
-       win_dump = subwin(stdscr, bottomDrawLine-1, COLS, LINES-bottomDrawLine, 0);
+       win_dump= subwin(stdscr,bottomDrawLine-1,COLS, LINES-bottomDrawLine, 0);
        scrollok(win_dump, TRUE);
        syncok(win_dump, TRUE);
+       reorderScrpos(1);
      }
-   }
-   else {
+   } else {
      bottomDrawLine = LINES - 2;
 
      if(win_dump) {
        delwin(win_dump);
        win_dump = NULL;
+       reorderScrpos(1);
      }
+
    }
- }
- else {
+ } else {
+   bottomDrawLine = LINES - 2;
+
    if(win_dump) {
      delwin(win_dump);
      win_dump = NULL;
+     reorderScrpos(1);
    }
-
-   bottomDrawLine = LINES - 2;
  }
 
  g_list_foreach(drawlist, (GFunc) drawEntry, NULL);

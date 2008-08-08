@@ -139,9 +139,8 @@ screen_get_dump(const SessNode *s) {
  GError *error = NULL;
  gchar **argv = NULL;
 
- if(!dump_fn) {
+ if(!dump_fn)
    dump_fn = g_strdup_printf("/tmp/%d.dump", getpid());
- }
 
  g_unlink(dump_fn);
 
@@ -151,8 +150,10 @@ screen_get_dump(const SessNode *s) {
    return NULL;
 
  gchar *cmd = screen_dump_cmd(s, dump_fn);
- if(!cmd)
-   return NULL;
+ if(!cmd) {
+  close(fd);
+  return NULL;
+ }
 
  argv = g_strsplit(cmd, "+", 0);
 
@@ -170,6 +171,8 @@ screen_get_dump(const SessNode *s) {
  
  gchar *c = NULL;
  g_file_get_contents(dump_fn, &c, NULL, NULL);
+
+ close(fd);
 
  return c;
 }
