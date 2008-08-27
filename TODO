@@ -5,4 +5,3 @@ TODO
    distributions (non apt/dpkg based)
  - fix UI glitches or better rewrite the code
  - change UI to show all informations gathered from the clients
- - add filters to search for certain distri/package/... versions

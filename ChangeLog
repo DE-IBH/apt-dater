@@ -1,856 +1,104 @@
-------------------------------------------------------------------------
-r191 | liske | 2008-08-06 15:44:07 +0200 (Wed, 06 Aug 2008) | 2 lines
+apt-dater (0.6.2-ibh0) unstable; urgency=low
 
-Changed regex to match package lines better.
+  * Fixed 2 bugs in the dump screen function.
+  * Add RPM only apt-dater-host script.
+  
+ -- Andre Ellguth <ellguth@ibh.de>  Fri, 08 Aug 2008 15:19:47 +0200
 
-------------------------------------------------------------------------
-r190 | liske | 2008-08-06 12:36:54 +0200 (Wed, 06 Aug 2008) | 3 lines
+apt-dater (0.6.1-ibh0) unstable; urgency=low
 
-Add RPM only apt-dater-host script. This could only be used to query 
-installed packages, running kernel.
+  * Fixed some bugs in the search function
+  * Changes in the XML report: 
+    - Renamed root element
+    - Supply DTD file
+    - Added another XSLT sample
+  
+ -- Andre Ellguth <ellguth@ibh.de>  Tue, 05 Aug 2008 11:14:42 +0200
 
-------------------------------------------------------------------------
-r189 | liske | 2008-08-06 11:51:27 +0200 (Wed, 06 Aug 2008) | 3 lines
+apt-dater (0.6.0-ibh0) unstable; urgency=low
 
-Don't require the "Release" field of `lsb_release -a` be longer than 1 
-char.
+  * New feature: TCL host filter function (README.tclfilter)
+  * New feature: XML report function (apt-dater -r)
+  * A better character input function
+  
+ -- Andre Ellguth <ellguth@ibh.de>  Tue, 29 Jul 2008 16:38:10 +0200
 
-------------------------------------------------------------------------
-r187 | ellguth | 2008-08-05 11:15:54 +0200 (Tue, 05 Aug 2008) | 2 lines
+apt-dater (0.5.8-ibh0) unstable; urgency=medium
 
-Preperation for release 0.6.1.
+  * Terminal resize handler works now correctly.
+  * Added the scrolling function to the help page.
+  * Global definition of control and function keys.
+  * Preparations for TCL host filters.
 
-------------------------------------------------------------------------
-r186 | liske | 2008-08-05 09:32:52 +0200 (Tue, 05 Aug 2008) | 2 lines
+ -- Andre Ellguth <ellguth@ibh.de>  Wed, 23 Jul 2008 16:16:58 +0200
 
-Detect if GLIB supports g_timeout_add_seconds and use it if possible.
+apt-dater (0.5.7-ibh1) unstable; urgency=medium
 
-------------------------------------------------------------------------
-r185 | liske | 2008-08-05 09:18:39 +0200 (Tue, 05 Aug 2008) | 2 lines
+  * Fixed a bug in apt-dater-host which let it die on Debian Etch.
 
-Beep and revert input when searching for hosts and entering an unknown one.
+ -- Thomas Liske <liske@ibh.de>  Mon, 21 Jul 2008 19:31:06 +0200
 
-------------------------------------------------------------------------
-r184 | liske | 2008-08-01 16:01:47 +0200 (Fri, 01 Aug 2008) | 3 lines
+apt-dater (0.5.7-ibh0) unstable; urgency=low
 
-Add extra-pkgs.xsl example file.
-Add xsltproc to "Suggests:" for apt-dater Debian package.
+  * Fixed some bugs in the status file detection.
 
-------------------------------------------------------------------------
-r183 | liske | 2008-08-01 14:42:23 +0200 (Fri, 01 Aug 2008) | 2 lines
+ -- Andre Ellguth <ellguth@ibh.de>  Mon, 21 Jul 2008 16:49:40 +0200
 
-Remove "Kill Session" shortcut. Screen already has a kill feature.
+apt-dater (0.5.6-ibh0) unstable; urgency=low
 
-------------------------------------------------------------------------
-r182 | liske | 2008-08-01 14:22:48 +0200 (Fri, 01 Aug 2008) | 2 lines
+  * Fixed a bug in the lock function.
 
-Fixed example XSLT to match renamed root element.
+ -- Andre Ellguth <ellguth@ibh.de>  Thu, 17 Jul 2008 15:24:05 +0200
 
-------------------------------------------------------------------------
-r181 | liske | 2008-08-01 12:48:53 +0200 (Fri, 01 Aug 2008) | 2 lines
+apt-dater (0.5.5-ibh1) unstable; urgency=low
 
-Change XML report root element and add a DTD.
+  * Added lsb-release as debian package dependency
+  * Check if the LSBREL status information is empty 
 
-------------------------------------------------------------------------
-r180 | ellguth | 2008-07-31 16:16:28 +0200 (Thu, 31 Jul 2008) | 3 lines
+ -- Andre Ellguth <ellguth@ibh.de>  Wed, 16 Jul 2008 16:58:32 +0200
 
-Fixed some UI glitches in the function searchEntry.
-New function to modify the query line (drawQuery).
+apt-dater (0.5.5-ibh0) unstable; urgency=low
 
-------------------------------------------------------------------------
-r179 | liske | 2008-07-31 12:54:23 +0200 (Thu, 31 Jul 2008) | 2 lines
+  * Added support for rug, yum based distributions.
+  * New additional informations (lsb_release, kernel release).
 
-Add a XML report example and a small README.
+ -- Andre Ellguth <ellguth@ibh.de>  Wed, 16 Jul 2008 16:58:32 +0200
 
-------------------------------------------------------------------------
-r178 | ellguth | 2008-07-31 11:40:03 +0200 (Thu, 31 Jul 2008) | 4 lines
+apt-dater (0.5.4-ibh0) unstable; urgency=low
 
-Initialize the search input buffer s with nulls in the function searchEntry.
-Replaced all ugly modifications of the status line with the drawStatus function.
+  * New upstream version
 
+ -- Andre Ellguth <ellguth@ibh.de>  Mon, 14 Jul 2008 15:40:42 +0200
 
-------------------------------------------------------------------------
-r177 | liske | 2008-07-31 11:16:30 +0200 (Thu, 31 Jul 2008) | 3 lines
+apt-dater (0.5.3-ibh1) unstable; urgency=low
 
-BUGFIX: hosts of the same group must be in the same group XML tag in 
-xmlreports
+  * Fix typo in apt-dater-host preventing
+    'apt-dater-host install' to work.
 
-------------------------------------------------------------------------
-r176 | liske | 2008-07-30 14:28:57 +0200 (Wed, 30 Jul 2008) | 4 lines
+ -- Thomas Liske <liske@ibh.de>  Thu, 10 Jul 2008 10:48:27 +0200
 
-Small build-fixes:
- - debian/control: build-dep should contain libpopt-dev
- - #ifdef 'filtered' in HostNode struct.
+apt-dater (0.5.3-ibh0) unstable; urgency=low
 
-------------------------------------------------------------------------
-r174 | ellguth | 2008-07-29 16:43:59 +0200 (Tue, 29 Jul 2008) | 2 lines
+  * added generic apt/aptitude interface in apt-dater-host
+    (still needed some work to support non-dpkg-based systems)
 
-Preperation for release 0.6.0.
+ -- Thomas Liske <liske@ibh.de>  Wed, 09 Jul 2008 09:37:42 +0200
 
-------------------------------------------------------------------------
-r173 | ellguth | 2008-07-29 16:29:23 +0200 (Tue, 29 Jul 2008) | 2 lines
+apt-dater (0.5.2-ibh0) unstable; urgency=low
 
-Added the -t switch for the parameter OptionalCmdFlags.
+  * Added apt-dater.conf manpage.
+  * Fixed some locking issues.
 
-------------------------------------------------------------------------
-r172 | ellguth | 2008-07-29 16:25:16 +0200 (Tue, 29 Jul 2008) | 4 lines
+ -- Thomas Liske <liske@ibh.de>  Tue, 08 Jul 2008 09:38:32 +0200
 
-Using the getnLine function to define the TCL filter.
-Read the RELTEST before release a new version of apt-dater.
+apt-dater (0.5.1-ibh0) unstable; urgency=low
 
+  * Documentation fixes.
 
-------------------------------------------------------------------------
-r171 | liske | 2008-07-29 15:59:55 +0200 (Tue, 29 Jul 2008) | 2 lines
+ -- Thomas Liske <liske@ibh.de>  Fri, 04 Jul 2008 14:50:34 +0200
 
-Enable XML reports for building .deb packages by default.
+apt-dater (0.5.0-ibh0) unstable; urgency=low
 
-------------------------------------------------------------------------
-r170 | liske | 2008-07-29 15:36:36 +0200 (Tue, 29 Jul 2008) | 2 lines
+  * Initial Release.
 
-Use libxml2 to create XML based reports of host stats.
-
-------------------------------------------------------------------------
-r169 | ellguth | 2008-07-29 12:10:22 +0200 (Tue, 29 Jul 2008) | 2 lines
-
-Added the functional getnLine function.
-
-------------------------------------------------------------------------
-r168 | ellguth | 2008-07-25 17:07:51 +0200 (Fri, 25 Jul 2008) | 2 lines
-
-Added the function getnLine in ui.c as replacement for getnstr (not final!, don't use it).
-
-------------------------------------------------------------------------
-r167 | liske | 2008-07-25 16:03:12 +0200 (Fri, 25 Jul 2008) | 2 lines
-
-Revert convert g_timeout_add -> g_timeout_add_seconds - not available in glib 2.12.
-
-------------------------------------------------------------------------
-r166 | liske | 2008-07-25 15:57:48 +0200 (Fri, 25 Jul 2008) | 2 lines
-
-Added reporting function (-r command switch).
-
-------------------------------------------------------------------------
-r165 | ellguth | 2008-07-25 13:40:49 +0200 (Fri, 25 Jul 2008) | 4 lines
-
-Added the `-t' flag to the OptionalCmdFlags in initial apt-dater.conf.
-Changed the sort order of packages (updates on first position).
-
-
-------------------------------------------------------------------------
-r164 | liske | 2008-07-25 10:59:14 +0200 (Fri, 25 Jul 2008) | 2 lines
-
-Create TCL interpreter only once. Add FilterFile config keyword to load a TCL script from file once apt-dater is started.
-
-------------------------------------------------------------------------
-r163 | liske | 2008-07-25 10:45:08 +0200 (Fri, 25 Jul 2008) | 2 lines
-
-Set HostNode.packages to NULL after free.
-
-------------------------------------------------------------------------
-r162 | liske | 2008-07-25 09:52:37 +0200 (Fri, 25 Jul 2008) | 2 lines
-
-Made update/extra/hold packages visible. Fixed HostNode.packages handling.
-
-------------------------------------------------------------------------
-r161 | liske | 2008-07-24 11:22:14 +0200 (Thu, 24 Jul 2008) | 2 lines
-
-Fixed TCL filter to work correct. Add TCL filter documentation.
-
-------------------------------------------------------------------------
-r160 | liske | 2008-07-24 11:20:25 +0200 (Thu, 24 Jul 2008) | 1 line
-
-
-------------------------------------------------------------------------
-r159 | liske | 2008-07-24 08:23:42 +0200 (Thu, 24 Jul 2008) | 2 lines
-
-TCL filters are now usable and enabled when building .deb packages.
-
-------------------------------------------------------------------------
-r157 | ellguth | 2008-07-23 16:25:51 +0200 (Wed, 23 Jul 2008) | 2 lines
-
-Changes for the new release 0.5.8.
-
-------------------------------------------------------------------------
-r156 | ellguth | 2008-07-23 15:45:45 +0200 (Wed, 23 Jul 2008) | 2 lines
-
-Content of the initial configuration files moved from keyfiles.h to keyfiles.c.
-
-------------------------------------------------------------------------
-r155 | ellguth | 2008-07-23 15:29:08 +0200 (Wed, 23 Jul 2008) | 3 lines
-
-Added the scrolling function to the help page.
-
-
-------------------------------------------------------------------------
-r154 | liske | 2008-07-23 14:56:21 +0200 (Wed, 23 Jul 2008) | 2 lines
-
-More changed for the TCL filter interface.
-
-------------------------------------------------------------------------
-r153 | liske | 2008-07-23 13:34:31 +0200 (Wed, 23 Jul 2008) | 2 lines
-
-Preparations for TCL host filters (protecteded inside ifdef's).
-
-------------------------------------------------------------------------
-r152 | ellguth | 2008-07-23 11:55:38 +0200 (Wed, 23 Jul 2008) | 4 lines
-
-Global definition of control and function keys.
-Fixed a bug in the install function if you've selected a package.
-
-
-------------------------------------------------------------------------
-r151 | ellguth | 2008-07-22 21:04:49 +0200 (Tue, 22 Jul 2008) | 2 lines
-
-Removed the nodelay function (replaced with timeout(-1)).
-
-------------------------------------------------------------------------
-r150 | ellguth | 2008-07-22 17:02:27 +0200 (Tue, 22 Jul 2008) | 2 lines
-
-Added a final doupdate() to the ctrlUI function.
-
-------------------------------------------------------------------------
-r149 | ellguth | 2008-07-22 14:36:47 +0200 (Tue, 22 Jul 2008) | 3 lines
-
-Fixed the the curses screen cleanup for the SIGINT and the SIGTERM signal handler.
-Terminal resize handler works now correctly.
-
-------------------------------------------------------------------------
-r148 | ellguth | 2008-07-22 08:32:06 +0200 (Tue, 22 Jul 2008) | 2 lines
-
-Some code movement.
-
-------------------------------------------------------------------------
-r146 | liske | 2008-07-21 19:32:33 +0200 (Mon, 21 Jul 2008) | 2 lines
-
-Release version 0.5.7-ibh1.
-
-------------------------------------------------------------------------
-r145 | liske | 2008-07-21 19:28:26 +0200 (Mon, 21 Jul 2008) | 2 lines
-
-Fixed apt-dater-host to run on Debian Etch. 
-
-------------------------------------------------------------------------
-r143 | ellguth | 2008-07-21 16:50:40 +0200 (Mon, 21 Jul 2008) | 2 lines
-
-Edited the changelog for the release 0.5.7.
-
-------------------------------------------------------------------------
-r142 | ellguth | 2008-07-21 16:42:49 +0200 (Mon, 21 Jul 2008) | 2 lines
-
-Small changes in the ui.c.
-
-------------------------------------------------------------------------
-r141 | liske | 2008-07-21 16:18:43 +0200 (Mon, 21 Jul 2008) | 2 lines
-
-Host flag fixes.
-
-------------------------------------------------------------------------
-r140 | liske | 2008-07-21 16:14:23 +0200 (Mon, 21 Jul 2008) | 2 lines
-
-Removed non-working help screen scrolling.
-
-------------------------------------------------------------------------
-r139 | ellguth | 2008-07-21 15:59:25 +0200 (Mon, 21 Jul 2008) | 2 lines
-
-Some changes for the scrolling function in the help page.
-
-------------------------------------------------------------------------
-r138 | liske | 2008-07-21 15:34:27 +0200 (Mon, 21 Jul 2008) | 2 lines
-
-Add status flags in front of host lines.
-
-------------------------------------------------------------------------
-r137 | liske | 2008-07-21 13:13:18 +0200 (Mon, 21 Jul 2008) | 4 lines
-
-Check if a hosts stats file contians valid lines, mark the host as 
-unkown if failed.
-Add 'extra packages installed' flag to UI.
-
-------------------------------------------------------------------------
-r136 | liske | 2008-07-18 16:41:34 +0200 (Fri, 18 Jul 2008) | 2 lines
-
-Add obsolete package support for yum-based apt-dater-host.
-
-------------------------------------------------------------------------
-r135 | liske | 2008-07-18 16:31:51 +0200 (Fri, 18 Jul 2008) | 3 lines
-
-Add detection of obsolete packages (packages which are not downloadable 
-any more) for apt-dater-host on Debian using libapt-pkg-perl.
-
-------------------------------------------------------------------------
-r134 | liske | 2008-07-18 13:46:03 +0200 (Fri, 18 Jul 2008) | 2 lines
-
-Fixed file naming glitch.
-
-------------------------------------------------------------------------
-r133 | liske | 2008-07-18 13:44:45 +0200 (Fri, 18 Jul 2008) | 2 lines
-
-Add apt-dater-host protocol version scheme.
-
-------------------------------------------------------------------------
-r132 | liske | 2008-07-18 13:23:27 +0200 (Fri, 18 Jul 2008) | 3 lines
-
-Fixed kernel version compare expression for reboot flag in 
-debian/apt-dater-host.
-
-------------------------------------------------------------------------
-r130 | ellguth | 2008-07-17 15:31:37 +0200 (Thu, 17 Jul 2008) | 3 lines
-
-* Fixed a bug in the lock function.
-
-
-------------------------------------------------------------------------
-r129 | liske | 2008-07-17 13:53:41 +0200 (Thu, 17 Jul 2008) | 3 lines
-
-Made apt-dater-host depend on ssh-server or ssh to work on Debian 
-Sarge hosts.
-
-------------------------------------------------------------------------
-r128 | liske | 2008-07-17 13:50:49 +0200 (Thu, 17 Jul 2008) | 2 lines
-
-Added missing 'STATUS: ' string on apt-dater-host for rug.
-
-------------------------------------------------------------------------
-r127 | ellguth | 2008-07-17 13:35:56 +0200 (Thu, 17 Jul 2008) | 2 lines
-
-Replaced ssh-server with ssh in the apt-dater-host dependencies.
-
-------------------------------------------------------------------------
-r126 | ellguth | 2008-07-17 13:24:20 +0200 (Thu, 17 Jul 2008) | 2 lines
-
-Small change in apt-dater-host for the backward compatibility. 
-
-------------------------------------------------------------------------
-r123 | liske | 2008-07-17 08:30:34 +0200 (Thu, 17 Jul 2008) | 2 lines
-
-Fixed 'apt-dater-host install' to work.
-
-------------------------------------------------------------------------
-r121 | ellguth | 2008-07-17 08:18:37 +0200 (Thu, 17 Jul 2008) | 4 lines
-
-* Added support for yum and rug based systems.
-* Added the lsb release and kernel release info.
-
-
-------------------------------------------------------------------------
-r119 | liske | 2008-07-16 11:13:41 +0200 (Wed, 16 Jul 2008) | 3 lines
-
-Made apt-dater-host for rug supporting the KERNELINFO:-line. Add `uname 
--r` ouput to KERNELINFO:-line.
-
-------------------------------------------------------------------------
-r118 | liske | 2008-07-16 10:03:19 +0200 (Wed, 16 Jul 2008) | 3 lines
-
-Add KERNELINFO: line to apt-dater-host for yum. Add README about 
-apt-daterhost.
-
-------------------------------------------------------------------------
-r117 | liske | 2008-07-15 17:20:40 +0200 (Tue, 15 Jul 2008) | 2 lines
-
-Fixed stats result parsing to changed apt-dater-host output format.
-
-------------------------------------------------------------------------
-r116 | ellguth | 2008-07-15 17:11:54 +0200 (Tue, 15 Jul 2008) | 2 lines
-
-Fix some bugs in apt-dater-host and stats.c
-
-------------------------------------------------------------------------
-r115 | ellguth | 2008-07-15 16:33:27 +0200 (Tue, 15 Jul 2008) | 2 lines
-
-Client support for rug/rpm based systems (SuSE,etc...)
-
-------------------------------------------------------------------------
-r114 | liske | 2008-07-15 15:39:08 +0200 (Tue, 15 Jul 2008) | 2 lines
-
-Removed debug output.
-
-------------------------------------------------------------------------
-r113 | liske | 2008-07-15 15:16:17 +0200 (Tue, 15 Jul 2008) | 3 lines
-
-Add apt-dater-host script for yum based (CentOS etc.) GNU/Linux 
-distris.
-
-------------------------------------------------------------------------
-r112 | liske | 2008-07-15 12:46:57 +0200 (Tue, 15 Jul 2008) | 2 lines
-
-Changed apt-dater's parsing of apt-dater-host output to reflect recent changes.
-
-------------------------------------------------------------------------
-r111 | liske | 2008-07-15 11:36:42 +0200 (Tue, 15 Jul 2008) | 4 lines
-
-Rewrite apt-dater-host as a perl script providing more generic output. 
-apt-dater's parsing routines must still be changed to work with the new 
-output.
-
-------------------------------------------------------------------------
-r109 | ellguth | 2008-07-14 15:44:40 +0200 (Mon, 14 Jul 2008) | 2 lines
-
-Changes for the new release 0.5.4.
-
-------------------------------------------------------------------------
-r106 | ellguth | 2008-07-14 15:16:29 +0200 (Mon, 14 Jul 2008) | 4 lines
-
-Added line breaks in keyfiles.h
-
-
-
-------------------------------------------------------------------------
-r105 | ellguth | 2008-07-14 14:39:09 +0200 (Mon, 14 Jul 2008) | 3 lines
-
-Added a function which create initial configuration files needed by apt-dater.
-
-
-------------------------------------------------------------------------
-r103 | ellguth | 2008-07-11 16:53:32 +0200 (Fri, 11 Jul 2008) | 2 lines
-
-Fixed 3 small memory leaks
-
-------------------------------------------------------------------------
-r102 | liske | 2008-07-11 11:10:42 +0200 (Fri, 11 Jul 2008) | 2 lines
-
-Add |O_RDWR to open call to make flock work on xfs.
-
-------------------------------------------------------------------------
-r95 | liske | 2008-07-10 15:01:23 +0200 (Thu, 10 Jul 2008) | 2 lines
-
-First release.
-
-------------------------------------------------------------------------
-r92 | ellguth | 2008-07-10 14:51:13 +0200 (Thu, 10 Jul 2008) | 2 lines
-
-- Changed version in configure.in
-
-------------------------------------------------------------------------
-r91 | ellguth | 2008-07-10 14:46:14 +0200 (Thu, 10 Jul 2008) | 3 lines
-
-Modified configure.in (version)
-
-
-------------------------------------------------------------------------
-r90 | liske | 2008-07-10 14:34:46 +0200 (Thu, 10 Jul 2008) | 2 lines
-
-Add TODO file.
-
-------------------------------------------------------------------------
-r89 | liske | 2008-07-09 13:40:45 +0200 (Wed, 09 Jul 2008) | 2 lines
-
-Fix typo in apt-dater-host preventing 'apt-dater-host install' to work.
-
-------------------------------------------------------------------------
-r88 | liske | 2008-07-09 12:56:13 +0200 (Wed, 09 Jul 2008) | 2 lines
-
-Added html version of manpages.
-
-------------------------------------------------------------------------
-r87 | liske | 2008-07-09 09:42:11 +0200 (Wed, 09 Jul 2008) | 2 lines
-
-Added generic apt/aptitude interface in apt-dater-host.
-
-------------------------------------------------------------------------
-r85 | liske | 2008-07-08 13:09:08 +0200 (Tue, 08 Jul 2008) | 2 lines
-
-Updated configure.in, debian stuff. etc.
-
-------------------------------------------------------------------------
-r84 | liske | 2008-07-08 10:14:17 +0200 (Tue, 08 Jul 2008) | 2 lines
-
-Fixed closing uninitialized lock fd.
-
-------------------------------------------------------------------------
-r83 | liske | 2008-07-08 09:39:10 +0200 (Tue, 08 Jul 2008) | 2 lines
-
-Documentation update.
-
-------------------------------------------------------------------------
-r82 | ellguth | 2008-07-07 17:33:14 +0200 (Mon, 07 Jul 2008) | 3 lines
-
-Added the apt-dater.conf(5) man page.
-
-
-------------------------------------------------------------------------
-r81 | liske | 2008-07-07 17:11:34 +0200 (Mon, 07 Jul 2008) | 2 lines
-
-Added missing clients/Makefile.am.
-
-------------------------------------------------------------------------
-r80 | liske | 2008-07-07 17:04:07 +0200 (Mon, 07 Jul 2008) | 5 lines
-
-- changed screen config options
-- fixed lock.c error handling
-- add %m (=>MAINTAINER) to parse_string function
-
-
-------------------------------------------------------------------------
-r79 | ellguth | 2008-07-07 16:32:44 +0200 (Mon, 07 Jul 2008) | 2 lines
-
-Some modifications of apt-dater.xml.
-
-------------------------------------------------------------------------
-r78 | liske | 2008-07-07 15:59:54 +0200 (Mon, 07 Jul 2008) | 2 lines
-
-add pixmap
-
-------------------------------------------------------------------------
-r77 | liske | 2008-07-07 09:38:04 +0200 (Mon, 07 Jul 2008) | 4 lines
-
-- config keyword QueryMaintainer changed: 0:no 1:yes 2:if env. not set
-- verbose error message if lock failes due a real error in lock.c
-- bailout if the TTY is not accessible (i.e. after su)
-
-------------------------------------------------------------------------
-r76 | liske | 2008-07-04 15:09:59 +0200 (Fri, 04 Jul 2008) | 2 lines
-
-Build apt-dater-host from debian/control.
-
-------------------------------------------------------------------------
-r75 | liske | 2008-07-04 11:36:56 +0200 (Fri, 04 Jul 2008) | 3 lines
-
-Create clients directory with debian package for Debian 
-based apt-dater'ed hosts.
-
-------------------------------------------------------------------------
-r74 | ellguth | 2008-07-04 08:53:34 +0200 (Fri, 04 Jul 2008) | 2 lines
-
-Changed author information
-
-------------------------------------------------------------------------
-r73 | liske | 2008-07-03 16:51:30 +0200 (Thu, 03 Jul 2008) | 2 lines
-
-Add manpage.
-
-------------------------------------------------------------------------
-r72 | ellguth | 2008-07-03 16:28:57 +0200 (Thu, 03 Jul 2008) | 2 lines
-
-Filled the README file basically
-
-------------------------------------------------------------------------
-r71 | liske | 2008-07-03 15:26:08 +0200 (Thu, 03 Jul 2008) | 2 lines
-
-Add changelog make target.
-
-------------------------------------------------------------------------
-r70 | ellguth | 2008-07-03 15:15:58 +0200 (Thu, 03 Jul 2008) | 3 lines
-
-- Added a test for the screen binary in configure.in
-
-
-------------------------------------------------------------------------
-r69 | liske | 2008-07-03 15:10:21 +0200 (Thu, 03 Jul 2008) | 2 lines
-
-Changed package building process to call configure.
-
-------------------------------------------------------------------------
-r68 | ellguth | 2008-07-03 14:55:47 +0200 (Thu, 03 Jul 2008) | 2 lines
-
-Added missing files.
-
-------------------------------------------------------------------------
-r67 | ellguth | 2008-07-03 14:54:21 +0200 (Thu, 03 Jul 2008) | 2 lines
-
-Generate Makefile,etc... with automake,autoconf,...
-
-------------------------------------------------------------------------
-r66 | liske | 2008-07-03 14:43:23 +0200 (Thu, 03 Jul 2008) | 2 lines
-
-Debianisize.
-
-------------------------------------------------------------------------
-r65 | liske | 2008-07-03 11:20:51 +0200 (Thu, 03 Jul 2008) | 4 lines
-
-- shortcuts changed
-- maintain GList of hold file locks and release them on quit/SIGTERM
-- fixed SIGINT handler
-
-------------------------------------------------------------------------
-r64 | liske | 2008-07-03 10:00:33 +0200 (Thu, 03 Jul 2008) | 3 lines
-
-Change apt-dater to use XDG Base Directory Specification based 
-config/stas files. Cleanup config files. Add customized screenrc.
-
-------------------------------------------------------------------------
-r63 | ellguth | 2008-07-02 08:31:39 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved Makefile to src/Makefile
-------------------------------------------------------------------------
-r62 | ellguth | 2008-07-02 08:31:38 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved ui.h to src/ui.h
-------------------------------------------------------------------------
-r61 | ellguth | 2008-07-02 08:31:36 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved stats.h to src/stats.h
-------------------------------------------------------------------------
-r60 | ellguth | 2008-07-02 08:31:35 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved sighandler.h to src/sighandler.h
-------------------------------------------------------------------------
-r59 | ellguth | 2008-07-02 08:31:34 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved screen.h to src/screen.h
-------------------------------------------------------------------------
-r58 | ellguth | 2008-07-02 08:31:33 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved parsecmd.h to src/parsecmd.h
-------------------------------------------------------------------------
-r57 | ellguth | 2008-07-02 08:31:32 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved lock.h to src/lock.h
-------------------------------------------------------------------------
-r56 | ellguth | 2008-07-02 08:31:31 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved keyfiles.h to src/keyfiles.h
-------------------------------------------------------------------------
-r55 | ellguth | 2008-07-02 08:31:31 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved extern.h to src/extern.h
-------------------------------------------------------------------------
-r54 | ellguth | 2008-07-02 08:31:30 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved exec.h to src/exec.h
-------------------------------------------------------------------------
-r53 | ellguth | 2008-07-02 08:31:30 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved colors.h to src/colors.h
-------------------------------------------------------------------------
-r52 | ellguth | 2008-07-02 08:31:28 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved apt-dater.h to src/apt-dater.h
-------------------------------------------------------------------------
-r51 | ellguth | 2008-07-02 08:31:27 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved ui.c to src/ui.c
-------------------------------------------------------------------------
-r50 | ellguth | 2008-07-02 08:31:27 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved stats.c to src/stats.c
-------------------------------------------------------------------------
-r49 | ellguth | 2008-07-02 08:31:26 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved sighandler.c to src/sighandler.c
-------------------------------------------------------------------------
-r48 | ellguth | 2008-07-02 08:31:26 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved screen.c to src/screen.c
-------------------------------------------------------------------------
-r47 | ellguth | 2008-07-02 08:31:25 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved parsecmd.c to src/parsecmd.c
-------------------------------------------------------------------------
-r46 | ellguth | 2008-07-02 08:31:24 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved lock.c to src/lock.c
-------------------------------------------------------------------------
-r45 | ellguth | 2008-07-02 08:31:24 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved keyfiles.c to src/keyfiles.c
-------------------------------------------------------------------------
-r44 | ellguth | 2008-07-02 08:31:23 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved exec.c to src/exec.c
-------------------------------------------------------------------------
-r43 | ellguth | 2008-07-02 08:31:23 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved colors.c to src/colors.c
-------------------------------------------------------------------------
-r42 | ellguth | 2008-07-02 08:31:22 +0200 (Wed, 02 Jul 2008) | 1 line
-
-Moved apt-dater.c to src/apt-dater.c
-------------------------------------------------------------------------
-r41 | ellguth | 2008-07-02 08:23:21 +0200 (Wed, 02 Jul 2008) | 3 lines
-
-Created source directory.
-
-
-------------------------------------------------------------------------
-r40 | liske | 2008-06-25 17:22:09 +0200 (Wed, 25 Jun 2008) | 4 lines
-
-Add cat/group install.
-Add kill session command.
-
-
-------------------------------------------------------------------------
-r39 | liske | 2008-06-25 16:40:50 +0200 (Wed, 25 Jun 2008) | 2 lines
-
-Added SFTP command and new cmd line parser.
-
-------------------------------------------------------------------------
-r38 | liske | 2008-06-19 14:05:58 +0200 (Thu, 19 Jun 2008) | 2 lines
-
-Removed NULL pointer derefer.
-
-------------------------------------------------------------------------
-r37 | liske | 2008-06-19 13:08:51 +0200 (Thu, 19 Jun 2008) | 2 lines
-
-Implement host search.
-
-------------------------------------------------------------------------
-r36 | ellguth | 2008-06-18 15:00:35 +0200 (Wed, 18 Jun 2008) | 4 lines
-
-- Added signal handlers to apt-dater
-- Confirmation request in the quit function added
-- Code cleanup
-
-------------------------------------------------------------------------
-r35 | liske | 2008-06-18 13:01:38 +0200 (Wed, 18 Jun 2008) | 3 lines
-
-Add search shortcut (it doesn't search anything yet, but it uses 
-g_completion to show matching hostnames ;).
-
-------------------------------------------------------------------------
-r34 | ellguth | 2008-06-18 11:01:59 +0200 (Wed, 18 Jun 2008) | 2 lines
-
-Memory leak in screen_get_sessions fixed.
-
-------------------------------------------------------------------------
-r33 | ellguth | 2008-06-18 10:28:05 +0200 (Wed, 18 Jun 2008) | 2 lines
-
-- Some modifications in queryConfirm
-
-------------------------------------------------------------------------
-r32 | ellguth | 2008-06-18 09:35:05 +0200 (Wed, 18 Jun 2008) | 2 lines
-
-Added a query function to the session cycle operation.
-
-------------------------------------------------------------------------
-r31 | liske | 2008-06-17 16:29:03 +0200 (Tue, 17 Jun 2008) | 2 lines
-
-Added n,N shortcuts.
-
-------------------------------------------------------------------------
-r30 | liske | 2008-06-17 13:42:36 +0200 (Tue, 17 Jun 2008) | 3 lines
-
-Made query maintainer configurable.
-Dump the bottom part of screens.
-
-------------------------------------------------------------------------
-r29 | liske | 2008-06-17 12:59:49 +0200 (Tue, 17 Jun 2008) | 2 lines
-
-Convert dead locking to mandatory locking.
-
-------------------------------------------------------------------------
-r28 | ellguth | 2008-06-17 12:06:01 +0200 (Tue, 17 Jun 2008) | 2 lines
-
-Added the lock function (1 bug exist)
-
-------------------------------------------------------------------------
-r27 | liske | 2008-06-17 11:50:08 +0200 (Tue, 17 Jun 2008) | 5 lines
-
-- add -Wall
-- fixed all warnings
-- build menus dynamicly
-- add help window
-
-------------------------------------------------------------------------
-r26 | liske | 2008-06-16 17:11:07 +0200 (Mon, 16 Jun 2008) | 2 lines
-
-Fix draw glitches on session dumps.
-
-------------------------------------------------------------------------
-r25 | liske | 2008-06-16 16:29:38 +0200 (Mon, 16 Jun 2008) | 3 lines
-
-Add some more colorizations.
-Query and set MAINTAINER environment variable (to be used by debtrack).
-
-------------------------------------------------------------------------
-r23 | ellguth | 2008-06-16 15:20:44 +0200 (Mon, 16 Jun 2008) | 2 lines
-
-Colorize apt-dater
-
-------------------------------------------------------------------------
-r22 | liske | 2008-06-16 08:49:13 +0200 (Mon, 16 Jun 2008) | 3 lines
-
-Fixed GError handling on reading screen settings from keyfile. Add 
-d:dump action.
-
-------------------------------------------------------------------------
-r21 | liske | 2008-06-13 16:50:12 +0200 (Fri, 13 Jun 2008) | 4 lines
-
-Prevent drawlist getting behind session dump window.
-Replace LINES-2 with bottomDrawLine.
-Made sessions dumps configurable.
-
-------------------------------------------------------------------------
-r20 | liske | 2008-06-13 16:10:23 +0200 (Fri, 13 Jun 2008) | 2 lines
-
-Dump and show session screens in apt-dater.
-
-------------------------------------------------------------------------
-r19 | liske | 2008-06-13 12:34:02 +0200 (Fri, 13 Jun 2008) | 2 lines
-
-Ask user for confirmation for u+i on hosts with running sessions.
-
-------------------------------------------------------------------------
-r18 | liske | 2008-06-13 11:23:54 +0200 (Fri, 13 Jun 2008) | 2 lines
-
-Force reconnect working. Show attached/detached session state.
-
-------------------------------------------------------------------------
-r17 | ellguth | 2008-06-13 10:16:29 +0200 (Fri, 13 Jun 2008) | 3 lines
-
-- Added definitions for the host status
-
-
-------------------------------------------------------------------------
-r16 | liske | 2008-06-13 09:32:40 +0200 (Fri, 13 Jun 2008) | 2 lines
-
-Don't use broken g_stat. Pretty print session details.
-
-------------------------------------------------------------------------
-r15 | liske | 2008-06-12 17:18:13 +0200 (Thu, 12 Jun 2008) | 2 lines
-
-Made multi screen support somehow working...
-
-------------------------------------------------------------------------
-r14 | liske | 2008-06-12 13:48:27 +0200 (Thu, 12 Jun 2008) | 2 lines
-
-Added screen support on install/upgrade.
-
-------------------------------------------------------------------------
-r13 | ellguth | 2008-06-12 12:52:22 +0200 (Thu, 12 Jun 2008) | 3 lines
-
-- Fixed the QueryString bug cursor position
-
-
-------------------------------------------------------------------------
-r12 | liske | 2008-06-12 12:38:31 +0200 (Thu, 12 Jun 2008) | 2 lines
-
-Add screen support stubs.
-
-------------------------------------------------------------------------
-r11 | liske | 2008-06-10 11:31:59 +0200 (Tue, 10 Jun 2008) | 2 lines
-
-Add 'i:Install Package' menu entry.
-
-------------------------------------------------------------------------
-r9 | ellguth | 2008-05-13 16:59:22 +0200 (Tue, 13 May 2008) | 2 lines
-
-Draw the mtime of the oldest stat file.
-
-------------------------------------------------------------------------
-r8 | ellguth | 2008-05-09 15:03:34 +0200 (Fri, 09 May 2008) | 4 lines
-
-- Added a sort funktion for groups and hosts
-- Code cleanup
-
-
-------------------------------------------------------------------------
-r7 | ellguth | 2008-05-08 14:56:46 +0200 (Thu, 08 May 2008) | 3 lines
-
-Fixed some drawing problems.
-
-
-------------------------------------------------------------------------
-r6 | ellguth | 2008-05-06 14:08:29 +0200 (Tue, 06 May 2008) | 2 lines
-
-Removed the $Log$ RCS tag.
-
-------------------------------------------------------------------------
-r4 | ellguth | 2008-05-06 14:01:43 +0200 (Tue, 06 May 2008) | 2 lines
-
-Intial revision
-
-------------------------------------------------------------------------
-r1 | ellguth | 2008-05-06 13:32:48 +0200 (Tue, 06 May 2008) | 1 line
-
-
-------------------------------------------------------------------------
+ -- Thomas Liske <liske@ibh.de>  Thu,  3 Jul 2008 13:56:44 +0200
