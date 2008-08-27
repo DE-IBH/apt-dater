@@ -147,7 +147,7 @@ if test "$enable_tclfilter" = "yes"; then
 		trylib=tcl$ver$ext
 		if test -f $try/lib$trylib ; then
 		  AC_MSG_RESULT($try/lib$trylib)
-		  TCL_LIBS="-L$try -ltcl$ver -ldl -lm"
+		  TCL_LIBS="-L$try -ltcl$ver"
 		  if test "`(uname) 2>/dev/null`" = SunOS &&
 					 uname -r | grep '^5' >/dev/null; then
 		    TCL_LIBS="$TCL_LIBS -R $try"
