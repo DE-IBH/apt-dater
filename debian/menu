@@ -1,4 +1,0 @@
-?package(apt-dater):needs="text" section="Apps/System" \
-  title="apt-dater" command="/usr/bin/apt-dater" hints="apt" \
-  icon="/usr/share/pixmaps/apt-dater.xpm" \
-  longtitle="Terminal-based remote package update manager"
