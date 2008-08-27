@@ -589,9 +589,6 @@ uninstall-info: uninstall-info-recursive
 	uninstall uninstall-am uninstall-info-am
 
 
-changelog:
-	LANG=C svn log > ChangeLog
-
 distclean-local:
 	rm -rf *.cache *~ .project .settings .cdtproject
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
