@@ -187,8 +187,10 @@ elif test -x /bin/screen; then
 	AC_DEFINE(SCREEN_BINARY,"/bin/screen",[ Where is the command screen located. ])
 	echo "/bin/screen"
 else
-	echo "not found."
-	exit 1;
+	echo "not found at configure time."
+	echo "Using mostly common systemdefault /usr/bin/screen."
+	AC_DEFINE(SCREEN_BINARY,"/usr/bin/screen",[ Where is the command screen located. ])
+	echo "/usr/bin/screen"
 fi
 
 # Check if `xsltproc' is installed on your system

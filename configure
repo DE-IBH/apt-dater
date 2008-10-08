@@ -5331,8 +5331,14 @@ _ACEOF
 
 	echo "/bin/screen"
 else
-	echo "not found."
-	exit 1;
+	echo "not found at configure time."
+	echo "Using mostly common systemdefault /usr/bin/screen."
+
+cat >>confdefs.h <<\_ACEOF
+#define SCREEN_BINARY "/usr/bin/screen"
+_ACEOF
+
+	echo "/usr/bin/screen"
 fi
 
 # Check if `xsltproc' is installed on your system
