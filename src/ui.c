@@ -182,34 +182,47 @@ static const struct HostFlag hostFlags[] = {
 int getnLine(WINDOW *win, gchar *str, gint n, gboolean usews)
 {
  gint     cpos = 0, slen = 0, i;
- int      ch = 0, cy, cx;
+ int      ch = 0, cy, cx, sx, sy;
  gchar    *modstr = NULL;
  gboolean dobeep;
+ WINDOW   *wp = NULL;
 
  if(!str || !win || !n) return (0);
+
+ if(n > INPUT_MAX) n = INPUT_MAX;
 
  modstr = g_malloc0(n+1);
  if(!modstr) return(0);
 
+ wp = newpad(1, n);
+ if(!wp) return(0);
+
  enableInput();
- keypad(win, TRUE);
+ keypad(wp, TRUE);
  noecho();
+
+ wrefresh(win);
+ getyx(win, sy, sx);
+
  while(ch != KEY_RETURN && ch != KEY_ENTER) {
-  getyx(win, cy, cx);
-  ch = wgetch(win);
+  getyx(wp, cy, cx);
+
+  prefresh(wp, 0, cx+sx - COLS < 0 ? 0 : cx+sx+1 - COLS, sy, sx, sy, COLS-1);
+
+  ch = wgetch(wp);
   dobeep = TRUE;
 
   if((isascii(ch) && isprint(ch)) || (ch == '\t' && usews == TRUE)) {
-   if(slen < n) {
+   if(slen < n-1) {
     if(cpos == slen) {
      modstr[cpos] = ch;
-     waddch(win, modstr[cpos++]);
+     waddch(wp, modstr[cpos++]);
      slen++;
     } else {
      bcopy(&modstr[cpos], &modstr[cpos+1], slen-cpos);
      modstr[cpos] = ch;
-     winsch(win, modstr[cpos++]);
-     wmove(win, cy, ++cx);
+     winsch(wp, modstr[cpos++]);
+     wmove(wp, cy, ++cx);
      slen++;
     }
     dobeep = FALSE;
@@ -227,7 +240,7 @@ int getnLine(WINDOW *win, gchar *str, gint n, gboolean usews)
       g_strlcpy(&modstr[cpos-1], &modstr[cpos], slen-cpos+1);
       cpos--;
      }
-     mvwdelch(win, cy, --cx);
+     mvwdelch(wp, cy, --cx);
      slen = strlen(modstr);
      dobeep = FALSE;
     }
@@ -236,28 +249,28 @@ int getnLine(WINDOW *win, gchar *str, gint n, gboolean usews)
     if(slen > 0 && cpos < slen) {
      dobeep = FALSE;
      g_strlcpy(&modstr[cpos], &modstr[cpos+1], slen-cpos+1);
-     wdelch(win);
+     wdelch(wp);
      slen = strlen(modstr);
     }
     break;
    case KEY_LEFT:
     if(cpos > 0) {
      cpos--;
-     wmove(win, cy, --cx);
+     wmove(wp, cy, --cx);
      dobeep = FALSE;
     }
     break;
    case KEY_RIGHT:
     if(cpos < slen && slen > 0) {
      cpos++;
-     wmove(win, cy, ++cx);
+     wmove(wp, cy, ++cx);
      dobeep = FALSE;
     }
     break;
    case ctrl('U'): /* Delete line */
     cx+=(slen-cpos);
     for(i=slen;i > 0;i--)
-     mvwdelch(win, cy, --cx);
+     mvwdelch(wp, cy, --cx);
     memset(modstr, 0, n);
     cpos=0;
     dobeep = FALSE;
@@ -266,34 +279,35 @@ int getnLine(WINDOW *win, gchar *str, gint n, gboolean usews)
    case KEY_HOME:
     cx-=cpos;
     cpos = 0;
-    wmove(win, cy, cx);
+    wmove(wp, cy, cx);
     dobeep = FALSE;
     break;
    case ctrl('E'):
    case KEY_END:
     cx+=(slen-cpos);
     cpos = slen;
-    wmove(win, cy, cx);
+    wmove(wp, cy, cx);
     dobeep = FALSE;
     break;
    case KEY_ESC: /* Abort */
+   case KEY_RESIZE:
    case ctrl('G'):
     disableInput();
     g_free(modstr);
+    delwin(wp);
     return(0);
    } /* switch(ch) */
 
   }
 
   if(dobeep == TRUE) beep();
-
-  wrefresh(win);
  }
  
  disableInput();
 
  memcpy(str, modstr, n+1);
  g_free(modstr);
+ delwin(wp);
 
  return(ch);
 }
@@ -511,7 +525,7 @@ gboolean queryString(const gchar *query, gchar *in, const gint size)
  for(i = strlen(in)-1; i>=0; i--)
   ungetch(in[i]);
 
- maxsize = size < (COLS-1 - strlen(query)) ? size : COLS-1 - strlen(query);
+ maxsize = size > INPUT_MAX ? INPUT_MAX : size;
  r = getnLine(stdscr, in, maxsize, FALSE) == 0 ? FALSE : TRUE;
  disableInput();
 
@@ -1959,7 +1973,7 @@ gboolean ctrlUI (GList *hosts)
  gboolean   retqry = FALSE;
  gboolean   refscr = FALSE;
  DrawNode   *n;
- static     gchar in[BUF_MAX_LEN];
+ static     gchar in[INPUT_MAX];
  gchar      *qrystr = NULL;
  gchar      *pkg = NULL;
  EShortCuts sc = SC_MAX;
