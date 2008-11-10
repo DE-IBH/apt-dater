@@ -2,6 +2,7 @@
 #
 #  [Customer Name]
 #  Hosts=([OptionalUser@]host.domain[:OptionalPort];)*
+#  [IdentityFile=path_to_identity_file]
 #
 
 [localdomain]
