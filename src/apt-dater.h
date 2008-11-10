@@ -126,6 +126,7 @@ typedef struct _hostnode {
  gchar     *lsb_release;
  gchar     *lsb_codename;
  gchar     *kernelrel;
+ gchar     *identity_file;
 } HostNode;
 
 struct mapping_t

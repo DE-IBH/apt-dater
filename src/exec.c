@@ -47,15 +47,18 @@ gboolean ssh_cmd_refresh(HostNode *n)
  gchar *cmd = NULL;
  gchar **argv = NULL;
  gchar *output = NULL;
+ gchar *identity_file = NULL;
  GPid  child_pid;
  gint  standard_output;
  GIOChannel *iocstdout;
 
  if(!n) return (FALSE);
 
- cmd = g_strdup_printf("%s+-n+-o+BatchMode=yes+-o+ConnectTimeout=5+-q+-l+%s+-p+%d+%s+unset LANG && %s",
-		       cfg->ssh_cmd, n->ssh_user, n->ssh_port, n->hostname,
-		       cfg->cmd_refresh);
+ cmd = g_strdup_printf("%s+-n+-o+BatchMode=yes+-o+ConnectTimeout=5+-q+-l+%s+-p+%d%s+%s+unset LANG && %s",
+		       cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
+		       n->identity_file && strlen(n->identity_file) > 0 ? (identity_file = g_strconcat("+-i+", n->identity_file , NULL)) : "",
+		       n->hostname, cfg->cmd_refresh);
+ g_free(identity_file);
  if(!cmd) return(FALSE);
 
  argv = g_strsplit(cmd, "+", 0);
@@ -104,22 +107,20 @@ gboolean ssh_cmd_upgrade(HostNode *n, const gboolean detached)
  gboolean r;
  GError *error = NULL;
  gchar *cmd = NULL;
+ gchar *optflags = NULL;
+ gchar *identity_file = NULL;
  gchar **argv = NULL;
 
  gchar *screen = screen_new(n, detached);
 
- if(strlen(cfg->ssh_optflags) > 0) {
-  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+%s+unset LANG ; export MAINTAINER='%s' ; %s", 
-			 screen,
-			 cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
-			 cfg->ssh_optflags, n->hostname, 
-			 maintainer, cfg->cmd_upgrade);
- } else {
-  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+unset LANG ; export MAINTAINER='%s' ; %s", 
-			 screen,
-			 cfg->ssh_cmd, n->ssh_user, n->ssh_port, n->hostname,
-			 maintainer, cfg->cmd_upgrade);
- }
+ cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d%s%s+%s+unset LANG ; export MAINTAINER='%s' ; %s", 
+			screen,
+			cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
+			cfg->ssh_optflags && strlen(cfg->ssh_optflags) > 0 ? (optflags = g_strconcat("+", cfg->ssh_optflags , NULL)) : "",
+			n->identity_file && strlen(n->identity_file) > 0 ? (identity_file = g_strconcat("+-i+", n->identity_file , NULL)) : "",
+			n->hostname, maintainer, cfg->cmd_upgrade);
+ g_free(optflags);
+ g_free(identity_file);
  g_free(screen);
 
  if(!cmd) return(FALSE);
@@ -148,22 +149,20 @@ gboolean ssh_cmd_install(HostNode *n, const gchar *package, const gboolean detac
  GError *error = NULL;
  gchar *cmd = NULL;
  gchar *buf = NULL;
+ gchar *optflags = NULL;
+ gchar *identity_file = NULL;
  gchar **argv = NULL;
 
  gchar *screen = screen_new(n, detached);
 
- if(strlen(cfg->ssh_optflags) > 0) {
-  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+%s+unset LANG ; export MAINTAINER='%s' ; %s", 
-			 screen,
-			 cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
-			 cfg->ssh_optflags, n->hostname,
-			 maintainer, cfg->cmd_install);
- } else {
-  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d+%s+unset LANG ; export MAINTAINER='%s' ; %s", 
-			 screen,
-			 cfg->ssh_cmd, n->ssh_user, n->ssh_port, n->hostname,
-			 maintainer, cfg->cmd_install);
- }
+ cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d%s%s+%s+unset LANG ; export MAINTAINER='%s' ; %s", 
+			screen,
+			cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
+			cfg->ssh_optflags && strlen(cfg->ssh_optflags) > 0 ? (optflags = g_strconcat("+", cfg->ssh_optflags , NULL)) : "",
+			n->identity_file && strlen(n->identity_file) > 0 ? (identity_file = g_strconcat("+-i+", n->identity_file , NULL)) : "",
+			n->hostname, maintainer, cfg->cmd_install);
+ g_free(optflags);
+ g_free(identity_file);
  g_free(screen);
 
  buf = g_strdup_printf (cmd, package);
@@ -196,22 +195,20 @@ gboolean ssh_connect(HostNode *n, const gboolean detached)
  gboolean r;
  GError *error = NULL;
  gchar *cmd = NULL;
+ gchar *optflags = NULL;
+ gchar *identity_file = NULL;
  gchar **argv = NULL;
 
  gchar *screen = screen_new(n, detached);
 
- if(strlen(cfg->ssh_optflags) > 0) {
-  cmd = g_strdup_printf ("%s%s+-l+%s+-t+-p+%d+%s+%s+export MAINTAINER='%s' ; $SHELL",
-			 screen,
-			 cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
-			 cfg->ssh_optflags, n->hostname,
-			 maintainer);
- } else {
-  cmd = g_strdup_printf ("%s%s+-l+%s+-t+-p+%d+%s+export MAINTAINER='%s' ; $SHELL", 
-			 screen,
-			 cfg->ssh_cmd, n->ssh_user, n->ssh_port, n->hostname,
-			 maintainer);
- }
+ cmd = g_strdup_printf ("%s%s+-l+%s+-t+-p+%d%s%s+%s+export MAINTAINER='%s' ; $SHELL",
+			screen,
+			cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
+			cfg->ssh_optflags && strlen(cfg->ssh_optflags) > 0 ? (optflags = g_strconcat("+", cfg->ssh_optflags , NULL)) : "",
+			n->identity_file && strlen(n->identity_file) > 0 ? (identity_file = g_strconcat("+-i+", n->identity_file , NULL)) : "",
+			n->hostname, maintainer);
+ g_free(optflags);
+ g_free(identity_file);
  g_free(screen);
 
  if(!cmd) return(FALSE);

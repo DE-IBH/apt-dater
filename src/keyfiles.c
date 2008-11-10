@@ -174,6 +174,10 @@ CfgFile *loadConfig (char *filename)
 
  lcfg = g_new0(CfgFile, 1);
 
+ lcfg->ssh_optflags = g_key_file_get_string(keyfile, "SSH", 
+					    "OptionalCmdFlags", &error);
+ g_clear_error(&error);
+
  if(!(lcfg->hostsfile = 
       g_key_file_get_string(keyfile, "Paths", "HostsFile", NULL)))
     lcfg->hostsfile = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.conf");
@@ -191,13 +195,6 @@ CfgFile *loadConfig (char *filename)
 
  if(!(lcfg->ssh_cmd = 
       g_key_file_get_string(keyfile, "SSH", "Cmd", &error))) {
-  g_error ("%s: %s", filename, error->message);
-  return (NULL);
- }
-
- lcfg->ssh_optflags = NULL;
- if(!(lcfg->ssh_optflags = 
-      g_key_file_get_string(keyfile, "SSH", "OptionalCmdFlags", &error))) {
   g_error ("%s: %s", filename, error->message);
   return (NULL);
  }
@@ -332,6 +329,9 @@ GList *loadHosts (char *filename)
    hostnode->ssh_port = ssh_port ? ssh_port : cfg->ssh_defport;
 
    hostnode->fdlock = -1;
+   hostnode->identity_file = g_key_file_get_string(keyfile, groups[i], 
+						  "IdentityFile", &error);
+   g_clear_error(&error);
 
    hostnode->group = g_strdup(groups[i]);
    getUpdatesFromStat(hostnode);
