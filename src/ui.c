@@ -638,7 +638,7 @@ void drawHostEntry (DrawNode *n)
 
   attroff(uicolors[UI_COLOR_HOSTSTATUS]);
  }
- mvaddstr(n->scrpos, 4, " [");
+ mvaddstr(n->scrpos, 6, " [");
 
  if(n->elements > 0)
   addch(n->elements > 0 && n->extended == FALSE ? '+' : '-');
@@ -1809,6 +1809,9 @@ void applyFilter(GList *hosts) {
 		break;
 	    case TCLMK_LSBREL:
         	Tcl_SetVar(tcl_interp, tclmap[i].name, n->lsb_release, 0);
+		break;
+	    case TCLMK_VIRT:
+        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->virt, 0);
 		break;
 	    default:
 		g_warning("Internal error: unhandled TCL TCLM_STRING maping!\n");

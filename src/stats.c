@@ -346,7 +346,7 @@ gboolean getUpdatesFromStat(HostNode *n)
   if (sscanf((gchar *) line, "VIRT: %255s", buf)) {
    n->virt = g_strdup(buf);
 
-   if (strcmp(n->virt, "Unkown") && strcmp(n->virt, "Physical"))
+   if (strcmp(n->virt, "Unknown") && strcmp(n->virt, "Physical"))
     n->status = n->status | HOST_STATUS_VIRTUALIZED;
 
    linesok++;
