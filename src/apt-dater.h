@@ -103,7 +103,8 @@ typedef enum {
 #define HOST_STATUS_PKGEXTRA         4
 #define HOST_STATUS_KERNELNOTMATCH   8
 #define HOST_STATUS_KERNELSELFBUILD 16
-#define HOST_STATUS_LOCKED          32
+#define HOST_STATUS_VIRTUALIZED     32
+#define HOST_STATUS_LOCKED          64
 
 typedef struct _hostnode {
  gchar     *hostname;
@@ -126,6 +127,7 @@ typedef struct _hostnode {
  gchar     *lsb_release;
  gchar     *lsb_codename;
  gchar     *kernelrel;
+ gchar     *virt;
  gchar     *identity_file;
 } HostNode;
 

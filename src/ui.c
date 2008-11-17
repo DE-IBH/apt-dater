@@ -91,6 +91,7 @@ typedef enum {
     TCLMK_LSBCNAME,
     TCLMK_LSBDISTRI,
     TCLMK_LSBREL,
+    TCLMK_VIRT,
 
     TCLMK_EXTRAS,
     TCLMK_FLAGS,
@@ -113,6 +114,7 @@ const static struct TCLMapping tclmap[] = {
     {TCLMK_LSBCNAME , "lsb_cname" , TCLM_STRING},
     {TCLMK_LSBDISTRI, "lsb_distri", TCLM_STRING},
     {TCLMK_LSBREL   , "lsb_rel"   , TCLM_STRING},
+    {TCLMK_VIRT     , "virt"      , TCLM_STRING},
 
     {TCLMK_EXTRAS   , "extras"    , TCLM_IGNORE},
     {TCLMK_FLAGS    , "flags"     , TCLM_IGNORE},
@@ -175,6 +177,7 @@ static const struct HostFlag hostFlags[] = {
   {HOST_STATUS_PKGEXTRA       ,  "x", "extra packages are installed"},
   {HOST_STATUS_KERNELNOTMATCH ,  "R", "running kernel is not the latest (reboot required)"},
   {HOST_STATUS_KERNELSELFBUILD,  "k", "a selfbuild kernel is running"},
+  {HOST_STATUS_VIRTUALIZED    ,  "v", "this is a virtualized machine"},
   {0                          , NULL, NULL},
 };
 

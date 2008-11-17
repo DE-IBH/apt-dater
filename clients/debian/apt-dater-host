@@ -76,6 +76,15 @@ sub do_refresh() {
     system("$GETROOT $DPKGTOOL update");
 }
 
+sub get_virt() {
+    return "Unknown" unless (-x '/usr/bin/imvirt');
+
+    my $imvirt;
+    chomp($imvirt = `/usr/bin/imvirt`);
+
+    return $imvirt;
+}
+
 sub do_status() {
     # initialise the global config object with the default values and
     # setup the $_system object
@@ -98,6 +107,9 @@ sub do_status() {
     }
     close(HLSB);
     print "LSBREL: $lsb{'Distributor ID'}|$lsb{'Release'}|$lsb{'Codename'}\n";
+
+    # retrieve virtualization informations
+    print "VIRT: ".&get_virt."\n";
 
     # get packages which might be upgraded
     my %updates;

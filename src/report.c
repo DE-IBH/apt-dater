@@ -142,6 +142,12 @@ static void reportHost(gpointer data, gpointer lgroup) {
     xmlTextWriterWriteElement(writer, "codename", n->lsb_codename);
   xmlTextWriterEndElement(writer);
 
+  /* virtualization info */
+  if(n->virt)
+    xmlTextWriterWriteElement(writer, "virt", n->lsb_virt);
+  else
+    xmlTextWriterWriteElement(writer, "virt", "Unknown");
+
   /* Packages */
   xmlTextWriterStartElement(writer, "packages");
   g_list_foreach(n->packages, reportPackage, NULL);

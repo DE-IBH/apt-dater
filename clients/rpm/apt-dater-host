@@ -61,6 +61,15 @@ else {
     die "Internal error!\n";
 }
 
+sub get_virt() {
+    return "Unknown" unless (-x '/usr/bin/imvirt');
+
+    my $imvirt;
+    chomp($imvirt = `/usr/bin/imvirt`);
+
+    return $imvirt;
+}
+
 sub do_status() {
     # retrieve lsb informations
     open(HLSB, "lsb_release -a 2> /dev/null |") or die "Can't fork: $!\n";

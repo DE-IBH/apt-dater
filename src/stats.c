@@ -244,6 +244,10 @@ gboolean getUpdatesFromStat(HostNode *n)
   g_free(n->lsb_codename);
   n->lsb_codename = NULL;
  }
+ if(n->virt) {
+  g_free(n->virt);
+  n->virt = NULL;
+ }
  if(n->kernelrel) {
   g_free(n->kernelrel);
   n->kernelrel = NULL;
@@ -337,6 +341,16 @@ gboolean getUpdatesFromStat(HostNode *n)
 
    linesok++;
    continue;     
+  }
+
+  if (sscanf((gchar *) line, "VIRT: %255s", buf)) {
+   n->virt = g_strdup(buf);
+
+   if (strcmp(n->virt, "Unkown") && strcmp(n->virt, "Physical"))
+    n->status = n->status | HOST_STATUS_VIRTUALIZED;
+
+   linesok++;
+   continue;
   }
  }
 
