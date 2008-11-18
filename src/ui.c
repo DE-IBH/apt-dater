@@ -543,7 +543,7 @@ gboolean queryString(const gchar *query, gchar *in, const gint size)
 }
 
 
-gboolean queryConfirm(const gchar *query, const gboolean enter_is_yes)
+gboolean queryConfirm(const gchar *query, const gboolean enter_is_yes, gboolean *has_canceled)
 {
  int c;
 
@@ -561,6 +561,10 @@ gboolean queryConfirm(const gchar *query, const gboolean enter_is_yes)
 
  move(LINES - 1, 0);
  remln(COLS);
+
+ if (has_canceled) {
+    *has_canceled = ((c == 'c') || (c == 'C') || (c == 27));
+ }
 
  return ((c == 'y') || (c == 'Y') || 
 	 (enter_is_yes == TRUE && (c == 0xd || c == KEY_ENTER)));
@@ -2074,7 +2078,7 @@ gboolean ctrlUI (GList *hosts)
 
     if (g_list_length(inhost->screens)) {
      if (!queryConfirm("There are running sessions on this host! Continue? [y/N]: ",
-		       FALSE))
+		       FALSE, NULL))
       break;
     }
 
@@ -2097,7 +2101,7 @@ gboolean ctrlUI (GList *hosts)
     
     if (g_list_length(inhost->screens)) {
      if (!queryConfirm("There are running sessions on this host! Continue? [y/N]: ",
-		       FALSE))
+		       FALSE, NULL))
       break;
     }
 
@@ -2112,8 +2116,8 @@ gboolean ctrlUI (GList *hosts)
    case GROUP:
    default:
     {
-     if(((n->type == CATEGORY) && !queryConfirm("Run update for the whole category? [y/N]: ", FALSE)) ||
-	((n->type == GROUP) && !queryConfirm("Run update for the whole group? [y/N]: ", FALSE)))
+     if(((n->type == CATEGORY) && !queryConfirm("Run update for the whole category? [y/N]: ", FALSE, NULL)) ||
+	((n->type == GROUP) && !queryConfirm("Run update for the whole group? [y/N]: ", FALSE, NULL)))
       break;
 
      GList *ho = g_list_first(hosts);
@@ -2143,7 +2147,7 @@ gboolean ctrlUI (GList *hosts)
      if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGUPDATE) {
       qrystr = g_strdup_printf("Install package `%s' [y/N]: ", pkg);
       if(!qrystr) break;
-      retqry = queryConfirm(qrystr, FALSE);
+      retqry = queryConfirm(qrystr, FALSE, NULL);
       g_free(qrystr);
       qrystr = NULL;
      } else {
@@ -2168,7 +2172,7 @@ gboolean ctrlUI (GList *hosts)
 
     if (g_list_length(inhost->screens)) {
      if (!queryConfirm("There are running sessions on this host! Continue? [y/N]: ", 
-		       FALSE))
+		       FALSE, NULL))
       break;
     }
   
@@ -2192,8 +2196,8 @@ gboolean ctrlUI (GList *hosts)
      if (strlen(in)==0)
       break;
 
-     if(((n->type == CATEGORY) && !queryConfirm("Run install for the whole category? [y/N]: ", FALSE)) ||
-	((n->type == GROUP) && !queryConfirm("Run install for the whole group? [y/N]: ", FALSE)))
+     if(((n->type == CATEGORY) && !queryConfirm("Run install for the whole category? [y/N]: ", FALSE, NULL)) ||
+	((n->type == GROUP) && !queryConfirm("Run install for the whole group? [y/N]: ", FALSE, NULL)))
       break;
 
      GList *ho = g_list_first(hosts);
@@ -2217,25 +2221,31 @@ gboolean ctrlUI (GList *hosts)
     GList *ho = g_list_first(hosts);
 
     while(ho) {
+     gboolean cancel = FALSE;
      HostNode *m = (HostNode *)ho->data;
 
      GList *sc = m->screens;
 
      while(sc) {
-      qrystr = g_strdup_printf("Attach host %s session %d [Y/n]: ", 
+      qrystr = g_strdup_printf("Attach host %s session %d [Y/n/c]: ", 
 			       m->hostname, ((SessNode *)sc->data)->pid);
       if(!qrystr) {
        g_warning("Memory allocation failed!");
        break;
       }
 
-      retqry = queryConfirm(qrystr, TRUE);
+      retqry = queryConfirm(qrystr, TRUE, &cancel);
       g_free(qrystr);
       qrystr = NULL;
 
+      if(cancel == TRUE) {
+       ho = NULL;
+       break;
+      }
+
       if(retqry == FALSE) {
        sc = g_list_next(sc);
-       break;
+       continue;
       }
 
       if (!screen_is_attached((SessNode *)sc->data)) {
@@ -2282,7 +2292,7 @@ gboolean ctrlUI (GList *hosts)
 
     /* Session already attached! */
     if (screen_is_attached(s)) {
-     if (!queryConfirm("Already attached - share session? [y/N]: ", FALSE))
+     if (!queryConfirm("Already attached - share session? [y/N]: ", FALSE, NULL))
       break;
       
      may_share = TRUE;
@@ -2419,7 +2429,7 @@ gboolean ctrlUI (GList *hosts)
     qrystr = g_strdup_printf("There are %d %s in status refresh state,\
  quit apt-dater? [y/N]: ", hostcnt, hostcnt > 1 ? "hosts" : "host");
 
-    retqry = queryConfirm(qrystr, FALSE);
+    retqry = queryConfirm(qrystr, FALSE, NULL);
     g_free(qrystr);
 
     if (retqry == FALSE)
