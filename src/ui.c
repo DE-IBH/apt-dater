@@ -206,6 +206,8 @@ int getnLine(WINDOW *win, gchar *str, gint n, gboolean usews)
 
  wrefresh(win);
  getyx(win, sy, sx);
+ getbegyx(win, cy, cx);
+ sy += cy; sx += cx;
 
  while(ch != KEY_RETURN && ch != KEY_ENTER) {
   getyx(wp, cy, cx);
@@ -1943,6 +1945,7 @@ static void filterHosts(GList *hosts)
  waddstr(w, "return [expr [string compare $lsb_distri \"Debian\"] == 0]\n");
  waddstr(w, "return [expr [string compare $lsb_distri \"Debian\"] == 0 && $lsb_rel < 4.0]\n");
  waddstr(w, "return [llength [array names installed \"bind*\"]]\n");
+ waddstr(w, "return [expr [string compare $virt \"Xen\"] == 0]\n");
 
  waddstr(w, "\n");
 
