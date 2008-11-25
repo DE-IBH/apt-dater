@@ -161,6 +161,7 @@ static struct ShortCut shortCuts[] = {
  {SC_KEY_REFRESH, 'g', "g" , "refresh host" , FALSE, VK_REFRESH},
  {SC_KEY_INSTALL, 'i', "i" , "install pkg" , FALSE, VK_INSTALL},
  {SC_KEY_UPGRADE, 'u', "u" , "upgrade host(s)" , FALSE, VK_UPGRADE},
+ {SC_KEY_MORE, 'm', "m" , "more (about this host)" , FALSE, 0},
  {SC_KEY_NEXTSESS, 'n', "n" , "next detached session" , FALSE, 0},
  {SC_KEY_CYCLESESS, 'N', "N" , "cycle detached sessions" , FALSE, 0},
  {SC_MAX, 0, NULL, NULL, FALSE, 0},
@@ -2384,6 +2385,160 @@ gboolean ctrlUI (GList *hosts)
     refscr = TRUE;
    }
    break; /* case SC_KEY_HELP */
+
+  case SC_KEY_MORE:
+   if (inhost) {
+    WINDOW *wp = newpad(BUF_MAX_LEN+SC_MAX, COLS);
+    char buf[0x1ff];
+    gint l = 0;
+    int  wic = 0, pminrow = 0, kcquit = 'q';
+    
+    keypad(wp, TRUE);
+
+    wattron(wp, A_BOLD);
+    mvwaddnstr(wp, l++,  1, "HOST DETAILS"  , COLS - 1);
+    wattroff(wp, A_BOLD);
+
+    mvwaddnstr(wp, l  ,  2, "Group:"               , COLS -  2);
+    mvwaddnstr(wp, l++, 16, inhost->group          , COLS - 16);
+    mvwaddnstr(wp, l  ,  2, "Hostname:"            , COLS -  2);
+    mvwaddnstr(wp, l++, 16, inhost->hostname       , COLS - 16);
+    mvwaddnstr(wp, l  ,  2, "Type:"                , COLS -  2);
+    mvwaddnstr(wp, l++, 16, inhost->virt           , COLS - 16);
+
+    l++;
+
+    mvwaddnstr(wp, l  ,  2, "Distri:"              , COLS -  2);
+    mvwaddnstr(wp, l++, 16, inhost->lsb_distributor, COLS - 16);
+    if (inhost->lsb_codename)
+	snprintf(buf, sizeof(buf), "%s (%s)", inhost->lsb_release, inhost->lsb_codename);
+    else
+	snprintf(buf, sizeof(buf), "%s", inhost->lsb_release);
+    mvwaddnstr(wp, l  ,  2, "Release:"             , COLS -  2);
+    mvwaddnstr(wp, l++, 16, buf                    , COLS - 16);
+    mvwaddnstr(wp, l  ,  2, "Kernel:"              , COLS -  2);
+    mvwaddnstr(wp, l++, 16, inhost->kernelrel      , COLS - 16);
+
+    l++;
+
+    mvwaddnstr(wp, l  , 2, "Packages: ", COLS - 2);
+    snprintf(buf, sizeof(buf), "%d installed (%d updates, %d hold back, %d extra)",
+	     g_list_length(inhost->packages), inhost->nupdates, inhost->nholds, inhost->nextras);
+    mvwaddnstr(wp, l++, 16, buf        , COLS - 16);
+
+    if (inhost->nupdates) {
+	l++;
+
+	wattron(wp, A_BOLD);
+	mvwaddnstr(wp, l++,  1, "UPDATES"  , COLS - 1);
+	wattroff(wp, A_BOLD);
+
+	GList *p = g_list_first(inhost->packages);
+	while(p) {
+	    PkgNode *pn = p->data;
+
+	    if (pn->flag & HOST_STATUS_PKGUPDATE) {
+		mvwaddnstr(wp, l  ,  2, pn->package , COLS - 2);
+		snprintf(buf, sizeof(buf), "%s -> %s", pn->version, pn->data);
+		mvwaddnstr(wp, l++, 24, buf , COLS - 24);
+            }
+
+	    p = g_list_next(p);
+	}
+    }
+
+    if (inhost->nholds) {
+	l++;
+
+	wattron(wp, A_BOLD);
+	mvwaddnstr(wp, l++,  1, "HOLD BACK"  , COLS - 1);
+	wattroff(wp, A_BOLD);
+
+	GList *p = g_list_first(inhost->packages);
+	while(p) {
+	    PkgNode *pn = p->data;
+
+	    if (pn->flag & HOST_STATUS_PKGKEPTBACK) {
+		mvwaddnstr(wp, l  ,  2, pn->package , COLS - 2);
+		mvwaddnstr(wp, l++, 24, pn->version, COLS - 24);
+            }
+
+	    p = g_list_next(p);
+	}
+    }
+
+    if (inhost->nextras) {
+	l++;
+
+	wattron(wp, A_BOLD);
+	mvwaddnstr(wp, l++,  1, "EXTRA"  , COLS - 1);
+	wattroff(wp, A_BOLD);
+
+	GList *p = g_list_first(inhost->packages);
+	while(p) {
+	    PkgNode *pn = p->data;
+
+	    if (pn->flag & HOST_STATUS_PKGEXTRA) {
+		mvwaddnstr(wp, l  ,  2, pn->package , COLS - 2);
+		mvwaddnstr(wp, l++, 24, pn->version , COLS - 24);
+            }
+
+	    p = g_list_next(p);
+	}
+    }
+
+#if 0
+    if (g_list_length(inhost->packages) > inhost->nupdates + inhost->nholds + inhost->nextras) {
+	l++;
+
+	wattron(wp, A_BOLD);
+	mvwaddnstr(wp, l++,  1, "INSTALLED", COLS - 1);
+	wattroff(wp, A_BOLD);
+
+	GList *p = g_list_first(inhost->packages);
+	while(p) {
+	    PkgNode *pn = p->data;
+
+	    if ((pn->flag & HOST_STATUS_PKGUPDATE == 0) &&
+		(pn->flag & HOST_STATUS_PKGKEPTBACK == 0) &&
+		(pn->flag & HOST_STATUS_PKGEXTRA == 0)) {*/
+		mvwaddnstr(wp, l  ,  2, pn->package , COLS - 2);
+		mvwaddnstr(wp, l++, 24, pn->version , COLS - 24);
+            }
+
+	    p = g_list_next(p);
+	}
+    }
+#endif
+
+
+    for(i = 0; shortCuts[i].key; i++)
+     if(shortCuts[i].sc == SC_KEY_QUIT) kcquit = shortCuts[i].keycode;
+
+    pminrow = 0;
+    prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
+    while((wic = tolower(wgetch(wp))) != kcquit) {
+     if(wic == KEY_UP && pminrow)
+      pminrow--;
+     else if(wic == KEY_DOWN && pminrow < l-LINES+4)
+      pminrow++;
+     else if(wic == KEY_HOME)
+      pminrow=0;
+     else if(wic == KEY_END)
+      pminrow=l-LINES+4;
+#ifdef KEY_RESIZE     
+     else if(wic == KEY_RESIZE) {
+      refscr = TRUE;
+      break;
+     }
+#endif
+     prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
+    }
+   
+    delwin(wp);
+    refscr = TRUE;
+   }
+   break; /* case SC_KEY_MORE */
 
   case SC_KEY_FIND:
    searchEntry(hosts);
