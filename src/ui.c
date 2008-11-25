@@ -2444,8 +2444,9 @@ gboolean ctrlUI (GList *hosts)
 	l++;
 
 	mvwaddnstr(wp, l  , 2, "Packages: ", COLS - 2);
-	snprintf(buf, sizeof(buf), "%d installed (%d updates, %d hold back, %d extra)",
-		 g_list_length(inhost->packages), inhost->nupdates, inhost->nholds, inhost->nextras);
+	snprintf(buf, sizeof(buf), "%d installed (%d update%s, %d hold back, %d extra)",
+		 g_list_length(inhost->packages), inhost->nupdates, inhost->nupdates == 1 ? "" : "s",
+		 inhost->nholds, inhost->nextras);
 	mvwaddnstr(wp, l++, 16, buf        , COLS - 16);
     }
 
@@ -2461,9 +2462,9 @@ gboolean ctrlUI (GList *hosts)
 	    PkgNode *pn = p->data;
 
 	    if (pn->flag & HOST_STATUS_PKGUPDATE) {
-		mvwaddnstr(wp, l  ,  2, pn->package , COLS - 2);
+		mvwaddnstr(wp, l  ,  2, pn->package, COLS - 2);
 		snprintf(buf, sizeof(buf), "%s -> %s", pn->version, pn->data);
-		mvwaddnstr(wp, l++, 24, buf , COLS - 24);
+		mvwaddnstr(wp, l++, 32, buf, COLS - 32);
             }
 
 	    p = g_list_next(p);
@@ -2482,8 +2483,8 @@ gboolean ctrlUI (GList *hosts)
 	    PkgNode *pn = p->data;
 
 	    if (pn->flag & HOST_STATUS_PKGKEPTBACK) {
-		mvwaddnstr(wp, l  ,  2, pn->package , COLS - 2);
-		mvwaddnstr(wp, l++, 24, pn->version, COLS - 24);
+		mvwaddnstr(wp, l  ,  2, pn->package, COLS -  2);
+		mvwaddnstr(wp, l++, 32, pn->version, COLS - 32);
             }
 
 	    p = g_list_next(p);
@@ -2502,8 +2503,8 @@ gboolean ctrlUI (GList *hosts)
 	    PkgNode *pn = p->data;
 
 	    if (pn->flag & HOST_STATUS_PKGEXTRA) {
-		mvwaddnstr(wp, l  ,  2, pn->package , COLS - 2);
-		mvwaddnstr(wp, l++, 24, pn->version , COLS - 24);
+		mvwaddnstr(wp, l  ,  2, pn->package , COLS -  2);
+		mvwaddnstr(wp, l++, 32, pn->version , COLS - 32);
             }
 
 	    p = g_list_next(p);
@@ -2525,8 +2526,8 @@ gboolean ctrlUI (GList *hosts)
 	    if ((pn->flag & HOST_STATUS_PKGUPDATE == 0) &&
 		(pn->flag & HOST_STATUS_PKGKEPTBACK == 0) &&
 		(pn->flag & HOST_STATUS_PKGEXTRA == 0)) {*/
-		mvwaddnstr(wp, l  ,  2, pn->package , COLS - 2);
-		mvwaddnstr(wp, l++, 24, pn->version , COLS - 24);
+		mvwaddnstr(wp, l  ,  2, pn->package , COLS -  2);
+		mvwaddnstr(wp, l++, 32, pn->version , COLS - 32);
             }
 
 	    p = g_list_next(p);
