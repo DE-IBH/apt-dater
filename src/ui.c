@@ -161,7 +161,7 @@ static struct ShortCut shortCuts[] = {
  {SC_KEY_REFRESH, 'g', "g" , "refresh host" , FALSE, VK_REFRESH},
  {SC_KEY_INSTALL, 'i', "i" , "install pkg" , FALSE, VK_INSTALL},
  {SC_KEY_UPGRADE, 'u', "u" , "upgrade host(s)" , FALSE, VK_UPGRADE},
- {SC_KEY_MORE, 'm', "m" , "more (about this host)" , FALSE, 0},
+ {SC_KEY_MORE, 'm', "m" , "host details" , FALSE, 0},
  {SC_KEY_NEXTSESS, 'n', "n" , "next detached session" , FALSE, 0},
  {SC_KEY_CYCLESESS, 'N', "N" , "cycle detached sessions" , FALSE, 0},
  {SC_MAX, 0, NULL, NULL, FALSE, 0},
@@ -2403,28 +2403,51 @@ gboolean ctrlUI (GList *hosts)
     mvwaddnstr(wp, l++, 16, inhost->group          , COLS - 16);
     mvwaddnstr(wp, l  ,  2, "Hostname:"            , COLS -  2);
     mvwaddnstr(wp, l++, 16, inhost->hostname       , COLS - 16);
-    mvwaddnstr(wp, l  ,  2, "Type:"                , COLS -  2);
-    mvwaddnstr(wp, l++, 16, inhost->virt           , COLS - 16);
+    if (inhost->virt) {
+	mvwaddnstr(wp, l  ,  2, "Machine Type:"        , COLS -  2);
+	mvwaddnstr(wp, l++, 16, inhost->virt           , COLS - 16);
+    }
 
     l++;
 
-    mvwaddnstr(wp, l  ,  2, "Distri:"              , COLS -  2);
-    mvwaddnstr(wp, l++, 16, inhost->lsb_distributor, COLS - 16);
-    if (inhost->lsb_codename)
-	snprintf(buf, sizeof(buf), "%s (%s)", inhost->lsb_release, inhost->lsb_codename);
-    else
-	snprintf(buf, sizeof(buf), "%s", inhost->lsb_release);
-    mvwaddnstr(wp, l  ,  2, "Release:"             , COLS -  2);
-    mvwaddnstr(wp, l++, 16, buf                    , COLS - 16);
-    mvwaddnstr(wp, l  ,  2, "Kernel:"              , COLS -  2);
-    mvwaddnstr(wp, l++, 16, inhost->kernelrel      , COLS - 16);
+    if (inhost->lsb_distributor) {
+	mvwaddnstr(wp, l  ,  2, "Distri:"              , COLS -  2);
+        mvwaddnstr(wp, l++, 16, inhost->lsb_distributor, COLS - 16);
+        if (inhost->lsb_codename)
+	    snprintf(buf, sizeof(buf), "%s (%s)", inhost->lsb_release, inhost->lsb_codename);
+	else
+	    snprintf(buf, sizeof(buf), "%s", inhost->lsb_release);
+	mvwaddnstr(wp, l  ,  2, "Release:"             , COLS -  2);
+        mvwaddnstr(wp, l++, 16, buf                    , COLS - 16);
+    }
+    if (inhost->kernelrel) {
+	mvwaddnstr(wp, l  ,  2, "Kernel:"              , COLS -  2);
+	mvwaddnstr(wp, l++, 16, inhost->kernelrel      , COLS - 16);
+	
+	switch(inhost->status & (HOST_STATUS_KERNELNOTMATCH | HOST_STATUS_KERNELSELFBUILD)) {
+	    case HOST_STATUS_KERNELNOTMATCH:
+		strcpy(buf, "(reboot required)");
+		break;
+	    case HOST_STATUS_KERNELSELFBUILD:
+		strcpy(buf, "(selfbuild kernel)");
+		break;
+	    default:
+		buf[0] = 0;
+		break;
+	}
 
-    l++;
+	if(strlen(buf) > 0)
+	    mvwaddnstr(wp, l-1, 17 + strlen(inhost->kernelrel), buf, COLS - 17 - strlen(inhost->kernelrel));
+    }
 
-    mvwaddnstr(wp, l  , 2, "Packages: ", COLS - 2);
-    snprintf(buf, sizeof(buf), "%d installed (%d updates, %d hold back, %d extra)",
-	     g_list_length(inhost->packages), inhost->nupdates, inhost->nholds, inhost->nextras);
-    mvwaddnstr(wp, l++, 16, buf        , COLS - 16);
+    if (g_list_length(inhost->packages)) {
+	l++;
+
+	mvwaddnstr(wp, l  , 2, "Packages: ", COLS - 2);
+	snprintf(buf, sizeof(buf), "%d installed (%d updates, %d hold back, %d extra)",
+		 g_list_length(inhost->packages), inhost->nupdates, inhost->nholds, inhost->nextras);
+	mvwaddnstr(wp, l++, 16, buf        , COLS - 16);
+    }
 
     if (inhost->nupdates) {
 	l++;
