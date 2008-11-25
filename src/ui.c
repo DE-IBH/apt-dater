@@ -2126,8 +2126,8 @@ gboolean ctrlUI (GList *hosts)
 
      while(ho) {
       HostNode *m = (HostNode *)ho->data;
-      if(((n->type == GROUP) && (strcmp(m->group, ingroup) == 0)) ||
-	 ((n->type == CATEGORY) && (m->category == cat)))
+      if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) && m->category == cat) ||
+	 (n->type == CATEGORY && m->category == cat))
        ssh_cmd_upgrade(m, TRUE);
 
       ho = g_list_next(ho);
@@ -2206,8 +2206,8 @@ gboolean ctrlUI (GList *hosts)
 
      while(ho) {
       HostNode *m = (HostNode *)ho->data;
-      if(((n->type == GROUP) && (strcmp(m->group, ingroup) == 0)) ||
-	 ((n->type == CATEGORY) && (m->category == cat)))
+      if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) && m->category == cat) ||
+	 (n->type == CATEGORY && m->category == cat))
        ssh_cmd_install(m, in, TRUE);
 
       ho = g_list_next(ho);
