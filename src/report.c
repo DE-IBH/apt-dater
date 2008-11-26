@@ -144,7 +144,7 @@ static void reportHost(gpointer data, gpointer lgroup) {
 
   /* virtualization info */
   if(n->virt)
-    xmlTextWriterWriteElement(writer, "virt", n->lsb_virt);
+    xmlTextWriterWriteElement(writer, "virt", n->virt);
   else
     xmlTextWriterWriteElement(writer, "virt", "Unknown");
 

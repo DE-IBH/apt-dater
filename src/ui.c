@@ -661,10 +661,10 @@ void drawHostEntry (DrawNode *n)
 			      ((HostNode *) n->p)->lsb_codename,
 			      ((HostNode *) n->p)->kernelrel);
   
-  addnstr((char *) hostentry, COLS);
+  addnstr((char *) hostentry, COLS - 11);
   g_free(hostentry);
  } else {
-  addnstr((char *) ((HostNode *) n->p)->hostname, COLS);
+  addnstr((char *) ((HostNode *) n->p)->hostname, COLS - 11);
  }
 
  attroff(n->attrs);
@@ -2462,9 +2462,9 @@ gboolean ctrlUI (GList *hosts)
 	    PkgNode *pn = p->data;
 
 	    if (pn->flag & HOST_STATUS_PKGUPDATE) {
-		mvwaddnstr(wp, l  ,  2, pn->package, COLS - 2);
+		mvwaddnstr(wp, l  ,  2, pn->package, MIN(33, COLS - 2));
 		snprintf(buf, sizeof(buf), "%s -> %s", pn->version, pn->data);
-		mvwaddnstr(wp, l++, 32, buf, COLS - 32);
+		mvwaddnstr(wp, l++, 36, buf, COLS - 36);
             }
 
 	    p = g_list_next(p);
@@ -2483,8 +2483,8 @@ gboolean ctrlUI (GList *hosts)
 	    PkgNode *pn = p->data;
 
 	    if (pn->flag & HOST_STATUS_PKGKEPTBACK) {
-		mvwaddnstr(wp, l  ,  2, pn->package, COLS -  2);
-		mvwaddnstr(wp, l++, 32, pn->version, COLS - 32);
+		mvwaddnstr(wp, l  ,  2, pn->package, MIN(33, COLS -  2));
+		mvwaddnstr(wp, l++, 36, pn->version, COLS - 36);
             }
 
 	    p = g_list_next(p);
@@ -2503,8 +2503,8 @@ gboolean ctrlUI (GList *hosts)
 	    PkgNode *pn = p->data;
 
 	    if (pn->flag & HOST_STATUS_PKGEXTRA) {
-		mvwaddnstr(wp, l  ,  2, pn->package , COLS -  2);
-		mvwaddnstr(wp, l++, 32, pn->version , COLS - 32);
+		mvwaddnstr(wp, l  ,  2, pn->package , MIN(33, COLS -  2));
+		mvwaddnstr(wp, l++, 36, pn->version , COLS - 36);
             }
 
 	    p = g_list_next(p);
@@ -2526,8 +2526,8 @@ gboolean ctrlUI (GList *hosts)
 	    if ((pn->flag & HOST_STATUS_PKGUPDATE == 0) &&
 		(pn->flag & HOST_STATUS_PKGKEPTBACK == 0) &&
 		(pn->flag & HOST_STATUS_PKGEXTRA == 0)) {*/
-		mvwaddnstr(wp, l  ,  2, pn->package , COLS -  2);
-		mvwaddnstr(wp, l++, 32, pn->version , COLS - 32);
+		mvwaddnstr(wp, l  ,  2, pn->package , MIN(33, COLS -  2));
+		mvwaddnstr(wp, l++, 36, pn->version , COLS - 36);
             }
 
 	    p = g_list_next(p);
