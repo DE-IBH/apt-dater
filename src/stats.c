@@ -229,6 +229,7 @@ gboolean getUpdatesFromStat(HostNode *n)
  n->nupdates = 0;
  n->nextras = 0;
  n->nholds = 0;
+ n->forbid = 0;
 
  freePackages(n);
 
@@ -352,6 +353,9 @@ gboolean getUpdatesFromStat(HostNode *n)
    linesok++;
    continue;
   }
+
+  if (sscanf((gchar *) line, "FORBID: %d", &n->forbid))
+   continue;
  }
 
  if(linesok>5) {

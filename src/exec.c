@@ -111,6 +111,9 @@ gboolean ssh_cmd_upgrade(HostNode *n, const gboolean detached)
  gchar *identity_file = NULL;
  gchar **argv = NULL;
 
+ if(n->forbid & HOST_FORBID_UPGRADE)
+    return;
+
  gchar *screen = screen_new(n, detached);
 
  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d%s%s+%s+unset LANG ; export MAINTAINER='%s' ; %s", 
@@ -152,6 +155,9 @@ gboolean ssh_cmd_install(HostNode *n, const gchar *package, const gboolean detac
  gchar *optflags = NULL;
  gchar *identity_file = NULL;
  gchar **argv = NULL;
+
+ if(n->forbid & HOST_FORBID_INSTALL)
+    return;
 
  gchar *screen = screen_new(n, detached);
 

@@ -106,6 +106,12 @@ typedef enum {
 #define HOST_STATUS_VIRTUALIZED     32
 #define HOST_STATUS_LOCKED          64
 
+#define HOST_FORBID_REFRESH          1
+#define HOST_FORBID_UPGRADE          2
+#define HOST_FORBID_INSTALL          4
+
+#define HOST_FORBID_MASK     (HOST_FORBID_REFRESH | HOST_FORBID_UPGRADE | HOST_FORBID_INSTALL)
+
 typedef struct _hostnode {
  gchar     *hostname;
  gchar     *group;
@@ -129,6 +135,7 @@ typedef struct _hostnode {
  gchar     *kernelrel;
  gchar     *virt;
  gchar     *identity_file;
+ gint      forbid;
 } HostNode;
 
 struct mapping_t

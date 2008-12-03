@@ -92,6 +92,7 @@ typedef enum {
     TCLMK_LSBDISTRI,
     TCLMK_LSBREL,
     TCLMK_VIRT,
+    TCLMK_FORBID,
 
     TCLMK_EXTRAS,
     TCLMK_FLAGS,
@@ -115,6 +116,7 @@ const static struct TCLMapping tclmap[] = {
     {TCLMK_LSBDISTRI, "lsb_distri", TCLM_STRING},
     {TCLMK_LSBREL   , "lsb_rel"   , TCLM_STRING},
     {TCLMK_VIRT     , "virt"      , TCLM_STRING},
+    {TCLMK_FORBID   , "forbid"    , TCLM_INT},
 
     {TCLMK_EXTRAS   , "extras"    , TCLM_IGNORE},
     {TCLMK_FLAGS    , "flags"     , TCLM_IGNORE},
@@ -653,6 +655,9 @@ void drawHostEntry (DrawNode *n)
   addch(' ');
  addstr("] ");
 
+ if(((HostNode *) n->p)->forbid & HOST_FORBID_MASK)
+    attron(A_UNDERLINE);
+
  if(((HostNode *) n->p)->lsb_distributor) {
   hostentry = g_strdup_printf("%s (%s %s %s; %s)", 
 			      ((HostNode *) n->p)->hostname,
@@ -666,6 +671,9 @@ void drawHostEntry (DrawNode *n)
  } else {
   addnstr((char *) ((HostNode *) n->p)->hostname, COLS - 11);
  }
+
+ if(((HostNode *) n->p)->forbid & HOST_FORBID_MASK)
+    attroff(A_UNDERLINE);
 
  attroff(n->attrs);
 
@@ -1832,6 +1840,9 @@ void applyFilter(GList *hosts) {
 		case TCLMK_CATEGORY:
 		    h = g_strdup_printf("%d", n->category);
 		    break;
+		case TCLMK_FORBID:
+		    h = g_strdup_printf("%d", n->forbid);
+		    break;
 		default:
 		    g_warning("Internal error: unhandled TCL TCLM_INT maping!\n");
 	    }
@@ -2438,6 +2449,34 @@ gboolean ctrlUI (GList *hosts)
 
 	if(strlen(buf) > 0)
 	    mvwaddnstr(wp, l-1, 17 + strlen(inhost->kernelrel), buf, COLS - 17 - strlen(inhost->kernelrel));
+    }
+
+    if (inhost->forbid & HOST_FORBID_MASK) {
+	l++;
+
+	wattron(wp, A_UNDERLINE);
+	mvwaddnstr(wp, l  , 2, "Forbidden:", COLS - 2);
+	wattroff(wp, A_UNDERLINE);
+
+	strcpy(buf, " ");
+	if (inhost->forbid & HOST_FORBID_REFRESH) {
+	    strcat(buf, "refresh");
+	}
+
+	if (inhost->forbid & HOST_FORBID_UPGRADE) {
+	    if(strlen(buf) > 1) {
+		strcat(buf, ", ");
+	    }
+	    strcat(buf, "upgrade");
+	}
+
+	if (inhost->forbid & HOST_FORBID_INSTALL) {
+	    if(strlen(buf) > 1) {
+		strcat(buf, ", ");
+	    }
+	    strcat(buf, "install");
+	}
+	mvwaddnstr(wp, l++, 15, buf        , COLS - 15);
     }
 
     if (g_list_length(inhost->packages)) {
