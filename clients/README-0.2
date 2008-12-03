@@ -74,6 +74,24 @@ installed. Detected virtualizations:
     VIRT: Unknown
 
 
+There might be a FORBID line of the format:
+
+    FORBID: ${Operations}
+
+This is a mask of forbidded apt-dater-host operations.
+An single operation is represented by the following values:
+
+    1:	refresh
+    2:	upgrade
+    4:	install
+
+These values are binary ORed. Default value is 0 if no
+there is no FORBID line (allows all operations).
+
+The apt-dater-host executable on the client will refused
+operations marked as forbidden.
+
+
 For each installed package there must be a status line:
 
     STATUS: ${Package}|${InstVersion}|${Status}...

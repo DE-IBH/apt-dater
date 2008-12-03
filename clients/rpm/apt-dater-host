@@ -30,7 +30,7 @@
 use strict;
 
 my $CMD = shift;
-my $ADPROTO = '0.1';
+my $ADPROTO = '0.2';
 
 delete($ENV{'LANG'});
 
@@ -82,6 +82,12 @@ sub do_status() {
     close(HLSB);
     print "LSBREL: $lsb{'Distributor ID'}|$lsb{'Release'}|$lsb{'Codename'}\n";
 
+    # retrieve virtualization informations
+    print "VIRT: ".&get_virt."\n";
+
+    # rpm is readonly, so forbid anything!
+    print "FORBID: 255\n";
+
     # get version of installed packages
     my %installed;
     my %status;
@@ -102,10 +108,12 @@ sub do_status() {
 
 sub do_upgrade() {
     # not implemented
+    print STDERR "\n\n** Sorry, apt-dater based upgrades on this host are not supported! **\n\n";
 }
 
 sub do_install() {
     # not implemented
+    print STDERR "\n\n** Sorry, apt-dater based installations on this host are not supported! **\n\n";
 }
 
 sub do_kernel() {

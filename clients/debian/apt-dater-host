@@ -35,11 +35,14 @@ use strict;
 my $CFGFILE = '/etc/apt-dater-host.conf';
 my $DPKGTOOL = 'aptitude';
 my $GETROOT = 'sudo';
+my $FORBID_REFRESH = 0;
+my $FORBID_UPGRADE = 0;
+my $FORBID_INSTALL = 0;
 
 eval `cat "$CFGFILE"` if (-r $CFGFILE);
 
 my $CMD = shift;
-my $ADPROTO = '0.1';
+my $ADPROTO = '0.2';
 
 delete($ENV{'LANG'});
 
@@ -48,7 +51,12 @@ die "Invalid command '$CMD'!\n" unless ($CMD=~/^(refresh|status|upgrade|install|
 
 if ($CMD eq 'refresh') {
     print "ADPROTO: $ADPROTO\n";
-    &do_refresh;
+    if ($FORBID_REFRESH) {
+	print STDERR "\n\n** Sorry, apt-dater based refreshs on this host are disabled! **\n\n"
+    }
+    else {
+	&do_refresh;
+    }
     &do_status;
     &do_kernel;
 }
@@ -58,10 +66,20 @@ elsif ($CMD eq 'status') {
     &do_kernel;
 }
 elsif ($CMD eq 'upgrade') {
-    &do_upgrade;
+    if ($FORBID_UPGRADE) {
+	print STDERR "\n\n** Sorry, apt-dater based upgrades on this host are disabled! **\n\n";
+    }
+    else {
+	&do_upgrade;
+    }
 }
 elsif ($CMD eq 'install') {
-    &do_install(@ARGV);
+    if ($FORBID_INSTALL) {
+	print STDERR "\n\n** Sorry, apt-dater based installations on this host are disabled! **\n\n";
+    }
+    else {
+	&do_install(@ARGV);
+    }
 }
 elsif ($CMD eq 'kernel') {
     print "ADPROTO: $ADPROTO\n";
@@ -110,6 +128,13 @@ sub do_status() {
 
     # retrieve virtualization informations
     print "VIRT: ".&get_virt."\n";
+
+    # calculate forbid mask
+    my $mask = 0;
+    $mask |= 1 if ($FORBID_REFRESH);
+    $mask |= 2 if ($FORBID_UPGRADE);
+    $mask |= 4 if ($FORBID_INSTALL);
+    print "FORBID: $mask\n";
 
     # get packages which might be upgraded
     my %updates;
