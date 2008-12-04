@@ -2109,6 +2109,9 @@ gboolean ctrlUI (GList *hosts)
    if(!n) break;
    switch(n->type) {
    case HOST:
+    if(inhost->forbid & HOST_FORBID_UPGRADE)
+     return;
+
     if(n->extended == TRUE) n->extended = FALSE;
     
     if (g_list_length(inhost->screens)) {
@@ -2138,8 +2141,10 @@ gboolean ctrlUI (GList *hosts)
      while(ho) {
       HostNode *m = (HostNode *)ho->data;
       if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) && m->category == cat) ||
-	 (n->type == CATEGORY && m->category == cat))
-       ssh_cmd_upgrade(m, TRUE);
+	 (n->type == CATEGORY && m->category == cat)) {
+       if(m->forbid ^ HOST_FORBID_UPGRADE)
+        ssh_cmd_upgrade(m, TRUE);
+      }
 
       ho = g_list_next(ho);
      }
@@ -2153,7 +2158,7 @@ gboolean ctrlUI (GList *hosts)
    if(!n) break;
    switch(n->type) {
    case PKG:
-    if(n->p) {
+    if(n->p && (inhost->forbid ^ HOST_FORBID_INSTALL)) {
      pkg = ((PkgNode *) n->p)->package;
 
      if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGUPDATE) {
@@ -2181,6 +2186,9 @@ gboolean ctrlUI (GList *hosts)
     break;
    case HOST:
     if(n->extended == TRUE) n->extended = FALSE;
+
+    if(inhost->forbid & HOST_FORBID_INSTALL)
+     break;
 
     if (g_list_length(inhost->screens)) {
      if (!queryConfirm("There are running sessions on this host! Continue? [y/N]: ", 
@@ -2218,8 +2226,11 @@ gboolean ctrlUI (GList *hosts)
      while(ho) {
       HostNode *m = (HostNode *)ho->data;
       if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) && m->category == cat) ||
-	 (n->type == CATEGORY && m->category == cat))
-       ssh_cmd_install(m, in, TRUE);
+	 (n->type == CATEGORY && m->category == cat)) {
+
+       if(m->forbid ^ HOST_FORBID_INSTALL)
+        ssh_cmd_install(m, in, TRUE);
+      }
 
       ho = g_list_next(ho);
      }
@@ -2418,6 +2429,29 @@ gboolean ctrlUI (GList *hosts)
 	mvwaddnstr(wp, l  ,  2, "Machine Type:"        , COLS -  2);
 	mvwaddnstr(wp, l++, 16, inhost->virt           , COLS - 16);
     }
+    if (inhost->forbid & HOST_FORBID_MASK) {
+	mvwaddnstr(wp, l  , 2, "Forbidden:", COLS - 2);
+
+	strcpy(buf, " ");
+	if (inhost->forbid & HOST_FORBID_REFRESH) {
+	    strcat(buf, "refresh");
+	}
+
+	if (inhost->forbid & HOST_FORBID_UPGRADE) {
+	    if(strlen(buf) > 1) {
+		strcat(buf, ", ");
+	    }
+	    strcat(buf, "upgrade");
+	}
+
+	if (inhost->forbid & HOST_FORBID_INSTALL) {
+	    if(strlen(buf) > 1) {
+		strcat(buf, ", ");
+	    }
+	    strcat(buf, "install");
+	}
+	mvwaddnstr(wp, l++, 15, buf        , COLS - 15);
+    }
 
     l++;
 
@@ -2451,34 +2485,6 @@ gboolean ctrlUI (GList *hosts)
 	    mvwaddnstr(wp, l-1, 17 + strlen(inhost->kernelrel), buf, COLS - 17 - strlen(inhost->kernelrel));
     }
 
-    if (inhost->forbid & HOST_FORBID_MASK) {
-	l++;
-
-	wattron(wp, A_UNDERLINE);
-	mvwaddnstr(wp, l  , 2, "Forbidden:", COLS - 2);
-	wattroff(wp, A_UNDERLINE);
-
-	strcpy(buf, " ");
-	if (inhost->forbid & HOST_FORBID_REFRESH) {
-	    strcat(buf, "refresh");
-	}
-
-	if (inhost->forbid & HOST_FORBID_UPGRADE) {
-	    if(strlen(buf) > 1) {
-		strcat(buf, ", ");
-	    }
-	    strcat(buf, "upgrade");
-	}
-
-	if (inhost->forbid & HOST_FORBID_INSTALL) {
-	    if(strlen(buf) > 1) {
-		strcat(buf, ", ");
-	    }
-	    strcat(buf, "install");
-	}
-	mvwaddnstr(wp, l++, 15, buf        , COLS - 15);
-    }
-
     if (g_list_length(inhost->packages)) {
 	l++;
 
@@ -2493,7 +2499,7 @@ gboolean ctrlUI (GList *hosts)
 	l++;
 
 	wattron(wp, A_BOLD);
-	mvwaddnstr(wp, l++,  1, "UPDATES"  , COLS - 1);
+	mvwaddnstr(wp, l++,  1, "UPDATE PACKAGES"  , COLS - 1);
 	wattroff(wp, A_BOLD);
 
 	GList *p = g_list_first(inhost->packages);
@@ -2514,7 +2520,7 @@ gboolean ctrlUI (GList *hosts)
 	l++;
 
 	wattron(wp, A_BOLD);
-	mvwaddnstr(wp, l++,  1, "HOLD BACK"  , COLS - 1);
+	mvwaddnstr(wp, l++,  1, "HOLD BACK PACKAGES"  , COLS - 1);
 	wattroff(wp, A_BOLD);
 
 	GList *p = g_list_first(inhost->packages);
@@ -2534,7 +2540,7 @@ gboolean ctrlUI (GList *hosts)
 	l++;
 
 	wattron(wp, A_BOLD);
-	mvwaddnstr(wp, l++,  1, "EXTRA"  , COLS - 1);
+	mvwaddnstr(wp, l++,  1, "EXTRA PACKAGES"  , COLS - 1);
 	wattroff(wp, A_BOLD);
 
 	GList *p = g_list_first(inhost->packages);
@@ -2555,7 +2561,7 @@ gboolean ctrlUI (GList *hosts)
 	l++;
 
 	wattron(wp, A_BOLD);
-	mvwaddnstr(wp, l++,  1, "INSTALLED", COLS - 1);
+	mvwaddnstr(wp, l++,  1, "INSTALLED PACKAGES", COLS - 1);
 	wattroff(wp, A_BOLD);
 
 	GList *p = g_list_first(inhost->packages);
