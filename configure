@@ -1296,6 +1296,7 @@ Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-xmlreport      Include XML reports.
+  --enable-coopref      Include 'cooperative refresh' support.
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
   --enable-tclfilter      Include Tcl interpreter.
@@ -2504,6 +2505,25 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
     fi
+fi
+
+{ echo "$as_me:$LINENO: checking --enable-coopref argument" >&5
+echo $ECHO_N "checking --enable-coopref argument... $ECHO_C" >&6; }
+# Check whether --enable-coopref was given.
+if test "${enable_coopref+set}" = set; then
+  enableval=$enable_coopref; enable_coopref="yes"
+else
+  enable_coopref="no"
+fi
+
+{ echo "$as_me:$LINENO: result: $enable_coopref" >&5
+echo "${ECHO_T}$enable_coopref" >&6; }
+if test "$enable_coopref" = "yes"; then
+
+cat >>confdefs.h <<\_ACEOF
+#define FEAT_COOPREF 1
+_ACEOF
+
 fi
 
 

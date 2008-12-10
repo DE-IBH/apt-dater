@@ -24,8 +24,17 @@ if test "$enable_xmlreport" = "yes"; then
     PKG_CHECK_MODULES(LIBXML2, "libxml-2.0", skip_xmlreport=no, skip_xmlreport=yes)
 
     if test "$skip_xmlreport" = "no"; then
-	AC_DEFINE(FEAT_XMLREPORT, 1, [ Define if you want XMP report support included. ])
+	AC_DEFINE(FEAT_XMLREPORT, 1, [ Define if you want XML report support included. ])
     fi
+fi
+
+AC_MSG_CHECKING(--enable-coopref argument)
+AC_ARG_ENABLE(coopref,
+	[  --enable-coopref      Include 'cooperative refresh' support.], [enable_coopref="yes"],
+	[enable_coopref="no"])
+AC_MSG_RESULT($enable_coopref)
+if test "$enable_coopref" = "yes"; then
+    AC_DEFINE(FEAT_COOPREF, 1, [ Define if you want 'cooperative refresh' support included. ])
 fi
 
 AC_SUBST(VERSION)

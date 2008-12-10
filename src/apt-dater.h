@@ -117,6 +117,9 @@ typedef struct _hostnode {
  gchar     *group;
  gchar     *ssh_user;
  gint      ssh_port;
+#ifdef FEAT_COOPREF
+ time_t    last_upd;
+#endif
  guint     status;
  gboolean  keptback;
 #ifdef FEAT_TCLFILTER

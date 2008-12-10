@@ -32,6 +32,7 @@
 #include "screen.h"
 #include "stats.h"
 #include "lock.h"
+#include "coopref.h"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -189,6 +190,8 @@ void freePkgNode(PkgNode *n)
 static void freePackages(HostNode *n)
 {
  if(n && n->packages) {
+  coopref_rem_host_info(n);
+
   g_list_foreach(n->packages, (GFunc) freePkgNode, NULL);
   g_list_free(n->packages);
   n->packages = NULL;
@@ -363,6 +366,8 @@ gboolean getUpdatesFromStat(HostNode *n)
     n->category = C_UPDATES_PENDING;
    else
     n->category = C_UP_TO_DATE;
+
+    coopref_add_host_info(n);
  }
  else
     n->category = C_UNKNOW;

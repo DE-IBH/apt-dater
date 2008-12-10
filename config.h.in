@@ -1,9 +1,12 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
+/* Define if you want 'cooperative refresh' support included. */
+#undef FEAT_COOPREF
+
 /* Define if you want TCL filter support included. */
 #undef FEAT_TCLFILTER
 
-/* Define if you want XMP report support included. */
+/* Define if you want XML report support included. */
 #undef FEAT_XMLREPORT
 
 /* Define if your curses library supports color. */
