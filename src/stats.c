@@ -190,8 +190,9 @@ void freePkgNode(PkgNode *n)
 static void freePackages(HostNode *n)
 {
  if(n && n->packages) {
+#ifdef FEAT_COOPREF
   coopref_rem_host_info(n);
-
+#endif
   g_list_foreach(n->packages, (GFunc) freePkgNode, NULL);
   g_list_free(n->packages);
   n->packages = NULL;
@@ -222,9 +223,11 @@ gboolean getUpdatesFromStat(HostNode *n)
   return (TRUE);
  }
 
+#ifdef FEAT_COOPREF
  struct stat sbuf;
  if(!g_stat(statsfile, &sbuf))
   n->last_upd = sbuf.st_mtime;
+#endif
 
  if(!(fp = (FILE *) g_fopen(statsfile, "r"))) {
   n->category = C_UNKNOW;
@@ -370,8 +373,9 @@ gboolean getUpdatesFromStat(HostNode *n)
     n->category = C_UPDATES_PENDING;
    else
     n->category = C_UP_TO_DATE;
-
+#ifdef FEAT_COOPREF
     coopref_add_host_info(n);
+#endif
  }
  else
     n->category = C_UNKNOW;
