@@ -69,6 +69,9 @@ typedef struct _cfgfile {
  gchar *filterexp;
  gchar *filterfile;
 #endif
+#ifdef FEAT_COOPREF
+ gint auto_after;
+#endif
 } CfgFile;
 
 typedef struct _update {

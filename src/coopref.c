@@ -74,19 +74,24 @@ typedef struct _version {
 
 static GHashTable *ht_distris = NULL;
 
-static gboolean cmp_distris(gconstpointer a, gconstpointer b) {
-    int ret;
+static inline gchar *distri2str(const Distri *d, gchar *buf, const gint bsize) {
+    snprintf(buf, bsize-1, "%s|%s|%s", d->lsb_distributor, d->lsb_release, d->lsb_codename);
 
-#define CMP_DIST(key, a, b) \
-    ret = strcmp(((Distri *)a)->key, ((Distri *)b)->key); \
-    if (ret) \
-	return ret;
+    return buf;
+}
 
-    CMP_DIST(lsb_distributor, a, b);
-    CMP_DIST(lsb_release, a, b);
-    CMP_DIST(lsb_codename, a, b);
+static gboolean distri_equal(gconstpointer a, gconstpointer b) {
+    gchar da[0x1ff];
+    gchar db[0x1ff];
 
-    return 0;
+    return g_str_equal(distri2str(a, da, sizeof(da)), distri2str(b, db, sizeof(db)));
+}
+
+static guint distri_hash(gconstpointer key) {
+    Distri *distri = (Distri *)key;
+    gchar b[0x1ff];
+
+    return g_str_hash(distri2str(distri, b, sizeof(b)));
 }
 
 static void add_pkg(gpointer data, gpointer user_data) {
@@ -102,14 +107,30 @@ static void add_pkg(gpointer data, gpointer user_data) {
 	g_hash_table_insert(ht_packages, strdup(pkg->package), ht_versions);
     }
 
+    gchar *v;
+    if(((pkg->flag & HOST_STATUS_PKGUPDATE) ||
+        (pkg->flag & HOST_STATUS_PKGKEPTBACK)) &&
+        (pkg->data))
+     v = pkg->data;
+    else
+     v = pkg->version;
+
+    if(!v)
+     return;
+
     /* Create version list if needed. */
-    Version *vers = g_hash_table_lookup(ht_versions, pkg->version);
+    Version *vers = g_hash_table_lookup(ht_versions, v);
     if(!vers) {
 	vers = g_malloc(sizeof(Version));
 	vers->ts_first = node->last_upd;
 	vers->nodes = NULL;
 
-	g_hash_table_insert(ht_versions, strdup(pkg->version), vers);
+//    fprintf(stderr, "pkg: %s (%d versions) gets new %s @ %d\n", pkg->package, g_hash_table_size(ht_versions), v, node->last_upd);
+
+	g_hash_table_insert(ht_versions, strdup(v), vers);
+    }
+    else if (vers->ts_first > node->last_upd) {
+	vers->ts_first = node->last_upd;
     }
 
     vers->nodes = g_list_prepend(vers->nodes, node);
@@ -119,7 +140,7 @@ void coopref_add_host_info(HostNode *node) {
     Distri distri;
 
     if (!ht_distris)
-	ht_distris = g_hash_table_new(g_str_hash, cmp_distris);
+	ht_distris = g_hash_table_new(distri_hash, distri_equal);
 
 #define ASSIGN_DIST(d, n, f) \
     (d).lsb_distributor = f((n)->lsb_distributor); \
@@ -168,7 +189,7 @@ void coopref_rem_host_info(HostNode *node) {
     Distri distri;
 
     if (!ht_distris)
-	ht_distris = g_hash_table_new(g_str_hash, cmp_distris);
+	return;
 
 #define ASSIGN_DIST(d, n, f) \
     (d).lsb_distributor = f((n)->lsb_distributor); \
@@ -189,4 +210,76 @@ void coopref_rem_host_info(HostNode *node) {
     g_list_foreach(node->packages, rem_pkg, data);
 }
 
+
+
+static void trigger_refresh(gpointer data, gpointer user_data) {
+    HostNode *node = (HostNode *)data;
+
+    node->category = C_REFRESH_REQUIRED;
+}
+
+GList *refresh_nodes = NULL;
+
+static void check_refresh(gpointer data, gpointer user_data) {
+    HostNode *node = (HostNode *)data;
+    int *newest = (int *)user_data;
+
+    if((node->last_upd < *newest) &&
+       (g_list_find(refresh_nodes, node) == NULL))
+	refresh_nodes = g_list_prepend(refresh_nodes, node);
+}
+
+static void add_refresh(gpointer key, gpointer value, gpointer user_data) {
+    Version *version = (Version *)value;
+
+    g_list_foreach(version->nodes, check_refresh, user_data);
+}
+
+static void get_newest(gpointer key, gpointer value, gpointer user_data) {
+    Version *version = (Version *)value;
+    int *newest = (int *)user_data;
+
+    if (version->ts_first > *newest)
+	*newest = version->ts_first;
+}
+
+static void trigger_package(gpointer key, gpointer value, gpointer user_data) {
+    GHashTable *ht_versions = (GHashTable *)value;
+
+    /* Only one version known => nothing todo. */
+    if(g_hash_table_size(ht_versions) <= 1)
+	return;
+
+
+    /* Find the newest one. */
+    gint newest = 0;
+    g_hash_table_foreach(ht_versions, get_newest, &newest);
+
+//fprintf(stderr, "more than one, newest=%d\n", newest);
+    /* Any host, which has last_upd < newest needs to be refreshed. */
+    g_hash_table_foreach(ht_versions, add_refresh, &newest);
+
+//fprintf(stderr, "more than one, # refresh=%d\n", g_list_length(refresh_nodes));
+    g_list_foreach(refresh_nodes, trigger_refresh, NULL);
+}
+
+static void trigger_distri(gpointer key, gpointer value, gpointer user_data) {
+    GHashTable *ht_packages = (GHashTable *)value;
+
+    g_hash_table_foreach(ht_packages, trigger_package, NULL);
+}
+
+/**
+* This function is called by refreshStats when no
+* host remains in IN_REFRESH state. This is the time
+* to start the auto_after timer to refresh outdated
+* nodes.
+**/
+void coopref_trigger_auto() {
+//fprintf(stderr, "coopref_trigger_auto: distris = %d\n", g_hash_table_size(ht_distris));
+    if(cfg->auto_after < 0)
+	return;
+
+    g_hash_table_foreach(ht_distris, trigger_distri, NULL);
+}
 #endif

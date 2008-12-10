@@ -35,9 +35,7 @@
 #ifdef FEAT_COOPREF
 void coopref_add_host_info(HostNode *node);
 void coopref_rem_host_info(HostNode *node);
-#else
-void static inline coopref_add_host_info(HostNode *node) { };
-void static inline coopref_rem_host_info(HostNode *node) { };
+void coopref_trigger_auto();
 #endif
 
 #endif /* _COOPREF_H */

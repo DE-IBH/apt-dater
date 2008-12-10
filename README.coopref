@@ -1,0 +1,25 @@
+Cooperative Refresh
+===================
+
+Since version 0.6.5, apt-dater has a 'cooperative refresh' feature. This
+gives to advantages:
+
+ * If one host is refreshed and got some updates, one should refresh
+   other hosts which are running the same distribution and have the
+   same (or atleast some) packages installed, too.
+
+ * There are some fundamental problems on replay attacks on todays
+   package managers[1]. If one has several hosts (using different
+   repository mirrors and different uplinks etc.), there is a chance
+   that some of your hosts got recent package lists. apt-dater collects
+   update informations over SSH on trusted hosts. If apt-dater compares
+   those information it could detect such replay attacks.
+
+
+Links
+=====
+
+[1] Attacks on Package Managers
+    (Justin Cappos, Justin Samuel, Scott Baker, John H. Hartman)
+
+    http://www.cs.arizona.edu/people/justin/packagemanagersecurity/attacks-on-package-managers.html

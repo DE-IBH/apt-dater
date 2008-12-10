@@ -265,6 +265,14 @@ CfgFile *loadConfig (char *filename)
  lcfg->filterfile = g_key_file_get_string(keyfile, "TCLFilter", "FilterFile", NULL);
 #endif
 
+#ifdef FEAT_COOPREF
+ lcfg->auto_after = g_key_file_get_integer(keyfile, "COOPRef", "auto_after", &error);
+ if (error) {
+   lcfg->auto_after = 60;
+   g_clear_error(&error);
+ }
+#endif
+
  g_clear_error(&error);
  g_key_file_free(keyfile);
 

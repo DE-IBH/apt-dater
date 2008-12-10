@@ -222,6 +222,10 @@ gboolean getUpdatesFromStat(HostNode *n)
   return (TRUE);
  }
 
+ struct stat sbuf;
+ if(!g_stat(statsfile, &sbuf))
+  n->last_upd = sbuf.st_mtime;
+
  if(!(fp = (FILE *) g_fopen(statsfile, "r"))) {
   n->category = C_UNKNOW;
   g_free(statsfile);
@@ -385,7 +389,8 @@ gboolean refreshStats(GList *hosts)
  gboolean r = TRUE;
 
  ho = g_list_first(hosts);
- 
+
+ gint num_in_refresh = 0;
  while(ho) {
   HostNode *n = (HostNode *) ho->data;
 
@@ -429,11 +434,19 @@ gboolean refreshStats(GList *hosts)
    }
   }
 
+  if(n->category == C_REFRESH)
+   num_in_refresh++;
+
   ho = g_list_next(ho);
  }
 
 #ifdef FEAT_TCLFILTER
  applyFilter(hosts);
+#endif
+
+#ifdef FEAT_COOPREF
+ if(num_in_refresh == 0)
+  coopref_trigger_auto();
 #endif
 
  return(r);
