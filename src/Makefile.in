@@ -51,7 +51,7 @@ am_apt_dater_OBJECTS = apt-dater.$(OBJEXT) colors.$(OBJEXT) \
 	exec.$(OBJEXT) keyfiles.$(OBJEXT) lock.$(OBJEXT) \
 	parsecmd.$(OBJEXT) report.$(OBJEXT) screen.$(OBJEXT) \
 	sighandler.$(OBJEXT) stats.$(OBJEXT) ui.$(OBJEXT) \
-	coopref.$(OBJEXT)
+	autoref.$(OBJEXT)
 apt_dater_OBJECTS = $(am_apt_dater_OBJECTS)
 am__DEPENDENCIES_1 =
 apt_dater_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -180,8 +180,8 @@ apt_dater_SOURCES = \
 	stats.h				\
 	ui.c				\
 	ui.h				\
-	coopref.c			\
-	coopref.h
+	autoref.c			\
+	autoref.h
 
 apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS)
 INCLUDES = $(GLIB_CFLAGS) $(TCL_CFLAGS) $(LIBXML2_CFLAGS)
@@ -252,8 +252,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/apt-dater.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autoref.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/colors.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/coopref.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exec.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/keyfiles.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lock.Po@am__quote@

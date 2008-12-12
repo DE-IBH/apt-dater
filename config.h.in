@@ -1,7 +1,7 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
-/* Define if you want 'cooperative refresh' support included. */
-#undef FEAT_COOPREF
+/* Define if you want 'auto refresh' support included. */
+#undef FEAT_AUTOREF
 
 /* Define if you want TCL filter support included. */
 #undef FEAT_TCLFILTER

@@ -265,7 +265,7 @@ CfgFile *loadConfig (char *filename)
  lcfg->filterfile = g_key_file_get_string(keyfile, "TCLFilter", "FilterFile", NULL);
 #endif
 
-#ifdef FEAT_COOPREF
+#ifdef FEAT_AUTOREF
  lcfg->auto_refresh = g_key_file_get_boolean(keyfile, "SmartRefresh", "auto_refresh", &error);
  if (error) {
    lcfg->auto_refresh = TRUE;

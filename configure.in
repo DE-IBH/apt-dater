@@ -28,13 +28,13 @@ if test "$enable_xmlreport" = "yes"; then
     fi
 fi
 
-AC_MSG_CHECKING(--enable-coopref argument)
-AC_ARG_ENABLE(coopref,
-	[  --enable-coopref      Include 'cooperative refresh' support.], [enable_coopref="yes"],
-	[enable_coopref="no"])
-AC_MSG_RESULT($enable_coopref)
-if test "$enable_coopref" = "yes"; then
-    AC_DEFINE(FEAT_COOPREF, 1, [ Define if you want 'cooperative refresh' support included. ])
+AC_MSG_CHECKING(--enable-autoref argument)
+AC_ARG_ENABLE(autoref,
+	[  --enable-autoref      Include 'auto refresh' support.], [enable_autoref="yes"],
+	[enable_autoref="no"])
+AC_MSG_RESULT($enable_autoref)
+if test "$enable_autoref" = "yes"; then
+    AC_DEFINE(FEAT_AUTOREF, 1, [ Define if you want 'auto refresh' support included. ])
 fi
 
 AC_SUBST(VERSION)

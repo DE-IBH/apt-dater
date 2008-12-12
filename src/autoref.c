@@ -31,7 +31,7 @@
 # include "config.h"
 #endif
 
-#ifdef FEAT_COOPREF
+#ifdef FEAT_AUTOREF
 
 /**
 * We record installed/updatable packages on the hosts. When a host has been
@@ -139,7 +139,7 @@ static void add_pkg(gpointer data, gpointer user_data) {
 }
 
 /* Fetch package data from HostNode and feed it into the hashtables. */
-void coopref_add_host_info(HostNode *node) {
+void autoref_add_host_info(HostNode *node) {
     Distri distri;
 
     if (!ht_distris)
@@ -190,7 +190,7 @@ static void rem_pkg(gpointer data, gpointer user_data) {
 }
 
 /* Remove package data of HostNode from the hashtable leaves. */
-void coopref_rem_host_info(HostNode *node) {
+void autoref_rem_host_info(HostNode *node) {
     Distri distri;
 
     if (!ht_distris)
@@ -287,7 +287,7 @@ static void trigger_distri(gpointer key, gpointer value, gpointer user_data) {
 * This function is called by refreshStats when no
 * host remains in IN_REFRESH state.
 **/
-void coopref_trigger_auto() {
+void autoref_trigger_auto() {
     g_hash_table_foreach(ht_distris, trigger_distri, NULL);
 }
 #endif

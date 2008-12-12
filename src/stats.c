@@ -32,7 +32,7 @@
 #include "screen.h"
 #include "stats.h"
 #include "lock.h"
-#include "coopref.h"
+#include "autoref.h"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -190,8 +190,8 @@ void freePkgNode(PkgNode *n)
 static void freePackages(HostNode *n)
 {
  if(n && n->packages) {
-#ifdef FEAT_COOPREF
-  coopref_rem_host_info(n);
+#ifdef FEAT_AUTOREF
+  autoref_rem_host_info(n);
 #endif
   g_list_foreach(n->packages, (GFunc) freePkgNode, NULL);
   g_list_free(n->packages);
@@ -223,7 +223,7 @@ gboolean getUpdatesFromStat(HostNode *n)
   return (TRUE);
  }
 
-#ifdef FEAT_COOPREF
+#ifdef FEAT_AUTOREF
  struct stat sbuf;
  if(!g_stat(statsfile, &sbuf))
   n->last_upd = sbuf.st_mtime;
@@ -373,8 +373,8 @@ gboolean getUpdatesFromStat(HostNode *n)
     n->category = C_UPDATES_PENDING;
    else
     n->category = C_UP_TO_DATE;
-#ifdef FEAT_COOPREF
-    coopref_add_host_info(n);
+#ifdef FEAT_AUTOREF
+    autoref_add_host_info(n);
 #endif
  }
  else
@@ -394,8 +394,8 @@ gboolean refreshStats(GList *hosts)
 
  ho = g_list_first(hosts);
 
-#ifdef FEAT_COOPREF
- static gboolean do_coopref = TRUE;
+#ifdef FEAT_AUTOREF
+ static gboolean do_autoref = TRUE;
  gint num_in_refresh = 0;
 #endif
  while(ho) {
@@ -441,7 +441,7 @@ gboolean refreshStats(GList *hosts)
    }
   }
 
-#ifdef FEAT_COOPREF
+#ifdef FEAT_AUTOREF
   if(n->category == C_REFRESH)
    num_in_refresh++;
 #endif
@@ -453,17 +453,17 @@ gboolean refreshStats(GList *hosts)
  applyFilter(hosts);
 #endif
 
-#ifdef FEAT_COOPREF
+#ifdef FEAT_AUTOREF
  if(cfg->auto_refresh &&
     (num_in_refresh == 0)) {
-  if(do_coopref) {
+  if(do_autoref) {
    drawStatus ("Smart refresh triggered...", FALSE);
-   coopref_trigger_auto();
-   do_coopref = FALSE;
+   autoref_trigger_auto();
+   do_autoref = FALSE;
   }
  }
  else
-   do_coopref = TRUE;
+   do_autoref = TRUE;
 #endif
 
  return(r);

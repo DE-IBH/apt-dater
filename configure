@@ -1296,7 +1296,7 @@ Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-xmlreport      Include XML reports.
-  --enable-coopref      Include 'cooperative refresh' support.
+  --enable-autoref      Include 'auto refresh' support.
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
   --enable-tclfilter      Include Tcl interpreter.
@@ -2507,21 +2507,21 @@ _ACEOF
     fi
 fi
 
-{ echo "$as_me:$LINENO: checking --enable-coopref argument" >&5
-echo $ECHO_N "checking --enable-coopref argument... $ECHO_C" >&6; }
-# Check whether --enable-coopref was given.
-if test "${enable_coopref+set}" = set; then
-  enableval=$enable_coopref; enable_coopref="yes"
+{ echo "$as_me:$LINENO: checking --enable-autoref argument" >&5
+echo $ECHO_N "checking --enable-autoref argument... $ECHO_C" >&6; }
+# Check whether --enable-autoref was given.
+if test "${enable_autoref+set}" = set; then
+  enableval=$enable_autoref; enable_autoref="yes"
 else
-  enable_coopref="no"
+  enable_autoref="no"
 fi
 
-{ echo "$as_me:$LINENO: result: $enable_coopref" >&5
-echo "${ECHO_T}$enable_coopref" >&6; }
-if test "$enable_coopref" = "yes"; then
+{ echo "$as_me:$LINENO: result: $enable_autoref" >&5
+echo "${ECHO_T}$enable_autoref" >&6; }
+if test "$enable_autoref" = "yes"; then
 
 cat >>confdefs.h <<\_ACEOF
-#define FEAT_COOPREF 1
+#define FEAT_AUTOREF 1
 _ACEOF
 
 fi

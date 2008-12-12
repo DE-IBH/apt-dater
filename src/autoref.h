@@ -25,17 +25,17 @@
  *   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#ifndef _COOPREF_H
-#define _COOPREF_H
+#ifndef _AUTOREF_H
+#define _AUTOREF_H
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
 
-#ifdef FEAT_COOPREF
-void coopref_add_host_info(HostNode *node);
-void coopref_rem_host_info(HostNode *node);
-void coopref_trigger_auto();
+#ifdef FEAT_AUTOREF
+void autoref_add_host_info(HostNode *node);
+void autoref_rem_host_info(HostNode *node);
+void autoref_trigger_auto();
 #endif
 
-#endif /* _COOPREF_H */
+#endif /* _AUTOREF_H */

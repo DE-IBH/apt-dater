@@ -1,7 +1,7 @@
-Cooperative Refresh
-===================
+Auto Refresh
+============
 
-Since version 0.6.5, apt-dater has a 'cooperative refresh' feature. This
+Since version 0.6.5, apt-dater has a 'auto refresh' feature. This
 gives to advantages:
 
  * If one host is refreshed and got some updates, one should refresh

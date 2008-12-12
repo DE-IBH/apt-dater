@@ -69,7 +69,7 @@ typedef struct _cfgfile {
  gchar *filterexp;
  gchar *filterfile;
 #endif
-#ifdef FEAT_COOPREF
+#ifdef FEAT_AUTOREF
  gboolean auto_refresh;
 #endif
 } CfgFile;
@@ -120,7 +120,7 @@ typedef struct _hostnode {
  gchar     *group;
  gchar     *ssh_user;
  gint      ssh_port;
-#ifdef FEAT_COOPREF
+#ifdef FEAT_AUTOREF
  time_t    last_upd;
 #endif
  guint     status;

@@ -24,8 +24,8 @@ apt_dater_SOURCES =			\
 	stats.h				\
 	ui.c				\
 	ui.h				\
-	coopref.c			\
-	coopref.h
+	autoref.c			\
+	autoref.h
 
 apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS)
 
