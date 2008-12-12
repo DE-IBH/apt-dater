@@ -394,7 +394,10 @@ gboolean refreshStats(GList *hosts)
 
  ho = g_list_first(hosts);
 
+#ifdef FEAT_COOPREF
+ static gboolean do_coopref = TRUE;
  gint num_in_refresh = 0;
+#endif
  while(ho) {
   HostNode *n = (HostNode *) ho->data;
 
@@ -438,8 +441,10 @@ gboolean refreshStats(GList *hosts)
    }
   }
 
+#ifdef FEAT_COOPREF
   if(n->category == C_REFRESH)
    num_in_refresh++;
+#endif
 
   ho = g_list_next(ho);
  }
@@ -449,8 +454,16 @@ gboolean refreshStats(GList *hosts)
 #endif
 
 #ifdef FEAT_COOPREF
- if(num_in_refresh == 0)
-  coopref_trigger_auto();
+ if(cfg->auto_refresh &&
+    (num_in_refresh == 0)) {
+  if(do_coopref) {
+   drawStatus ("Smart refresh triggered...", FALSE);
+   coopref_trigger_auto();
+   do_coopref = FALSE;
+  }
+ }
+ else
+   do_coopref = TRUE;
 #endif
 
  return(r);

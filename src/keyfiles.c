@@ -266,9 +266,9 @@ CfgFile *loadConfig (char *filename)
 #endif
 
 #ifdef FEAT_COOPREF
- lcfg->auto_after = g_key_file_get_integer(keyfile, "COOPRef", "auto_after", &error);
+ lcfg->auto_refresh = g_key_file_get_boolean(keyfile, "SmartRefresh", "auto_refresh", &error);
  if (error) {
-   lcfg->auto_after = 60;
+   lcfg->auto_refresh = TRUE;
    g_clear_error(&error);
  }
 #endif

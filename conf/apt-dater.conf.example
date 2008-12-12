@@ -35,11 +35,9 @@ CmdUpgrade=apt-dater-host upgrade
 CmdInstall=apt-dater-host install %s
 
 # 'Cooperative Refresh' feature configuration
-[COOPRef]
-# If coopref detects outdated hosts, refresh them
-# after 60 seconds automaticly. -1 disables auto
-# refresh.
-auto_after=60
+[SmartRefresh]
+# Refresh hosts if the are outdated.
+auto_refresh=true
 
 [Appearance]
 # Colors      = (COMPONENT FG BG ';')*

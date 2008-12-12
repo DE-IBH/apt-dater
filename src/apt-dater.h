@@ -70,7 +70,7 @@ typedef struct _cfgfile {
  gchar *filterfile;
 #endif
 #ifdef FEAT_COOPREF
- gint auto_after;
+ gboolean auto_refresh;
 #endif
 } CfgFile;
 
