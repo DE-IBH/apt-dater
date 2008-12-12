@@ -104,6 +104,7 @@ void applyFilter(GList *hosts);
 void disableInput();
 void enableInput();
 void reorderScrpos(guint);
+gchar *getStrFromDrawNode (DrawNode *);
 
 #include "apt-dater.h"
 

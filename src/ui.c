@@ -71,6 +71,7 @@ gchar  filterexp[0x1ff];
 #endif
 gint   sc_mask = 0;
 static GCompletion* hstCompl = NULL;
+static GCompletion* dlCompl = NULL;
 
 #ifdef FEAT_TCLFILTER
 static Tcl_Interp *tcl_interp = NULL;
@@ -335,6 +336,16 @@ static void setMenuEntries(gint mask) {
 static gchar *compHost(gpointer p) {
   return ((HostNode *)p)->hostname;
 }
+
+
+static gchar *compDl(gpointer p) {
+ gchar *ret = NULL;
+
+ ret = getStrFromDrawNode((DrawNode *) p);
+
+ return ret;
+}
+
 
 void freeDrawNode (DrawNode *n)
 {
@@ -812,6 +823,32 @@ void detectPos()
  }
 }
 
+
+gchar *getStrFromDrawNode (DrawNode *n)
+{
+ gchar *ret = NULL;
+
+ switch(n->type) {
+ case CATEGORY:
+   ret = (gchar *) n->p;
+  break;
+ case GROUP:
+   ret = (gchar *) n->p;
+  break;
+ case HOST:
+  ret = (gchar * ) ((HostNode *) n->p)->hostname;
+  break;
+ case PKG:
+  ret = (gchar * ) ((PkgNode *) n->p)->package;
+  break;
+ default:
+  break;
+ }
+
+ return ret;
+}
+
+
 void drawEntry (DrawNode *n)
 {
  if(n->scrpos == 0 || n->scrpos >= bottomDrawLine) return;
@@ -1009,13 +1046,19 @@ void doUI (GList *hosts)
  initUI();
 
  /* Create completion list. */
- hstCompl = g_completion_new(compHost);
- g_completion_add_items(hstCompl, hosts);
+ /*
+   hstCompl = g_completion_new(compHost);
+   g_completion_add_items(hstCompl, hosts);
+ */
 
  /* Draw the host entries intial. */
  buildIntialDrawList(hosts);
  reorderScrpos(1);
  refreshDraw();
+
+ /* Create completion list. */
+ dlCompl = g_completion_new(compDl);
+ g_completion_add_items(dlCompl, drawlist);
 
  const gchar *m = getenv("MAINTAINER");
  if (m)
@@ -1615,6 +1658,9 @@ void searchEntry(GList *hosts) {
 
  drawQuery(query);
 
+ g_completion_clear_items (dlCompl);
+ g_completion_add_items (dlCompl, drawlist);
+
  while((c = getch())) {
    /* handle backspace */
    if(c == KEY_BACKSPACE) {
@@ -1647,9 +1693,9 @@ void searchEntry(GList *hosts) {
 
    /* find completion matches */
    if(strlen(s))
-     matches = g_completion_complete(hstCompl, s, NULL);
+    matches = g_completion_complete(dlCompl, s, NULL);
    else
-     matches = NULL;
+    matches = NULL;
 
    /* nothing was found, revert last pressed key */
    if(!matches && (pos > 0)) {
@@ -1657,7 +1703,7 @@ void searchEntry(GList *hosts) {
      s[--pos] = 0;
 
      if(pos>0)
-       matches = g_completion_complete(hstCompl, s, NULL);
+       matches = g_completion_complete(dlCompl, s, NULL);
    }
    /* print new search string */
    else {
@@ -1703,6 +1749,8 @@ void searchEntry(GList *hosts) {
 	 
 	 rebuildDrawList(hosts);
        }
+       g_completion_clear_items (dlCompl);
+       g_completion_add_items (dlCompl, drawlist);
        
        /* clear selection */
        DrawNode *n = getSelectedDrawNode();
@@ -1741,6 +1789,10 @@ void searchEntry(GList *hosts) {
        
        cleanBetween();
        rebuildDrawList(hosts);
+
+       g_completion_clear_items (dlCompl);
+       g_completion_add_items (dlCompl, drawlist);
+
        g_list_foreach(drawlist, (GFunc) drawEntry, NULL);
      }
    }
@@ -1762,7 +1814,9 @@ void searchEntry(GList *hosts) {
      while(m) {
       g_strlcat(dsstr, " ", dssize);
 
-      g_strlcat(dsstr, ((HostNode *)m->data)->hostname, dssize);
+      DrawNode *dn = (DrawNode *) m->data;
+
+      g_strlcat(dsstr, getStrFromDrawNode(dn), dssize);
       m = g_list_next(m);
      }
 
@@ -2663,7 +2717,7 @@ gboolean ctrlUI (GList *hosts)
 #ifdef FEAT_TCLFILTER
    if (!Tcl_InterpDeleted(tcl_interp)) Tcl_DeleteInterp(tcl_interp);
 #endif
-   if(hstCompl) g_completion_free (hstCompl);
+   if(dlCompl) g_completion_free (dlCompl);
 
    ret = FALSE;
    attrset(A_NORMAL);
