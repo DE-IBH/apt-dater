@@ -1650,6 +1650,8 @@ void searchEntry(GList *hosts) {
  const int offset = strlen(query)-1;
  GList *matches = NULL;
  GList *selmatch = NULL;
+ GList *dl = NULL;
+ int i;
 
  enableInput();
  noecho();
@@ -1658,10 +1660,22 @@ void searchEntry(GList *hosts) {
 
  drawQuery(query);
 
- g_completion_clear_items (dlCompl);
- g_completion_add_items (dlCompl, drawlist);
-
  while((c = getch())) {
+  for(i=2; i>0; i--) {
+   dl = g_list_first(drawlist);
+   while(dl) {
+    DrawNode *dn = (DrawNode *) dl->data;
+	   
+    if(dn->type != HOST) dn->extended = TRUE;
+	   
+    dl = g_list_next(dl);
+   }
+	 
+   rebuildDrawList(hosts);
+  }
+  g_completion_clear_items (dlCompl);
+  g_completion_add_items (dlCompl, drawlist);
+
    /* handle backspace */
    if(c == KEY_BACKSPACE) {
      if (strlen(s)>0)
@@ -1721,11 +1735,13 @@ void searchEntry(GList *hosts) {
      if(selmatch) {
       attron(uicolors[UI_COLOR_INPUT]);
       attron(A_REVERSE);
-      mvaddstr(LINES-1, offset+pos+1, &((HostNode *)selmatch->data)->hostname[pos]);
+      gchar *selstr = getStrFromDrawNode((DrawNode *) selmatch->data);
+   
+      mvaddstr(LINES-1, offset+pos+1, &selstr[pos]);
       attroff(A_REVERSE);
       attroff(uicolors[UI_COLOR_INPUT]);
-      
-      remln(COLS-offset-strlen(&((HostNode *)selmatch->data)->hostname[pos])-1);
+
+      remln(COLS-offset-strlen(&selstr[pos])-1);
      }
      else
       remln(COLS-offset-pos-1);
@@ -1733,10 +1749,9 @@ void searchEntry(GList *hosts) {
 
      /* we have a match which is selected */
      if(selmatch) {
-       GList *dl;
-       int i;
-       
+ 
        /* UGLY: expand everything (so the matched host is on the drawlist) */
+       /*
        for(i=2; i>0; i--) {
 	 dl = g_list_first(drawlist);
 	 while(dl) {
@@ -1751,6 +1766,7 @@ void searchEntry(GList *hosts) {
        }
        g_completion_clear_items (dlCompl);
        g_completion_add_items (dlCompl, drawlist);
+       */
        
        /* clear selection */
        DrawNode *n = getSelectedDrawNode();
@@ -1789,9 +1805,6 @@ void searchEntry(GList *hosts) {
        
        cleanBetween();
        rebuildDrawList(hosts);
-
-       g_completion_clear_items (dlCompl);
-       g_completion_add_items (dlCompl, drawlist);
 
        g_list_foreach(drawlist, (GFunc) drawEntry, NULL);
      }
