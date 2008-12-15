@@ -1779,11 +1779,12 @@ void searchEntry(GList *hosts) {
        gint up = 0; /* 0: no expand; 2: exp. category 4: exp. group */
        while(dl) {
 	 DrawNode *dn = (DrawNode *) dl->data;
-	 
-	 if((dn->type == HOST) && (selmatch->data == dn->p)) {
+
+	 if(selmatch->data == dn) {
 	   up = 4;
-	   dn->selected = TRUE;
+	   setEntryActiveStatus(dn, TRUE);
 	 }
+	 /*
 	 else if(dn->type == GROUP) {
 	   if(up == 4) {
 	     up = 2;
@@ -1799,12 +1800,13 @@ void searchEntry(GList *hosts) {
 	 }
 	 else
 	   dn->extended = FALSE;
+	 */
 	 
 	 dl = g_list_previous(dl);
        }
        
        cleanBetween();
-       rebuildDrawList(hosts);
+       //       rebuildDrawList(hosts);
 
        g_list_foreach(drawlist, (GFunc) drawEntry, NULL);
      }
@@ -1830,6 +1832,7 @@ void searchEntry(GList *hosts) {
       DrawNode *dn = (DrawNode *) m->data;
 
       g_strlcat(dsstr, getStrFromDrawNode(dn), dssize);
+
       m = g_list_next(m);
      }
 
