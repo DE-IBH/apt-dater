@@ -1054,6 +1054,7 @@ void buildIntialDrawList(GList *hosts)
   drawnode->selected = i == 0 ? TRUE : FALSE;
   drawnode->scrpos = i == 0 ? 1 : 0;
   drawnode->elements = getHostCatCnt(hosts, i);
+  drawnode->parent = NULL;
   if((i == (Category) C_UPDATES_PENDING || 
       i == (Category) C_NO_STATS ||
       i == (Category) C_SESSIONS ) && drawnode->elements > 0)
@@ -1343,6 +1344,7 @@ void extDrawListCategory(gint atpos, gchar *category, GList *hosts)
  guint i = 0;
  GList *ho;
  DrawNode *drawnode = NULL;
+ DrawNode *parent = NULL;
 
  while(*(drawCategories+i)) {
   if(category == *(drawCategories+i)) break;
@@ -1351,6 +1353,7 @@ void extDrawListCategory(gint atpos, gchar *category, GList *hosts)
 
  if(!(*(drawCategories+i))) return;
 
+ parent = g_list_nth_data(drawlist, (guint) atpos);
  ho = g_list_first(hosts);
 
  while(ho) {
@@ -1375,6 +1378,7 @@ void extDrawListCategory(gint atpos, gchar *category, GList *hosts)
      drawnode->scrpos = 0;
      drawnode->elements = elements;
      drawnode->attrs = A_NORMAL;
+     drawnode->parent = parent;
      drawlist = g_list_insert(drawlist, drawnode, ++atpos);
    }
   }
@@ -1387,8 +1391,11 @@ void extDrawListGroup(gint atpos, gchar *group, GList *hosts)
 {
  GList *ho;
  DrawNode *drawnode = NULL;
+ DrawNode *parent = NULL;
 
  ho = g_list_first(hosts);
+
+ parent = g_list_nth_data(drawlist, (guint) atpos);
 
  while(ho) {
   if(!g_strcasecmp(((HostNode *) ho->data)->group, group) && 
@@ -1404,6 +1411,7 @@ void extDrawListGroup(gint atpos, gchar *group, GList *hosts)
    drawnode->extended = FALSE;
    drawnode->selected = FALSE;
    drawnode->scrpos = 0;
+   drawnode->parent = parent;
    if (((HostNode *) ho->data)->category != C_SESSIONS)
      drawnode->elements = ((HostNode *) ho->data)->nupdates + ((HostNode *) ho->data)->nholds + ((HostNode *) ho->data)->nextras;
    else
@@ -1419,6 +1427,9 @@ void extDrawListGroup(gint atpos, gchar *group, GList *hosts)
 void extDrawListHost(gint atpos, HostNode *n)
 {
  DrawNode *drawnode = NULL;
+ DrawNode *parent = NULL;
+
+ parent = g_list_nth_data(drawlist, (guint) atpos);
 
  if (n->category == C_SESSIONS) {
    GList *sess = g_list_first(n->screens);
@@ -1427,6 +1438,7 @@ void extDrawListHost(gint atpos, HostNode *n)
      drawnode = g_new0(DrawNode, 1);
      drawnode->p = ((SessNode *)sess->data);
      drawnode->type = SESSION;
+     drawnode->parent = parent;
      drawlist = g_list_insert(drawlist, drawnode, ++atpos);
      sess = g_list_next(sess);
    }
@@ -1445,6 +1457,7 @@ void extDrawListHost(gint atpos, HostNode *n)
     drawnode->type = PKG;
     drawnode->p = ((PkgNode *) upd->data);
     drawnode->attrs = (((PkgNode *) upd->data)->flag & HOST_STATUS_PKGUPDATE) ? A_BOLD : A_NORMAL;
+    drawnode->parent = parent;
     drawlist = g_list_insert(drawlist, drawnode, ++atpos);
   }
   upd = g_list_next(upd);
@@ -1678,23 +1691,10 @@ void injectKey(int ch)
 }
 
 
-void searchEntry(GList *hosts) {
- gint c;
- gchar s[BUF_MAX_LEN];
- gint pos = 0;
- const gchar *query = "Search: ";
- const int offset = strlen(query)-1;
- GList *matches = NULL;
- GList *selmatch = NULL;
+static void expandAllNodes(GList *hosts)
+{
+ gint i;
  GList *dl = NULL;
- int i;
-
- enableInput();
- noecho();
-
- memset(s, 0, sizeof(s));
-
- drawQuery(query);
 
  /* UGLY: expand everything (so the matched host is on the drawlist) */
  for(i=2; i>0; i--) {
@@ -1711,12 +1711,35 @@ void searchEntry(GList *hosts) {
  }
  g_completion_clear_items (dlCompl);
  g_completion_add_items (dlCompl, drawlist);
+}
+
+
+void searchEntry(GList *hosts) {
+ gint c;
+ gchar s[BUF_MAX_LEN];
+ gint pos = 0;
+ const gchar *query = "Search: ";
+ const int offset = strlen(query)-1;
+ GList *matches = NULL;
+ GList *selmatch = NULL;
+ GList *dl = NULL;
+ GList *dlkeep = NULL;
+ int i;
+
+ enableInput();
+ noecho();
+
+ memset(s, 0, sizeof(s));
+
+ drawQuery(query);
 
  while((c = getch())) {
    /* handle backspace */
    if(c == KEY_BACKSPACE) {
-     if (strlen(s)>0)
-       s[--pos] = 0;
+    if (strlen(s)>0) {
+     expandAllNodes(hosts);
+     s[--pos] = 0;
+    }
      else
        beep();
    }
@@ -1738,8 +1761,9 @@ void searchEntry(GList *hosts) {
    }
    /* accept char */
    else if(strlen(s)<sizeof(s)) {
-     s[pos++] = c;
-     s[pos] = 0;
+    expandAllNodes(hosts);
+    s[pos++] = c;
+    s[pos] = 0;
    }
 
    /* find completion matches */
@@ -1786,24 +1810,44 @@ void searchEntry(GList *hosts) {
 
      /* we have a match which is selected */
      if(selmatch) {
-
       /* Shrink all drawnodes which are not matches. */
-      /*
-      gboolean found = FALSE;
-      GList *m = g_list_last(matches);
-      while(dl) {
-
-       DrawNode *dn = (DrawNode *) dl->data;
-       if(dn == selmatch->data) found = TRUE;
-       if(dn->extended == TRUE && dn->type == CATEGORY) {
-	if(found == FALSE)
-	 extDrawList(g_list_index(dl, dn), FALSE, dn, hosts);
-	else found = FALSE;
+      GList *m = g_list_first(matches);
+      while(m) {
+       DrawNode *parent = ((DrawNode *) m->data)->parent;
+       while(parent) {
+	/* Keep the following drawnodes extended. */
+	dlkeep = g_list_append(dlkeep, parent);
+	parent = parent->parent;
        }
+       m = g_list_next(m);
+      }
+
+      dl = g_list_last(drawlist);
+      while(dl) {
+       DrawNode *dn = (DrawNode *) dl->data;
        
+       if(dn->extended == TRUE) {
+	GList *k = g_list_first(dlkeep);
+	while(k) {
+	 if(k->data == dn) break;
+
+	 k = g_list_next(k);
+	}
+	
+	/* Shrink the list, if is not found in the search list. */
+	if(!k) {
+	 dn->extended = FALSE;
+	 extDrawList(g_list_index(drawlist, dn), FALSE, dn, hosts);
+	}
+       }
+      
        dl = g_list_previous(dl);
       }
-      */
+
+      if(dlkeep) {
+       g_list_free(dlkeep);
+       dlkeep = NULL;
+      }
 
        /* clear selection */
        DrawNode *n = getSelectedDrawNode();

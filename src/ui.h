@@ -82,13 +82,14 @@ typedef enum {
 } EShortCuts;
 
 typedef struct _drawnode {
- void     *p;
- DrawType type;
- gboolean extended;
- gboolean selected;
- guint    scrpos;
- guint    elements;
- int      attrs;
+ void             *p;
+ DrawType         type;
+ gboolean         extended;
+ gboolean         selected;
+ guint            scrpos;
+ guint            elements;
+ int              attrs;
+ struct _drawnode *parent;
 } DrawNode;
 
 gboolean
