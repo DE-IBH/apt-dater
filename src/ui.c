@@ -186,6 +186,39 @@ static const struct HostFlag hostFlags[] = {
 };
 
 
+static gboolean freeDl(GList *dl)
+{
+ if(dl) {
+  g_list_foreach(dl, (GFunc) freeDrawNode, NULL);
+  g_list_free(dl);
+ } else return FALSE;
+
+ return TRUE;
+}
+
+
+static GList *copyDl(GList *dlsrc)
+{
+ GList *dldst = NULL;
+ GList *dl = NULL;
+ DrawNode *dn = NULL;
+
+ dl = g_list_first(dlsrc);
+
+ while(dl) {
+  dn = g_new0(DrawNode, 1);
+  if(!dn) return NULL;
+
+  memcpy(dn, (DrawNode *) dl->data, sizeof(DrawNode));
+
+  dldst = g_list_append(dldst, dn);
+  dl = g_list_next(dl);
+ }
+ 
+ return dldst;
+}
+
+
 int getnLine(WINDOW *win, gchar *str, gint n, gboolean usews)
 {
  gint     cpos = 0, slen = 0, i;
@@ -338,7 +371,8 @@ static gchar *compHost(gpointer p) {
 }
 
 
-static gchar *compDl(gpointer p) {
+static gchar *compDl(gpointer p)
+{
  gchar *ret = NULL;
 
  ret = getStrFromDrawNode((DrawNode *) p);
@@ -346,6 +380,10 @@ static gchar *compDl(gpointer p) {
  return ret;
 }
 
+static gint strcompDl (const gchar *s1, const gchar *s2, gsize n)
+{
+ return(g_ascii_strncasecmp(s1, s2, n));
+}
 
 void freeDrawNode (DrawNode *n)
 {
@@ -1059,6 +1097,7 @@ void doUI (GList *hosts)
  /* Create completion list. */
  dlCompl = g_completion_new(compDl);
  g_completion_add_items(dlCompl, drawlist);
+ g_completion_set_compare(dlCompl, strcompDl);
 
  const gchar *m = getenv("MAINTAINER");
  if (m)
@@ -1294,11 +1333,8 @@ void rebuildDrawList(GList *hosts)
  }
 
  reorderScrpos(1);
-
- if(drawlist) {
-  g_list_foreach(old_drawlist, (GFunc) freeDrawNode, NULL);
-  g_list_free(old_drawlist);
- }
+ 
+ if(drawlist) freeDl(old_drawlist);
  else drawlist = old_drawlist;
 }
 
@@ -1660,22 +1696,23 @@ void searchEntry(GList *hosts) {
 
  drawQuery(query);
 
- while((c = getch())) {
-  for(i=2; i>0; i--) {
-   dl = g_list_first(drawlist);
-   while(dl) {
-    DrawNode *dn = (DrawNode *) dl->data;
+ /* UGLY: expand everything (so the matched host is on the drawlist) */
+ for(i=2; i>0; i--) {
+  dl = g_list_first(drawlist);
+  while(dl) {
+   DrawNode *dn = (DrawNode *) dl->data;
 	   
-    if(dn->type != HOST) dn->extended = TRUE;
+   if(dn->type != HOST) dn->extended = TRUE;
 	   
-    dl = g_list_next(dl);
-   }
-	 
-   rebuildDrawList(hosts);
+   dl = g_list_next(dl);
   }
-  g_completion_clear_items (dlCompl);
-  g_completion_add_items (dlCompl, drawlist);
+	 
+  rebuildDrawList(hosts);
+ }
+ g_completion_clear_items (dlCompl);
+ g_completion_add_items (dlCompl, drawlist);
 
+ while((c = getch())) {
    /* handle backspace */
    if(c == KEY_BACKSPACE) {
      if (strlen(s)>0)
@@ -1749,25 +1786,25 @@ void searchEntry(GList *hosts) {
 
      /* we have a match which is selected */
      if(selmatch) {
- 
-       /* UGLY: expand everything (so the matched host is on the drawlist) */
-       /*
-       for(i=2; i>0; i--) {
-	 dl = g_list_first(drawlist);
-	 while(dl) {
-	   DrawNode *dn = (DrawNode *) dl->data;
-	   
-	   if(dn->type != HOST) dn->extended = TRUE;
-	   
-	   dl = g_list_next(dl);
-	 }
-	 
-	 rebuildDrawList(hosts);
+
+      /* Shrink all drawnodes which are not matches. */
+      /*
+      gboolean found = FALSE;
+      GList *m = g_list_last(matches);
+      while(dl) {
+
+       DrawNode *dn = (DrawNode *) dl->data;
+       if(dn == selmatch->data) found = TRUE;
+       if(dn->extended == TRUE && dn->type == CATEGORY) {
+	if(found == FALSE)
+	 extDrawList(g_list_index(dl, dn), FALSE, dn, hosts);
+	else found = FALSE;
        }
-       g_completion_clear_items (dlCompl);
-       g_completion_add_items (dlCompl, drawlist);
-       */
        
+       dl = g_list_previous(dl);
+      }
+      */
+
        /* clear selection */
        DrawNode *n = getSelectedDrawNode();
        if (n)
@@ -1776,37 +1813,23 @@ void searchEntry(GList *hosts) {
        /* traverse drawlist bottom up... and only expand
 	* the path to the selmatch */
        dl = g_list_last(drawlist);
-       gint up = 0; /* 0: no expand; 2: exp. category 4: exp. group */
        while(dl) {
 	 DrawNode *dn = (DrawNode *) dl->data;
 
+	 dn->scrpos = 0;
 	 if(selmatch->data == dn) {
-	   up = 4;
 	   setEntryActiveStatus(dn, TRUE);
+	   dn->scrpos = 1;
+	   reorderScrpos(1);
+
+	   break;
 	 }
-	 /*
-	 else if(dn->type == GROUP) {
-	   if(up == 4) {
-	     up = 2;
-	     dn->extended = TRUE;
-	   }
-	   else
-	     dn->extended = FALSE;
-	 }
-	 else if((dn->type == CATEGORY) &&
-		 (up == 2)) {
-	   up = 0;
-	   dn->extended = TRUE;
-	 }
-	 else
-	   dn->extended = FALSE;
-	 */
-	 
+ 
 	 dl = g_list_previous(dl);
        }
        
        cleanBetween();
-       //       rebuildDrawList(hosts);
+       /* rebuildDrawList(hosts); */
 
        g_list_foreach(drawlist, (GFunc) drawEntry, NULL);
      }
@@ -1815,7 +1838,6 @@ void searchEntry(GList *hosts) {
     remln(COLS-offset-pos-1);
 
    /* print matches in status bar */
-
    if(matches) {
      gint dssize = COLS+1;
      gchar *dsstr = NULL;
@@ -1823,7 +1845,7 @@ void searchEntry(GList *hosts) {
      dsstr = g_malloc0(dssize);
      if(!dsstr) break;
 
-     g_strlcat(dsstr, "Hosts:", dssize);
+     g_strlcat(dsstr, "Matches:", dssize);
 
      GList *m = g_list_first(matches);
      while(m) {
@@ -1840,7 +1862,7 @@ void searchEntry(GList *hosts) {
      g_free(dsstr);
    }
    else {
-     drawStatus("Hosts: -", FALSE);
+     drawStatus("Matches: -", FALSE);
      selmatch = NULL;
    }
 
@@ -1849,7 +1871,7 @@ void searchEntry(GList *hosts) {
 
    refresh();
  } /* while((c = getch())) */
-
+ 
  attroff(uicolors[UI_COLOR_INPUT]);
 
  disableInput();
