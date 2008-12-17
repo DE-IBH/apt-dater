@@ -1737,8 +1737,8 @@ void searchEntry(GList *hosts) {
    /* handle backspace */
    if(c == KEY_BACKSPACE) {
     if (strlen(s)>0) {
-     expandAllNodes(hosts);
      s[--pos] = 0;
+     if(strlen(s)>0) expandAllNodes(hosts);
     }
      else
        beep();
@@ -1873,7 +1873,6 @@ void searchEntry(GList *hosts) {
        }
        
        cleanBetween();
-       /* rebuildDrawList(hosts); */
 
        g_list_foreach(drawlist, (GFunc) drawEntry, NULL);
      }
@@ -1914,7 +1913,7 @@ void searchEntry(GList *hosts) {
    move(LINES-1, offset+pos+1);
 
    refresh();
- } /* while((c = getch())) */
+ }
  
  attroff(uicolors[UI_COLOR_INPUT]);
 
