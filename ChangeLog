@@ -1,10 +1,11 @@
-apt-dater (0.6.4.1-ibh0) unstable; urgency=low
+apt-dater (0.7.0-ibh0) unstable; urgency=low
 
-  * Fix xmlreport compile error.
-  * Cut long package names and host lines.
+  * New auto refresh feature
+  * Improved the search function
+  * Improved the more info page
 
- -- Thomas Liske <liske@ibh.de>  Wed, 26 Nov 2008 08:50:39 +0100
-  
+ -- Andre Ellguth <ellguth@ibh.de>  Wed, 17 Dec 2008 16:23:25 +0100
+
 apt-dater (0.6.4-ibh0) unstable; urgency=low
 
   * Fixed sf bugs #2308347, #2308369, #2308370

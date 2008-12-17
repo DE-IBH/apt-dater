@@ -2,12 +2,12 @@
 # Process this file with autoconf to produce a configure script.
 
 PACKAGE=apt-dater
-VERSION=0.6.4.1
+VERSION=0.7.0
 
 AC_REVISION($Revision$)
 
 AC_PREREQ(2.61)
-AC_INIT(apt-dater, 0.6.4.1, apt-dater@ibh.de)
+AC_INIT(apt-dater, 0.7.0, apt-dater@ibh.de)
 AM_INIT_AUTOMAKE([apt-dater], VERSION)
 AC_CONFIG_SRCDIR([src/apt-dater.c])
 AC_CONFIG_HEADER([config.h])
