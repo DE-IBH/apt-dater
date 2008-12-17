@@ -64,6 +64,8 @@ typedef struct _cfgfile {
  gboolean use_screen;
  gboolean dump_screen;
  gboolean query_maintainer;
+ gboolean beep;
+ gboolean flash;
  gchar **colors;
 #ifdef FEAT_TCLFILTER
  gchar *filterexp;

@@ -1068,6 +1068,14 @@ void buildIntialDrawList(GList *hosts)
  }
 }
 
+void notifyUser() {
+ if(cfg->beep)
+    beep();
+
+ if(cfg->flash)
+    flash();
+}
+
 void doUI (GList *hosts)
 {
 #ifdef FEAT_TCLFILTER

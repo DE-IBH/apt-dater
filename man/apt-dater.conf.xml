@@ -259,6 +259,39 @@ and docbook-xsl in your Build-Depends control field.
       </varlistentry>
     </variablelist>
     </refsect2>
+
+    <refsect2>
+	<title>Section <symbol>[AutoRef]</symbol></title>
+
+    <variablelist>
+      <varlistentry>
+        <term><symbol>enabled</symbol>=<replaceable>true</replaceable></term>
+        <listitem>
+	  <para>Enabled the auto refresh feature if compiled in (see README.autoref).</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+    </refsect2>
+
+    <refsect2>
+	<title>Section <symbol>[Notify]</symbol></title>
+
+    <variablelist>
+      <varlistentry>
+        <term><symbol>bell</symbol>=<replaceable>true</replaceable></term>
+        <listitem>
+	  <para>Enabled user notification by terminal bell.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><symbol>flash</symbol>=<replaceable>true</replaceable></term>
+        <listitem>
+	  <para>Enabled user notification by terminal flashing.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+    </refsect2>
   </refsect1>
 
   <refsect1>

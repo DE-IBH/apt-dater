@@ -34,10 +34,10 @@ CmdRefresh=apt-dater-host refresh
 CmdUpgrade=apt-dater-host upgrade
 CmdInstall=apt-dater-host install %s
 
-# 'Cooperative Refresh' feature configuration
-[SmartRefresh]
+# 'Auto Refresh' feature configuration
+[AutoRef]
 # Refresh hosts if the are outdated.
-auto_refresh=true
+enabled=true
 
 [Appearance]
 # Colors      = (COMPONENT FG BG ';')*
@@ -54,3 +54,10 @@ Colors=menu brightgreen blue;status brightgreen blue;selector black red;
 #FilterExp=return [expr [string compare $lsb_distri \"Debian\"] == 0 && $lsb_rel < 4.0]
 #Load this TCL file on startup in the same context as the FilterExp.
 #FilterFile=/patch/to/file.tcl
+
+# Notify user by...
+[Notify]
+# terminal bell
+beep=true
+# screen flash
+flash=true

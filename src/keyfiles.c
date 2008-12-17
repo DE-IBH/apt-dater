@@ -266,12 +266,23 @@ CfgFile *loadConfig (char *filename)
 #endif
 
 #ifdef FEAT_AUTOREF
- lcfg->auto_refresh = g_key_file_get_boolean(keyfile, "SmartRefresh", "auto_refresh", &error);
+ lcfg->auto_refresh = g_key_file_get_boolean(keyfile, "AutoRef", "enabled", &error);
  if (error) {
    lcfg->auto_refresh = TRUE;
    g_clear_error(&error);
  }
 #endif
+
+ lcfg->beep = g_key_file_get_boolean(keyfile, "Notify", "beep", &error);
+ if (error) {
+   lcfg->beep = TRUE;
+   g_clear_error(&error);
+ }
+ lcfg->flash = g_key_file_get_boolean(keyfile, "Notify", "flash", &error);
+ if (error) {
+   lcfg->flash = TRUE;
+   g_clear_error(&error);
+ }
 
  g_clear_error(&error);
  g_key_file_free(keyfile);

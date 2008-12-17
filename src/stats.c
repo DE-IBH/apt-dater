@@ -391,6 +391,8 @@ gboolean refreshStats(GList *hosts)
 {
  GList *ho;
  gboolean r = TRUE;
+ static gboolean upd_pending = FALSE;
+ gboolean n_upd_pending = FALSE;
 
  ho = g_list_first(hosts);
 
@@ -406,6 +408,9 @@ gboolean refreshStats(GList *hosts)
    rebuilddl = TRUE;
   }
   else {
+   if(n->category == C_UPDATES_PENDING)
+    n_upd_pending = TRUE;
+
    if (n->category == C_SESSIONS)
     n->category = C_REFRESH_REQUIRED;
 
@@ -453,11 +458,15 @@ gboolean refreshStats(GList *hosts)
  applyFilter(hosts);
 #endif
 
+ if(n_upd_pending && !upd_pending)
+  notifyUser();
+ upd_pending = n_upd_pending;
+
 #ifdef FEAT_AUTOREF
  if(cfg->auto_refresh &&
     (num_in_refresh == 0)) {
   if(do_autoref) {
-   drawStatus ("Smart refresh triggered...", FALSE);
+   drawStatus ("Auto refresh triggered...", FALSE);
    autoref_trigger_auto();
    do_autoref = FALSE;
   }
