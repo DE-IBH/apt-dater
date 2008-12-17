@@ -2537,6 +2537,10 @@ gboolean ctrlUI (GList *hosts)
       pminrow=0;
      else if(wic == KEY_END)
       pminrow=l-LINES+4;
+     else if(wic == KEY_NPAGE)
+      pminrow = pminrow+LINES-3 > (l-LINES+4) ? l-LINES+4 : pminrow+LINES-3;
+     else if(wic == KEY_PPAGE)
+      pminrow = pminrow-(LINES-3) < 0 ? 0 : pminrow-(LINES-3);
 #ifdef KEY_RESIZE     
      else if(wic == KEY_RESIZE) {
       refscr = TRUE;
@@ -2738,6 +2742,10 @@ gboolean ctrlUI (GList *hosts)
       pminrow=0;
      else if(wic == KEY_END)
       pminrow=l-LINES+4;
+     else if(wic == KEY_NPAGE)
+      pminrow = pminrow+LINES-3 > (l-LINES+4) ? l-LINES+4 : pminrow+LINES-3;
+     else if(wic == KEY_PPAGE)
+      pminrow = pminrow-(LINES-3) < 0 ? 0 : pminrow-(LINES-3);
 #ifdef KEY_RESIZE     
      else if(wic == KEY_RESIZE) {
       refscr = TRUE;
