@@ -1747,6 +1747,7 @@ void searchEntry(GList *hosts) {
     if (strlen(s)>0) {
      s[--pos] = 0;
      if(strlen(s)>0) expandAllNodes(hosts);
+     selmatch = NULL;
     }
      else
        beep();
@@ -1772,6 +1773,7 @@ void searchEntry(GList *hosts) {
     expandAllNodes(hosts);
     s[pos++] = c;
     s[pos] = 0;
+    selmatch = NULL;
    }
 
    /* find completion matches */
@@ -1797,9 +1799,11 @@ void searchEntry(GList *hosts) {
 
    /* check if selected match is still valid... or get new one */
    if(matches) {
-     if(!selmatch ||
-	!g_list_find(matches, selmatch->data))
-       selmatch = g_list_first(matches);
+     if(selmatch) {
+       if(!g_list_find(matches, selmatch->data))
+         selmatch = g_list_first(matches);
+     } else selmatch = g_list_first(matches);
+    
 
      if(selmatch) {
       attron(uicolors[UI_COLOR_INPUT]);

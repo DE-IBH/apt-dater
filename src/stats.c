@@ -225,7 +225,7 @@ gboolean getUpdatesFromStat(HostNode *n)
 
 #ifdef FEAT_AUTOREF
  struct stat sbuf;
- if(!g_stat(statsfile, &sbuf))
+ if(!stat(statsfile, &sbuf))
   n->last_upd = sbuf.st_mtime;
 #endif
 
@@ -427,7 +427,7 @@ gboolean refreshStats(GList *hosts)
     else if (rsetlck == 0) {
      if(n->status & HOST_STATUS_LOCKED) {
       refreshStatsOfNode(n);
-      //      n->status ^= HOST_STATUS_LOCKED;
+      /* n->status ^= HOST_STATUS_LOCKED; */
      } else {
       n->category = C_REFRESH;
       rebuilddl = TRUE;
