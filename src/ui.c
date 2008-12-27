@@ -67,7 +67,7 @@ static WINDOW *win_dump = NULL;
 static gboolean dump_screen = FALSE;
 gchar  maintainer[48];
 #ifdef FEAT_TCLFILTER
-gchar  filterexp[0x1ff];
+gchar  filterexp[BUF_MAX_LEN];
 #endif
 gint   sc_mask = 0;
 static GCompletion* hstCompl = NULL;
@@ -639,7 +639,7 @@ void drawCategoryEntry (DrawNode *n)
  attroff(n->attrs);
 
  if(n->selected == TRUE) {
-  sprintf(statusln, "%d %s in status \"%s\"", n->elements, n->elements > 1 || n->elements == 0 ? "Hosts" : "Host", (char *) n->p);
+  snprintf(statusln, BUF_MAX_LEN, "%d %s in status \"%s\"", n->elements, n->elements > 1 || n->elements == 0 ? "Hosts" : "Host", (char *) n->p);
 
   drawMenu(VK_REFRESH);
   drawStatus(statusln, TRUE);
@@ -659,7 +659,7 @@ void drawGroupEntry (DrawNode *n)
  attroff(n->attrs);
 
  if(n->selected == TRUE) {
-  sprintf(statusln, "%d %s is in status \"%s\"", n->elements, n->elements > 1 || n->elements == 0 ? "Hosts" : "Host", incategory);
+  snprintf(statusln, BUF_MAX_LEN, "%d %s is in status \"%s\"", n->elements, n->elements > 1 || n->elements == 0 ? "Hosts" : "Host", incategory);
 
   drawMenu(VK_REFRESH);
   drawStatus(statusln, TRUE);
@@ -731,7 +731,7 @@ void drawHostEntry (DrawNode *n)
   switch(((HostNode *) n->p)->category) {
   case C_UPDATES_PENDING:
    mask = VK_CONNECT | VK_UPGRADE | VK_REFRESH | VK_INSTALL;
-   sprintf(statusln, "%d %s required", ((HostNode *) n->p)->nupdates, ((HostNode *) n->p)->nupdates > 1 || ((HostNode *) n->p)->nupdates == 0 ? "Updates" : "Update");
+   snprintf(statusln, "%d %s required", ((HostNode *) n->p)->nupdates, ((HostNode *) n->p)->nupdates > 1 || ((HostNode *) n->p)->nupdates == 0 ? "Updates" : "Update");
    break;
   case C_UP_TO_DATE:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
@@ -785,9 +785,9 @@ void drawPackageEntry (DrawNode *n)
  attroff(n->attrs);
  if(n->selected == TRUE) {
   if(((PkgNode *) n->p)->data)
-    sprintf(statusln, "%s -> %s", ((PkgNode *) n->p)->version, ((PkgNode *) n->p)->data);
+    snprintf(statusln, BUF_MAX_LEN, "%s -> %s", ((PkgNode *) n->p)->version, ((PkgNode *) n->p)->data);
   else
-    sprintf(statusln, "%s", ((PkgNode *) n->p)->version);
+    snprintf(statusln, BUF_MAX_LEN, "%s", ((PkgNode *) n->p)->version);
   drawMenu(VK_INSTALL);
   drawStatus(statusln, TRUE);
  }
@@ -1081,7 +1081,7 @@ void doUI (GList *hosts)
 #ifdef FEAT_TCLFILTER
  /* Prepare TCL interpreter */
  if(cfg->filterexp)
-  strcpy(filterexp, cfg->filterexp);
+  strncpy(filterexp, cfg->filterexp, BUF_MAX_LEN);
  else
   filterexp[0] = 0;
 
