@@ -266,7 +266,7 @@ gboolean getUpdatesFromStat(HostNode *n)
 
  int linesok = 0;
  while(fgets(line, STATS_MAX_LINE_LEN, fp)) {
-  line[strlen(line) - 1] = 0;
+  line[sizeof(line) - 1] = 0;
 
   if (sscanf((gchar *) line, "KERNELINFO: %d %255s", &status, buf)) {
    n->kernelrel = g_strdup(buf);
