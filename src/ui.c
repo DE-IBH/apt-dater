@@ -731,7 +731,7 @@ void drawHostEntry (DrawNode *n)
   switch(((HostNode *) n->p)->category) {
   case C_UPDATES_PENDING:
    mask = VK_CONNECT | VK_UPGRADE | VK_REFRESH | VK_INSTALL;
-   snprintf(statusln, "%d %s required", ((HostNode *) n->p)->nupdates, ((HostNode *) n->p)->nupdates > 1 || ((HostNode *) n->p)->nupdates == 0 ? "Updates" : "Update");
+   snprintf(statusln, sizeof(statusln), "%d %s required", ((HostNode *) n->p)->nupdates, ((HostNode *) n->p)->nupdates > 1 || ((HostNode *) n->p)->nupdates == 0 ? "Updates" : "Update");
    break;
   case C_UP_TO_DATE:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
