@@ -105,30 +105,33 @@ int chkForInitialConfig(const gchar *cfgdir, const gchar *cfgfile)
    /* Create a example hosts.conf */
    pathtofile = g_strdup_printf("%s/hosts.conf", cfgdir);
    if(!pathtofile) g_error("Out of memory\n");
-   fp = fopen(pathtofile, "w");
+   fp = fopen(pathtofile, "wx");
    g_message("Creating file %s", pathtofile);
    g_free(pathtofile);
-   if(!fp) return(1);
-   fwrite(hosts_conf, sizeof(hosts_conf)-1, 1, fp);
-   fclose(fp);
+   if(fp) {
+    fwrite(hosts_conf, sizeof(hosts_conf)-1, 1, fp);
+    fclose(fp);
+   }
 
    /* Create a the example screenrc */
    pathtofile = g_strdup_printf("%s/screenrc", cfgdir);
    if(!pathtofile) g_error("Out of memory\n");
-   fp = fopen(pathtofile, "w");
+   fp = fopen(pathtofile, "wx");
    g_message("Creating file %s", pathtofile);
    g_free(pathtofile);
+   if(fp) {
+    fwrite(screenrc, sizeof(screenrc)-1, 1, fp);
+    fclose(fp);
+   }
+
+   /* Create initial config file */
+   fp = fopen(cfgfile, "wx");
    if(!fp) return(1);
-   fwrite(screenrc, sizeof(screenrc)-1, 1, fp);
+  
+   g_message("Creating file %s", cfgfile);
+   fwrite(apt_dater_conf, sizeof(apt_dater_conf)-1, 1, fp);
    fclose(fp);
   }
-
-  fp = fopen(cfgfile, "w");
-  if(!fp) return(1);
-  
-  g_message("Creating file %s", cfgfile);
-  fwrite(apt_dater_conf, sizeof(apt_dater_conf)-1, 1, fp);
-  fclose(fp);
  }
 
  return(0);
@@ -332,13 +335,13 @@ GList *loadHosts (char *filename)
 
    *hostname = *ssh_user = 0; ssh_port = 0;
 
-   if(sscanf(khosts[j], "%[a-zA-Z0-9_-.]@%[a-zA-Z0-9-.]:%d", ssh_user, hostname, &ssh_port) != 3) {
+   if(sscanf(khosts[j], "%255[a-zA-Z0-9_-.]@%255[a-zA-Z0-9-.]:%d", ssh_user, hostname, &ssh_port) != 3) {
     *hostname = *ssh_user = 0; ssh_port = 0;
-    if(sscanf(khosts[j], "%[a-zA-Z0-9-.]:%d", hostname, &ssh_port) != 2) {
+    if(sscanf(khosts[j], "%255[a-zA-Z0-9-.]:%d", hostname, &ssh_port) != 2) {
      *hostname = *ssh_user = 0; ssh_port = 0;
-     if(sscanf(khosts[j], "%[a-zA-Z0-9_-.]@%[a-zA-Z0-9-.]", ssh_user, hostname) != 2) {
+     if(sscanf(khosts[j], "%255[a-zA-Z0-9_-.]@%255[a-zA-Z0-9-.]", ssh_user, hostname) != 2) {
       *hostname = *ssh_user = 0; ssh_port = 0;
-      sscanf(khosts[j], "%s", hostname);
+      sscanf(khosts[j], "%255s", hostname);
      }
     }
    }
