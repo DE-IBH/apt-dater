@@ -22,3 +22,23 @@ $ cygrunsrv.exe -S sshd
 
 Finaly you have to create a symlink or script in /usr/local/bin
 which is named apt-dater-host and calls the apt-dater-host.cmd.
+
+
+Since apt-dater uses SSH public key authentification, apt-dater-host
+must be run as the SYSTEM user (SID S-1-5-18) to be able to search
+for updates.
+
+To be able to login via SSH as SYSTEM, edit /etc/passwd and add
+a home directory:
+
+SYSTEM:*:18:544:,S-1-5-18:/home/SYSTEM:
+
+Create the .ssh directory in the home directory:
+
+$ mkdir -p /home/SYSTEM/.ssh
+
+And add your public key to the 'authorized_keys' file in the .ssh
+directory.
+
+Remember: SYSTEM has all kinds of dangerous rights,
+sort of an uber-root account.
