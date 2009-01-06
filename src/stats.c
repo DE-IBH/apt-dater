@@ -210,10 +210,10 @@ gboolean getUpdatesFromStat(HostNode *n)
 {
  gchar *statsfile;
  char line[STATS_MAX_LINE_LEN];
- char buf[256];
+ char buf[256] = "\0";
  FILE  *fp;
  PkgNode *pkgnode = NULL;
- gint status, i;
+ gint status=0, i;
  gchar **argv = NULL;
 
  if(!n) return (FALSE);
@@ -270,6 +270,8 @@ gboolean getUpdatesFromStat(HostNode *n)
 
   if (strlen(line) > 0)
    line[strlen(line) - 1] = 0;
+  /* Remove carriage return from the MS Windows agents. */
+  if(line[strlen(line) - 1] == 0x0D) line[strlen(line) - 1] = 0;
 
   if (sscanf((gchar *) line, "KERNELINFO: %d %255s", &status, buf)) {
    n->kernelrel = g_strdup(buf);
