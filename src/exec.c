@@ -54,7 +54,7 @@ gboolean ssh_cmd_refresh(HostNode *n)
 
  if(!n) return (FALSE);
 
- cmd = g_strdup_printf("%s+-n+-o+BatchMode=yes+-o+ConnectTimeout=5+-q+-l+%s+-p+%d%s+%s+unset LANG && %s",
+ cmd = g_strdup_printf("%s+-n+-o+BatchMode=yes+-o+ConnectTimeout=5+-q+-l+%s+-p+%d%s+%s+%s",
 		       cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
 		       n->identity_file && strlen(n->identity_file) > 0 ? (identity_file = g_strconcat("+-i+", n->identity_file , NULL)) : "",
 		       n->hostname, cfg->cmd_refresh);
@@ -116,7 +116,7 @@ gboolean ssh_cmd_upgrade(HostNode *n, const gboolean detached)
 
  gchar *screen = screen_new(n, detached);
 
- cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d%s%s+%s+unset LANG ; export MAINTAINER='%s' ; %s", 
+ cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d%s%s+%s+export MAINTAINER='%s' ; %s", 
 			screen,
 			cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
 			cfg->ssh_optflags && strlen(cfg->ssh_optflags) > 0 ? (optflags = g_strconcat("+", cfg->ssh_optflags , NULL)) : "",
@@ -161,7 +161,7 @@ gboolean ssh_cmd_install(HostNode *n, const gchar *package, const gboolean detac
 
  gchar *screen = screen_new(n, detached);
 
- cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d%s%s+%s+unset LANG ; export MAINTAINER='%s' ; %s", 
+ cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d%s%s+%s+export MAINTAINER='%s' ; %s", 
 			screen,
 			cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
 			cfg->ssh_optflags && strlen(cfg->ssh_optflags) > 0 ? (optflags = g_strconcat("+", cfg->ssh_optflags , NULL)) : "",

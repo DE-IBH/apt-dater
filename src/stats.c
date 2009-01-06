@@ -351,7 +351,7 @@ gboolean getUpdatesFromStat(HostNode *n)
    g_strfreev(argv);
 
    linesok++;
-   continue;     
+   continue;
   }
 
   if (sscanf((gchar *) line, "VIRT: %255s", buf)) {
