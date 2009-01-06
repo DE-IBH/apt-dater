@@ -268,6 +268,9 @@ gboolean getUpdatesFromStat(HostNode *n)
  while(fgets(line, STATS_MAX_LINE_LEN, fp)) {
   line[sizeof(line) - 1] = 0;
 
+  if (strlen(line) > 0)
+   line[strlen(line) - 1] = 0;
+
   if (sscanf((gchar *) line, "KERNELINFO: %d %255s", &status, buf)) {
    n->kernelrel = g_strdup(buf);
    switch(status){
@@ -281,7 +284,7 @@ gboolean getUpdatesFromStat(HostNode *n)
    linesok++;
    continue;
   }
-  
+
   if(!strncmp("STATUS: ", line, 8)) {
     argv = g_strsplit(&line[8], "|", 0);
 
@@ -289,17 +292,17 @@ gboolean getUpdatesFromStat(HostNode *n)
 
     i=0;
     while(argv[i]) i++;
-    
+
     /* ignore invalid lines */
     if(i < 3) {
      g_strfreev(argv);
-     continue;     
+     continue;
     }
-    
+
     pkgnode = g_new0(PkgNode, 1);
     pkgnode->package = g_strdup(argv[0]);
     pkgnode->version = g_strdup(argv[1]);
-   
+
     if (strlen(argv[2]) > 3)
 	pkgnode->data = g_strdup(&argv[2][2]);
 
@@ -332,14 +335,14 @@ gboolean getUpdatesFromStat(HostNode *n)
    argv = g_strsplit(&line[8], "|", 0);
 
    if(!argv) continue;
-   
+
    i=0;
    while(argv[i]) i++;
-   
+
    /* ignore invalid lines */
    if(i < 3) {
     g_strfreev(argv);
-    continue;     
+    continue;
    }
 
    if(strlen(argv[0]) > 0) {
