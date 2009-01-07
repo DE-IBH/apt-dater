@@ -137,6 +137,7 @@ typedef struct _hostnode {
  gint      nextras;
  GList     *screens;
  gint      fdlock;
+ FILE      *fpstat;
  gchar     *lsb_distributor;
  gchar     *lsb_release;
  gchar     *lsb_codename;

@@ -7,7 +7,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008-2009 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -63,7 +63,7 @@ gboolean ssh_cmd_refresh(HostNode *n)
 
  argv = g_strsplit(cmd, "+", 0);
 
- removeStatsFile(n->hostname);
+ prepareStatsFile(n);
 
  r = g_spawn_async_with_pipes(g_getenv ("HOME"), /* working_directory */
 			      argv,

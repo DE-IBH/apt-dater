@@ -7,7 +7,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008-2009 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -88,26 +88,27 @@ gchar *getStatsFileName(const gchar *hostname)
 }
 
 
-gboolean removeStatsFile(const gchar *hostname)
+gboolean prepareStatsFile(HostNode *n)
 {
- gboolean r = FALSE;
- gchar *statsfile;
+ gchar *statsfile = getStatsFileName(n->hostname);
 
- if(hostname) {
-  statsfile = getStatsFileName(hostname);
+ g_unlink(statsfile);
 
-  if(!g_unlink(statsfile)) r = TRUE;
+ n->fpstat = fopen(statsfile, "wx");
 
-  g_free(statsfile);  
- }
+ g_free(statsfile);
 
- return(r);
-
+ return n->fpstat != NULL;
 }
 
 
 void refreshStatsOfNode(gpointer n)
 {
+ if( ((HostNode *)n)->fpstat ) {
+    fclose(((HostNode *)n)->fpstat);
+    ((HostNode *)n)->fpstat = NULL;
+ }
+
  getUpdatesFromStat(((HostNode *) n));
 
  unsetLockForHost((HostNode *) n);
@@ -119,26 +120,21 @@ void refreshStatsOfNode(gpointer n)
 gboolean setStatsFileFromIOC(GIOChannel *ioc, GIOCondition condition,
 			     gpointer n)
 {
- gchar *statsfile = NULL;
  gchar *buf = NULL;
  GError *error = NULL;
  gsize bytes;
  gboolean r = TRUE;
- FILE *fp = NULL;
  GIOStatus iostatus =  G_IO_STATUS_NORMAL;
 
  if(!n) return(FALSE);
-
- statsfile = getStatsFileName(((HostNode *) n)->hostname);
 
  if (condition & (G_IO_HUP | G_IO_PRI | G_IO_IN))
   {
    buf = (gchar *) g_malloc0 (g_io_channel_get_buffer_size (ioc) + 1);
 
    r = FALSE;
-   fp = fopen(statsfile, "a");
 
-   while(iostatus == G_IO_STATUS_NORMAL && fp) {
+   while(iostatus == G_IO_STATUS_NORMAL && ((HostNode *) n)->fpstat) {
     iostatus = g_io_channel_read_chars (ioc, buf,
 					g_io_channel_get_buffer_size (ioc), 
 					&bytes, NULL);
@@ -146,13 +142,13 @@ gboolean setStatsFileFromIOC(GIOChannel *ioc, GIOCondition condition,
     if(iostatus == G_IO_STATUS_ERROR || iostatus == G_IO_STATUS_AGAIN)
      break;
 
-    fwrite(buf, sizeof(gchar), bytes, fp);
-    fflush(fp);
+    fwrite(buf, sizeof(gchar), bytes, ((HostNode *) n)->fpstat);
 
     r = TRUE;
    }
 
-   if(r == TRUE) fclose(fp);
+   if(r == TRUE)
+    fflush(((HostNode *) n)->fpstat);
 
    g_free(buf);
   }
@@ -168,8 +164,6 @@ gboolean setStatsFileFromIOC(GIOChannel *ioc, GIOCondition condition,
 
    r = FALSE;
   }
-
- g_free(statsfile);
 
  return(r);
 }

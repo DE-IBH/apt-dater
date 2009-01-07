@@ -2494,7 +2494,7 @@ gboolean ctrlUI (GList *hosts)
 
   case SC_KEY_HELP:
    {
-    WINDOW *wp = newpad(BUF_MAX_LEN+SC_MAX, COLS);
+    WINDOW *wp = newpad(32+SC_MAX, COLS);
     gint l = 0;
     int  wic = 0, pminrow = 0, kcquit = 'q';
     
@@ -2553,7 +2553,7 @@ gboolean ctrlUI (GList *hosts)
 #endif
      prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
     }
-   
+
     delwin(wp);
     refscr = TRUE;
    }
@@ -2561,11 +2561,12 @@ gboolean ctrlUI (GList *hosts)
 
   case SC_KEY_MORE:
    if (inhost) {
-    WINDOW *wp = newpad(BUF_MAX_LEN+SC_MAX, COLS);
+    WINDOW *wp = newpad(32 + inhost->nupdates + inhost->nholds + inhost->nextras +
+			g_list_length(inhost->packages), COLS);
     char buf[0x1ff];
     gint l = 0;
     int  wic = 0, pminrow = 0, kcquit = 'q';
-    
+
     keypad(wp, TRUE);
 
     wattron(wp, A_BOLD);
@@ -2707,8 +2708,7 @@ gboolean ctrlUI (GList *hosts)
 	}
     }
 
-#if 0
-    if (g_list_length(inhost->packages) > inhost->nupdates + inhost->nholds + inhost->nextras) {
+    if (g_list_length(inhost->packages)) {
 	l++;
 
 	wattron(wp, A_BOLD);
@@ -2719,17 +2719,12 @@ gboolean ctrlUI (GList *hosts)
 	while(p) {
 	    PkgNode *pn = p->data;
 
-	    if ((pn->flag & HOST_STATUS_PKGUPDATE == 0) &&
-		(pn->flag & HOST_STATUS_PKGKEPTBACK == 0) &&
-		(pn->flag & HOST_STATUS_PKGEXTRA == 0)) {*/
-		mvwaddnstr(wp, l  ,  2, pn->package , MIN(33, COLS -  2));
-		mvwaddnstr(wp, l++, 36, pn->version , COLS - 36);
-            }
+	    mvwaddnstr(wp, l  ,  2, pn->package , MIN(33, COLS -  2));
+	    mvwaddnstr(wp, l++, 36, pn->version , COLS - 36);
 
 	    p = g_list_next(p);
 	}
     }
-#endif
 
 
     for(i = 0; shortCuts[i].key; i++)

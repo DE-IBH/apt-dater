@@ -1,34 +1,35 @@
-apt-dater (0.7.0-ibh0) unstable; urgency=low
+apt-dater (0.7.0-pre) unstable; urgency=low
 
   * New auto refresh feature
-  * Improved the search function
-  * Improved the more info page
+  * Improved search function
+  * Improved more info page
+  * Basic WUA client
 
  -- Andre Ellguth <ellguth@ibh.de>  Wed, 17 Dec 2008 16:23:25 +0100
 
-apt-dater (0.6.4-ibh0) unstable; urgency=low
+apt-dater (0.6.4) unstable; urgency=low
 
   * Fixed sf bugs #2308347, #2308369, #2308370
   * Add host details window.
 
  -- Andre Ellguth <ellguth@ibh.de>  Tue, 25 Nov 2008 15:11:55 +0100
-  
-apt-dater (0.6.3-ibh0) unstable; urgency=low
+
+apt-dater (0.6.3) unstable; urgency=low
 
   * The getnLine() function can now handle a input of 4096 characters.
   * Added support for ssh identity file per group.
   * Add new VIRT line to apt-dater-host protocol.
-  
+
  -- Andre Ellguth <ellguth@ibh.de>  Mon, 17 Nov 2008 15:59:30 +0100
 
-apt-dater (0.6.2-ibh0) unstable; urgency=low
+apt-dater (0.6.2) unstable; urgency=low
 
   * Fixed 2 bugs in the dump screen function.
   * Add RPM only apt-dater-host script.
-  
+
  -- Andre Ellguth <ellguth@ibh.de>  Fri, 08 Aug 2008 15:19:47 +0200
 
-apt-dater (0.6.1-ibh0) unstable; urgency=low
+apt-dater (0.6.1) unstable; urgency=low
 
   * Fixed some bugs in the search function
   * Changes in the XML report: 
@@ -38,7 +39,7 @@ apt-dater (0.6.1-ibh0) unstable; urgency=low
   
  -- Andre Ellguth <ellguth@ibh.de>  Tue, 05 Aug 2008 11:14:42 +0200
 
-apt-dater (0.6.0-ibh0) unstable; urgency=low
+apt-dater (0.6.0) unstable; urgency=low
 
   * New feature: TCL host filter function (README.tclfilter)
   * New feature: XML report function (apt-dater -r)
@@ -46,7 +47,7 @@ apt-dater (0.6.0-ibh0) unstable; urgency=low
   
  -- Andre Ellguth <ellguth@ibh.de>  Tue, 29 Jul 2008 16:38:10 +0200
 
-apt-dater (0.5.8-ibh0) unstable; urgency=medium
+apt-dater (0.5.8) unstable; urgency=medium
 
   * Terminal resize handler works now correctly.
   * Added the scrolling function to the help page.
@@ -61,33 +62,33 @@ apt-dater (0.5.7-ibh1) unstable; urgency=medium
 
  -- Thomas Liske <liske@ibh.de>  Mon, 21 Jul 2008 19:31:06 +0200
 
-apt-dater (0.5.7-ibh0) unstable; urgency=low
+apt-dater (0.5.7) unstable; urgency=low
 
   * Fixed some bugs in the status file detection.
 
  -- Andre Ellguth <ellguth@ibh.de>  Mon, 21 Jul 2008 16:49:40 +0200
 
-apt-dater (0.5.6-ibh0) unstable; urgency=low
+apt-dater (0.5.6) unstable; urgency=low
 
   * Fixed a bug in the lock function.
 
  -- Andre Ellguth <ellguth@ibh.de>  Thu, 17 Jul 2008 15:24:05 +0200
 
-apt-dater (0.5.5-ibh1) unstable; urgency=low
+apt-dater (0.5.5.1) unstable; urgency=low
 
   * Added lsb-release as debian package dependency
   * Check if the LSBREL status information is empty 
 
  -- Andre Ellguth <ellguth@ibh.de>  Wed, 16 Jul 2008 16:58:32 +0200
 
-apt-dater (0.5.5-ibh0) unstable; urgency=low
+apt-dater (0.5.5) unstable; urgency=low
 
   * Added support for rug, yum based distributions.
   * New additional informations (lsb_release, kernel release).
 
  -- Andre Ellguth <ellguth@ibh.de>  Wed, 16 Jul 2008 16:58:32 +0200
 
-apt-dater (0.5.4-ibh0) unstable; urgency=low
+apt-dater (0.5.4) unstable; urgency=low
 
   * New upstream version
 
@@ -100,27 +101,27 @@ apt-dater (0.5.3-ibh1) unstable; urgency=low
 
  -- Thomas Liske <liske@ibh.de>  Thu, 10 Jul 2008 10:48:27 +0200
 
-apt-dater (0.5.3-ibh0) unstable; urgency=low
+apt-dater (0.5.3) unstable; urgency=low
 
   * added generic apt/aptitude interface in apt-dater-host
     (still needed some work to support non-dpkg-based systems)
 
  -- Thomas Liske <liske@ibh.de>  Wed, 09 Jul 2008 09:37:42 +0200
 
-apt-dater (0.5.2-ibh0) unstable; urgency=low
+apt-dater (0.5.2) unstable; urgency=low
 
   * Added apt-dater.conf manpage.
   * Fixed some locking issues.
 
  -- Thomas Liske <liske@ibh.de>  Tue, 08 Jul 2008 09:38:32 +0200
 
-apt-dater (0.5.1-ibh0) unstable; urgency=low
+apt-dater (0.5.1) unstable; urgency=low
 
   * Documentation fixes.
 
  -- Thomas Liske <liske@ibh.de>  Fri, 04 Jul 2008 14:50:34 +0200
 
-apt-dater (0.5.0-ibh0) unstable; urgency=low
+apt-dater (0.5.0) unstable; urgency=low
 
   * Initial Release.
 

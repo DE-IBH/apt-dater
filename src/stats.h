@@ -41,7 +41,7 @@ gboolean refreshStats(GList *);
 gboolean setStatsFileFromIOC(GIOChannel *, GIOCondition, gpointer);
 gchar *getStatsFileName(const gchar *);
 gchar *getStatsFile(const gchar *);
-gboolean removeStatsFile(const gchar *);
+gboolean prepareStatsFile(HostNode *n);
 gboolean getUpdatesFromStat(HostNode *);
 void refreshStatsOfNode(gpointer);
 
