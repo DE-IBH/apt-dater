@@ -235,7 +235,10 @@ int getnLine(WINDOW *win, gchar *str, gint n, gboolean usews)
  if(!modstr) return(0);
 
  wp = newpad(1, n);
- if(!wp) return(0);
+ if(!wp) {
+  g_free(modstr);
+  return(0);
+ }
 
  enableInput();
  keypad(wp, TRUE);
