@@ -868,6 +868,8 @@ void detectPos()
 gchar *getStrFromDrawNode (DrawNode *n)
 {
  gchar *ret = NULL;
+ static gchar h[BUF_MAX_LEN];
+ struct tm *tm_mtime;
 
  switch(n->type) {
  case CATEGORY:
@@ -881,6 +883,17 @@ gchar *getStrFromDrawNode (DrawNode *n)
   break;
  case PKG:
   ret = (gchar * ) ((PkgNode *) n->p)->package;
+  break;
+ case SESSION:
+  snprintf(h, sizeof(h), "%5d: ", ((SessNode *) n->p)->pid);
+  
+  tm_mtime = localtime(&((SessNode *) n->p)->st.st_mtime);
+  strftime(&h[strlen(h)], sizeof(h)-strlen(h), "%D %H:%M ", tm_mtime);
+  
+  snprintf(&h[strlen(h)], sizeof(h)-strlen(h), "(%s)",
+	   (screen_is_attached((SessNode *) n->p) ? "Attached" : "Detached"));  
+
+  ret = h;
   break;
  default:
   break;
