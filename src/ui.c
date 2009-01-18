@@ -711,8 +711,17 @@ void drawHostEntry (DrawNode *n)
     attron(A_UNDERLINE);
 
  if(((HostNode *) n->p)->lsb_distributor) {
-  hostentry = g_strdup_printf("%s (%s %s %s; %s)", 
+  if(((HostNode *) n->p)->ssh_port == 22)
+   hostentry = g_strdup_printf("%s (%s %s %s; %s)", 
 			      ((HostNode *) n->p)->hostname,
+			      ((HostNode *) n->p)->lsb_distributor, 
+			      ((HostNode *) n->p)->lsb_release,
+			      ((HostNode *) n->p)->lsb_codename,
+			      ((HostNode *) n->p)->kernelrel);
+  else
+   hostentry = g_strdup_printf("%s:%d (%s %s %s; %s)", 
+			      ((HostNode *) n->p)->hostname,
+			      ((HostNode *) n->p)->ssh_port,
 			      ((HostNode *) n->p)->lsb_distributor, 
 			      ((HostNode *) n->p)->lsb_release,
 			      ((HostNode *) n->p)->lsb_codename,
@@ -721,7 +730,15 @@ void drawHostEntry (DrawNode *n)
   addnstr((char *) hostentry, COLS - 11);
   g_free(hostentry);
  } else {
-  addnstr((char *) ((HostNode *) n->p)->hostname, COLS - 11);
+  if(((HostNode *) n->p)->ssh_port == cfg->ssh_defport)
+   addnstr((char *) ((HostNode *) n->p)->hostname, COLS - 11);
+  else {
+   hostentry = g_strdup_printf("%s:%d",
+			      ((HostNode *) n->p)->hostname,
+			      ((HostNode *) n->p)->ssh_port);
+   addnstr((char *) hostentry, COLS - 11);
+   g_free(hostentry);
+  }
  }
 
  if(((HostNode *) n->p)->forbid & HOST_FORBID_MASK)
