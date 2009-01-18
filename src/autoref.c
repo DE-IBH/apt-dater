@@ -288,6 +288,6 @@ static void trigger_distri(gpointer key, gpointer value, gpointer user_data) {
 * host remains in IN_REFRESH state.
 **/
 void autoref_trigger_auto() {
-    g_hash_table_foreach(ht_distris, trigger_distri, NULL);
+    if (ht_distris) g_hash_table_foreach(ht_distris, trigger_distri, NULL);
 }
 #endif
