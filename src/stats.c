@@ -38,59 +38,28 @@
 # include "config.h"
 #endif
 
-gchar *getStatsFile(const gchar *hostname)
+gchar *getStatsFile(const HostNode *n)
 {
- GDir *dir;
- GError *error = NULL;
- const gchar *entry;
- GFileTest test;
- gchar *compare;
- gchar *statsfile = NULL;
- 
- if(!(dir = g_dir_open(cfg->statsdir, 0, &error))) {
-  g_error ("%s: %s", cfg->statsdir, error->message);
-  return (NULL);
+ gchar *statsfile = getStatsFileName(n);
+
+ if(g_file_test(statsfile, G_FILE_TEST_IS_REGULAR | G_FILE_TEST_EXISTS) == FALSE) {
+   g_free(statsfile);
+   statsfile = NULL;
  }
- g_clear_error(&error);
-
- while(((entry = g_dir_read_name(dir)))) {
-  compare = g_strdup_printf("%s.stat", hostname);
-  if(!g_strcasecmp(entry, compare)) {
-   statsfile = g_strdup_printf("%s/%s", cfg->statsdir, entry);
-
-   test = G_FILE_TEST_IS_REGULAR | G_FILE_TEST_EXISTS;
-   if(g_file_test (statsfile, test) == FALSE) {
-    g_free(statsfile);
-    statsfile = NULL;
-   }
-   
-   g_free(compare);
-   break;
-  }
-  g_free(compare);
- }
-
- g_dir_close(dir);
 
  return(statsfile);
 }
 
 
-gchar *getStatsFileName(const gchar *hostname)
+gchar *getStatsFileName(const HostNode *n)
 {
- gchar *statsfile = NULL;
-
- if(hostname) {
-  statsfile = g_strdup_printf("%s/%s.stat", cfg->statsdir, hostname);
- }
-
- return(statsfile);
+ return g_strdup_printf("%s/%s:%d.stat", cfg->statsdir, n->hostname, n->ssh_port);
 }
 
 
 gboolean prepareStatsFile(HostNode *n)
 {
- gchar *statsfile = getStatsFileName(n->hostname);
+ gchar *statsfile = getStatsFileName(n);
 
  g_unlink(statsfile);
 
@@ -212,7 +181,7 @@ gboolean getUpdatesFromStat(HostNode *n)
 
  if(!n) return (FALSE);
 
- if(!(statsfile = getStatsFile(n->hostname))) {
+ if(!(statsfile = getStatsFile(n))) {
   n->category = C_NO_STATS;
   return (TRUE);
  }
@@ -488,7 +457,7 @@ void getOldestMtime(GList *hosts)
  while(ho) {
   n = (HostNode *) ho->data;
 
-  if((statsfile = getStatsFile(n->hostname)))
+  if((statsfile = getStatsFile(n)))
    {
     if(!stat(statsfile, &stat_p)) {
      if(difftime(stat_p.st_mtime, oldest_st_mtime) < 0)

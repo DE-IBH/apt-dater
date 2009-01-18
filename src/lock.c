@@ -37,12 +37,12 @@
 
 static GList *lockList = NULL;
 
-static gchar *getLockFile(const gchar *hostname)
+static gchar *getLockFile(const HostNode *n)
 {
  gchar *lockfile = NULL;
  gchar *statsfile = NULL;
  
- statsfile = getStatsFileName(hostname);
+ statsfile = getStatsFileName(n);
 
  lockfile = g_strdup_printf("%s.lck", statsfile);
  g_free(statsfile);
@@ -56,7 +56,7 @@ int setLockForHost(HostNode *n)
  int r;
  gchar *lockfile = NULL;
  
- if(!(lockfile = getLockFile(n->hostname))) {
+ if(!(lockfile = getLockFile(n))) {
   g_error("Can't get the name of the lock file!");
   return(EXIT_FAILURE);
  }
