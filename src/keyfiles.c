@@ -252,7 +252,7 @@ CfgFile *loadConfig (char *filename)
 
  lcfg->query_maintainer = g_key_file_get_integer(keyfile, "Screen", "QueryMaintainer", &error);
  if (error) {
-   lcfg->query_maintainer = 2;
+   lcfg->query_maintainer = 0;
    g_clear_error(&error);
  }
 
