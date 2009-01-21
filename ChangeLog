@@ -1,11 +1,12 @@
-apt-dater (0.7.0-pre) unstable; urgency=low
+apt-dater (0.7.0) unstable; urgency=low
 
   * New auto refresh feature
   * Improved search function
   * Improved more info page
   * Basic WUA client
+  * Removed memory leak
 
- -- Andre Ellguth <ellguth@ibh.de>  Wed, 17 Dec 2008 16:23:25 +0100
+ -- Andre Ellguth <ellguth@ibh.de>  Wed, 21 Jan 2009 15:17:18 +0100
 
 apt-dater (0.6.4) unstable; urgency=low
 
