@@ -70,7 +70,6 @@ gchar  maintainer[48];
 gchar  filterexp[BUF_MAX_LEN];
 #endif
 gint   sc_mask = 0;
-static GCompletion* hstCompl = NULL;
 static GCompletion* dlCompl = NULL;
 
 #ifdef FEAT_TCLFILTER
@@ -194,28 +193,6 @@ static gboolean freeDl(GList *dl)
  } else return FALSE;
 
  return TRUE;
-}
-
-
-static GList *copyDl(GList *dlsrc)
-{
- GList *dldst = NULL;
- GList *dl = NULL;
- DrawNode *dn = NULL;
-
- dl = g_list_first(dlsrc);
-
- while(dl) {
-  dn = g_new0(DrawNode, 1);
-  if(!dn) return NULL;
-
-  memcpy(dn, (DrawNode *) dl->data, sizeof(DrawNode));
-
-  dldst = g_list_append(dldst, dn);
-  dl = g_list_next(dl);
- }
- 
- return dldst;
 }
 
 
@@ -367,10 +344,6 @@ static void setMenuEntries(gint mask) {
 
     shortCuts[i].visible = mask & shortCuts[i].id;
   }
-}
-
-static gchar *compHost(gpointer p) {
-  return ((HostNode *)p)->hostname;
 }
 
 
@@ -1765,7 +1738,6 @@ void searchEntry(GList *hosts) {
  GList *selmatch = NULL;
  GList *dl = NULL;
  GList *dlkeep = NULL;
- int i;
 
  enableInput();
  noecho();
@@ -2290,7 +2262,7 @@ gboolean ctrlUI (GList *hosts)
    switch(n->type) {
    case HOST:
     if(inhost->forbid & HOST_FORBID_UPGRADE)
-     return;
+     break;
 
     if(n->extended == TRUE) n->extended = FALSE;
     
