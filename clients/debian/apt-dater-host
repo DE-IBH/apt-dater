@@ -243,7 +243,7 @@ sub do_kernel() {
     my $vers = $1;
 
     my $reboot = 0;
-    open(HDPKG, "dpkg-query -W -f='\${Version} \${Status;20} \${Maintainer}\n' 'linux-image*' | grep 'install ok installed Debian Kernel Team'|") or die "Could not fork: $!\n";
+    open(HDPKG, "dpkg-query -W -f='\${Version} \${Status;20} \${Maintainer} \${Provides}\n' 'linux-image*'|grep 'install ok installed Debian Kernel Team'|grep linux-image|") or die "Could not fork: $!\n";
     while(<HDPKG>) {
 	next unless (/^(\S+)\s/);
 	
