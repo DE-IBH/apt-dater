@@ -33,7 +33,7 @@ Management server:
   Debian hosts.
 
   Generate a SSH keypair:
-    ssh-keygen -t TYPE
+    ssh-keygen [-t TYPE]
 
   Distribute the public key(s) e.g.:
-    ssh-copy-id .ssh/your-public-key managed-host
+    ssh-copy-id -i .ssh/your-public-key managed-host
