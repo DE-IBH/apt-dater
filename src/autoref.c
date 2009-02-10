@@ -236,7 +236,7 @@ static void check_refresh(gpointer data, gpointer user_data) {
     int *newest = (int *)user_data;
 
     if((node->last_upd < *newest) &&
-       (node->forbid & HOST_FORBID_REFRESH == 0) &&
+       ((node->forbid & HOST_FORBID_REFRESH) == 0) &&
        (g_list_find(refresh_nodes, node) == NULL))
 	refresh_nodes = g_list_prepend(refresh_nodes, node);
 }
