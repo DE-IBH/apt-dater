@@ -191,7 +191,11 @@ sub do_status() {
 	    
 	    if ($status{$1} eq 'i') {
 		my $p = $cache->{$1};
-		if ($p) {
+
+		unless ($5 eq 'installed') {
+		    $status{$1} = "b=$5";
+		}
+		elsif ($p) {
 		    if (my $available = $p->{VersionList}) {
 			my $extra = 1;
 			for my $v (@$available) {
