@@ -14,9 +14,9 @@ Non-user interactive sessions should start with the protocol version:
 
     ADPROTO: ${ProtoVersion}
 
-The current protocol version is 0.1. Example:
+The current protocol version is 0.3. Example:
 
-    ADPROTO: 0.1
+    ADPROTO: 0.3
 
 
 Calling syntax
@@ -47,6 +47,51 @@ Example for Debian Etch:
 
     LSBREL: Debian|4.0|etch
 
+
+There sould be an VIRTualization line of the format:
+
+    VIRT: ${Name}
+
+This will only work if the remote host has the imvirt script
+installed. Detected virtualizations:
+
+  Microsoft Corporation / Virtual Machine:
+    VIRT: Virtual Machine
+
+  VMware, Inc. / VMware Virtual Platform:
+    VIRT: VMware Virtual Platform
+
+  QEMU or KVM:
+    VIRT: QEMU
+
+  Xen:
+    VIRT: Xen
+
+  non detected:
+    VIRT: Physical
+
+  imvirt not installed:
+    VIRT: Unknown
+
+
+There might be a FORBID line of the format:
+
+    FORBID: ${Operations}
+
+This is a mask of forbidded apt-dater-host operations.
+An single operation is represented by the following values:
+
+    1:	refresh
+    2:	upgrade
+    4:	install
+
+These values are binary ORed. Default value is 0 if no
+there is no FORBID line (allows all operations).
+
+The apt-dater-host executable on the client will refused
+operations marked as forbidden.
+
+
 For each installed package there must be a status line:
 
     STATUS: ${Package}|${InstVersion}|${Status}...
@@ -57,6 +102,8 @@ For each installed package there must be a status line:
 	u=${NewVersion}	: update available
 	x		: extra (no version found in any repository, this
 			  might be an obsoleted package)
+	b=${AddInfo}	: package is installed but broken
+			  (i.e. not configured)
 
 Example for an installed package:
 
@@ -108,8 +155,9 @@ Example
 The following lines show an example output of the 'status' command for a
 Debian Etch installation (the 'STATUS:' lines are truncated):
 
-ADPROTO: 0.1
+ADPROTO: 0.3
 LSBREL: Debian|4.0|etch
+VIRT: Physical
 STATUS: groff-base|1.18.1.1-12|i
 STATUS: libgnome2-0|2.16.0-2|i
 STATUS: m4|1.4.8-2|i
