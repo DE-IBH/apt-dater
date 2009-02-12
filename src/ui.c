@@ -730,9 +730,9 @@ void drawHostEntry (DrawNode *n)
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
    sprintf(statusln, "No update required");
    break;
-  case C_NO_STATS:
+  case C_BROKEN_PKGS:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
-   sprintf(statusln, "Statusfile is missing");
+   sprintf(statusln, "Broken package(s)");
    break;
   case C_REFRESH_REQUIRED:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
@@ -1062,7 +1062,7 @@ void buildIntialDrawList(GList *hosts)
   drawnode->elements = getHostCatCnt(hosts, i);
   drawnode->parent = NULL;
   if((i == (Category) C_UPDATES_PENDING || 
-      i == (Category) C_NO_STATS ||
+      i == (Category) C_BROKEN_PKGS ||
       i == (Category) C_SESSIONS ) && drawnode->elements > 0)
    drawnode->attrs = A_BOLD;
   else

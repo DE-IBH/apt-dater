@@ -91,29 +91,30 @@ typedef struct _session {
 typedef enum {
  C_UPDATES_PENDING = 0,
  C_UP_TO_DATE = 1,
- C_NO_STATS = 2,
+ C_BROKEN_PKGS = 2,
  C_REFRESH_REQUIRED = 3,
  C_REFRESH = 4,
  C_SESSIONS = 5,
 #ifdef FEAT_TCLFILTER
  C_FILTERED = 6,
- C_UNKNOW = 7,
+ C_UNKNOWN = 7,
 #else
- C_UNKNOW = 6,
+ C_UNKNOWN = 6,
 #endif
 } Category;
 
-#define HOST_STATUS_PKGUPDATE        1
-#define HOST_STATUS_PKGKEPTBACK      2
-#define HOST_STATUS_PKGEXTRA         4
-#define HOST_STATUS_KERNELNOTMATCH   8
-#define HOST_STATUS_KERNELSELFBUILD 16
-#define HOST_STATUS_VIRTUALIZED     32
-#define HOST_STATUS_LOCKED          64
+#define HOST_STATUS_PKGUPDATE         1
+#define HOST_STATUS_PKGKEPTBACK       2
+#define HOST_STATUS_PKGEXTRA          4
+#define HOST_STATUS_PKGBROKEN         8
+#define HOST_STATUS_KERNELNOTMATCH   16
+#define HOST_STATUS_KERNELSELFBUILD  32
+#define HOST_STATUS_VIRTUALIZED      64
+#define HOST_STATUS_LOCKED          128
 
-#define HOST_FORBID_REFRESH          1
-#define HOST_FORBID_UPGRADE          2
-#define HOST_FORBID_INSTALL          4
+#define HOST_FORBID_REFRESH           1
+#define HOST_FORBID_UPGRADE           2
+#define HOST_FORBID_INSTALL           4
 
 #define HOST_FORBID_MASK     (HOST_FORBID_REFRESH | HOST_FORBID_UPGRADE | HOST_FORBID_INSTALL)
 
@@ -135,6 +136,7 @@ typedef struct _hostnode {
  gint      nupdates;
  gint      nholds;
  gint      nextras;
+ gint      nbrokens;
  GList     *screens;
  gint      fdlock;
  FILE      *fpstat;

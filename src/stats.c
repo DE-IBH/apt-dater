@@ -182,7 +182,7 @@ gboolean getUpdatesFromStat(HostNode *n)
  if(!n) return (FALSE);
 
  if(!(statsfile = getStatsFile(n))) {
-  n->category = C_NO_STATS;
+  n->category = C_UNKNOWN;
   return (TRUE);
  }
 
@@ -193,7 +193,7 @@ gboolean getUpdatesFromStat(HostNode *n)
 #endif
 
  if(!(fp = (FILE *) g_fopen(statsfile, "r"))) {
-  n->category = C_UNKNOW;
+  n->category = C_UNKNOWN;
   g_free(statsfile);
   return (TRUE);
  }
@@ -202,6 +202,7 @@ gboolean getUpdatesFromStat(HostNode *n)
  n->nupdates = 0;
  n->nextras = 0;
  n->nholds = 0;
+ n->nbrokens = 0;
  n->forbid = 0;
 
  freePackages(n);
@@ -283,6 +284,11 @@ gboolean getUpdatesFromStat(HostNode *n)
 	    pkgnode->flag = HOST_STATUS_PKGEXTRA;
 	    n->nextras++;
 	    break;
+	case 'b':
+	    n->status = n->status | HOST_STATUS_PKGBROKEN;
+	    pkgnode->flag = HOST_STATUS_PKGBROKEN;
+	    n->nbrokens++;
+	    break;
     }
     g_strfreev(argv);
 
@@ -333,7 +339,9 @@ gboolean getUpdatesFromStat(HostNode *n)
  }
 
  if(linesok>5) {
-   if(n->status & HOST_STATUS_PKGUPDATE)
+   if (n->status & HOST_STATUS_PKGBROKEN)
+    n->category = C_BROKEN_PKGS;
+   else if(n->status & HOST_STATUS_PKGUPDATE)
     n->category = C_UPDATES_PENDING;
    else
     n->category = C_UP_TO_DATE;
@@ -342,7 +350,7 @@ gboolean getUpdatesFromStat(HostNode *n)
 #endif
  }
  else
-    n->category = C_UNKNOW;
+    n->category = C_UNKNOWN;
 
  fclose(fp);
  g_free(statsfile);
@@ -399,12 +407,12 @@ gboolean refreshStats(GList *hosts)
       freePackages(n);
 
       if(ssh_cmd_refresh(n) == FALSE) {
-       n->category = C_NO_STATS;
+       n->category = C_UNKNOWN;
       }
      }
     /* Something weird happend. */
     } else {
-     n->category = C_UNKNOW;
+     n->category = C_UNKNOWN;
      rebuilddl = TRUE;
     }
    }
