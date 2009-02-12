@@ -50,7 +50,7 @@ static GList *drawlist = NULL;
 gchar *drawCategories[] = {
     "Updates pending",
     "Up to date",
-    "Status file missing",
+    "Broken packages",
     "Refresh required",
     "In refresh",
     "Sessions",
@@ -99,6 +99,7 @@ typedef enum {
     TCLMK_HOLDS,
     TCLMK_INSTALLED,
     TCLMK_UPDATES,
+    TCLMK_BROKENS,
 } ETCLMAPKEYS;
 
 struct TCLMapping {
@@ -123,6 +124,7 @@ const static struct TCLMapping tclmap[] = {
     {TCLMK_HOLDS    , "holds"     , TCLM_IGNORE},
     {TCLMK_INSTALLED, "installed" , TCLM_IGNORE},
     {TCLMK_UPDATES  , "updates"   , TCLM_IGNORE},
+    {TCLMK_BROKENS  , "brokens"   , TCLM_IGNORE},
 
     {0              ,         NULL,           0},
 };
@@ -724,7 +726,7 @@ void drawHostEntry (DrawNode *n)
   switch(((HostNode *) n->p)->category) {
   case C_UPDATES_PENDING:
    mask = VK_CONNECT | VK_UPGRADE | VK_REFRESH | VK_INSTALL;
-   snprintf(statusln, sizeof(statusln), "%d %s required", ((HostNode *) n->p)->nupdates, ((HostNode *) n->p)->nupdates > 1 || ((HostNode *) n->p)->nupdates == 0 ? "Updates" : "Update");
+   snprintf(statusln, sizeof(statusln), "%d %s required", ((HostNode *) n->p)->nupdates, ((HostNode *) n->p)->nupdates > 1 || ((HostNode *) n->p)->nupdates == 1 ? "Updates" : "Update");
    break;
   case C_UP_TO_DATE:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
@@ -732,7 +734,7 @@ void drawHostEntry (DrawNode *n)
    break;
   case C_BROKEN_PKGS:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
-   sprintf(statusln, "Broken package(s)");
+   snprintf(statusln, sizeof(statusln), "%d Broken %s", ((HostNode *) n->p)->nbrokens, ((HostNode *) n->p)->nbrokens > 1 || ((HostNode *) n->p)->nupdates == 1 ? "packages" : "package");
    break;
   case C_REFRESH_REQUIRED:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
@@ -773,13 +775,21 @@ void drawPackageEntry (DrawNode *n)
    mvaddstr(n->scrpos, 7, "h:");
  else if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGEXTRA)
    mvaddstr(n->scrpos, 7, "x:");
+ else if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGBROKEN) {
+   attron(A_BOLD);
+   mvaddstr(n->scrpos, 7, "b:");
+ }
 
  mvaddnstr(n->scrpos, 10, (char *) ((PkgNode *) n->p)->package, COLS-10);
+ attroff(A_BOLD);
  attroff(n->attrs);
  if(n->selected == TRUE) {
-  if(((PkgNode *) n->p)->data)
-    snprintf(statusln, BUF_MAX_LEN, "%s -> %s", ((PkgNode *) n->p)->version, ((PkgNode *) n->p)->data);
-  else
+  if(((PkgNode *) n->p)->data) {
+    if (((PkgNode *) n->p)->flag & HOST_STATUS_PKGBROKEN)
+     snprintf(statusln, BUF_MAX_LEN, "%s (%s)", ((PkgNode *) n->p)->version, ((PkgNode *) n->p)->data);
+    else
+     snprintf(statusln, BUF_MAX_LEN, "%s -> %s", ((PkgNode *) n->p)->version, ((PkgNode *) n->p)->data);
+  } else
     snprintf(statusln, BUF_MAX_LEN, "%s", ((PkgNode *) n->p)->version);
   drawMenu(VK_INSTALL);
   drawStatus(statusln, TRUE);
@@ -1466,7 +1476,8 @@ void extDrawListHost(gint atpos, HostNode *n)
  while(upd) {
   if((((PkgNode *) upd->data)->flag & HOST_STATUS_PKGUPDATE) ||
      (((PkgNode *) upd->data)->flag & HOST_STATUS_PKGKEPTBACK) ||
-     (((PkgNode *) upd->data)->flag & HOST_STATUS_PKGEXTRA)) {
+     (((PkgNode *) upd->data)->flag & HOST_STATUS_PKGEXTRA) ||
+     (((PkgNode *) upd->data)->flag & HOST_STATUS_PKGBROKEN)) {
     drawnode = g_new0(DrawNode, 1);
     drawnode->type = PKG;
     drawnode->p = ((PkgNode *) upd->data);
@@ -2646,9 +2657,9 @@ gboolean ctrlUI (GList *hosts)
 	l++;
 
 	mvwaddnstr(wp, l  , 2, "Packages: ", COLS - 2);
-	snprintf(buf, sizeof(buf), "%d installed (%d update%s, %d hold back, %d extra)",
+	snprintf(buf, sizeof(buf), "%d installed (%d update%s, %d hold back, %d broken, %d extra)",
 		 g_list_length(inhost->packages), inhost->nupdates, inhost->nupdates == 1 ? "" : "s",
-		 inhost->nholds, inhost->nextras);
+		 inhost->nholds, inhost->nbrokens, inhost->nextras);
 	mvwaddnstr(wp, l++, 16, buf        , COLS - 16);
     }
 
@@ -2666,6 +2677,27 @@ gboolean ctrlUI (GList *hosts)
 	    if (pn->flag & HOST_STATUS_PKGUPDATE) {
 		mvwaddnstr(wp, l  ,  2, pn->package, MIN(33, COLS - 2));
 		snprintf(buf, sizeof(buf), "%s -> %s", pn->version, pn->data);
+		mvwaddnstr(wp, l++, 36, buf, COLS - 36);
+            }
+
+	    p = g_list_next(p);
+	}
+    }
+
+    if (inhost->nbrokens) {
+	l++;
+
+	wattron(wp, A_BOLD);
+	mvwaddnstr(wp, l++,  1, "BROKEN PACKAGES"  , COLS - 1);
+	wattroff(wp, A_BOLD);
+
+	GList *p = g_list_first(inhost->packages);
+	while(p) {
+	    PkgNode *pn = p->data;
+
+	    if (pn->flag & HOST_STATUS_PKGBROKEN) {
+		mvwaddnstr(wp, l  ,  2, pn->package , MIN(33, COLS -  2));
+		snprintf(buf, sizeof(buf), "%s (%s)", pn->version, pn->data);
 		mvwaddnstr(wp, l++, 36, buf, COLS - 36);
             }
 
