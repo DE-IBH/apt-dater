@@ -74,6 +74,102 @@ typedef struct _version {
 
 static GHashTable *ht_distris = NULL;
 
+/* ====================[ begin: stuff taken from libdpkg.a ]==================== */
+struct versionrevision {
+  unsigned long epoch;
+  const char *version;
+  const char *revision;
+};  
+
+static inline int cisdigit(int c) {
+  return (c>='0') && (c<='9');
+}
+
+static int cisalpha(int c) {
+  return ((c>='a') && (c<='z')) || ((c>='A') && (c<='Z'));
+}
+
+/* assume ascii; warning: evaluates x multiple times! */
+#define order(x) ((x) == '~' ? -1 \
+		: cisdigit((x)) ? 0 \
+		: !(x) ? 0 \
+		: cisalpha((x)) ? (x) \
+		: (x) + 256)
+
+static int verrevcmp(const char *val, const char *ref) {
+  if (!val) val= "";
+  if (!ref) ref= "";
+
+  while (*val || *ref) {
+    int first_diff= 0;
+
+    while ( (*val && !cisdigit(*val)) || (*ref && !cisdigit(*ref)) ) {
+      int vc= order(*val), rc= order(*ref);
+      if (vc != rc) return vc - rc;
+      val++; ref++;
+    }
+
+    while ( *val == '0' ) val++;
+    while ( *ref == '0' ) ref++;
+    while (cisdigit(*val) && cisdigit(*ref)) {
+      if (!first_diff) first_diff= *val - *ref;
+      val++; ref++;
+    }
+    if (cisdigit(*val)) return 1;
+    if (cisdigit(*ref)) return -1;
+    if (first_diff) return first_diff;
+  }
+  return 0;
+}
+
+int versioncompare(const struct versionrevision *version,
+                   const struct versionrevision *refversion) {
+  int r;
+
+  if (version->epoch > refversion->epoch) return 1;
+  if (version->epoch < refversion->epoch) return -1;
+  r= verrevcmp(version->version,refversion->version);  if (r) return r;
+  return verrevcmp(version->revision,refversion->revision);
+}
+
+const char *parseversion(struct versionrevision *rversion, const char *string) {
+  char *hyphen, *colon, *eepochcolon;
+  const char *end, *ptr;
+  unsigned long epoch;
+
+  if (!*string) return NULL;
+
+  /* trim leading and trailing space */
+  while (*string && (*string == ' ' || *string == '\t') ) string++;
+  /* string now points to the first non-whitespace char */
+  end = string;
+  /* find either the end of the string, or a whitespace char */
+  while (*end && *end != ' ' && *end != '\t' ) end++;
+  /* check for extra chars after trailing space */
+  ptr = end;
+  while (*ptr && ( *ptr == ' ' || *ptr == '\t' ) ) ptr++;
+  if (*ptr) return NULL;
+
+  colon= strchr(string,':');
+  if (colon) {
+    epoch= strtoul(string,&eepochcolon,10);
+    if (colon != eepochcolon) return NULL;
+    if (!*++colon) return NULL;
+    string= colon;
+    rversion->epoch= epoch;
+  } else {
+    rversion->epoch= 0;
+  }
+  rversion->version= strndup(string,end-string);
+  hyphen= strrchr(rversion->version,'-');
+  if (hyphen) *hyphen++= 0;
+  rversion->revision= hyphen ? hyphen : "";
+  
+  return NULL;
+}
+/* =====================[ end: stuff taken from libdpkg.a ]===================== */
+
+
 /* Creates a string from LSB fields used for the hashtable. */
 static inline gchar *distri2str(const Distri *d, gchar *buf, const gint bsize) {
     snprintf(buf, bsize-1, "%s|%s|%s", d->lsb_distributor, d->lsb_release, d->lsb_codename);

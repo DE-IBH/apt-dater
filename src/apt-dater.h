@@ -28,6 +28,8 @@
 #ifndef _APT_DATER_H
 #define _APT_DATER_H
 
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
