@@ -222,7 +222,14 @@ sub do_status() {
 }
 
 sub do_upgrade() {
-    system("$GETROOT $DPKGTOOL upgrade");
+    my $UpgradeCmd = $GETROOT . ' ' . $DPKGTOOL . ' ';
+
+    if($DPKGTOOL eq 'aptitude'){
+	$UpgradeCmd .= 'safe-';
+    }
+    $UpgradeCmd .= 'upgrade';
+
+    system($UpgradeCmd);
 }
 
 sub do_install() {
