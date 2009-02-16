@@ -43,8 +43,8 @@
 *   |
 *   +--[Debian/4.0/etch]
 *   |    +--[package1]
-*   |    |    +--[version1]->(host1, host2, host3)
-*   |    |    +--[version2]->(host5, host6, ...)
+*   |    |    +--(version1)->(host1, host2, host3)
+*   |    |    +--(version2)->(host5, host6, ...)
 *   |    |    |
 *   |    |   ...
 *   |    +--[package2]
@@ -68,6 +68,7 @@ typedef struct _distri {
 } Distri;
 
 typedef struct _version {
+ gchar *version;
  time_t ts_first;
  GList *nodes;
 } Version;
@@ -79,7 +80,7 @@ struct versionrevision {
   unsigned long epoch;
   const char *version;
   const char *revision;
-};  
+};
 
 static inline int cisdigit(int c) {
   return (c>='0') && (c<='9');
@@ -164,7 +165,7 @@ const char *parseversion(struct versionrevision *rversion, const char *string) {
   hyphen= strrchr(rversion->version,'-');
   if (hyphen) *hyphen++= 0;
   rversion->revision= hyphen ? hyphen : "";
-  
+
   return NULL;
 }
 /* =====================[ end: stuff taken from libdpkg.a ]===================== */
@@ -193,19 +194,15 @@ static guint distri_hash(gconstpointer key) {
     return g_str_hash(distri2str(distri, b, sizeof(b)));
 }
 
+static gint cmp_vers(gconstpointer a, gconstpointer b) {
+    return verrevcmp((char *)a, (char *)b);
+}
+
 /* Add PkgNode to package hashtable */
 static void add_pkg(gpointer data, gpointer user_data) {
     PkgNode *pkg = (PkgNode *)data;
     GHashTable *ht_packages = (GHashTable *)(((gpointer *)user_data)[0]);
     HostNode *node = (HostNode *)(((gpointer *)user_data)[1]);
-
-    /* Create packages hashtable if needed. */
-    GHashTable *ht_versions = g_hash_table_lookup(ht_packages, pkg->package);
-    if(!ht_versions) {
-	ht_versions = g_hash_table_new(g_str_hash, g_str_equal);
-
-	g_hash_table_insert(ht_packages, strdup(pkg->package), ht_versions);
-    }
 
     gchar *v;
     if(((pkg->flag & HOST_STATUS_PKGUPDATE) ||
@@ -218,14 +215,21 @@ static void add_pkg(gpointer data, gpointer user_data) {
     if(!v)
      return;
 
+    /* Create packages hashtable if needed. */
+    GList *l_versions = g_hash_table_lookup(ht_packages, pkg->package);
+
+    Version _v;
+    _v.version = v;
+
     /* Create version list if needed. */
-    Version *vers = g_hash_table_lookup(ht_versions, v);
+    Version *vers = (Version *)g_list_find_custom(l_versions, &_v, cmp_vers);
     if(!vers) {
 	vers = g_malloc(sizeof(Version));
+	vers->version = strdup(v);
 	vers->ts_first = node->last_upd;
 	vers->nodes = NULL;
 
-	g_hash_table_insert(ht_versions, strdup(v), vers);
+	l_versions = g_list_insert_sorted(l_versions, vers, cmp_vers);
     }
     else if (vers->ts_first > node->last_upd) {
 	vers->ts_first = node->last_upd;
