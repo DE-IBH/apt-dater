@@ -123,7 +123,7 @@ static int verrevcmp(const char *val, const char *ref) {
   return 0;
 }
 
-int versioncompare(const struct versionrevision *version,
+static int versioncompare(const struct versionrevision *version,
                    const struct versionrevision *refversion) {
   int r;
 
@@ -133,7 +133,7 @@ int versioncompare(const struct versionrevision *version,
   return verrevcmp(version->revision,refversion->revision);
 }
 
-const char *parseversion(struct versionrevision *rversion, const char *string) {
+static const char *parseversion(struct versionrevision *rversion, const char *string) {
   char *hyphen, *colon, *eepochcolon;
   const char *end, *ptr;
   unsigned long epoch;
@@ -195,7 +195,7 @@ static guint distri_hash(gconstpointer key) {
 }
 
 static gint cmp_vers(gconstpointer a, gconstpointer b) {
-    return verrevcmp((char *)a, (char *)b);
+    return verrevcmp(((Version *)a)->version, ((Version *)b)->version);
 }
 
 /* Add PkgNode to package hashtable */
@@ -230,6 +230,7 @@ static void add_pkg(gpointer data, gpointer user_data) {
 	vers->nodes = NULL;
 
 	l_versions = g_list_insert_sorted(l_versions, vers, cmp_vers);
+	g_hash_table_insert(ht_packages, pkg->package, l_versions);
     }
     else if (vers->ts_first > node->last_upd) {
 	vers->ts_first = node->last_upd;
@@ -333,45 +334,40 @@ GList *refresh_nodes = NULL;
  **/
 static void check_refresh(gpointer data, gpointer user_data) {
     HostNode *node = (HostNode *)data;
-    int *newest = (int *)user_data;
+    int *ts_first = (int *)user_data;
 
-    if((node->last_upd < *newest) &&
+    if((node->last_upd < *ts_first) &&
        ((node->forbid & HOST_FORBID_REFRESH) == 0) &&
        (g_list_find(refresh_nodes, node) == NULL))
 	refresh_nodes = g_list_prepend(refresh_nodes, node);
 }
 
 /* Trigger refresh for any node which has older version data. */
-static void add_refresh(gpointer key, gpointer value, gpointer user_data) {
+static void add_refresh(gpointer value, gpointer user_data) {
     Version *version = (Version *)value;
 
     g_list_foreach(version->nodes, check_refresh, user_data);
 }
 
-/* Retrieve the newest recorded version. */
-static void get_oldest(gpointer key, gpointer value, gpointer user_data) {
+static void dump(gpointer value, gpointer user_data) {
     Version *version = (Version *)value;
-    int *oldest = (int *)user_data;
-
-    if (version->ts_first < *oldest)
-	*oldest = version->ts_first;
 }
 
 /* Check if refresh is needed for each package. */
 static void trigger_package(gpointer key, gpointer value, gpointer user_data) {
-    GList *l_versions = (GHashTable *)value;
-    GList *newests = g_list_first(l_versions);
+    GList *l_versions = (GList *)value;
 
-    /* Only one version known => nothing todo. */
-    if(newests == NULL)
+    if(l_versions == NULL)
 	return;
 
-    /* Find the oldest date of the newest package. */
-    gint oldest = 0;
-    g_list_foreach(newests, get_oldest, &oldest);
+    Version *newest = (Version *)(g_list_first(l_versions) -> data);
 
-    /* Any host, which has last_upd < newest needs to be refreshed. */
-    g_list_foreach(g_list_next(newests), add_refresh, &newest);
+    /* Only one version known => nothing todo. */
+    if(newest == NULL)
+	return;
+
+    /* Any host, which has last_upd < version->ts_first needs to be refreshed. */
+    g_list_foreach(g_list_next(l_versions), add_refresh, &( newest -> ts_first ));
 }
 
 /* Start refresh stuff for each distri. */
