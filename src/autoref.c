@@ -349,31 +349,29 @@ static void add_refresh(gpointer key, gpointer value, gpointer user_data) {
 }
 
 /* Retrieve the newest recorded version. */
-static void get_newest(gpointer key, gpointer value, gpointer user_data) {
+static void get_oldest(gpointer key, gpointer value, gpointer user_data) {
     Version *version = (Version *)value;
-    int *newest = (int *)user_data;
+    int *oldest = (int *)user_data;
 
-    if (version->ts_first > *newest)
-	*newest = version->ts_first;
+    if (version->ts_first < *oldest)
+	*oldest = version->ts_first;
 }
 
 /* Check if refresh is needed for each package. */
 static void trigger_package(gpointer key, gpointer value, gpointer user_data) {
-    GHashTable *ht_versions = (GHashTable *)value;
+    GList *l_versions = (GHashTable *)value;
+    GList *newests = g_list_first(l_versions);
 
     /* Only one version known => nothing todo. */
-    if(g_hash_table_size(ht_versions) <= 1)
+    if(newests == NULL)
 	return;
 
-    /* Find the newest one. */
-    gint newest = 0;
-    g_hash_table_foreach(ht_versions, get_newest, &newest);
+    /* Find the oldest date of the newest package. */
+    gint oldest = 0;
+    g_list_foreach(newests, get_oldest, &oldest);
 
     /* Any host, which has last_upd < newest needs to be refreshed. */
-    g_hash_table_foreach(ht_versions, add_refresh, &newest);
-
-    /* Refresh now! */
-    g_list_foreach(refresh_nodes, trigger_refresh, NULL);
+    g_list_foreach(g_list_next(newests), add_refresh, &newest);
 }
 
 /* Start refresh stuff for each distri. */
@@ -388,6 +386,11 @@ static void trigger_distri(gpointer key, gpointer value, gpointer user_data) {
 * host remains in IN_REFRESH state.
 **/
 void autoref_trigger_auto() {
-    if (ht_distris) g_hash_table_foreach(ht_distris, trigger_distri, NULL);
+    if (ht_distris) {
+	g_hash_table_foreach(ht_distris, trigger_distri, NULL);
+
+	/* Refresh now! */
+	g_list_foreach(refresh_nodes, trigger_refresh, NULL);
+    }
 }
 #endif
