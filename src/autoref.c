@@ -195,7 +195,9 @@ static guint distri_hash(gconstpointer key) {
 }
 
 static gint cmp_vers(gconstpointer a, gconstpointer b) {
-    return verrevcmp(((Version *)a)->version, ((Version *)b)->version);
+ int x = 0;
+ x = verrevcmp(((Version *)a)->version, ((Version *)b)->version);
+ return x;
 }
 
 /* Add PkgNode to package hashtable */
@@ -203,6 +205,7 @@ static void add_pkg(gpointer data, gpointer user_data) {
     PkgNode *pkg = (PkgNode *)data;
     GHashTable *ht_packages = (GHashTable *)(((gpointer *)user_data)[0]);
     HostNode *node = (HostNode *)(((gpointer *)user_data)[1]);
+    Version  *vers = NULL;
 
     gchar *v;
     if(((pkg->flag & HOST_STATUS_PKGUPDATE) ||
@@ -222,15 +225,16 @@ static void add_pkg(gpointer data, gpointer user_data) {
     _v.version = v;
 
     /* Create version list if needed. */
-    Version *vers = (Version *)g_list_find_custom(l_versions, &_v, cmp_vers);
+    if(l_versions) vers = (Version *)g_list_find_custom(l_versions, &_v, cmp_vers);
     if(!vers) {
 	vers = g_malloc(sizeof(Version));
 	vers->version = strdup(v);
 	vers->ts_first = node->last_upd;
 	vers->nodes = NULL;
 
-	l_versions = g_list_insert_sorted(l_versions, vers, cmp_vers);
+	l_versions = l_versions ? g_list_append(l_versions, vers) : g_list_insert_sorted(l_versions, vers, cmp_vers);
 	g_hash_table_insert(ht_packages, pkg->package, l_versions);
+
     }
     else if (vers->ts_first > node->last_upd) {
 	vers->ts_first = node->last_upd;
@@ -336,7 +340,8 @@ static void check_refresh(gpointer data, gpointer user_data) {
     HostNode *node = (HostNode *)data;
     int *ts_first = (int *)user_data;
 
-    if((node->last_upd < *ts_first) &&
+    static int z=0;
+    if(node && (node->last_upd < *ts_first) &&
        ((node->forbid & HOST_FORBID_REFRESH) == 0) &&
        (g_list_find(refresh_nodes, node) == NULL))
 	refresh_nodes = g_list_prepend(refresh_nodes, node);
