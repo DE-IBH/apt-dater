@@ -289,6 +289,12 @@ gboolean getUpdatesFromStat(HostNode *n)
 	    pkgnode->flag = HOST_STATUS_PKGBROKEN;
 	    n->nbrokens++;
 	    break;
+	case 'i':
+	    break;
+	default:
+	    g_free(pkgnode);
+	    g_strfreev(argv);
+	    continue;
     }
     g_strfreev(argv);
 
@@ -435,16 +441,17 @@ gboolean refreshStats(GList *hosts)
  upd_pending = n_upd_pending;
 
 #ifdef FEAT_AUTOREF
- if(cfg->auto_refresh &&
-    (num_in_refresh == 0)) {
-  if(do_autoref) {
-   drawStatus ("Auto refresh triggered...", FALSE);
-   autoref_trigger_auto();
-   do_autoref = FALSE;
+ if(cfg->auto_refresh) {
+  if (num_in_refresh == 0) {
+   if(do_autoref) {
+    drawStatus ("Auto refresh triggered...", FALSE);
+    autoref_trigger_auto();
+    do_autoref = FALSE;
+   }
   }
- }
- else
+  else
    do_autoref = TRUE;
+ }
 #endif
 
  return(r);
