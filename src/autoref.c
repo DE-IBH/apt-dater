@@ -7,7 +7,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008-2009 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -62,12 +62,18 @@
 #include <glib.h>
 
 typedef struct _distri {
+#ifndef NDEBUG
+ etype _type;
+#endif
  gchar     *lsb_distributor;
  gchar     *lsb_release;
  gchar     *lsb_codename;
 } Distri;
 
 typedef struct _version {
+#ifndef NDEBUG
+ etype _type;
+#endif
  gchar *version;
  time_t ts_first;
  GList *nodes;
@@ -77,6 +83,9 @@ static GHashTable *ht_distris = NULL;
 
 /* ====================[ begin: stuff taken from libdpkg.a ]==================== */
 struct versionrevision {
+#ifndef NDEBUG
+ etype _type;
+#endif
   unsigned long epoch;
   const char *version;
   const char *revision;
@@ -191,13 +200,16 @@ static guint distri_hash(gconstpointer key) {
     Distri *distri = (Distri *)key;
     gchar b[0x1ff];
 
+    assert(distri->_type == T_DISTRI);
+
     return g_str_hash(distri2str(distri, b, sizeof(b)));
 }
 
 static gint cmp_vers(gconstpointer a, gconstpointer b) {
- int x = 0;
- x = verrevcmp(((Version *)a)->version, ((Version *)b)->version);
- return x;
+    assert(((Version *)a)->_type == T_VERSION);
+    assert(((Version *)b)->_type == T_VERSION);
+
+    return verrevcmp(((Version *)a)->version, ((Version *)b)->version);
 }
 
 /* Add PkgNode to package hashtable */
@@ -228,11 +240,14 @@ static void add_pkg(gpointer data, gpointer user_data) {
     if(l_versions) vers = (Version *)g_list_find_custom(l_versions, &_v, cmp_vers);
     if(!vers) {
 	vers = g_malloc(sizeof(Version));
+#ifndef NDEBUG
+	vers->_type = T_VERSION;
+#endif
 	vers->version = strdup(v);
 	vers->ts_first = node->last_upd;
 	vers->nodes = NULL;
 
-	l_versions = l_versions ? g_list_append(l_versions, vers) : g_list_insert_sorted(l_versions, vers, cmp_vers);
+	l_versions = /*l_versions ?*/ g_list_prepend(l_versions, vers) /*: g_list_insert_sorted(l_versions, vers, cmp_vers)*/;
 	g_hash_table_insert(ht_packages, pkg->package, l_versions);
 
     }
@@ -251,6 +266,7 @@ void autoref_add_host_info(HostNode *node) {
 	ht_distris = g_hash_table_new(distri_hash, distri_equal);
 
 #define ASSIGN_DIST(d, n, f) \
+    (d)._type = T_DISTRI; \
     (d).lsb_distributor = f((n)->lsb_distributor); \
     (d).lsb_release = f((n)->lsb_release); \
     (d).lsb_codename = f((n)->lsb_codename);
@@ -263,6 +279,9 @@ void autoref_add_host_info(HostNode *node) {
 	ht_packages = g_hash_table_new(g_str_hash, g_str_equal);
 
 	Distri *ndistri = g_malloc(sizeof(Distri));
+#ifndef NDEBUG
+	ndistri->_type = T_DISTRI;
+#endif
 	ASSIGN_DIST(*ndistri, node, g_strdup);
 
 	g_hash_table_insert(ht_distris, ndistri, ht_packages);
@@ -300,11 +319,6 @@ void autoref_rem_host_info(HostNode *node) {
 
     if (!ht_distris)
 	return;
-
-#define ASSIGN_DIST(d, n, f) \
-    (d).lsb_distributor = f((n)->lsb_distributor); \
-    (d).lsb_release = f((n)->lsb_release); \
-    (d).lsb_codename = f((n)->lsb_codename);
 
     ASSIGN_DIST(distri, node, );
 
@@ -351,11 +365,9 @@ static void check_refresh(gpointer data, gpointer user_data) {
 static void add_refresh(gpointer value, gpointer user_data) {
     Version *version = (Version *)value;
 
-    g_list_foreach(version->nodes, check_refresh, user_data);
-}
+    assert(version->_type == T_VERSION);
 
-static void dump(gpointer value, gpointer user_data) {
-    Version *version = (Version *)value;
+    g_list_foreach(version->nodes, check_refresh, user_data);
 }
 
 /* Check if refresh is needed for each package. */
@@ -364,6 +376,8 @@ static void trigger_package(gpointer key, gpointer value, gpointer user_data) {
 
     if(l_versions == NULL)
 	return;
+
+    l_versions = g_list_sort(l_versions, cmp_vers);
 
     Version *newest = (Version *)(g_list_first(l_versions) -> data);
 

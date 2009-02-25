@@ -7,7 +7,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008-2009 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,7 @@
 
 #define _GNU_SOURCE
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -50,7 +51,22 @@
 # include "config.h"
 #endif
 
+#ifndef NDEBUG
+typedef enum {
+    T_CFGFILE=1,
+    T_UPDATE=2,
+    T_SESSION=3,
+    T_HOSTNODE=4,
+    T_MAPPING=5,
+    T_VERSION=6,
+    T_DISTRI=7,
+} etype;
+#endif
+
 typedef struct _cfgfile {
+#ifndef NDEBUG
+ etype _type;
+#endif
  gchar *hostsfile;
  gchar *screenrcfile;
  gchar *screentitle;
@@ -79,6 +95,9 @@ typedef struct _cfgfile {
 } CfgFile;
 
 typedef struct _update {
+#ifndef NDEBUG
+ etype _type;
+#endif
  gchar *package;
  gchar *version;
  gint flag;
@@ -86,6 +105,9 @@ typedef struct _update {
 } PkgNode;
 
 typedef struct _session {
+#ifndef NDEBUG
+ etype _type;
+#endif
   gint pid;
   struct stat st;
 } SessNode;
@@ -121,6 +143,9 @@ typedef enum {
 #define HOST_FORBID_MASK     (HOST_FORBID_REFRESH | HOST_FORBID_UPGRADE | HOST_FORBID_INSTALL)
 
 typedef struct _hostnode {
+#ifndef NDEBUG
+ etype _type;
+#endif
  gchar     *hostname;
  gchar     *group;
  gchar     *ssh_user;
@@ -151,8 +176,7 @@ typedef struct _hostnode {
  gint      forbid;
 } HostNode;
 
-struct mapping_t
-{
+struct mapping_t {
  gchar *name;
  gint value;
 };
