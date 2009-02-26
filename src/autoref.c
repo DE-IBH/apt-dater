@@ -239,7 +239,13 @@ static void add_pkg(gpointer data, gpointer user_data) {
     _v.version = v;
 
     /* Create version entry if needed. */
-    Version *vers = (Version *) g_list_find_custom(l_versions, &_v, cmp_vers);
+    Version *vers = NULL;
+    GList *l_v = g_list_find_custom(l_versions, &_v, cmp_vers);
+    if (l_v) {
+	vers = (Version *)l_v->data;
+	ASSERT_TYPE(vers, T_VERSION);
+    }
+
     if(!vers) {
 	vers = g_malloc(sizeof(Version));
 #ifndef NDEBUG
@@ -301,13 +307,36 @@ static void rem_pkg(gpointer data, gpointer user_data) {
     GHashTable *ht_packages = (GHashTable *)(((gpointer *)user_data)[0]);
     HostNode *node = (HostNode *)(((gpointer *)user_data)[1]);
 
+    ASSERT_TYPE(pkg, T_PKGNODE);
+    ASSERT_TYPE(node, T_HOSTNODE);
+
     /* Lookup packages hashtable. */
-    GHashTable *ht_versions = g_hash_table_lookup(ht_packages, pkg->package);
-    if(!ht_versions)
+    GList *l_versions = g_hash_table_lookup(ht_packages, pkg->package);
+    if(!l_versions)
 	return;
 
     /* Lookup version list. */
-    Version *vers = g_hash_table_lookup(ht_versions, pkg->version);
+    gchar *v = NULL;
+    if(((pkg->flag & HOST_STATUS_PKGUPDATE) ||
+        (pkg->flag & HOST_STATUS_PKGKEPTBACK)) &&
+        (pkg->data))
+     v = pkg->data;
+    else
+     v = pkg->version;
+
+    Version _v;
+#ifndef NDEBUG
+    _v._type = T_VERSION;
+#endif
+    _v.version = v;
+
+    Version *vers = NULL;
+    GList *l_v = g_list_find_custom(l_versions, &_v, cmp_vers);
+    if (l_v) {
+	vers = (Version *)l_v->data;
+	ASSERT_TYPE(vers, T_VERSION);
+    }
+
     if(!vers)
 	return;
 
