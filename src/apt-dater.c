@@ -63,7 +63,9 @@ int main(int argc, char **argv)
  char *cfgfilename = NULL;
  char *cfgdirname = NULL;
  GList *hosts = NULL;
+#ifdef FEAT_XMLREPORT
  gboolean report = FALSE;
+#endif
 
  cfgdirname = g_strdup_printf("%s/%s", g_get_user_config_dir(), PACKAGE);
  if(!cfgdirname) g_error("Out of memory\n");

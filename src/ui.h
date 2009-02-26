@@ -110,6 +110,8 @@ void enableInput();
 void reorderScrpos(guint);
 gchar *getStrFromDrawNode (DrawNode *);
 void freeDrawNode (DrawNode *);
+void notifyUser();
+void drawStatus (char *str, gboolean drawoldest);
 
 #include "apt-dater.h"
 

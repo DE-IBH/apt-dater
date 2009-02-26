@@ -86,6 +86,9 @@
    slash. */
 #undef LSTAT_FOLLOWS_SLASHED_SYMLINK
 
+/* Define if you want no debug code included. */
+#undef NDEBUG
+
 /* Name of package */
 #undef PACKAGE
 

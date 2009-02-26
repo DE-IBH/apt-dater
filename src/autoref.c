@@ -128,52 +128,6 @@ static int verrevcmp(const char *val, const char *ref) {
   }
   return 0;
 }
-
-static int versioncompare(const struct versionrevision *version,
-                   const struct versionrevision *refversion) {
-  int r;
-
-  if (version->epoch > refversion->epoch) return 1;
-  if (version->epoch < refversion->epoch) return -1;
-  r= verrevcmp(version->version,refversion->version);  if (r) return r;
-  return verrevcmp(version->revision,refversion->revision);
-}
-
-static const char *parseversion(struct versionrevision *rversion, const char *string) {
-  char *hyphen, *colon, *eepochcolon;
-  const char *end, *ptr;
-  unsigned long epoch;
-
-  if (!*string) return NULL;
-
-  /* trim leading and trailing space */
-  while (*string && (*string == ' ' || *string == '\t') ) string++;
-  /* string now points to the first non-whitespace char */
-  end = string;
-  /* find either the end of the string, or a whitespace char */
-  while (*end && *end != ' ' && *end != '\t' ) end++;
-  /* check for extra chars after trailing space */
-  ptr = end;
-  while (*ptr && ( *ptr == ' ' || *ptr == '\t' ) ) ptr++;
-  if (*ptr) return NULL;
-
-  colon= strchr(string,':');
-  if (colon) {
-    epoch= strtoul(string,&eepochcolon,10);
-    if (colon != eepochcolon) return NULL;
-    if (!*++colon) return NULL;
-    string= colon;
-    rversion->epoch= epoch;
-  } else {
-    rversion->epoch= 0;
-  }
-  rversion->version= strndup(string,end-string);
-  hyphen= strrchr(rversion->version,'-');
-  if (hyphen) *hyphen++= 0;
-  rversion->revision= hyphen ? hyphen : "";
-
-  return NULL;
-}
 /* =====================[ end: stuff taken from libdpkg.a ]===================== */
 
 
@@ -272,11 +226,18 @@ void autoref_add_host_info(HostNode *node) {
     if (!ht_distris)
 	ht_distris = g_hash_table_new(distri_hash, distri_equal);
 
+#ifdef NDEBUG
+#define ASSIGN_DIST(d, n, f) \
+    (d).lsb_distributor = f((n)->lsb_distributor); \
+    (d).lsb_release = f((n)->lsb_release); \
+    (d).lsb_codename = f((n)->lsb_codename);
+#else
 #define ASSIGN_DIST(d, n, f) \
     (d)._type = T_DISTRI; \
     (d).lsb_distributor = f((n)->lsb_distributor); \
     (d).lsb_release = f((n)->lsb_release); \
     (d).lsb_codename = f((n)->lsb_codename);
+#endif
 
     ASSIGN_DIST(distri, node, );
 
@@ -384,7 +345,6 @@ static void check_refresh(gpointer data, gpointer user_data) {
     HostNode *node = (HostNode *)data;
     int *ts_first = (int *)user_data;
 
-    static int z=0;
     if(node && (node->last_upd < *ts_first) &&
        ((node->forbid & HOST_FORBID_REFRESH) == 0) &&
        (g_list_find(refresh_nodes, node) == NULL))

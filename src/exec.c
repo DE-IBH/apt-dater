@@ -112,7 +112,7 @@ gboolean ssh_cmd_upgrade(HostNode *n, const gboolean detached)
  gchar **argv = NULL;
 
  if(n->forbid & HOST_FORBID_UPGRADE)
-    return;
+    return(FALSE);
 
  gchar *screen = screen_new(n, detached);
 
@@ -157,7 +157,7 @@ gboolean ssh_cmd_install(HostNode *n, const gchar *package, const gboolean detac
  gchar **argv = NULL;
 
  if(n->forbid & HOST_FORBID_INSTALL)
-    return;
+    return(FALSE);
 
  gchar *screen = screen_new(n, detached);
 
