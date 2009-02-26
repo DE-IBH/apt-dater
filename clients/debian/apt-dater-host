@@ -103,6 +103,15 @@ sub get_virt() {
     return $imvirt;
 }
 
+sub get_uname() {
+    my $kernel;
+    my $machine;
+
+    chomp($kernel = `uname -s`);
+    chomp($machine = `uname -m`);
+    return "$kernel|$machine";
+}
+
 sub do_status() {
     # initialise the global config object with the default values and
     # setup the $_system object
@@ -128,6 +137,9 @@ sub do_status() {
 
     # retrieve virtualization informations
     print "VIRT: ".&get_virt."\n";
+
+    # retrieve uname informations
+    print "UNAME: ".&get_uname."\n";
 
     # calculate forbid mask
     my $mask = 0;

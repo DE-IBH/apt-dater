@@ -74,6 +74,16 @@ installed. Detected virtualizations:
     VIRT: Unknown
 
 
+There sould be an UNAME line of the format:
+
+    UNAME: ${KERNEL-NAME}|${MACHINE}
+
+The values are taken from the uname command:
+
+    KERNEL-NAME: uname -s
+    MACHINE    : uname -m
+
+
 There might be a FORBID line of the format:
 
     FORBID: ${Operations}
@@ -158,6 +168,7 @@ Debian Etch installation (the 'STATUS:' lines are truncated):
 ADPROTO: 0.3
 LSBREL: Debian|4.0|etch
 VIRT: Physical
+UNAME: Linux|i686
 STATUS: groff-base|1.18.1.1-12|i
 STATUS: libgnome2-0|2.16.0-2|i
 STATUS: m4|1.4.8-2|i
