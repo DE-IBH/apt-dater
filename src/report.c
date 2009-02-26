@@ -142,6 +142,14 @@ static void reportHost(gpointer data, gpointer lgroup) {
     xmlTextWriterWriteElement(writer, "codename", n->lsb_codename);
   xmlTextWriterEndElement(writer);
 
+  /* UNAME info */
+  xmlTextWriterStartElement(writer, "uname");
+  if(n->uname_kernel)
+    xmlTextWriterWriteElement(writer, "kernel", n->uname_kernel);
+  if(n->uname_machine)
+    xmlTextWriterWriteElement(writer, "machine", n->uname_machine);
+  xmlTextWriterEndElement(writer);
+
   /* virtualization info */
   if(n->virt)
     xmlTextWriterWriteElement(writer, "virt", n->virt);

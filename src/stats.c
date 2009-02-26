@@ -219,6 +219,14 @@ gboolean getUpdatesFromStat(HostNode *n)
   g_free(n->lsb_codename);
   n->lsb_codename = NULL;
  }
+ if(n->uname_kernel) {
+  g_free(n->uname_kernel);
+  n->uname_kernel = NULL;
+ }
+ if(n->uname_machine) {
+  g_free(n->uname_machine);
+  n->uname_kernel = NULL;
+ }
  if(n->virt) {
   g_free(n->virt);
   n->virt = NULL;
@@ -340,6 +348,19 @@ gboolean getUpdatesFromStat(HostNode *n)
     n->status = n->status | HOST_STATUS_VIRTUALIZED;
 
    linesok++;
+   continue;
+  }
+
+  if (sscanf((gchar *) line, "UNAME: %255s", buf)) {
+   gchar *s = strchr(buf, '|');
+   if (s) {
+    s[0] = 0;
+
+    n->uname_kernel = g_strdup(buf);
+    n->uname_machine = g_strdup(s+1);
+
+    linesok++;
+   }
    continue;
   }
 

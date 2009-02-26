@@ -91,6 +91,8 @@ typedef enum {
     TCLMK_LSBCNAME,
     TCLMK_LSBDISTRI,
     TCLMK_LSBREL,
+    TCLMK_UNKERNEL,
+    TCLMK_UNMACHINE,
     TCLMK_VIRT,
     TCLMK_FORBID,
 
@@ -2008,6 +2010,12 @@ void applyFilter(GList *hosts) {
 	    case TCLMK_LSBREL:
         	Tcl_SetVar(tcl_interp, tclmap[i].name, n->lsb_release, 0);
 		break;
+	    case TCLMK_UNKERNEL:
+        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->uname_kernel, 0);
+		break;
+	    case TCLMK_UNMACHINE:
+        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->uname_machine, 0);
+		break;
 	    case TCLMK_VIRT:
         	Tcl_SetVar(tcl_interp, tclmap[i].name, n->virt, 0);
 		break;
@@ -2610,12 +2618,16 @@ gboolean ctrlUI (GList *hosts)
     wattroff(wp, A_BOLD);
 
     mvwaddnstr(wp, l  ,  2, "Group:"               , COLS -  2);
-    mvwaddnstr(wp, l++, 16, inhost->group          , COLS - 16);
+    mvwaddnstr(wp, l++, 20, inhost->group          , COLS - 20);
     mvwaddnstr(wp, l  ,  2, "Hostname:"            , COLS -  2);
-    mvwaddnstr(wp, l++, 16, inhost->hostname       , COLS - 16);
+    mvwaddnstr(wp, l++, 20, inhost->hostname       , COLS - 20);
     if (inhost->virt) {
 	mvwaddnstr(wp, l  ,  2, "Machine Type:"        , COLS -  2);
-	mvwaddnstr(wp, l++, 16, inhost->virt           , COLS - 16);
+	mvwaddnstr(wp, l++, 20, inhost->virt           , COLS - 20);
+    }
+    if (inhost->uname_machine && inhost->uname_machine[0]) {
+	mvwaddnstr(wp, l  ,  2, "Hardware:"            , COLS -  2);
+	mvwaddnstr(wp, l++, 20, inhost->uname_machine  , COLS - 20);
     }
     if (inhost->forbid & HOST_FORBID_MASK) {
 	mvwaddnstr(wp, l  , 2, "Forbidden:", COLS - 2);
@@ -2645,17 +2657,21 @@ gboolean ctrlUI (GList *hosts)
 
     if (inhost->lsb_distributor) {
 	mvwaddnstr(wp, l  ,  2, "Distri:"              , COLS -  2);
-        mvwaddnstr(wp, l++, 16, inhost->lsb_distributor, COLS - 16);
+        mvwaddnstr(wp, l++, 20, inhost->lsb_distributor, COLS - 20);
         if (inhost->lsb_codename)
 	    snprintf(buf, sizeof(buf), "%s (%s)", inhost->lsb_release, inhost->lsb_codename);
 	else
 	    snprintf(buf, sizeof(buf), "%s", inhost->lsb_release);
 	mvwaddnstr(wp, l  ,  2, "Release:"             , COLS -  2);
-        mvwaddnstr(wp, l++, 16, buf                    , COLS - 16);
+        mvwaddnstr(wp, l++, 20, buf                    , COLS - 20);
+    }
+    if (inhost->uname_kernel && inhost->uname_kernel[0]) {
+	mvwaddnstr(wp, l  ,  2, "Kernel name:"         , COLS -  2);
+	mvwaddnstr(wp, l++, 20, inhost->uname_kernel   , COLS - 20);
     }
     if (inhost->kernelrel) {
-	mvwaddnstr(wp, l  ,  2, "Kernel:"              , COLS -  2);
-	mvwaddnstr(wp, l++, 16, inhost->kernelrel      , COLS - 16);
+	mvwaddnstr(wp, l  ,  2, "Kernel version:"      , COLS -  2);
+	mvwaddnstr(wp, l++, 20, inhost->kernelrel      , COLS - 20);
 	
 	switch(inhost->status & (HOST_STATUS_KERNELNOTMATCH | HOST_STATUS_KERNELSELFBUILD)) {
 	    case HOST_STATUS_KERNELNOTMATCH:
@@ -2670,7 +2686,7 @@ gboolean ctrlUI (GList *hosts)
 	}
 
 	if(strlen(buf) > 0)
-	    mvwaddnstr(wp, l-1, 17 + strlen(inhost->kernelrel), buf, COLS - 17 - strlen(inhost->kernelrel));
+	    mvwaddnstr(wp, l-1, 21 + strlen(inhost->kernelrel), buf, COLS - 21 - strlen(inhost->kernelrel));
     }
 
     if (g_list_length(inhost->packages)) {
@@ -2680,7 +2696,7 @@ gboolean ctrlUI (GList *hosts)
 	snprintf(buf, sizeof(buf), "%d installed (%d update%s, %d hold back, %d broken, %d extra)",
 		 g_list_length(inhost->packages), inhost->nupdates, inhost->nupdates == 1 ? "" : "s",
 		 inhost->nholds, inhost->nbrokens, inhost->nextras);
-	mvwaddnstr(wp, l++, 16, buf        , COLS - 16);
+	mvwaddnstr(wp, l++, 20, buf        , COLS - 20);
     }
 
     if (inhost->nupdates) {

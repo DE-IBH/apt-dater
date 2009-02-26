@@ -68,6 +68,8 @@ typedef struct _distri {
  gchar     *lsb_distributor;
  gchar     *lsb_release;
  gchar     *lsb_codename;
+ gchar     *uname_kernel;
+ gchar     *uname_machine;
 } Distri;
 
 typedef struct _version {
@@ -133,7 +135,8 @@ static int verrevcmp(const char *val, const char *ref) {
 
 /* Creates a string from LSB fields used for the hashtable. */
 static inline gchar *distri2str(const Distri *d, gchar *buf, const gint bsize) {
-    snprintf(buf, bsize-1, "%s|%s|%s", d->lsb_distributor, d->lsb_release, d->lsb_codename);
+    snprintf(buf, bsize-1, "%s|%s|%s|%s|%s", d->lsb_distributor, d->lsb_release,
+	     d->lsb_codename, d->uname_kernel, d->uname_machine);
 
     return buf;
 }
@@ -163,6 +166,15 @@ static gint cmp_vers(gconstpointer a, gconstpointer b) {
     return verrevcmp(((Version *)a)->version, ((Version *)b)->version);
 }
 
+static inline int test_pkg(const PkgNode *pkg) {
+    return (pkg->flag & (HOST_STATUS_PKGEXTRA | HOST_STATUS_PKGBROKEN)) == 0;
+}
+
+#define HOST_STATUS_PKGUPDATE         1
+#define HOST_STATUS_PKGKEPTBACK       2
+#define HOST_STATUS_PKGEXTRA          4
+#define HOST_STATUS_PKGBROKEN         8
+
 /* Add PkgNode to package hashtable */
 static void add_pkg(gpointer data, gpointer user_data) {
     PkgNode *pkg = (PkgNode *)data;
@@ -171,6 +183,9 @@ static void add_pkg(gpointer data, gpointer user_data) {
 
     ASSERT_TYPE(pkg, T_PKGNODE);
     ASSERT_TYPE(node, T_HOSTNODE);
+
+    if (!test_pkg(pkg))
+	return;
 
     gchar *v;
     if(((pkg->flag & HOST_STATUS_PKGUPDATE) ||
@@ -210,7 +225,7 @@ static void add_pkg(gpointer data, gpointer user_data) {
 	vers->nodes = NULL;
 
 	l_versions = g_list_prepend(l_versions, vers);
-	g_hash_table_insert(ht_packages, pkg->package, l_versions);
+	g_hash_table_insert(ht_packages, g_strdup(pkg->package), l_versions);
     }
     else if (vers->ts_first > node->last_upd) {
 	vers->ts_first = node->last_upd;
@@ -219,9 +234,21 @@ static void add_pkg(gpointer data, gpointer user_data) {
     vers->nodes = g_list_prepend(vers->nodes, node);
 }
 
+/* Test if host should be observed by autoref. */
+static inline int test_hostnode(const HostNode *node) {
+    return (node->lsb_distributor &&
+	    node->lsb_release &&
+	    node->lsb_codename &&
+	    node->uname_kernel &&
+	    node->uname_machine);
+}
+
 /* Fetch package data from HostNode and feed it into the hashtables. */
 void autoref_add_host_info(HostNode *node) {
     Distri distri;
+
+    if(!test_hostnode(node))
+	return;
 
     if (!ht_distris)
 	ht_distris = g_hash_table_new(distri_hash, distri_equal);
@@ -230,13 +257,17 @@ void autoref_add_host_info(HostNode *node) {
 #define ASSIGN_DIST(d, n, f) \
     (d).lsb_distributor = f((n)->lsb_distributor); \
     (d).lsb_release = f((n)->lsb_release); \
-    (d).lsb_codename = f((n)->lsb_codename);
+    (d).lsb_codename = f((n)->lsb_codename); \
+    (d).uname_kernel = f((n)->uname_kernel); \
+    (d).uname_machine = f((n)->uname_machine);
 #else
 #define ASSIGN_DIST(d, n, f) \
     (d)._type = T_DISTRI; \
     (d).lsb_distributor = f((n)->lsb_distributor); \
     (d).lsb_release = f((n)->lsb_release); \
-    (d).lsb_codename = f((n)->lsb_codename);
+    (d).lsb_codename = f((n)->lsb_codename); \
+    (d).uname_kernel = f((n)->uname_kernel); \
+    (d).uname_machine = f((n)->uname_machine);
 #endif
 
     ASSIGN_DIST(distri, node, );
@@ -244,7 +275,7 @@ void autoref_add_host_info(HostNode *node) {
     /* Create distri hashtable if needed. */
     GHashTable *ht_packages = g_hash_table_lookup(ht_distris, &distri);
     if(!ht_packages) {
-	ht_packages = g_hash_table_new(g_str_hash, g_str_equal);
+	ht_packages = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
 
 	Distri *ndistri = g_malloc(sizeof(Distri));
 #ifndef NDEBUG
@@ -270,6 +301,9 @@ static void rem_pkg(gpointer data, gpointer user_data) {
 
     ASSERT_TYPE(pkg, T_PKGNODE);
     ASSERT_TYPE(node, T_HOSTNODE);
+
+    if (!test_pkg(pkg))
+	return;
 
     /* Lookup packages hashtable. */
     GList *l_versions = g_hash_table_lookup(ht_packages, pkg->package);
@@ -308,6 +342,9 @@ static void rem_pkg(gpointer data, gpointer user_data) {
 void autoref_rem_host_info(HostNode *node) {
     Distri distri;
 
+    if(!test_hostnode(node))
+	return;
+
     if (!ht_distris)
 	return;
 
@@ -345,6 +382,8 @@ static void check_refresh(gpointer data, gpointer user_data) {
     HostNode *node = (HostNode *)data;
     int *ts_first = (int *)user_data;
 
+    ASSERT_TYPE(node, T_HOSTNODE);
+
     if(node && (node->last_upd < *ts_first) &&
        ((node->forbid & HOST_FORBID_REFRESH) == 0) &&
        (g_list_find(refresh_nodes, node) == NULL))
@@ -369,14 +408,17 @@ static void trigger_package(gpointer key, gpointer value, gpointer user_data) {
 
     l_versions = g_list_sort(l_versions, cmp_vers);
 
-    Version *newest = (Version *)(g_list_first(l_versions) -> data);
+    Version *newest = (Version *)(l_versions->data);
+    ASSERT_TYPE(newest, T_VERSION);
+
+    GList *l_oldvers = g_list_next(l_versions);
 
     /* Only one version known => nothing todo. */
-    if(newest == NULL)
+    if(l_oldvers == NULL)
 	return;
 
     /* Any host, which has last_upd < version->ts_first needs to be refreshed. */
-    g_list_foreach(g_list_next(l_versions), add_refresh, &( newest -> ts_first ));
+    g_list_foreach(l_oldvers, add_refresh, &( newest -> ts_first ));
 }
 
 /* Start refresh stuff for each distri. */

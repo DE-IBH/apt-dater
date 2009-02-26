@@ -180,6 +180,8 @@ typedef struct _hostnode {
  gchar     *lsb_distributor;
  gchar     *lsb_release;
  gchar     *lsb_codename;
+ gchar     *uname_kernel;
+ gchar     *uname_machine;
  gchar     *kernelrel;
  gchar     *virt;
  gchar     *identity_file;
