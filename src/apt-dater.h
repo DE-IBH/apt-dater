@@ -54,13 +54,23 @@
 #ifndef NDEBUG
 typedef enum {
     T_CFGFILE=1,
-    T_UPDATE=2,
-    T_SESSION=3,
+    T_DRAWNODE=2,
+    T_SESSNODE=3,
     T_HOSTNODE=4,
-    T_MAPPING=5,
-    T_VERSION=6,
-    T_DISTRI=7,
+    T_PKGNODE=5,
+    T_MAPPING=6,
+    T_VERSION=7,
+    T_DISTRI=8,
 } etype;
+
+#define ASSERT_TYPE(p,t) \
+    if ((p)->_type != (t)) \
+	g_error("Unexpected type %d for " #p " in " __FILE__ ":%d" \
+		", should be " #t "(%d)!\n", (p)->_type, __LINE__, (t));
+#else
+
+#define ASSERT_TYPE(p,t)
+
 #endif
 
 typedef struct _cfgfile {

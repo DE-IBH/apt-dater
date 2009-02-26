@@ -7,7 +7,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008-2009 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -87,6 +87,9 @@ screen_get_sessions(HostNode *n) {
 	  (strcmp(name+1, search) == 0)) {
 
 	SessNode *s = g_new0(SessNode, 1);
+#ifndef NDEBUG
+	s->_type = T_SESSNODE;
+#endif
 	s->pid = pid;
 	stat(fn, &s->st);
 

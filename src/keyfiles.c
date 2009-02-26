@@ -7,7 +7,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008-2009 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -176,6 +176,9 @@ CfgFile *loadConfig (char *filename)
  }
 
  lcfg = g_new0(CfgFile, 1);
+#ifndef NDEBUG
+ lcfg->_type = T_CFGFILE;
+#endif
 
  lcfg->ssh_optflags = g_key_file_get_string(keyfile, "SSH", 
 					    "OptionalCmdFlags", &error);
@@ -332,6 +335,9 @@ GList *loadHosts (char *filename)
 
   for(j = 0; j < lenkey; j++) {
    hostnode = g_new0(HostNode, 1);
+#ifndef NDEBUG
+   hostnode->_type = T_HOSTNODE;
+#endif
 
    *hostname = *ssh_user = 0; ssh_port = 0;
 

@@ -384,8 +384,11 @@ DrawNode *getSelectedDrawNode()
  dl = g_list_first(drawlist);
  while (dl && (((DrawNode *) dl->data)->selected != TRUE)) dl = g_list_next(dl);
 
- if (dl) return ((DrawNode *) dl->data);
- else return NULL;
+ if (!dl) return NULL;
+
+ ASSERT_TYPE((DrawNode *)dl->data, T_DRAWNODE);
+
+ return (DrawNode *)dl->data;
 }
 
 guint getCategoryNumber(gchar *category)
@@ -1064,6 +1067,9 @@ void buildIntialDrawList(GList *hosts)
 
  while(*(drawCategories+i)) {
   drawnode = g_new0(DrawNode, 1);
+#ifndef NDEBUG
+  drawnode->_type = T_DRAWNODE;
+#endif
   drawnode->p = *(drawCategories+i);
   drawnode->type = CATEGORY;
   drawnode->extended = FALSE;
@@ -1395,6 +1401,9 @@ void extDrawListCategory(gint atpos, gchar *category, GList *hosts)
    gint elements = getHostGrpCatCnt(hosts, ((HostNode *) ho->data)->group, i);
    if(elements) {
      drawnode = g_new0(DrawNode, 1);
+#ifndef NDEBUG
+     drawnode->_type = T_DRAWNODE;
+#endif
      drawnode->p = (((HostNode *) ho->data)->group);
      drawnode->type = GROUP;
      drawnode->extended = FALSE;
@@ -1430,6 +1439,9 @@ void extDrawListGroup(gint atpos, gchar *group, GList *hosts)
       (drawCategories[((HostNode *) ho->data)->category] == incategory)
      )) {
    drawnode = g_new0(DrawNode, 1);
+#ifndef NDEBUG
+   drawnode->_type = T_DRAWNODE;
+#endif
    drawnode->p = ((HostNode *) ho->data);
    drawnode->type = HOST;
    drawnode->extended = FALSE;
@@ -1455,11 +1467,16 @@ void extDrawListHost(gint atpos, HostNode *n)
 
  parent = g_list_nth_data(drawlist, (guint) atpos);
 
+ ASSERT_TYPE(parent, T_DRAWNODE);
+
  if (n->category == C_SESSIONS) {
    GList *sess = g_list_first(n->screens);
    
    while(sess) {
      drawnode = g_new0(DrawNode, 1);
+#ifndef NDEBUG
+     drawnode->_type = T_DRAWNODE;
+#endif
      drawnode->p = ((SessNode *)sess->data);
      drawnode->type = SESSION;
      drawnode->parent = parent;
@@ -1479,6 +1496,9 @@ void extDrawListHost(gint atpos, HostNode *n)
      (((PkgNode *) upd->data)->flag & HOST_STATUS_PKGEXTRA) ||
      (((PkgNode *) upd->data)->flag & HOST_STATUS_PKGBROKEN)) {
     drawnode = g_new0(DrawNode, 1);
+#ifndef NDEBUG
+    drawnode->_type = T_DRAWNODE;
+#endif
     drawnode->type = PKG;
     drawnode->p = ((PkgNode *) upd->data);
     drawnode->attrs = (((PkgNode *) upd->data)->flag & HOST_STATUS_PKGUPDATE) ? A_BOLD : A_NORMAL;

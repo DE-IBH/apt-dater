@@ -262,6 +262,9 @@ gboolean getUpdatesFromStat(HostNode *n)
     }
 
     pkgnode = g_new0(PkgNode, 1);
+#ifndef NDEBUG
+    pkgnode->_type = T_PKGNODE;
+#endif
     pkgnode->package = g_strdup(argv[0]);
     pkgnode->version = g_strdup(argv[1]);
 

@@ -83,9 +83,6 @@ static GHashTable *ht_distris = NULL;
 
 /* ====================[ begin: stuff taken from libdpkg.a ]==================== */
 struct versionrevision {
-#ifndef NDEBUG
- etype _type;
-#endif
   unsigned long epoch;
   const char *version;
   const char *revision;
@@ -200,14 +197,14 @@ static guint distri_hash(gconstpointer key) {
     Distri *distri = (Distri *)key;
     gchar b[0x1ff];
 
-    assert(distri->_type == T_DISTRI);
+    ASSERT_TYPE(distri, T_DISTRI);
 
     return g_str_hash(distri2str(distri, b, sizeof(b)));
 }
 
 static gint cmp_vers(gconstpointer a, gconstpointer b) {
-    assert(((Version *)a)->_type == T_VERSION);
-    assert(((Version *)b)->_type == T_VERSION);
+    ASSERT_TYPE((Version *)a, T_VERSION);
+    ASSERT_TYPE((Version *)b, T_VERSION);
 
     return verrevcmp(((Version *)a)->version, ((Version *)b)->version);
 }
@@ -217,7 +214,9 @@ static void add_pkg(gpointer data, gpointer user_data) {
     PkgNode *pkg = (PkgNode *)data;
     GHashTable *ht_packages = (GHashTable *)(((gpointer *)user_data)[0]);
     HostNode *node = (HostNode *)(((gpointer *)user_data)[1]);
-    Version  *vers = NULL;
+
+    ASSERT_TYPE(pkg, T_PKGNODE);
+    ASSERT_TYPE(node, T_HOSTNODE);
 
     gchar *v;
     if(((pkg->flag & HOST_STATUS_PKGUPDATE) ||
@@ -234,10 +233,13 @@ static void add_pkg(gpointer data, gpointer user_data) {
     GList *l_versions = g_hash_table_lookup(ht_packages, pkg->package);
 
     Version _v;
+#ifndef NDEBUG
+    _v._type = T_VERSION;
+#endif
     _v.version = v;
 
-    /* Create version list if needed. */
-    if(l_versions) vers = (Version *)g_list_find_custom(l_versions, &_v, cmp_vers);
+    /* Create version entry if needed. */
+    Version *vers = (Version *) g_list_find_custom(l_versions, &_v, cmp_vers);
     if(!vers) {
 	vers = g_malloc(sizeof(Version));
 #ifndef NDEBUG
@@ -247,9 +249,8 @@ static void add_pkg(gpointer data, gpointer user_data) {
 	vers->ts_first = node->last_upd;
 	vers->nodes = NULL;
 
-	l_versions = /*l_versions ?*/ g_list_prepend(l_versions, vers) /*: g_list_insert_sorted(l_versions, vers, cmp_vers)*/;
+	l_versions = g_list_prepend(l_versions, vers);
 	g_hash_table_insert(ht_packages, pkg->package, l_versions);
-
     }
     else if (vers->ts_first > node->last_upd) {
 	vers->ts_first = node->last_upd;
@@ -365,7 +366,7 @@ static void check_refresh(gpointer data, gpointer user_data) {
 static void add_refresh(gpointer value, gpointer user_data) {
     Version *version = (Version *)value;
 
-    assert(version->_type == T_VERSION);
+    ASSERT_TYPE(version, T_VERSION);
 
     g_list_foreach(version->nodes, check_refresh, user_data);
 }
