@@ -2627,7 +2627,7 @@ gboolean ctrlUI (GList *hosts)
 	mvwaddnstr(wp, l++, 20, inhost->virt           , COLS - 20);
     }
     if (inhost->uname_machine && inhost->uname_machine[0]) {
-	mvwaddnstr(wp, l  ,  2, "Hardware:"            , COLS -  2);
+	mvwaddnstr(wp, l  ,  2, "Architecture:"        , COLS -  2);
 	mvwaddnstr(wp, l++, 20, inhost->uname_machine  , COLS - 20);
     }
     if (inhost->forbid & HOST_FORBID_MASK) {

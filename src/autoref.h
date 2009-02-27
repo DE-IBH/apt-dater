@@ -35,7 +35,7 @@
 #ifdef FEAT_AUTOREF
 void autoref_add_host_info(HostNode *node);
 void autoref_rem_host_info(HostNode *node);
-void autoref_trigger_auto();
+guint autoref_trigger_auto();
 #endif
 
 #endif /* _AUTOREF_H */

@@ -468,8 +468,8 @@ gboolean refreshStats(GList *hosts)
  if(cfg->auto_refresh) {
   if (num_in_refresh == 0) {
    if(do_autoref) {
-    drawStatus ("Auto refresh triggered...", FALSE);
-    autoref_trigger_auto();
+    if (autoref_trigger_auto())
+     drawStatus ("Auto refresh triggered...", FALSE);
     do_autoref = FALSE;
    }
   }

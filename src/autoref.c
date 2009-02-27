@@ -163,17 +163,12 @@ static gint cmp_vers(gconstpointer a, gconstpointer b) {
     ASSERT_TYPE((Version *)a, T_VERSION);
     ASSERT_TYPE((Version *)b, T_VERSION);
 
-    return verrevcmp(((Version *)a)->version, ((Version *)b)->version);
+    return -verrevcmp(((Version *)a)->version, ((Version *)b)->version);
 }
 
 static inline int test_pkg(const PkgNode *pkg) {
     return (pkg->flag & (HOST_STATUS_PKGEXTRA | HOST_STATUS_PKGBROKEN)) == 0;
 }
-
-#define HOST_STATUS_PKGUPDATE         1
-#define HOST_STATUS_PKGKEPTBACK       2
-#define HOST_STATUS_PKGEXTRA          4
-#define HOST_STATUS_PKGBROKEN         8
 
 /* Add PkgNode to package hashtable */
 static void add_pkg(gpointer data, gpointer user_data) {
@@ -402,11 +397,14 @@ static void add_refresh(gpointer value, gpointer user_data) {
 /* Check if refresh is needed for each package. */
 static void trigger_package(gpointer key, gpointer value, gpointer user_data) {
     GList *l_versions = (GList *)value;
+    GHashTable *ht_packages = (GHashTable *)user_data;
 
     if(l_versions == NULL)
 	return;
 
     l_versions = g_list_sort(l_versions, cmp_vers);
+    if (value != l_versions)
+	g_hash_table_insert(ht_packages, g_strdup(key), l_versions);
 
     Version *newest = (Version *)(l_versions->data);
     ASSERT_TYPE(newest, T_VERSION);
@@ -425,19 +423,27 @@ static void trigger_package(gpointer key, gpointer value, gpointer user_data) {
 static void trigger_distri(gpointer key, gpointer value, gpointer user_data) {
     GHashTable *ht_packages = (GHashTable *)value;
 
-    g_hash_table_foreach(ht_packages, trigger_package, NULL);
+    g_hash_table_foreach(ht_packages, trigger_package, ht_packages);
 }
 
 /**
 * This function is called by refreshStats when no
 * host remains in IN_REFRESH state.
 **/
-void autoref_trigger_auto() {
+guint autoref_trigger_auto() {
     if (ht_distris) {
 	g_hash_table_foreach(ht_distris, trigger_distri, NULL);
 
-	/* Refresh now! */
-	g_list_foreach(refresh_nodes, trigger_refresh, NULL);
+	guint ret = g_list_length(refresh_nodes);
+	if (ret) {
+	    /* Refresh now! */
+	    g_list_foreach(refresh_nodes, trigger_refresh, NULL);
+	    g_list_free(refresh_nodes);
+	    refresh_nodes = NULL;
+	    return ret;
+	}
     }
+    
+    return 0;
 }
 #endif
