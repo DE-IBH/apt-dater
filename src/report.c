@@ -82,6 +82,9 @@ static void reportPackage(gpointer data, gpointer user_data) {
   if(n->flag & HOST_STATUS_PKGEXTRA)
     xmlTextWriterWriteAttribute(writer, "extra", "1");
 
+  if(n->flag & HOST_STATUS_PKGBROKEN)
+    xmlTextWriterWriteAttribute(writer, "broken", "1");
+
   if(n->data)
     xmlTextWriterWriteAttribute(writer, "data", n->data);
 
