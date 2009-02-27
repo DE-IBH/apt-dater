@@ -739,7 +739,7 @@ void drawHostEntry (DrawNode *n)
    break;
   case C_BROKEN_PKGS:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
-   snprintf(statusln, sizeof(statusln), "%d Broken %s", ((HostNode *) n->p)->nbrokens, ((HostNode *) n->p)->nbrokens > 1 || ((HostNode *) n->p)->nupdates == 1 ? "packages" : "package");
+   snprintf(statusln, sizeof(statusln), "%d Broken %s", ((HostNode *) n->p)->nbrokens, ((HostNode *) n->p)->nbrokens > 1 || ((HostNode *) n->p)->nbrokens == 1 ? "packages" : "package");
    break;
   case C_REFRESH_REQUIRED:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
@@ -1451,7 +1451,8 @@ void extDrawListGroup(gint atpos, gchar *group, GList *hosts)
    drawnode->scrpos = 0;
    drawnode->parent = parent;
    if (((HostNode *) ho->data)->category != C_SESSIONS)
-     drawnode->elements = ((HostNode *) ho->data)->nupdates + ((HostNode *) ho->data)->nholds + ((HostNode *) ho->data)->nextras;
+     drawnode->elements = ((HostNode *) ho->data)->nupdates + ((HostNode *) ho->data)->nholds +
+			  ((HostNode *) ho->data)->nextras + ((HostNode *) ho->data)->nbrokens;
    else
      drawnode->elements = g_list_length(((HostNode *) ho->data)->screens);
    drawnode->attrs = A_NORMAL;
@@ -2606,7 +2607,7 @@ gboolean ctrlUI (GList *hosts)
   case SC_KEY_MORE:
    if (inhost) {
     WINDOW *wp = newpad(32 + inhost->nupdates + inhost->nholds + inhost->nextras +
-			g_list_length(inhost->packages), COLS);
+			inhost->nbrokens + g_list_length(inhost->packages), COLS);
     char buf[0x1ff];
     gint l = 0;
     int  wic = 0, pminrow = 0, kcquit = 'q';
@@ -2699,27 +2700,6 @@ gboolean ctrlUI (GList *hosts)
 	mvwaddnstr(wp, l++, 20, buf        , COLS - 20);
     }
 
-    if (inhost->nupdates) {
-	l++;
-
-	wattron(wp, A_BOLD);
-	mvwaddnstr(wp, l++,  1, "UPDATE PACKAGES"  , COLS - 1);
-	wattroff(wp, A_BOLD);
-
-	GList *p = g_list_first(inhost->packages);
-	while(p) {
-	    PkgNode *pn = p->data;
-
-	    if (pn->flag & HOST_STATUS_PKGUPDATE) {
-		mvwaddnstr(wp, l  ,  2, pn->package, MIN(33, COLS - 2));
-		snprintf(buf, sizeof(buf), "%s -> %s", pn->version, pn->data);
-		mvwaddnstr(wp, l++, 36, buf, COLS - 36);
-            }
-
-	    p = g_list_next(p);
-	}
-    }
-
     if (inhost->nbrokens) {
 	l++;
 
@@ -2734,6 +2714,27 @@ gboolean ctrlUI (GList *hosts)
 	    if (pn->flag & HOST_STATUS_PKGBROKEN) {
 		mvwaddnstr(wp, l  ,  2, pn->package , MIN(33, COLS -  2));
 		snprintf(buf, sizeof(buf), "%s (%s)", pn->version, pn->data);
+		mvwaddnstr(wp, l++, 36, buf, COLS - 36);
+            }
+
+	    p = g_list_next(p);
+	}
+    }
+
+    if (inhost->nupdates) {
+	l++;
+
+	wattron(wp, A_BOLD);
+	mvwaddnstr(wp, l++,  1, "UPDATE PACKAGES"  , COLS - 1);
+	wattroff(wp, A_BOLD);
+
+	GList *p = g_list_first(inhost->packages);
+	while(p) {
+	    PkgNode *pn = p->data;
+
+	    if (pn->flag & HOST_STATUS_PKGUPDATE) {
+		mvwaddnstr(wp, l  ,  2, pn->package, MIN(33, COLS - 2));
+		snprintf(buf, sizeof(buf), "%s -> %s", pn->version, pn->data);
 		mvwaddnstr(wp, l++, 36, buf, COLS - 36);
             }
 
