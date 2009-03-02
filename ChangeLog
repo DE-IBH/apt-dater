@@ -1,3 +1,10 @@
+2009-03-02  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.am (SUBDIRS): Add po.
+	(ACLOCAL_AMFLAGS): New variable.
+	(EXTRA_DIST): New variable.
+	* configure.in (AC_CONFIG_FILES): Add po/Makefile.in.
+
 apt-dater (0.7.0) unstable; urgency=low
 
   * New auto refresh feature

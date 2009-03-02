@@ -2,15 +2,16 @@
 # Process this file with autoconf to produce a configure script.
 
 PACKAGE=apt-dater
-VERSION=0.7.1
 
 AC_REVISION($Revision$)
 
 AC_PREREQ(2.61)
 AC_INIT(apt-dater, 0.7.1, apt-dater@ibh.de)
-AM_INIT_AUTOMAKE([apt-dater], VERSION)
+AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/apt-dater.c])
 AC_CONFIG_HEADER([config.h])
+
+AM_GNU_GETTEXT([external])
 
 glib_module="glib-2.0 >= 2.3.6"
 PKG_CHECK_MODULES(GLIB, "$glib_module", enable_glib_=yes, enable_glib_=no)
@@ -245,7 +246,7 @@ AC_FUNC_STAT
 AC_FUNC_STRFTIME
 AC_CHECK_FUNCS([memset strchr strdup strerror])
 
-AC_CONFIG_FILES([
+AC_CONFIG_FILES([ po/Makefile.in
 Makefile
 man/Makefile
 src/Makefile

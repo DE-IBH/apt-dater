@@ -52,7 +52,7 @@ screen_get_sdir() {
     return NULL;
 
   g_snprintf(sdir, sizeof(sdir), SCREEN_SDFORMT, SCREEN_SOCKDIR, pw->pw_name);
-  
+
   return sdir;
 }
 
@@ -77,7 +77,7 @@ screen_get_sessions(HostNode *n) {
   const gchar *f;
   while ((f = g_dir_read_name(d))) {
     gchar *fn = g_strdup_printf("%s/%s", sdir, f);
-    
+
     if (g_file_test(fn, G_FILE_TEST_EXISTS)) {
       gint pid = atoi(f);
       char *name = strchr(f, '.');
@@ -110,7 +110,7 @@ gchar *
 screen_new(HostNode *n, const gboolean detached) {
   if (!cfg->use_screen)
     return g_strdup("");
-  
+
   gchar *title = parse_string(cfg->screentitle, n);
 
   gchar *cmd = g_strdup_printf(SCREEN_BINARY"+-%sS+"SCREEN_SOCKPRE"%s_%s_%d"	\
@@ -194,7 +194,7 @@ screen_get_dump(const SessNode *s) {
 
  g_free(cmd);
  g_strfreev(argv);
- 
+
  gchar *c = NULL;
  g_file_get_contents(dump_fn, &c, NULL, NULL);
 

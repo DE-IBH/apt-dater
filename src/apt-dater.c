@@ -68,16 +68,16 @@ int main(int argc, char **argv)
 #endif
 
  cfgdirname = g_strdup_printf("%s/%s", g_get_user_config_dir(), PACKAGE);
- if(!cfgdirname) g_error("Out of memory\n");
+ if(!cfgdirname) g_error(_("Out of memory."));
 
  cfgfilename = g_strdup_printf("%s/%s", cfgdirname, CFGFILENAME);
- if(!cfgfilename) g_error("Out of memory\n");
+ if(!cfgfilename) g_error(_("Out of memory."));
 
  g_set_prgname(PACKAGE);
  g_set_application_name(PACKAGE_STRING);
 
  if(chkForInitialConfig(cfgdirname, cfgfilename))
-  g_warning("Failed to create initial configuration file %s.", cfgfilename);
+  g_warning(_("Failed to create initial configuration file %s."), cfgfilename);
 
  while ((opts = getopt(argc, argv, "c:vr")) != EOF) {
   switch(opts) {
@@ -93,23 +93,23 @@ int main(int argc, char **argv)
 #ifdef FEAT_XMLREPORT
     report = TRUE;
 #else
-    g_error("Sorry, "PACKAGE" was compiled w/o report feature!\n");
+    g_error(_("Sorry, apt-dater was compiled w/o report feature!"));
 #endif
     break;
   default:
-   g_printerr("Usage: %s [-(c config|v|r)]\n", g_get_prgname());
+   g_printerr(_("Usage: %s [-(c config|v|r)]\n"), g_get_prgname());
    exit(EXIT_FAILURE);
   }
  }
- if(!cfgfilename) g_error("Out of memory\n");
+ if(!cfgfilename) g_error(_("Out of memory."));
 
  if(!(cfg = (CfgFile *) loadConfig(cfgfilename))) {
-  g_printerr("Error on loading config file %s\n", cfgfilename);
+  g_error(_("Error on loading config file %s\n"), cfgfilename);
   exit(EXIT_FAILURE);
  }
 
  if(!(hosts = (GList *) loadHosts(cfg->hostsfile))) {
-  g_printerr("Error on loading config file %s\n", cfg->hostsfile);
+  g_printerr(_("Error on loading config file %s\n"), cfg->hostsfile);
   exit(EXIT_FAILURE);
  }
 
@@ -119,7 +119,7 @@ int main(int argc, char **argv)
 #endif
    /* Test if we are the owner of the TTY or die. */
    if(g_access("/proc/self/fd/0", R_OK|W_OK)) {
-     g_error("Cannot open your terminal /proc/self/fd/0 - please check.");
+     g_error(_("Cannot open your terminal /proc/self/fd/0 - please check."));
      exit(EXIT_FAILURE);
    }
 

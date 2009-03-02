@@ -48,20 +48,18 @@ void initReport(GList *hosts) {
    * library used.
    */
   LIBXML_TEST_VERSION
-                            
-  fprintf(stderr, PACKAGE" is refreshing %d hosts, please standby...\n\n", g_list_length(hosts));
+
+  fprintf(stderr, _("apt-dater is refreshing %d hosts, please standby...\n\n"), g_list_length(hosts));
 
   writer = xmlNewTextWriterDoc(&doc, 0);
-  if (writer == NULL) {
-    fprintf(stderr, "Error creating the xml output.\n");
-    exit(1);
-  }
+  if (writer == NULL)
+    g_error("Error creating the xml output."));
   xmlTextWriterStartDocument(writer, NULL, NULL, NULL);
-                           
+
   GList *n = hosts;
   while(n) {
     ((HostNode *)n->data)->category = C_REFRESH_REQUIRED;
-    
+
     n = g_list_next(n);
   }
 }
@@ -170,18 +168,18 @@ static void reportHost(gpointer data, gpointer lgroup) {
 gboolean ctrlReport(GList *hosts) {
   gint torefresh = 0;
   char *lgroup = NULL;
-  
+
   g_usleep(G_USEC_PER_SEC);
-  
+
   GList *n = hosts;
   while(n) {
     if( (((HostNode *)n->data)->category == C_REFRESH_REQUIRED) ||
         (((HostNode *)n->data)->category == C_REFRESH) )
         torefresh++;
-        
+
     n = g_list_next(n);
   }
-  
+
   if(torefresh == 0) {
     /* Create root node. */
     xmlTextWriterStartElement(writer, "report");
@@ -198,7 +196,7 @@ gboolean ctrlReport(GList *hosts) {
     xmlTextWriterEndElement(writer);
     xmlTextWriterEndDocument(writer);
     xmlFreeTextWriter(writer);
-    
+
     xmlSaveCtxtPtr save = xmlSaveToFd(fileno(stdout), NULL, XML_SAVE_FORMAT);
     xmlSaveDoc(save, doc);
     xmlSaveClose(save);
@@ -208,7 +206,7 @@ gboolean ctrlReport(GList *hosts) {
     g_main_loop_quit (loop);
     fprintf(stderr, "\ndone\n");
   }
-  
+
   return torefresh > 0;
 }
 #endif

@@ -1,0 +1,521 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR IBH IT-Service GmbH
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: apt-dater 0.7.1\n"
+"Report-Msgid-Bugs-To: apt-dater@ibh.de\n"
+"POT-Creation-Date: 2009-03-02 22:40+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/apt-dater.c:71 src/apt-dater.c:74 src/apt-dater.c:104
+#: src/keyfiles.c:107 src/keyfiles.c:118 src/ui.c:2481
+msgid "Out of memory."
+msgstr ""
+
+#: src/apt-dater.c:80
+#, c-format
+msgid "Failed to create initial configuration file %s."
+msgstr ""
+
+#: src/apt-dater.c:96
+msgid "Sorry, apt-dater was compiled w/o report feature!"
+msgstr ""
+
+#: src/apt-dater.c:100
+#, c-format
+msgid "Usage: %s [-(c config|v|r)]\n"
+msgstr ""
+
+#: src/apt-dater.c:107 src/apt-dater.c:112
+#, c-format
+msgid "Error on loading config file %s\n"
+msgstr ""
+
+#: src/apt-dater.c:122
+msgid "Cannot open your terminal /proc/self/fd/0 - please check."
+msgstr ""
+
+#: src/colors.c:153
+msgid "Wrong color definition!"
+msgstr ""
+
+#: src/keyfiles.c:109 src/keyfiles.c:120 src/keyfiles.c:131
+#, c-format
+msgid "Creating file %s"
+msgstr ""
+
+#: src/lock.c:60
+msgid "Can't get the name of the lock file!"
+msgstr ""
+
+#: src/lock.c:79
+#, c-format
+msgid "Failed to get lockfile %s: %s"
+msgstr ""
+
+#: src/lock.c:83
+#, c-format
+msgid "Can't lock to file %s because function flock() is missing!"
+msgstr ""
+
+#: src/report.c:52
+#, c-format
+msgid ""
+"apt-dater is refreshing %d hosts, please standby...\n"
+"\n"
+msgstr ""
+
+#: src/stats.c:472
+msgid "Auto refresh triggered..."
+msgstr ""
+
+#: src/ui.c:51
+msgid "Updates pending"
+msgstr ""
+
+#: src/ui.c:52
+msgid "Up to date"
+msgstr ""
+
+#: src/ui.c:53
+msgid "Broken packages"
+msgstr ""
+
+#: src/ui.c:54 src/ui.c:770
+#, c-format
+msgid "Refresh required"
+msgstr ""
+
+#: src/ui.c:55 src/ui.c:773
+#, c-format
+msgid "In refresh"
+msgstr ""
+
+#: src/ui.c:56
+msgid "Sessions"
+msgstr ""
+
+#: src/ui.c:58
+msgid "Filtered"
+msgstr ""
+
+#: src/ui.c:60
+msgid "Unknown"
+msgstr ""
+
+#: src/ui.c:145
+msgid "<Left>"
+msgstr ""
+
+#: src/ui.c:145 src/ui.c:146
+msgid "shrink node"
+msgstr ""
+
+#: src/ui.c:147
+msgid "<Right>"
+msgstr ""
+
+#: src/ui.c:147 src/ui.c:148
+msgid "expand node"
+msgstr ""
+
+#: src/ui.c:149
+msgid "<Space>"
+msgstr ""
+
+#: src/ui.c:149 src/ui.c:150 src/ui.c:151 src/ui.c:160
+msgid "shrink/expand node"
+msgstr ""
+
+#: src/ui.c:150
+msgid "<Return>"
+msgstr ""
+
+#: src/ui.c:151
+msgid "<Enter>"
+msgstr ""
+
+#: src/ui.c:152
+msgid "<Up>"
+msgstr ""
+
+#: src/ui.c:152 src/ui.c:153
+msgid "move up"
+msgstr ""
+
+#: src/ui.c:154
+msgid "<Down>"
+msgstr ""
+
+#: src/ui.c:154 src/ui.c:155
+msgid "move down"
+msgstr ""
+
+#: src/ui.c:156
+msgid "<Home>"
+msgstr ""
+
+#: src/ui.c:156
+msgid "move to the top"
+msgstr ""
+
+#: src/ui.c:157
+msgid "<End>"
+msgstr ""
+
+#: src/ui.c:157
+msgid "move to the end"
+msgstr ""
+
+#: src/ui.c:158
+msgid "<PageUp>"
+msgstr ""
+
+#: src/ui.c:158
+msgid "previous page"
+msgstr ""
+
+#: src/ui.c:159
+msgid "<PageDown>"
+msgstr ""
+
+#: src/ui.c:159
+msgid "next page"
+msgstr ""
+
+#: src/ui.c:161
+msgid "quit"
+msgstr ""
+
+#: src/ui.c:162
+msgid "help"
+msgstr ""
+
+#: src/ui.c:163
+msgid "search host"
+msgstr ""
+
+#: src/ui.c:167
+msgid "attach session"
+msgstr ""
+
+#: src/ui.c:168
+msgid "connect host"
+msgstr ""
+
+#: src/ui.c:169
+msgid "file transfer"
+msgstr ""
+
+#: src/ui.c:170
+msgid "toggle dumps"
+msgstr ""
+
+#: src/ui.c:171
+msgid "refresh host"
+msgstr ""
+
+#: src/ui.c:172
+msgid "install pkg"
+msgstr ""
+
+#: src/ui.c:173
+msgid "upgrade host(s)"
+msgstr ""
+
+#: src/ui.c:174
+msgid "host details"
+msgstr ""
+
+#: src/ui.c:175
+msgid "next detached session"
+msgstr ""
+
+#: src/ui.c:176
+msgid "cycle detached sessions"
+msgstr ""
+
+#: src/ui.c:187
+msgid "some packages are kept back"
+msgstr ""
+
+#: src/ui.c:188
+msgid "extra packages are installed"
+msgstr ""
+
+#: src/ui.c:189
+msgid "running kernel is not the latest (reboot required)"
+msgstr ""
+
+#: src/ui.c:190
+msgid "a selfbuild kernel is running"
+msgstr ""
+
+#: src/ui.c:191
+msgid "this is a virtualized machine"
+msgstr ""
+
+#: src/ui.c:526
+msgid " Oldest: %D %H:%M"
+msgstr ""
+
+#: src/ui.c:630 src/ui.c:655
+#, c-format
+msgid "%d Hosts in status \"%s\""
+msgstr ""
+
+#: src/ui.c:633 src/ui.c:658
+#, c-format
+msgid "%d Host in status \"%s\""
+msgstr ""
+
+#: src/ui.c:749
+#, c-format
+msgid "%d Updates required"
+msgstr ""
+
+#: src/ui.c:752
+#, c-format
+msgid "%d Update required"
+msgstr ""
+
+#: src/ui.c:757
+#, c-format
+msgid "No update required"
+msgstr ""
+
+#: src/ui.c:762
+#, c-format
+msgid "%d Broken packages"
+msgstr ""
+
+#: src/ui.c:765
+#, c-format
+msgid "%d Broken package"
+msgstr ""
+
+#: src/ui.c:778
+#, c-format
+msgid "%d sessions running"
+msgstr ""
+
+#: src/ui.c:781
+#, c-format
+msgid "%d session running"
+msgstr ""
+
+#: src/ui.c:786
+#, c-format
+msgid "Status is unknown"
+msgstr ""
+
+#: src/ui.c:791
+msgid " - host locked by another process"
+msgstr ""
+
+#: src/ui.c:840 src/ui.c:924
+msgid "%D %H:%M "
+msgstr ""
+
+#: src/ui.c:843 src/ui.c:927
+msgid "Attached"
+msgstr ""
+
+#: src/ui.c:843 src/ui.c:927
+msgid "Detached"
+msgstr ""
+
+#: src/ui.c:863
+msgid "Running session:"
+msgstr ""
+
+#: src/ui.c:868
+msgid "Could not read session dump."
+msgstr ""
+
+#: src/ui.c:1181
+msgid "Maintainer name:"
+msgstr ""
+
+#: src/ui.c:1798
+msgid "Search: "
+msgstr ""
+
+#: src/ui.c:1971
+msgid "Matches:"
+msgstr ""
+
+#: src/ui.c:1988
+msgid "Matches: -"
+msgstr ""
+
+#: src/ui.c:2053
+msgid "Internal error: unhandled TCL TCLM_STRING maping!"
+msgstr ""
+
+#: src/ui.c:2068
+msgid "Internal error: unhandled TCL TCLM_INT maping!"
+msgstr ""
+
+#: src/ui.c:2078
+msgid "Internal error: unkown TCL maping type!"
+msgstr ""
+
+#: src/ui.c:2134
+msgid "Scalars:"
+msgstr ""
+
+#: src/ui.c:2156
+msgid "Arrays:"
+msgstr ""
+
+#: src/ui.c:2177
+msgid "Examples:"
+msgstr ""
+
+#: src/ui.c:2190
+msgid "Enter filter expression:"
+msgstr ""
+
+#: src/ui.c:2317 src/ui.c:2343 src/ui.c:2419
+msgid "There are running sessions on this host! Continue? [y/N]: "
+msgstr ""
+
+#: src/ui.c:2359
+msgid "Run update for the whole category? [y/N]: "
+msgstr ""
+
+#: src/ui.c:2360
+msgid "Run update for the whole group? [y/N]: "
+msgstr ""
+
+#: src/ui.c:2390
+#, c-format
+msgid "Install package `%s' [y/N]: "
+msgstr ""
+
+#: src/ui.c:2396 src/ui.c:2424 src/ui.c:2440
+msgid "Install package: "
+msgstr ""
+
+#: src/ui.c:2444
+msgid "Run install for the whole category? [y/N]: "
+msgstr ""
+
+#: src/ui.c:2445
+msgid "Run install for the whole group? [y/N]: "
+msgstr ""
+
+#: src/ui.c:2478
+#, c-format
+msgid "Attach host %s session %d [Y/n/c]: "
+msgstr ""
+
+#: src/ui.c:2543
+msgid "Already attached - share session? [y/N]: "
+msgstr ""
+
+#: src/ui.c:2564
+msgid "Session dumps enabled."
+msgstr ""
+
+#: src/ui.c:2566
+msgid "Session dumps disabled."
+msgstr ""
+
+#: src/ui.c:2582
+msgid "FLAG"
+msgstr ""
+
+#: src/ui.c:2583 src/ui.c:2596
+msgid "DESCRIPTION"
+msgstr ""
+
+#: src/ui.c:2595
+msgid "KEY"
+msgstr ""
+
+#: src/ui.c:2651
+msgid "HOST DETAILS"
+msgstr ""
+
+#: src/ui.c:2654
+msgid "Group:"
+msgstr ""
+
+#: src/ui.c:2656
+msgid "Hostname:"
+msgstr ""
+
+#: src/ui.c:2659
+msgid "Machine Type:"
+msgstr ""
+
+#: src/ui.c:2663
+msgid "Architecture:"
+msgstr ""
+
+#: src/ui.c:2667
+msgid "Forbidden:"
+msgstr ""
+
+#: src/ui.c:2693
+msgid "Distri:"
+msgstr ""
+
+#: src/ui.c:2699
+msgid "Release:"
+msgstr ""
+
+#: src/ui.c:2703
+msgid "Kernel name:"
+msgstr ""
+
+#: src/ui.c:2707
+msgid "Kernel version:"
+msgstr ""
+
+#: src/ui.c:2712
+msgid "(reboot required)"
+msgstr ""
+
+#: src/ui.c:2715
+msgid "(selfbuild kernel)"
+msgstr ""
+
+#: src/ui.c:2729
+msgid "Packages: "
+msgstr ""
+
+#: src/ui.c:2740
+msgid "BROKEN PACKAGES"
+msgstr ""
+
+#: src/ui.c:2761
+msgid "UPDATE PACKAGES"
+msgstr ""
+
+#: src/ui.c:2782
+msgid "HOLD BACK PACKAGES"
+msgstr ""
+
+#: src/ui.c:2802
+msgid "EXTRA PACKAGES"
+msgstr ""
+
+#: src/ui.c:2822
+msgid "INSTALLED PACKAGES"
+msgstr ""
+
+#: src/ui.c:165
+msgid "filter hosts"
+msgstr ""

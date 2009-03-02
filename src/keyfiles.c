@@ -54,7 +54,7 @@ static char apt_dater_conf[] = "# Config file of apt-dater in the form of the"
  "n\' | \'green\' | \'magenta\' | \'red\' |\n#               \'white\' | \'ye"
  "llow\'\nColors=menu brightgreen blue;status brightgreen blue;selector black"
  " red;\n\n#[TCLFilter]\n#Predefined filter expression on startup.\n#FilterEx"
- "p=return [expr [string compare $lsb_distri \"Debian\"] == 0 && $lsb_rel < 4"
+ "p=return [expr [string compare $lsb_distri \"Debian\"] == 0 && $lsb_rel < 5"
  ".0]\n#Load this TCL file on startup in the same context as the FilterExp.\n"
  "#FilterFile=/patch/to/file.tcl\n";
 
@@ -104,9 +104,9 @@ int chkForInitialConfig(const gchar *cfgdir, const gchar *cfgfile)
 
    /* Create a example hosts.conf */
    pathtofile = g_strdup_printf("%s/hosts.conf", cfgdir);
-   if(!pathtofile) g_error("Out of memory\n");
+   if(!pathtofile) g_error(_("Out of memory."));
    fp = fopen(pathtofile, "wx");
-   g_message("Creating file %s", pathtofile);
+   g_message(_("Creating file %s"), pathtofile);
    g_free(pathtofile);
    if(fp) {
     fwrite(hosts_conf, sizeof(hosts_conf)-1, 1, fp);
@@ -115,9 +115,9 @@ int chkForInitialConfig(const gchar *cfgdir, const gchar *cfgfile)
 
    /* Create a the example screenrc */
    pathtofile = g_strdup_printf("%s/screenrc", cfgdir);
-   if(!pathtofile) g_error("Out of memory\n");
+   if(!pathtofile) g_error(_("Out of memory."));
    fp = fopen(pathtofile, "wx");
-   g_message("Creating file %s", pathtofile);
+   g_message(_("Creating file %s"), pathtofile);
    g_free(pathtofile);
    if(fp) {
     fwrite(screenrc, sizeof(screenrc)-1, 1, fp);
@@ -127,8 +127,8 @@ int chkForInitialConfig(const gchar *cfgdir, const gchar *cfgfile)
    /* Create initial config file */
    fp = fopen(cfgfile, "wx");
    if(!fp) return(1);
-  
-   g_message("Creating file %s", cfgfile);
+
+   g_message(_("Creating file %s"), cfgfile);
    fwrite(apt_dater_conf, sizeof(apt_dater_conf)-1, 1, fp);
    fclose(fp);
   }

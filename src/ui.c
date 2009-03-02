@@ -48,16 +48,16 @@
 
 static GList *drawlist = NULL;
 gchar *drawCategories[] = {
-    "Updates pending",
-    "Up to date",
-    "Broken packages",
-    "Refresh required",
-    "In refresh",
-    "Sessions",
+    N_("Updates pending"),
+    N_("Up to date"),
+    N_("Broken packages"),
+    N_("Refresh required"),
+    N_("In refresh"),
+    N_("Sessions"),
 #ifdef FEAT_TCLFILTER
-    "Filtered",
+    N_("Filtered"),
 #endif
-    "Unknown",
+    N_("Unknown"),
     NULL};
 static gchar *incategory = NULL;
 static gchar *ingroup = NULL;
@@ -142,38 +142,38 @@ struct ShortCut {
 };
 
 static struct ShortCut shortCuts[] = {
- {SC_KEY_LEFT, KEY_LEFT, "<Left>", "shrink node" , FALSE, 0},
- {SC_KEY_LEFT2, 'h', "h", "shrink node" , FALSE, 0},
- {SC_KEY_RIGHT, KEY_RIGHT, "<Right>", "expand node" , FALSE, 0},
- {SC_KEY_RIGHT2, 'l', "l", "expand node" , FALSE, 0},
- {SC_KEY_SPACE, ' ', "<Space>", "shrink/expand node" , FALSE, 0},
- {SC_KEY_RETURN, KEY_RETURN, "<Return>", "shrink/expand node" , FALSE, 0},
- {SC_KEY_ENTER, KEY_ENTER, "<Enter>", "shrink/expand node" , FALSE, 0},
- {SC_KEY_UP, KEY_UP, "<Up>", "move up" , FALSE, 0},
- {SC_KEY_UP2, 'k', "k", "move up" , FALSE, 0},
- {SC_KEY_DOWN, KEY_DOWN, "<Down>", "move down" , FALSE, 0},
- {SC_KEY_DOWN2, 'j', "j", "move down" , FALSE, 0},
- {SC_KEY_HOME, KEY_HOME, "<Home>", "move to the top" , FALSE, 0},
- {SC_KEY_END, KEY_END, "<End>", "move to the end" , FALSE, 0},
- {SC_KEY_PPAGE, KEY_PPAGE, "<PageUp>", "previous page" , FALSE, 0},
- {SC_KEY_NPAGE, KEY_NPAGE, "<PageDown>", "next page" , FALSE, 0},
- {SC_KEY_PLUS, '+', "+", "shrink/expand node" , FALSE, 0},
- {SC_KEY_QUIT, 'q', "q" , "quit" , TRUE , 0},
- {SC_KEY_HELP, '?', "?" , "help" , TRUE , 0},
- {SC_KEY_FIND, '/', "/" , "search host" , TRUE , 0},
+ {SC_KEY_LEFT, KEY_LEFT, N_("<Left>"), N_("shrink node") , FALSE, 0},
+ {SC_KEY_LEFT2, 'h', "h", N_("shrink node") , FALSE, 0},
+ {SC_KEY_RIGHT, KEY_RIGHT, N_("<Right>"), N_("expand node") , FALSE, 0},
+ {SC_KEY_RIGHT2, 'l', "l", N_("expand node") , FALSE, 0},
+ {SC_KEY_SPACE, ' ', N_("<Space>"), N_("shrink/expand node") , FALSE, 0},
+ {SC_KEY_RETURN, KEY_RETURN, N_("<Return>"), N_("shrink/expand node") , FALSE, 0},
+ {SC_KEY_ENTER, KEY_ENTER, N_("<Enter>"), N_("shrink/expand node") , FALSE, 0},
+ {SC_KEY_UP, KEY_UP, N_("<Up>"), N_("move up") , FALSE, 0},
+ {SC_KEY_UP2, 'k', "k", N_("move up") , FALSE, 0},
+ {SC_KEY_DOWN, KEY_DOWN, N_("<Down>"), N_("move down") , FALSE, 0},
+ {SC_KEY_DOWN2, 'j', "j", N_("move down") , FALSE, 0},
+ {SC_KEY_HOME, KEY_HOME, N_("<Home>"), N_("move to the top") , FALSE, 0},
+ {SC_KEY_END, KEY_END, N_("<End>"), N_("move to the end") , FALSE, 0},
+ {SC_KEY_PPAGE, KEY_PPAGE, N_("<PageUp>"), N_("previous page") , FALSE, 0},
+ {SC_KEY_NPAGE, KEY_NPAGE, N_("<PageDown>"), N_("next page") , FALSE, 0},
+ {SC_KEY_PLUS, '+', "+", N_("shrink/expand node") , FALSE, 0},
+ {SC_KEY_QUIT, 'q', "q" , N_("quit") , TRUE , 0},
+ {SC_KEY_HELP, '?', "?" , N_("help") , TRUE , 0},
+ {SC_KEY_FIND, '/', "/" , N_("search host") , TRUE , 0},
 #ifdef FEAT_TCLFILTER
- {SC_KEY_FILTER, 'f', "f" , "filter hosts" , FALSE, 0},
+ {SC_KEY_FILTER, 'f', "f" , N_("filter hosts" , FALSE, 0},
 #endif
- {SC_KEY_ATTACH, 'a', "a" , "attach session" , FALSE, VK_ATTACH},
- {SC_KEY_CONNECT, 'c', "c" , "connect host" , FALSE, VK_CONNECT},
- {SC_KEY_FILETRANS, 't', "t" , "file transfer" , FALSE, 0},
- {SC_KEY_TOGGLEDUMPS, 'd', "d" , "toggle dumps" , FALSE, VK_DUMP},
- {SC_KEY_REFRESH, 'g', "g" , "refresh host" , FALSE, VK_REFRESH},
- {SC_KEY_INSTALL, 'i', "i" , "install pkg" , FALSE, VK_INSTALL},
- {SC_KEY_UPGRADE, 'u', "u" , "upgrade host(s)" , FALSE, VK_UPGRADE},
- {SC_KEY_MORE, 'm', "m" , "host details" , FALSE, 0},
- {SC_KEY_NEXTSESS, 'n', "n" , "next detached session" , FALSE, 0},
- {SC_KEY_CYCLESESS, 'N', "N" , "cycle detached sessions" , FALSE, 0},
+ {SC_KEY_ATTACH, 'a', "a" , N_("attach session") , FALSE, VK_ATTACH},
+ {SC_KEY_CONNECT, 'c', "c" , N_("connect host") , FALSE, VK_CONNECT},
+ {SC_KEY_FILETRANS, 't', "t" , N_("file transfer") , FALSE, 0},
+ {SC_KEY_TOGGLEDUMPS, 'd', "d" , N_("toggle dumps") , FALSE, VK_DUMP},
+ {SC_KEY_REFRESH, 'g', "g" , N_("refresh host") , FALSE, VK_REFRESH},
+ {SC_KEY_INSTALL, 'i', "i" , N_("install pkg") , FALSE, VK_INSTALL},
+ {SC_KEY_UPGRADE, 'u', "u" , N_("upgrade host(s)") , FALSE, VK_UPGRADE},
+ {SC_KEY_MORE, 'm', "m" , N_("host details") , FALSE, 0},
+ {SC_KEY_NEXTSESS, 'n', "n" , N_("next detached session") , FALSE, 0},
+ {SC_KEY_CYCLESESS, 'N', "N" , N_("cycle detached sessions") , FALSE, 0},
  {SC_MAX, 0, NULL, NULL, FALSE, 0},
 };
 
@@ -184,11 +184,11 @@ struct HostFlag {
 };
 
 static const struct HostFlag hostFlags[] = {
-  {HOST_STATUS_PKGKEPTBACK    ,  "h", "some packages are kept back"},
-  {HOST_STATUS_PKGEXTRA       ,  "x", "extra packages are installed"},
-  {HOST_STATUS_KERNELNOTMATCH ,  "R", "running kernel is not the latest (reboot required)"},
-  {HOST_STATUS_KERNELSELFBUILD,  "k", "a selfbuild kernel is running"},
-  {HOST_STATUS_VIRTUALIZED    ,  "v", "this is a virtualized machine"},
+  {HOST_STATUS_PKGKEPTBACK    ,  "h", N_("some packages are kept back")},
+  {HOST_STATUS_PKGEXTRA       ,  "x", N_("extra packages are installed")},
+  {HOST_STATUS_KERNELNOTMATCH ,  "R", N_("running kernel is not the latest (reboot required)")},
+  {HOST_STATUS_KERNELSELFBUILD,  "k", N_("a selfbuild kernel is running")},
+  {HOST_STATUS_VIRTUALIZED    ,  "v", N_("this is a virtualized machine")},
   {0                          , NULL, NULL},
 };
 
@@ -523,7 +523,7 @@ void drawStatus (char *str, gboolean drawoldest)
 
  if(drawoldest == TRUE) {
   tm_mtime = localtime(&oldest_st_mtime);
-  strftime(strmtime, sizeof(strmtime), " Oldest: %D %H:%M", tm_mtime);
+  strftime(strmtime, sizeof(strmtime), _(" Oldest: %D %H:%M"), tm_mtime);
  }
 
  attron(uicolors[UI_COLOR_STATUS]);
@@ -626,7 +626,12 @@ void drawCategoryEntry (DrawNode *n)
  attroff(n->attrs);
 
  if(n->selected == TRUE) {
-  snprintf(statusln, BUF_MAX_LEN, "%d %s in status \"%s\"", n->elements, n->elements > 1 || n->elements == 0 ? "Hosts" : "Host", (char *) n->p);
+  if (n->elements > 1 || n->elements == 0) {
+   snprintf(statusln, BUF_MAX_LEN, _("%d Hosts in status \"%s\""), n->elements, (char *) n->p);
+  }
+  else {
+   snprintf(statusln, BUF_MAX_LEN, _("%d Host in status \"%s\""), n->elements, (char *) n->p);
+  }
 
   drawMenu(VK_REFRESH);
   drawStatus(statusln, TRUE);
@@ -646,7 +651,12 @@ void drawGroupEntry (DrawNode *n)
  attroff(n->attrs);
 
  if(n->selected == TRUE) {
-  snprintf(statusln, BUF_MAX_LEN, "%d %s is in status \"%s\"", n->elements, n->elements > 1 || n->elements == 0 ? "Hosts" : "Host", incategory);
+  if (n->elements > 1 || n->elements == 0) {
+   snprintf(statusln, BUF_MAX_LEN, _("%d Hosts in status \"%s\""), n->elements, incategory);
+  }
+  else {
+   snprintf(statusln, BUF_MAX_LEN, _("%d Host in status \"%s\""), n->elements, incategory);
+  }
 
   drawMenu(VK_REFRESH);
   drawStatus(statusln, TRUE);
@@ -677,7 +687,7 @@ void drawHostEntry (DrawNode *n)
       addch(hostFlags[i].code[0]);
     else
       addch(' ');
-      
+
     i++;
   }
 
@@ -735,36 +745,50 @@ void drawHostEntry (DrawNode *n)
   switch(((HostNode *) n->p)->category) {
   case C_UPDATES_PENDING:
    mask = VK_CONNECT | VK_UPGRADE | VK_REFRESH | VK_INSTALL;
-   snprintf(statusln, sizeof(statusln), "%d %s required", ((HostNode *) n->p)->nupdates, ((HostNode *) n->p)->nupdates > 1 || ((HostNode *) n->p)->nupdates == 1 ? "Updates" : "Update");
+   if (((HostNode *) n->p)->nupdates > 1 || ((HostNode *) n->p)->nupdates == 0) {
+    snprintf(statusln, sizeof(statusln), _("%d Updates required"), ((HostNode *) n->p)->nupdates);
+   }
+   else {
+    snprintf(statusln, sizeof(statusln), _("%d Update required"), ((HostNode *) n->p)->nupdates);
+   }
    break;
   case C_UP_TO_DATE:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
-   sprintf(statusln, "No update required");
+   sprintf(statusln, _("No update required"));
    break;
   case C_BROKEN_PKGS:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
-   snprintf(statusln, sizeof(statusln), "%d Broken %s", ((HostNode *) n->p)->nbrokens, ((HostNode *) n->p)->nbrokens > 1 || ((HostNode *) n->p)->nbrokens == 1 ? "packages" : "package");
+   if (((HostNode *) n->p)->nbrokens > 1 || ((HostNode *) n->p)->nbrokens == 0) {
+    snprintf(statusln, sizeof(statusln), _("%d Broken packages"), ((HostNode *) n->p)->nbrokens);
+   }
+   else {
+    snprintf(statusln, sizeof(statusln), _("%d Broken package"), ((HostNode *) n->p)->nbrokens);
+   }
    break;
   case C_REFRESH_REQUIRED:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
-   sprintf(statusln, "Refresh required");
+   sprintf(statusln, _("Refresh required"));
    break;
   case C_REFRESH:
-   sprintf(statusln, "In refresh");
+   sprintf(statusln, _("In refresh"));
    break;
   case C_SESSIONS:
    mask = VK_ATTACH;
-   sprintf(statusln, "%d session%s running", g_list_length(((HostNode *) n->p)->screens),
-	   (g_list_length(((HostNode *) n->p)->screens)==1?"":"s"));
+   if (g_list_length(((HostNode *) n->p)->screens) != 1) {
+    sprintf(statusln, _("%d sessions running"), g_list_length(((HostNode *) n->p)->screens));
+   }
+   else {
+    sprintf(statusln, _("%d session running"), g_list_length(((HostNode *) n->p)->screens));
+   }
    break;
   default:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
-   sprintf(statusln, "Status is unknown");
+   sprintf(statusln, _("Status is unknown"));
    break;
   }
 
   if (((HostNode *) n->p)->status & HOST_STATUS_LOCKED) 
-   strcat(statusln," - host locked by another process");
+   strcat(statusln, _(" - host locked by another process"));
   drawMenu(mask);
 
   drawStatus(statusln, TRUE);
@@ -813,10 +837,10 @@ void drawSessionEntry (DrawNode *n)
  snprintf(h, sizeof(h), "%5d: ", ((SessNode *) n->p)->pid);
 
  tm_mtime = localtime(&((SessNode *) n->p)->st.st_mtime);
- strftime(&h[strlen(h)], sizeof(h)-strlen(h), "%D %H:%M ", tm_mtime);
+ strftime(&h[strlen(h)], sizeof(h)-strlen(h), _("%D %H:%M "), tm_mtime);
 
  snprintf(&h[strlen(h)], sizeof(h)-strlen(h), "(%s)",
-	  (screen_is_attached((SessNode *) n->p) ? "Attached" : "Detached"));
+	  (screen_is_attached((SessNode *) n->p) ? _("Attached") : _("Detached")));
 
 
  attron(n->attrs);
@@ -836,12 +860,12 @@ void drawSessionEntry (DrawNode *n)
 	wrefresh(win_dump);
       }
 
-      drawStatus("Running session:", TRUE);
+      drawStatus(_("Running session:"), TRUE);
 
       g_free(dump);
     }
     else
-     drawStatus("Could not read session dump.", TRUE);
+     drawStatus(_("Could not read session dump."), TRUE);
   }
   else
    drawStatus("", TRUE);
@@ -895,12 +919,12 @@ gchar *getStrFromDrawNode (DrawNode *n)
   break;
  case SESSION:
   snprintf(h, sizeof(h), "%5d: ", ((SessNode *) n->p)->pid);
-  
+
   tm_mtime = localtime(&((SessNode *) n->p)->st.st_mtime);
-  strftime(&h[strlen(h)], sizeof(h)-strlen(h), "%D %H:%M ", tm_mtime);
-  
+  strftime(&h[strlen(h)], sizeof(h)-strlen(h), _("%D %H:%M "), tm_mtime);
+
   snprintf(&h[strlen(h)], sizeof(h)-strlen(h), "(%s)",
-	   (screen_is_attached((SessNode *) n->p) ? "Attached" : "Detached"));  
+	   (screen_is_attached((SessNode *) n->p) ? _("Attached") : _("Detached")));  
 
   ret = h;
   break;
@@ -1154,16 +1178,16 @@ void doUI (GList *hosts)
 
    enableInput();
    wattron(w, uicolors[UI_COLOR_QUERY]);
-   mvwaddstr(w, 1, 2, "Maintainer name:");
+   mvwaddstr(w, 1, 2, _("Maintainer name:"));
    wattroff(w, uicolors[UI_COLOR_QUERY]);
    wmove(w, 3, 2);
-   
+
    wattron(w, uicolors[UI_COLOR_INPUT]);
 
    int i;
    for(i = strlen(maintainer)-1; i>=0; i--)
      ungetch(maintainer[i]);
-   
+
    wgetnstr(w, maintainer, sizeof(maintainer));
    disableInput();
 
@@ -1480,7 +1504,7 @@ void extDrawListHost(gint atpos, HostNode *n)
 
  if (n->category == C_SESSIONS) {
    GList *sess = g_list_first(n->screens);
-   
+
    while(sess) {
      drawnode = g_new0(DrawNode, 1);
 #ifndef NDEBUG
@@ -1496,7 +1520,6 @@ void extDrawListHost(gint atpos, HostNode *n)
 
    return;
  }
-      
 
  GList *upd = g_list_first(n->packages);
  while(upd) {
@@ -1755,12 +1778,12 @@ static void expandAllNodes(GList *hosts)
   dl = g_list_first(drawlist);
   while(dl) {
    DrawNode *dn = (DrawNode *) dl->data;
-	   
+
    if(dn->type != HOST) dn->extended = TRUE;
-	   
+
    dl = g_list_next(dl);
   }
-	 
+
   rebuildDrawList(hosts);
  }
  g_completion_clear_items (dlCompl);
@@ -1772,7 +1795,7 @@ void searchEntry(GList *hosts) {
  gint c;
  gchar s[BUF_MAX_LEN];
  gint pos = 0;
- const gchar *query = "Search: ";
+ const gchar *query = _("Search: ");
  const int offset = strlen(query)-1;
  GList *matches = NULL;
  GList *selmatch = NULL;
@@ -1882,7 +1905,7 @@ void searchEntry(GList *hosts) {
       dl = g_list_last(drawlist);
       while(dl) {
        DrawNode *dn = (DrawNode *) dl->data;
-       
+
        if(dn->extended == TRUE) {
 	GList *k = g_list_first(dlkeep);
 	while(k) {
@@ -1910,7 +1933,7 @@ void searchEntry(GList *hosts) {
        DrawNode *n = getSelectedDrawNode();
        if (n)
 	 setEntryActiveStatus(n, FALSE);
-       
+
        /* traverse drawlist bottom up... and only expand
 	* the path to the selmatch */
        dl = g_list_last(drawlist);
@@ -1928,7 +1951,7 @@ void searchEntry(GList *hosts) {
  
 	 dl = g_list_previous(dl);
        }
-       
+
        cleanBetween();
 
        g_list_foreach(drawlist, (GFunc) drawEntry, NULL);
@@ -1945,7 +1968,7 @@ void searchEntry(GList *hosts) {
      dsstr = g_malloc0(dssize);
      if(!dsstr) break;
 
-     g_strlcat(dsstr, "Matches:", dssize);
+     g_strlcat(dsstr, _("Matches:"), dssize);
 
      GList *m = g_list_first(matches);
      while(m) {
@@ -1962,7 +1985,7 @@ void searchEntry(GList *hosts) {
      g_free(dsstr);
    }
    else {
-     drawStatus("Matches: -", FALSE);
+     drawStatus(_("Matches: -"), FALSE);
      selmatch = NULL;
    }
 
@@ -2027,7 +2050,7 @@ void applyFilter(GList *hosts) {
         	Tcl_SetVar(tcl_interp, tclmap[i].name, n->virt, 0);
 		break;
 	    default:
-		g_warning("Internal error: unhandled TCL TCLM_STRING maping!\n");
+		g_warning(_("Internal error: unhandled TCL TCLM_STRING maping!"));
 	  }
 	  break;
 	case TCLM_INT:
@@ -2042,7 +2065,7 @@ void applyFilter(GList *hosts) {
 		    h = g_strdup_printf("%d", n->forbid);
 		    break;
 		default:
-		    g_warning("Internal error: unhandled TCL TCLM_INT maping!\n");
+		    g_warning(_("Internal error: unhandled TCL TCLM_INT maping!"));
 	    }
 
 	    Tcl_SetVar(tcl_interp, tclmap[i].name, h, 0);
@@ -2052,7 +2075,7 @@ void applyFilter(GList *hosts) {
 	case TCLM_IGNORE:
 	  break;
 	default:
-	  g_warning("Internal error: unkown TCL maping type!\n");
+	  g_warning(_("Internal error: unkown TCL maping type!"));
       }
     }
 
@@ -2075,7 +2098,7 @@ void applyFilter(GList *hosts) {
 	
       p = g_list_next(p);
     }
-    
+
     Tcl_UnsetVar(tcl_interp, "flags", 0);
     for(i=0; hostFlags[i].code; i++) {
       if(n->status & hostFlags[i].flag)
@@ -2089,7 +2112,7 @@ void applyFilter(GList *hosts) {
      filtered = FALSE;
     else
      filtered = atoi(tcl_interp->result) > 0;
-     
+
     if(filtered != n->filtered) {
       n->filtered = filtered;
       rebuilddl = TRUE;
@@ -2108,7 +2131,7 @@ static void filterHosts(GList *hosts)
  WINDOW *w = newwin(LINES-3, COLS, 2, 0);
 
  wattron(w, uicolors[UI_COLOR_QUERY]);
- mvwaddstr(w, 1, 0, "Scalars:");
+ mvwaddstr(w, 1, 0, _("Scalars:"));
  wattroff(w, uicolors[UI_COLOR_QUERY]);
 
  waddstr(w, "\n");
@@ -2123,16 +2146,16 @@ static void filterHosts(GList *hosts)
     waddstr(w, ", ");
    else
     first = 0;
-    
+
    waddstr(w, tclmap[i].name);
  }
-  
+
  waddstr(w, "\n\n");
- 
+
  wattron(w, uicolors[UI_COLOR_QUERY]);
- waddstr(w, "Arrays:");
+ waddstr(w, _("Arrays:"));
  wattroff(w, uicolors[UI_COLOR_QUERY]);
- 
+
  waddstr(w, "\n");
 
  first = 1;
@@ -2144,16 +2167,16 @@ static void filterHosts(GList *hosts)
     waddstr(w, ", ");
    else
     first = 0;
-    
+
    waddstr(w, tclmap[i].name);
  }
- 
+
  waddstr(w, "\n\n");
 
  wattron(w, uicolors[UI_COLOR_QUERY]);
- waddstr(w, "Examples:");
+ waddstr(w, _("Examples:"));
  wattroff(w, uicolors[UI_COLOR_QUERY]);
- 
+
  waddstr(w, "\n");
 
  waddstr(w, "return [expr [string compare $lsb_distri \"Debian\"] == 0]\n");
@@ -2164,16 +2187,16 @@ static void filterHosts(GList *hosts)
  waddstr(w, "\n");
 
  wattron(w, uicolors[UI_COLOR_QUERY]);
- waddstr(w, "Enter filter expression:");
+ waddstr(w, _("Enter filter expression:"));
  wattroff(w, uicolors[UI_COLOR_QUERY]);
  waddstr(w, "\n");
-   
+
  enableInput();
  wattron(w, uicolors[UI_COLOR_INPUT]);
 
  for(i = strlen(filterexp)-1; i>=0; i--)
    ungetch(filterexp[i]);
-   
+
  r = getnLine(w, filterexp, sizeof(filterexp)-1, FALSE);
 
  disableInput();
@@ -2291,7 +2314,7 @@ gboolean ctrlUI (GList *hosts)
     if(n->extended == TRUE) n->extended = FALSE;
 
     if (g_list_length(inhost->screens)) {
-     if (!queryConfirm("There are running sessions on this host! Continue? [y/N]: ",
+     if (!queryConfirm(_("There are running sessions on this host! Continue? [y/N]: "),
 		       FALSE, NULL))
       break;
     }
@@ -2315,9 +2338,9 @@ gboolean ctrlUI (GList *hosts)
      break;
 
     if(n->extended == TRUE) n->extended = FALSE;
-    
+
     if (g_list_length(inhost->screens)) {
-     if (!queryConfirm("There are running sessions on this host! Continue? [y/N]: ",
+     if (!queryConfirm(_("There are running sessions on this host! Continue? [y/N]: "),
 		       FALSE, NULL))
       break;
     }
@@ -2333,8 +2356,8 @@ gboolean ctrlUI (GList *hosts)
    case GROUP:
    default:
     {
-     if(((n->type == CATEGORY) && !queryConfirm("Run update for the whole category? [y/N]: ", FALSE, NULL)) ||
-	((n->type == GROUP) && !queryConfirm("Run update for the whole group? [y/N]: ", FALSE, NULL)))
+     if(((n->type == CATEGORY) && !queryConfirm(_("Run update for the whole category? [y/N]: "), FALSE, NULL)) ||
+	((n->type == GROUP) && !queryConfirm(_("Run update for the whole group? [y/N]: "), FALSE, NULL)))
       break;
 
      GList *ho = g_list_first(hosts);
@@ -2364,18 +2387,18 @@ gboolean ctrlUI (GList *hosts)
      pkg = ((PkgNode *) n->p)->package;
 
      if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGUPDATE) {
-      qrystr = g_strdup_printf("Install package `%s' [y/N]: ", pkg);
+      qrystr = g_strdup_printf(_("Install package `%s' [y/N]: "), pkg);
       if(!qrystr) break;
       retqry = queryConfirm(qrystr, FALSE, NULL);
       g_free(qrystr);
       qrystr = NULL;
      } else {
-      if(queryString("Install package: ", in, sizeof(in)-1) == FALSE) break;
+      if(queryString(_("Install package: "), in, sizeof(in)-1) == FALSE) break;
       if (strlen(in)==0) break;
       pkg = in;
       retqry = TRUE;
      }
-     
+
      if(retqry == TRUE) {
       cleanUI();
       ssh_cmd_install(inhost, pkg, FALSE);
@@ -2393,12 +2416,12 @@ gboolean ctrlUI (GList *hosts)
      break;
 
     if (g_list_length(inhost->screens)) {
-     if (!queryConfirm("There are running sessions on this host! Continue? [y/N]: ", 
+     if (!queryConfirm(_("There are running sessions on this host! Continue? [y/N]: "),
 		       FALSE, NULL))
       break;
     }
-  
-    if(queryString("Install package: ", in, sizeof(in)-1) == FALSE) break;
+
+    if(queryString(_("Install package: "), in, sizeof(in)-1) == FALSE) break;
     if (strlen(in)==0)
      break;
     pkg = in;
@@ -2414,12 +2437,12 @@ gboolean ctrlUI (GList *hosts)
    case GROUP:
    default:
     {
-     if(queryString("Install package: ", in, sizeof(in)-1) == FALSE) break;
+     if(queryString(_("Install package: "), in, sizeof(in)-1) == FALSE) break;
      if (strlen(in)==0)
       break;
 
-     if(((n->type == CATEGORY) && !queryConfirm("Run install for the whole category? [y/N]: ", FALSE, NULL)) ||
-	((n->type == GROUP) && !queryConfirm("Run install for the whole group? [y/N]: ", FALSE, NULL)))
+     if(((n->type == CATEGORY) && !queryConfirm(_("Run install for the whole category? [y/N]: "), FALSE, NULL)) ||
+	((n->type == GROUP) && !queryConfirm(_("Run install for the whole group? [y/N]: "), FALSE, NULL)))
       break;
 
      GList *ho = g_list_first(hosts);
@@ -2452,10 +2475,10 @@ gboolean ctrlUI (GList *hosts)
      GList *sc = m->screens;
 
      while(sc) {
-      qrystr = g_strdup_printf("Attach host %s session %d [Y/n/c]: ", 
+      qrystr = g_strdup_printf(_("Attach host %s session %d [Y/n/c]: "),
 			       m->hostname, ((SessNode *)sc->data)->pid);
       if(!qrystr) {
-       g_warning("Memory allocation failed!");
+       g_warning(_("Out of memory."));
        break;
       }
 
@@ -2485,7 +2508,7 @@ gboolean ctrlUI (GList *hosts)
 
       }
       sc = g_list_next(sc);
- 
+
      }
 
      if(ho)
@@ -2499,7 +2522,7 @@ gboolean ctrlUI (GList *hosts)
    if(!inhost) break;
 
    SessNode *s = NULL;
-  
+
    if(!n || (n->type != SESSION)) {
     GList *l = g_list_first(inhost->screens);
     if (l)
@@ -2517,9 +2540,9 @@ gboolean ctrlUI (GList *hosts)
 
     /* Session already attached! */
     if (screen_is_attached(s)) {
-     if (!queryConfirm("Already attached - share session? [y/N]: ", FALSE, NULL))
+     if (!queryConfirm(_("Already attached - share session? [y/N]: "), FALSE, NULL))
       break;
-      
+
      may_share = TRUE;
     }
 
@@ -2538,9 +2561,9 @@ gboolean ctrlUI (GList *hosts)
 
    if(getSelectedDrawNode()->type != SESSION) {
     if(dump_screen)
-     drawQuery("Session dumps enabled.");
+     drawQuery(_("Session dumps enabled."));
     else
-     drawQuery("Session dumps disabled.");
+     drawQuery(_("Session dumps disabled."));
    }
    else
     refscr = TRUE;
@@ -2556,8 +2579,8 @@ gboolean ctrlUI (GList *hosts)
     keypad(wp, TRUE);
 
     wattron(wp, A_BOLD);
-    mvwaddnstr(wp, l  ,  2, "FLAG"       , COLS - 2);
-    mvwaddnstr(wp, l++, 16, "DESCRIPTION", COLS - 16);
+    mvwaddnstr(wp, l  ,  2, _("FLAG")       , COLS - 2);
+    mvwaddnstr(wp, l++, 16, _("DESCRIPTION"), COLS - 16);
     wattroff(wp, A_BOLD);
 
     gint i = -1;
@@ -2569,8 +2592,8 @@ gboolean ctrlUI (GList *hosts)
     l++;
      
     wattron(wp, A_BOLD);
-    mvwaddnstr(wp, l  ,  2, "KEY"        , COLS - 2);
-    mvwaddnstr(wp, l++, 16, "DESCRIPTION", COLS - 16);
+    mvwaddnstr(wp, l  ,  2, _("KEY")        , COLS - 2);
+    mvwaddnstr(wp, l++, 16, _("DESCRIPTION"), COLS - 16);
     wattroff(wp, A_BOLD);
 
     i = -1;
@@ -2625,23 +2648,23 @@ gboolean ctrlUI (GList *hosts)
     keypad(wp, TRUE);
 
     wattron(wp, A_BOLD);
-    mvwaddnstr(wp, l++,  1, "HOST DETAILS"  , COLS - 1);
+    mvwaddnstr(wp, l++,  1, _("HOST DETAILS")  , COLS - 1);
     wattroff(wp, A_BOLD);
 
-    mvwaddnstr(wp, l  ,  2, "Group:"               , COLS -  2);
+    mvwaddnstr(wp, l  ,  2, _("Group:")               , COLS -  2);
     mvwaddnstr(wp, l++, 20, inhost->group          , COLS - 20);
-    mvwaddnstr(wp, l  ,  2, "Hostname:"            , COLS -  2);
+    mvwaddnstr(wp, l  ,  2, _("Hostname:")            , COLS -  2);
     mvwaddnstr(wp, l++, 20, inhost->hostname       , COLS - 20);
     if (inhost->virt) {
-	mvwaddnstr(wp, l  ,  2, "Machine Type:"        , COLS -  2);
+	mvwaddnstr(wp, l  ,  2, _("Machine Type:")        , COLS -  2);
 	mvwaddnstr(wp, l++, 20, inhost->virt           , COLS - 20);
     }
     if (inhost->uname_machine && inhost->uname_machine[0]) {
-	mvwaddnstr(wp, l  ,  2, "Architecture:"        , COLS -  2);
+	mvwaddnstr(wp, l  ,  2, _("Architecture:")        , COLS -  2);
 	mvwaddnstr(wp, l++, 20, inhost->uname_machine  , COLS - 20);
     }
     if (inhost->forbid & HOST_FORBID_MASK) {
-	mvwaddnstr(wp, l  , 2, "Forbidden:", COLS - 2);
+	mvwaddnstr(wp, l  , 2, _("Forbidden:"), COLS - 2);
 
 	strcpy(buf, " ");
 	if (inhost->forbid & HOST_FORBID_REFRESH) {
@@ -2667,29 +2690,29 @@ gboolean ctrlUI (GList *hosts)
     l++;
 
     if (inhost->lsb_distributor) {
-	mvwaddnstr(wp, l  ,  2, "Distri:"              , COLS -  2);
+	mvwaddnstr(wp, l  ,  2, _("Distri:")              , COLS -  2);
         mvwaddnstr(wp, l++, 20, inhost->lsb_distributor, COLS - 20);
         if (inhost->lsb_codename)
 	    snprintf(buf, sizeof(buf), "%s (%s)", inhost->lsb_release, inhost->lsb_codename);
 	else
 	    snprintf(buf, sizeof(buf), "%s", inhost->lsb_release);
-	mvwaddnstr(wp, l  ,  2, "Release:"             , COLS -  2);
+	mvwaddnstr(wp, l  ,  2, _("Release:")             , COLS -  2);
         mvwaddnstr(wp, l++, 20, buf                    , COLS - 20);
     }
     if (inhost->uname_kernel && inhost->uname_kernel[0]) {
-	mvwaddnstr(wp, l  ,  2, "Kernel name:"         , COLS -  2);
+	mvwaddnstr(wp, l  ,  2, _("Kernel name:")         , COLS -  2);
 	mvwaddnstr(wp, l++, 20, inhost->uname_kernel   , COLS - 20);
     }
     if (inhost->kernelrel) {
-	mvwaddnstr(wp, l  ,  2, "Kernel version:"      , COLS -  2);
+	mvwaddnstr(wp, l  ,  2, _("Kernel version:")      , COLS -  2);
 	mvwaddnstr(wp, l++, 20, inhost->kernelrel      , COLS - 20);
 	
 	switch(inhost->status & (HOST_STATUS_KERNELNOTMATCH | HOST_STATUS_KERNELSELFBUILD)) {
 	    case HOST_STATUS_KERNELNOTMATCH:
-		strcpy(buf, "(reboot required)");
+		strcpy(buf, _("(reboot required)"));
 		break;
 	    case HOST_STATUS_KERNELSELFBUILD:
-		strcpy(buf, "(selfbuild kernel)");
+		strcpy(buf, _("(selfbuild kernel)"));
 		break;
 	    default:
 		buf[0] = 0;
@@ -2703,7 +2726,7 @@ gboolean ctrlUI (GList *hosts)
     if (g_list_length(inhost->packages)) {
 	l++;
 
-	mvwaddnstr(wp, l  , 2, "Packages: ", COLS - 2);
+	mvwaddnstr(wp, l  , 2, _("Packages: "), COLS - 2);
 	snprintf(buf, sizeof(buf), "%d installed (%d update%s, %d hold back, %d broken, %d extra)",
 		 g_list_length(inhost->packages), inhost->nupdates, inhost->nupdates == 1 ? "" : "s",
 		 inhost->nholds, inhost->nbrokens, inhost->nextras);
@@ -2714,7 +2737,7 @@ gboolean ctrlUI (GList *hosts)
 	l++;
 
 	wattron(wp, A_BOLD);
-	mvwaddnstr(wp, l++,  1, "BROKEN PACKAGES"  , COLS - 1);
+	mvwaddnstr(wp, l++,  1, _("BROKEN PACKAGES")  , COLS - 1);
 	wattroff(wp, A_BOLD);
 
 	GList *p = g_list_first(inhost->packages);
@@ -2735,7 +2758,7 @@ gboolean ctrlUI (GList *hosts)
 	l++;
 
 	wattron(wp, A_BOLD);
-	mvwaddnstr(wp, l++,  1, "UPDATE PACKAGES"  , COLS - 1);
+	mvwaddnstr(wp, l++,  1, _("UPDATE PACKAGES")  , COLS - 1);
 	wattroff(wp, A_BOLD);
 
 	GList *p = g_list_first(inhost->packages);
@@ -2756,7 +2779,7 @@ gboolean ctrlUI (GList *hosts)
 	l++;
 
 	wattron(wp, A_BOLD);
-	mvwaddnstr(wp, l++,  1, "HOLD BACK PACKAGES"  , COLS - 1);
+	mvwaddnstr(wp, l++,  1, _("HOLD BACK PACKAGES")  , COLS - 1);
 	wattroff(wp, A_BOLD);
 
 	GList *p = g_list_first(inhost->packages);
@@ -2776,7 +2799,7 @@ gboolean ctrlUI (GList *hosts)
 	l++;
 
 	wattron(wp, A_BOLD);
-	mvwaddnstr(wp, l++,  1, "EXTRA PACKAGES"  , COLS - 1);
+	mvwaddnstr(wp, l++,  1, _("EXTRA PACKAGES")  , COLS - 1);
 	wattroff(wp, A_BOLD);
 
 	GList *p = g_list_first(inhost->packages);
@@ -2796,7 +2819,7 @@ gboolean ctrlUI (GList *hosts)
 	l++;
 
 	wattron(wp, A_BOLD);
-	mvwaddnstr(wp, l++,  1, "INSTALLED PACKAGES", COLS - 1);
+	mvwaddnstr(wp, l++,  1, _("INSTALLED PACKAGES"), COLS - 1);
 	wattroff(wp, A_BOLD);
 
 	GList *p = g_list_first(inhost->packages);
@@ -2829,7 +2852,7 @@ gboolean ctrlUI (GList *hosts)
       pminrow = pminrow+LINES-3 > (l-LINES+4) ? l-LINES+4 : pminrow+LINES-3;
      else if(wic == KEY_PPAGE)
       pminrow = pminrow-(LINES-3) < 0 ? 0 : pminrow-(LINES-3);
-#ifdef KEY_RESIZE     
+#ifdef KEY_RESIZE
      else if(wic == KEY_RESIZE) {
       refscr = TRUE;
       break;
@@ -2837,7 +2860,7 @@ gboolean ctrlUI (GList *hosts)
 #endif
      prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
     }
-   
+
     delwin(wp);
     refscr = TRUE;
    }
@@ -2884,8 +2907,12 @@ gboolean ctrlUI (GList *hosts)
    }
 
    if(hostcnt > 0) {
-    qrystr = g_strdup_printf("There are %d %s in status refresh state,\
- quit apt-dater? [y/N]: ", hostcnt, hostcnt > 1 ? "hosts" : "host");
+    if (hostcnt != 1) {
+     qrystr = g_strdup_printf("There are %d hosts in status refresh state, quit apt-dater? [y/N]: ", hostcnt);
+    }
+    else {
+     qrystr = g_strdup_printf("There is %d host in status refresh state, quit apt-dater? [y/N]: ", hostcnt);
+    }
 
     retqry = queryConfirm(qrystr, FALSE, NULL);
     g_free(qrystr);

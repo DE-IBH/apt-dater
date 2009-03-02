@@ -150,7 +150,7 @@ void ui_start_color ()
  start_color();
  if(cfg->colors)
   if(setColors((const gchar **) cfg->colors) == FALSE)
-   g_warning("Wrong color definition!");
+   g_warning(_("Wrong color definition!"));
 
 #ifdef HAVE_USE_DEFAULT_COLORS
  if(pair_content(UI_COLOR_DEFAULT+1, &fg, &bg) != ERR) {

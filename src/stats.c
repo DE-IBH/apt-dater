@@ -469,7 +469,7 @@ gboolean refreshStats(GList *hosts)
   if (num_in_refresh == 0) {
    if(do_autoref) {
     if (autoref_trigger_auto())
-     drawStatus ("Auto refresh triggered...", FALSE);
+     drawStatus (_("Auto refresh triggered..."), FALSE);
     do_autoref = FALSE;
    }
   }

@@ -41,6 +41,19 @@
 
 #include <glib-2.0/glib.h>
 
+#include "../config.h"
+
+
+#ifdef HAVE_GETTEXT
+
+#include <libintl.h>
+#define _(x) gettext(x)
+#else
+#define _(x) x
+#endif
+#define N_(x) x
+
+
 #define STATS_MAX_LINE_LEN 1000
 #define INPUT_MAX 4096
 #define BUF_MAX_LEN 256

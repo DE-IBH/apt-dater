@@ -7,7 +7,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008-2009 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,7 @@ static gchar *getLockFile(const HostNode *n)
 {
  gchar *lockfile = NULL;
  gchar *statsfile = NULL;
- 
+
  statsfile = getStatsFileName(n);
 
  lockfile = g_strdup_printf("%s.lck", statsfile);
@@ -55,9 +55,9 @@ int setLockForHost(HostNode *n)
 {
  int r;
  gchar *lockfile = NULL;
- 
+
  if(!(lockfile = getLockFile(n))) {
-  g_error("Can't get the name of the lock file!");
+  g_error(_("Can't get the name of the lock file!"));
   return(EXIT_FAILURE);
  }
 
@@ -76,11 +76,11 @@ int setLockForHost(HostNode *n)
  } while((r==-1) && (errno == EINTR));
 
  if((r==-1) && (errno != EWOULDBLOCK)) {
-   g_error("Failed to get lockfile %s: %s",
+   g_error(_("Failed to get lockfile %s: %s"),
 	   lockfile, g_strerror(errno));
  }
 #else
- g_warning("Can't lock to file %s because function flock() is missing!",
+ g_warning(_("Can't lock to file %s because function flock() is missing!"),
 	   lockfile);
  g_free(lockfile);
  return(EXIT_FAILURE);
