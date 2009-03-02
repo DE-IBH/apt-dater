@@ -52,9 +52,13 @@ typedef enum {
 
 typedef enum {
  SC_KEY_LEFT = 0,
+ SC_KEY_LEFT2,
  SC_KEY_RIGHT,
+ SC_KEY_RIGHT2,
  SC_KEY_UP,
+ SC_KEY_UP2,
  SC_KEY_DOWN,
+ SC_KEY_DOWN2,
  SC_KEY_HOME,
  SC_KEY_END,
  SC_KEY_PPAGE,

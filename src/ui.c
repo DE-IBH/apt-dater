@@ -143,12 +143,16 @@ struct ShortCut {
 
 static struct ShortCut shortCuts[] = {
  {SC_KEY_LEFT, KEY_LEFT, "<Left>", "shrink node" , FALSE, 0},
+ {SC_KEY_LEFT2, 'h', "h", "shrink node" , FALSE, 0},
  {SC_KEY_RIGHT, KEY_RIGHT, "<Right>", "expand node" , FALSE, 0},
+ {SC_KEY_RIGHT2, 'l', "l", "expand node" , FALSE, 0},
  {SC_KEY_SPACE, ' ', "<Space>", "shrink/expand node" , FALSE, 0},
  {SC_KEY_RETURN, KEY_RETURN, "<Return>", "shrink/expand node" , FALSE, 0},
  {SC_KEY_ENTER, KEY_ENTER, "<Enter>", "shrink/expand node" , FALSE, 0},
  {SC_KEY_UP, KEY_UP, "<Up>", "move up" , FALSE, 0},
+ {SC_KEY_UP2, 'k', "k", "move up" , FALSE, 0},
  {SC_KEY_DOWN, KEY_DOWN, "<Down>", "move down" , FALSE, 0},
+ {SC_KEY_DOWN2, 'j', "j", "move down" , FALSE, 0},
  {SC_KEY_HOME, KEY_HOME, "<Home>", "move to the top" , FALSE, 0},
  {SC_KEY_END, KEY_END, "<End>", "move to the end" , FALSE, 0},
  {SC_KEY_PPAGE, KEY_PPAGE, "<PageUp>", "previous page" , FALSE, 0},
@@ -1181,6 +1185,7 @@ gboolean ctrlKeyUpDown(int ic)
 
  switch (ic) {
  case KEY_UP:
+ case 'k':
   if(!g_list_previous(dl)) return(ret);
   else {
    setEntryActiveStatus((DrawNode *) dl->data, FALSE);
@@ -1194,6 +1199,7 @@ gboolean ctrlKeyUpDown(int ic)
   }
   break;
  case KEY_DOWN:
+ case 'j':
   if(!g_list_next(dl)) return(ret);
   else {
    setEntryActiveStatus((DrawNode *) dl->data, FALSE);
@@ -2217,6 +2223,8 @@ gboolean ctrlUI (GList *hosts)
   case SC_KEY_END:
   case SC_KEY_UP:
   case SC_KEY_DOWN:
+  case SC_KEY_UP2:
+  case SC_KEY_DOWN2:
    refscr = ctrlKeyUpDown(ic);
    break; /* case SC_KEY_DOWN */
 
@@ -2229,10 +2237,12 @@ gboolean ctrlUI (GList *hosts)
    break; /* case SC_KEY_NPAGE */
 
   case SC_KEY_LEFT:
+  case SC_KEY_LEFT2:
    refscr = ctrlKeyLeft(hosts);
    break; /* case SC_KEY_LEFT */
 
   case SC_KEY_RIGHT:
+  case SC_KEY_RIGHT2:
    refscr = ctrlKeyRight(hosts);
    break; /* case SC_KEY_RIGHT */
 
