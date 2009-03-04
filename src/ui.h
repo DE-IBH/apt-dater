@@ -86,6 +86,7 @@ typedef enum {
  SC_KEY_CYCLESESS,
  SC_KEY_TAG,
  SC_KEY_TAGMATCH,
+ SC_KEY_UNTAGMATCH,
  SC_MAX,
 } EShortCuts;
 

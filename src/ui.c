@@ -177,7 +177,8 @@ static struct ShortCut shortCuts[] = {
  {SC_KEY_NEXTSESS, 'n', "n" , N_("next detached session") , FALSE, 0},
  {SC_KEY_CYCLESESS, 'N', "N" , N_("cycle detached sessions") , FALSE, 0},
  {SC_KEY_TAG, 't', "t" , N_("tag current host") , FALSE, 0},
-  /* {SC_KEY_TAGMATCH, 'T', "T" , N_("tag all hosts matching") , FALSE, 0}, */
+ {SC_KEY_TAGMATCH, 'T', "T" , N_("tag all hosts matching") , FALSE, 0},
+  {SC_KEY_UNTAGMATCH, ctrl('T'), "^T" , N_("untag all hosts matching") , FALSE, 0},
  {SC_MAX, 0, NULL, NULL, FALSE, 0},
 };
 
@@ -2527,10 +2528,10 @@ gboolean ctrlUI (GList *hosts)
    
     if(thosts && g_list_length (thosts) > 0) {
      qrystr = g_strdup_printf(_("Install package on %d tagged and hosts: "), g_list_length (thosts));
+     if(!qrystr) break;
      retqry = TRUE;
      if(queryString(qrystr, in, sizeof(in)-1) == FALSE) retqry = FALSE;
      if (strlen(in)==0) retqry = FALSE;
-
      g_free(qrystr);
 
      if(retqry == TRUE) {
@@ -2550,6 +2551,33 @@ gboolean ctrlUI (GList *hosts)
    
    }
    break; /* case SC_KEY_INSTTAGGED */
+
+  case SC_KEY_TAGMATCH:
+  case SC_KEY_UNTAGMATCH:
+   {
+    if(queryString(sc == SC_KEY_TAGMATCH ? _("Tag hosts matching: ") : 
+		    _("Untag hosts matching: "), in, 
+		    sizeof(in)-1) == FALSE) break;
+    if (strlen(in)==0) break;
+
+    GList *ho = g_list_first(hosts);
+
+    while(ho) {
+     HostNode *n = (HostNode *)ho->data;
+     
+     if(strlen(n->hostname) >= strlen(in)) {
+      for(i=0; i<strlen(n->hostname)&&strlen(&n->hostname[i]) >= strlen(in);i++)
+       if(!g_ascii_strncasecmp (&n->hostname[i], in, strlen(in))) {
+	n->tagged= sc == SC_KEY_TAGMATCH ? TRUE : FALSE;
+	refscr= TRUE;
+       }
+     }
+
+     ho = g_list_next(ho);
+    }
+    *in = 0;
+   }
+   break; /* case SC_KEY_TAGMATCH */
 
   case SC_KEY_NEXTSESS:
    {
