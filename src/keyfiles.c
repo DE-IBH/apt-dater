@@ -359,6 +359,7 @@ GList *loadHosts (char *filename)
    hostnode->fdlock = -1;
    hostnode->identity_file = g_key_file_get_string(keyfile, groups[i], 
 						  "IdentityFile", &error);
+   hostnode->tagged = FALSE;
    g_clear_error(&error);
 
    hostnode->group = g_strdup(groups[i]);

@@ -199,6 +199,7 @@ typedef struct _hostnode {
  gchar     *virt;
  gchar     *identity_file;
  gint      forbid;
+ gboolean  tagged;
 } HostNode;
 
 struct mapping_t {

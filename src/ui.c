@@ -166,14 +166,18 @@ static struct ShortCut shortCuts[] = {
 #endif
  {SC_KEY_ATTACH, 'a', "a" , N_("attach session") , FALSE, VK_ATTACH},
  {SC_KEY_CONNECT, 'c', "c" , N_("connect host") , FALSE, VK_CONNECT},
- {SC_KEY_FILETRANS, 't', "t" , N_("file transfer") , FALSE, 0},
+ {SC_KEY_FILETRANS, 'C', "C" , N_("file transfer") , FALSE, 0},
  {SC_KEY_TOGGLEDUMPS, 'd', "d" , N_("toggle dumps") , FALSE, VK_DUMP},
  {SC_KEY_REFRESH, 'g', "g" , N_("refresh host") , FALSE, VK_REFRESH},
  {SC_KEY_INSTALL, 'i', "i" , N_("install pkg") , FALSE, VK_INSTALL},
+ {SC_KEY_INSTTAGGED, 'I', "I" , N_("install pkg on tagged host(s)") , FALSE, 0},
  {SC_KEY_UPGRADE, 'u', "u" , N_("upgrade host(s)") , FALSE, VK_UPGRADE},
+ {SC_KEY_UPGTAGGED, 'U', "U" , N_("upgrade tagged host(s)") , FALSE, 0},
  {SC_KEY_MORE, 'm', "m" , N_("host details") , FALSE, 0},
  {SC_KEY_NEXTSESS, 'n', "n" , N_("next detached session") , FALSE, 0},
  {SC_KEY_CYCLESESS, 'N', "N" , N_("cycle detached sessions") , FALSE, 0},
+ {SC_KEY_TAG, 't', "t" , N_("tag current host") , FALSE, 0},
+  /* {SC_KEY_TAGMATCH, 'T', "T" , N_("tag all hosts matching") , FALSE, 0}, */
  {SC_MAX, 0, NULL, NULL, FALSE, 0},
 };
 
@@ -699,7 +703,13 @@ void drawHostEntry (DrawNode *n)
   addch(n->elements > 0 && n->extended == FALSE ? '+' : '-');
  else
   addch(' ');
- addstr("] ");
+ addstr("]");
+
+ if(((HostNode *) n->p)->tagged)
+  addch('*');
+ else
+  addch(' ');
+
 
  if(((HostNode *) n->p)->forbid & HOST_FORBID_MASK)
     attron(A_UNDERLINE);
@@ -2233,7 +2243,7 @@ gboolean ctrlUI (GList *hosts)
   refresh();
  else 
   for(i = 0; shortCuts[i].keycode; i++) 
-   if(shortCuts[i].keycode == tolower(ic)) sc = shortCuts[i].sc;
+   if(shortCuts[i].keycode == ic) sc = shortCuts[i].sc;
 
 #ifdef KEY_RESIZE
  if(ic == KEY_RESIZE) refscr = TRUE;
@@ -2378,6 +2388,42 @@ gboolean ctrlUI (GList *hosts)
    }
    break; /* case SC_KEY_UPGRADE */
 
+  case SC_KEY_UPGTAGGED:
+   {
+    GList *thosts = NULL;
+
+    GList *ho = g_list_first(hosts);
+    
+    while(ho) {
+     HostNode *m = (HostNode *)ho->data;
+     if(m->forbid ^ HOST_FORBID_UPGRADE && m->nupdates > 0 && m->tagged == TRUE)
+      thosts = g_list_prepend(thosts, m);
+    
+     ho = g_list_next(ho);
+    }
+   
+    if(thosts && g_list_length (thosts) > 0) {
+     qrystr = g_strdup_printf(_("Run update for %d tagged and updatable hosts? [y/N]: "), g_list_length (thosts));
+     retqry = queryConfirm(qrystr, FALSE, NULL);
+     g_free(qrystr);
+
+     if(retqry == TRUE) {
+      GList *ho = g_list_first(thosts);
+     
+      while(ho) {
+       HostNode *m = (HostNode *)ho->data;
+       ssh_cmd_upgrade(m, TRUE);
+      
+       ho = g_list_next(ho);
+      }
+     }
+    
+     g_list_free (thosts);
+    } else beep();
+   
+   }
+   break; /* case SC_KEY_UPGTAGGED */
+
   case SC_KEY_INSTALL:
    n = getSelectedDrawNode();
    if(!n) break;
@@ -2409,6 +2455,7 @@ gboolean ctrlUI (GList *hosts)
      }
     }
     break;
+
    case HOST:
     if(n->extended == TRUE) n->extended = FALSE;
 
@@ -2463,6 +2510,46 @@ gboolean ctrlUI (GList *hosts)
     break;
    }
    break; /* case SC_KEY_INSTALL */
+
+  case SC_KEY_INSTTAGGED:
+   {
+    GList *thosts = NULL;
+
+    GList *ho = g_list_first(hosts);
+    
+    while(ho) {
+     HostNode *m = (HostNode *)ho->data;
+     if(m->forbid ^ HOST_FORBID_INSTALL && m->tagged == TRUE)
+      thosts = g_list_prepend(thosts, m);
+    
+     ho = g_list_next(ho);
+    }
+   
+    if(thosts && g_list_length (thosts) > 0) {
+     qrystr = g_strdup_printf(_("Install package on %d tagged and hosts: "), g_list_length (thosts));
+     retqry = TRUE;
+     if(queryString(qrystr, in, sizeof(in)-1) == FALSE) retqry = FALSE;
+     if (strlen(in)==0) retqry = FALSE;
+
+     g_free(qrystr);
+
+     if(retqry == TRUE) {
+      pkg = in;
+      GList *ho = g_list_first(thosts);
+     
+      while(ho) {
+       HostNode *m = (HostNode *)ho->data;
+       ssh_cmd_install(m, pkg, TRUE);
+      
+       ho = g_list_next(ho);
+      }
+     }
+    
+     g_list_free (thosts);
+    } else beep();
+   
+   }
+   break; /* case SC_KEY_INSTTAGGED */
 
   case SC_KEY_NEXTSESS:
    {
@@ -2869,6 +2956,15 @@ gboolean ctrlUI (GList *hosts)
   case SC_KEY_FIND:
    searchEntry(hosts);
    refscr = TRUE;
+   break;
+
+  case SC_KEY_TAG:
+   n = getSelectedDrawNode();
+   if(!n) break;
+   if(n->type == HOST) {
+    ((HostNode *) n->p)->tagged = !((HostNode *) n->p)->tagged;
+    drawHostEntry(n);
+   } else beep();
    break;
 
 #ifdef FEAT_TCLFILTER
