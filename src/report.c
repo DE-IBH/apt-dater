@@ -49,7 +49,7 @@ void initReport(GList *hosts) {
    */
   LIBXML_TEST_VERSION
 
-  fprintf(stderr, _("apt-dater is refreshing %d hosts, please standby...\n\n"), g_list_length(hosts));
+  fprintf(stderr, _("apt-dater is refreshing %d hosts, please standby...\n"), g_list_length(hosts));
 
   writer = xmlNewTextWriterDoc(&doc, 0);
   if (writer == NULL)
