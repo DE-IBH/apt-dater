@@ -170,15 +170,14 @@ static struct ShortCut shortCuts[] = {
  {SC_KEY_TOGGLEDUMPS, 'd', "d" , N_("toggle dumps") , FALSE, VK_DUMP},
  {SC_KEY_REFRESH, 'g', "g" , N_("refresh host") , FALSE, VK_REFRESH},
  {SC_KEY_INSTALL, 'i', "i" , N_("install pkg") , FALSE, VK_INSTALL},
- {SC_KEY_INSTTAGGED, 'I', "I" , N_("install pkg on tagged host(s)") , FALSE, 0},
  {SC_KEY_UPGRADE, 'u', "u" , N_("upgrade host(s)") , FALSE, VK_UPGRADE},
- {SC_KEY_UPGTAGGED, 'U', "U" , N_("upgrade tagged host(s)") , FALSE, 0},
  {SC_KEY_MORE, 'm', "m" , N_("host details") , FALSE, 0},
  {SC_KEY_NEXTSESS, 'n', "n" , N_("next detached session") , FALSE, 0},
  {SC_KEY_CYCLESESS, 'N', "N" , N_("cycle detached sessions") , FALSE, 0},
  {SC_KEY_TAG, 't', "t" , N_("tag current host") , FALSE, 0},
  {SC_KEY_TAGMATCH, 'T', "T" , N_("tag all hosts matching") , FALSE, 0},
   {SC_KEY_UNTAGMATCH, ctrl('T'), "^T" , N_("untag all hosts matching") , FALSE, 0},
+  {SC_KEY_TAGACTION, ';', ";" , N_("apply next function to tagged hosts") , FALSE, 0},
  {SC_MAX, 0, NULL, NULL, FALSE, 0},
 };
 
@@ -2231,9 +2230,10 @@ gboolean ctrlUI (GList *hosts)
  gboolean   refscr = FALSE;
  DrawNode   *n;
  static     gchar in[INPUT_MAX];
+ static     gboolean keytagactive = FALSE;
  gchar      *qrystr = NULL;
  gchar      *pkg = NULL;
- EShortCuts sc = SC_MAX;
+ guint sc = SC_MAX;
 
  if(rebuilddl == TRUE) {
   rebuildDrawList(hosts);
@@ -2251,8 +2251,8 @@ gboolean ctrlUI (GList *hosts)
 #endif
 
  if(sc != SC_MAX) {
+  if(keytagactive == TRUE) sc+=TAGGED_MASK;
   switch(sc) {
-
   case SC_KEY_HOME:
   case SC_KEY_END:
   case SC_KEY_UP:
@@ -2317,6 +2317,63 @@ gboolean ctrlUI (GList *hosts)
       }
      }
    break; /* case SC_KEY_REFRESH */
+
+  case SC_KEY_REFRESH+TAGGED_MASK:
+   {
+    GList *thosts = NULL;
+
+    GList *ho = g_list_first(hosts);
+    
+    while(ho) {
+     HostNode *m = (HostNode *)ho->data;
+     if(m->tagged == TRUE)
+      thosts = g_list_prepend(thosts, m);
+    
+     ho = g_list_next(ho);
+    }
+   
+    if(thosts && g_list_length (thosts) > 0) {
+     qrystr = g_strdup_printf(_("Refresh %d tagged hosts? [y/N]: "), g_list_length (thosts));
+     retqry = queryConfirm(qrystr, FALSE, NULL);
+     g_free(qrystr);
+
+     if(retqry == TRUE) {
+      GList *ho = g_list_first(thosts);
+     
+      while(ho) {
+       HostNode *m = (HostNode *)ho->data;
+
+       m->category = C_REFRESH_REQUIRED;
+       refscr = TRUE;
+      
+       ho = g_list_next(ho);
+      }
+      if(refscr == TRUE) rebuildDrawList(hosts);
+     }
+    
+     g_list_free (thosts);
+    }
+   }
+   break; /* case SC_KEY_REFRESH + KEY_TAGGED_MASK */
+
+  case SC_KEY_TAGACTION:
+   {
+    GList *ho = g_list_first(hosts);
+
+    while(ho) {
+     if(((HostNode *)ho->data)->tagged == TRUE) break;
+     ho = g_list_next(ho);
+    }
+
+    if(ho) {
+     keytagactive = !keytagactive;
+     if(keytagactive == TRUE) {
+      drawQuery(_("tag-"));
+      curs_set(1);
+     }
+    } else beep();
+   } /* case SC_KEY_TAGACTION */
+   break;
 
   case SC_KEY_CONNECT:
    n = getSelectedDrawNode();
@@ -2389,7 +2446,7 @@ gboolean ctrlUI (GList *hosts)
    }
    break; /* case SC_KEY_UPGRADE */
 
-  case SC_KEY_UPGTAGGED:
+  case SC_KEY_UPGRADE + TAGGED_MASK:
    {
     GList *thosts = NULL;
 
@@ -2423,7 +2480,7 @@ gboolean ctrlUI (GList *hosts)
     } else beep();
    
    }
-   break; /* case SC_KEY_UPGTAGGED */
+   break; /* case SC_KEY_UPGRADE + TAGGED_MASK */
 
   case SC_KEY_INSTALL:
    n = getSelectedDrawNode();
@@ -2512,7 +2569,7 @@ gboolean ctrlUI (GList *hosts)
    }
    break; /* case SC_KEY_INSTALL */
 
-  case SC_KEY_INSTTAGGED:
+  case SC_KEY_INSTALL + TAGGED_MASK:
    {
     GList *thosts = NULL;
 
@@ -2527,7 +2584,7 @@ gboolean ctrlUI (GList *hosts)
     }
    
     if(thosts && g_list_length (thosts) > 0) {
-     qrystr = g_strdup_printf(_("Install package on %d tagged and hosts: "), g_list_length (thosts));
+     qrystr = g_strdup_printf(_("Install package on %d tagged hosts: "), g_list_length (thosts));
      if(!qrystr) break;
      retqry = TRUE;
      if(queryString(qrystr, in, sizeof(in)-1) == FALSE) retqry = FALSE;
@@ -2550,7 +2607,7 @@ gboolean ctrlUI (GList *hosts)
     } else beep();
    
    }
-   break; /* case SC_KEY_INSTTAGGED */
+   break; /* case SC_KEY_INSTALL + TAGGED_MASK */
 
   case SC_KEY_TAGMATCH:
   case SC_KEY_UNTAGMATCH:
@@ -3061,8 +3118,17 @@ gboolean ctrlUI (GList *hosts)
   default:
    break;
   } /* switch (sc) */
+
+
  }
 
+ if(((keytagactive == TRUE && sc != SC_KEY_TAGACTION) || 
+     (keytagactive == FALSE && SC_KEY_TAGACTION)) && ic != -1) {
+  keytagactive = FALSE;
+  refscr = TRUE;
+  curs_set(0);
+  remln(COLS);
+ }
 
  if(refscr == TRUE) {
   getOldestMtime(hosts);
