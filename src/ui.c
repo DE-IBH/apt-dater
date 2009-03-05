@@ -37,6 +37,7 @@
 #include "exec.h"
 #include "stats.h"
 #include "keyfiles.h"
+#include "tag.h"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -2623,11 +2624,10 @@ gboolean ctrlUI (GList *hosts)
      HostNode *n = (HostNode *)ho->data;
      
      if(strlen(n->hostname) >= strlen(in)) {
-      for(i=0; i<strlen(n->hostname)&&strlen(&n->hostname[i]) >= strlen(in);i++)
-       if(!g_ascii_strncasecmp (&n->hostname[i], in, strlen(in))) {
-	n->tagged= sc == SC_KEY_TAGMATCH ? TRUE : FALSE;
-	refscr= TRUE;
-       }
+      if(compHostWithPattern (n, in, strlen(in)) == TRUE) {
+       n->tagged= sc == SC_KEY_TAGMATCH ? TRUE : FALSE;
+       refscr= TRUE;
+      }
      }
 
      ho = g_list_next(ho);
