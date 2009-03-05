@@ -53,7 +53,7 @@ void initReport(GList *hosts) {
 
   writer = xmlNewTextWriterDoc(&doc, 0);
   if (writer == NULL)
-    g_error("Error creating the xml output."));
+    g_error(_("Error creating the xml output."));
   xmlTextWriterStartDocument(writer, NULL, NULL, NULL);
 
   GList *n = hosts;

@@ -162,7 +162,7 @@ static struct ShortCut shortCuts[] = {
  {SC_KEY_HELP, '?', "?" , N_("help") , TRUE , 0},
  {SC_KEY_FIND, '/', "/" , N_("search host") , TRUE , 0},
 #ifdef FEAT_TCLFILTER
- {SC_KEY_FILTER, 'f', "f" , N_("filter hosts" , FALSE, 0},
+ {SC_KEY_FILTER, 'f', "f" , N_("filter hosts") , FALSE, 0},
 #endif
  {SC_KEY_ATTACH, 'a', "a" , N_("attach session") , FALSE, VK_ATTACH},
  {SC_KEY_CONNECT, 'c', "c" , N_("connect host") , FALSE, VK_CONNECT},
