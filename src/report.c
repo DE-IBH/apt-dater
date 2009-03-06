@@ -67,24 +67,24 @@ void initReport(GList *hosts) {
 static void reportPackage(gpointer data, gpointer user_data) {
   PkgNode *n = (PkgNode *)data;
   
-  xmlTextWriterStartElement(writer, "pkg");
-  xmlTextWriterWriteAttribute(writer, "name", n->package);
-  xmlTextWriterWriteAttribute(writer, "version", n->version);
+  xmlTextWriterStartElement(writer, BAD_CAST("pkg"));
+  xmlTextWriterWriteAttribute(writer, BAD_CAST("name"), BAD_CAST(n->package));
+  xmlTextWriterWriteAttribute(writer, BAD_CAST("version"), BAD_CAST(n->version));
 
   if(n->flag & HOST_STATUS_PKGUPDATE)
-    xmlTextWriterWriteAttribute(writer, "hasupdate", "1");
+    xmlTextWriterWriteAttribute(writer, BAD_CAST("hasupdate"), BAD_CAST("1"));
 
   if(n->flag & HOST_STATUS_PKGKEPTBACK)
-    xmlTextWriterWriteAttribute(writer, "onhold", "1");
+    xmlTextWriterWriteAttribute(writer, BAD_CAST("onhold"), BAD_CAST("1"));
 
   if(n->flag & HOST_STATUS_PKGEXTRA)
-    xmlTextWriterWriteAttribute(writer, "extra", "1");
+    xmlTextWriterWriteAttribute(writer, BAD_CAST("extra"), BAD_CAST("1"));
 
   if(n->flag & HOST_STATUS_PKGBROKEN)
-    xmlTextWriterWriteAttribute(writer, "broken", "1");
+    xmlTextWriterWriteAttribute(writer, BAD_CAST("broken"), BAD_CAST("1"));
 
   if(n->data)
-    xmlTextWriterWriteAttribute(writer, "data", n->data);
+    xmlTextWriterWriteAttribute(writer, BAD_CAST("data"), BAD_CAST(n->data));
 
   xmlTextWriterEndElement(writer);
 }
@@ -97,68 +97,68 @@ static void reportHost(gpointer data, gpointer lgroup) {
     if(*(char **)lgroup)
 	xmlTextWriterEndElement(writer);
 
-    xmlTextWriterStartElement(writer, "group");
-    xmlTextWriterWriteAttribute(writer, "name", n->group);
+    xmlTextWriterStartElement(writer, BAD_CAST("group"));
+    xmlTextWriterWriteAttribute(writer, BAD_CAST("name"), BAD_CAST(n->group));
     
     *(char **)lgroup = n->group;
   }
 
   /* Begin host element. */  
-  xmlTextWriterStartElement(writer, "host");
-  xmlTextWriterWriteAttribute(writer, "hostname", n->hostname);
+  xmlTextWriterStartElement(writer, BAD_CAST("host"));
+  xmlTextWriterWriteAttribute(writer, BAD_CAST("hostname"), BAD_CAST(n->hostname));
 #ifdef FEAT_TCLFILTER
   if(n->filtered)
-    xmlTextWriterWriteAttribute(writer, "filtered", "1");
+    xmlTextWriterWriteAttribute(writer, BAD_CAST("filtered"), BAD_CAST("1"));
 #endif
 
   /* Status */
-  xmlTextWriterStartElement(writer, "status");
-  xmlTextWriterWriteFormatAttribute(writer, "status", "%d", n->category);
-  xmlTextWriterWriteString(writer, drawCategories[n->category]);
+  xmlTextWriterStartElement(writer, BAD_CAST("status"));
+  xmlTextWriterWriteFormatAttribute(writer, BAD_CAST("status"), "%d", n->category);
+  xmlTextWriterWriteString(writer, BAD_CAST(drawCategories[n->category]));
   xmlTextWriterEndElement(writer);
 
   /* SSH config */
-  xmlTextWriterStartElement(writer, "ssh");
-  xmlTextWriterWriteElement(writer, "user", n->ssh_user);
-  xmlTextWriterWriteFormatElement(writer, "port", "%d", n->ssh_port);
+  xmlTextWriterStartElement(writer, BAD_CAST("ssh"));
+  xmlTextWriterWriteElement(writer, BAD_CAST("user"), BAD_CAST(n->ssh_user));
+  xmlTextWriterWriteFormatElement(writer, BAD_CAST("port"), "%d", n->ssh_port);
   xmlTextWriterEndElement(writer);
 
   /* Kernel info */
-  xmlTextWriterStartElement(writer, "kernel");
+  xmlTextWriterStartElement(writer, BAD_CAST("kernel"));
   if(n->status & HOST_STATUS_KERNELNOTMATCH)
-    xmlTextWriterWriteAttribute(writer, "reboot", "1");
+    xmlTextWriterWriteAttribute(writer, BAD_CAST("reboot"), BAD_CAST("1"));
   if(n->status & HOST_STATUS_KERNELSELFBUILD)
-    xmlTextWriterWriteAttribute(writer, "custom", "1");
+    xmlTextWriterWriteAttribute(writer, BAD_CAST("custom"), BAD_CAST("1"));
   if(n->kernelrel)
-    xmlTextWriterWriteString(writer, n->kernelrel);
+    xmlTextWriterWriteString(writer, BAD_CAST(n->kernelrel));
   xmlTextWriterEndElement(writer);
 
   /* LSB info */
-  xmlTextWriterStartElement(writer, "lsb");
+  xmlTextWriterStartElement(writer, BAD_CAST("lsb"));
   if(n->lsb_distributor)
-    xmlTextWriterWriteElement(writer, "distri", n->lsb_distributor);
+    xmlTextWriterWriteElement(writer, BAD_CAST("distri"), BAD_CAST(n->lsb_distributor));
   if(n->lsb_release)
-    xmlTextWriterWriteElement(writer, "release", n->lsb_release);
+    xmlTextWriterWriteElement(writer, BAD_CAST("release"), BAD_CAST(n->lsb_release));
   if(n->lsb_codename)
-    xmlTextWriterWriteElement(writer, "codename", n->lsb_codename);
+    xmlTextWriterWriteElement(writer, BAD_CAST("codename"), BAD_CAST(n->lsb_codename));
   xmlTextWriterEndElement(writer);
 
   /* UNAME info */
-  xmlTextWriterStartElement(writer, "uname");
+  xmlTextWriterStartElement(writer, BAD_CAST("uname"));
   if(n->uname_kernel)
-    xmlTextWriterWriteElement(writer, "kernel", n->uname_kernel);
+    xmlTextWriterWriteElement(writer, BAD_CAST("kernel"), BAD_CAST(n->uname_kernel));
   if(n->uname_machine)
-    xmlTextWriterWriteElement(writer, "machine", n->uname_machine);
+    xmlTextWriterWriteElement(writer, BAD_CAST("machine"), BAD_CAST(n->uname_machine));
   xmlTextWriterEndElement(writer);
 
   /* virtualization info */
   if(n->virt)
-    xmlTextWriterWriteElement(writer, "virt", n->virt);
+    xmlTextWriterWriteElement(writer, BAD_CAST("virt"), BAD_CAST(n->virt));
   else
-    xmlTextWriterWriteElement(writer, "virt", "Unknown");
+    xmlTextWriterWriteElement(writer, BAD_CAST("virt"), BAD_CAST("Unknown"));
 
   /* Packages */
-  xmlTextWriterStartElement(writer, "packages");
+  xmlTextWriterStartElement(writer, BAD_CAST("packages"));
   g_list_foreach(n->packages, reportPackage, NULL);
   xmlTextWriterEndElement(writer);
 
@@ -182,8 +182,8 @@ gboolean ctrlReport(GList *hosts) {
 
   if(torefresh == 0) {
     /* Create root node. */
-    xmlTextWriterStartElement(writer, "report");
-    xmlTextWriterWriteFormatElement(writer, "timestamp", "%d", time(NULL));
+    xmlTextWriterStartElement(writer, BAD_CAST("report"));
+    xmlTextWriterWriteFormatElement(writer, BAD_CAST("timestamp"), "%d", time(NULL));
 
     /* Put node stats to file. */
     g_list_foreach(hosts, reportHost, &lgroup);
