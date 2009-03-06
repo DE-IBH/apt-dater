@@ -449,6 +449,23 @@ guint getHostGrpCatCnt(GList *hosts, gchar *group, Category category)
  return(cnt);
 }
 
+
+guint getHostTaggedGrpCatCnt(GList *hosts, gchar *group, Category category)
+{
+ guint cnt = 0;
+ GList *ho;
+
+ ho = g_list_first(hosts);
+
+ while(ho) {
+  if((((HostNode *) ho->data)->category == category) && (!g_strcasecmp(((HostNode *) ho->data)->group, group)) && ((HostNode *) ho->data)->tagged == TRUE) cnt++;
+
+  ho = g_list_next(ho);
+ }
+ return(cnt);
+}
+
+
 void disableInput() {
  noecho();
  curs_set(0);
@@ -520,15 +537,15 @@ void drawMenu (gint mask)
  attroff(uicolors[UI_COLOR_MENU]);
 }
 
-void drawStatus (char *str, gboolean drawoldest)
+void drawStatus (char *str, gboolean drawinfo)
 {
- char strmtime[30];
+ char strinfo[30];
  struct tm *tm_mtime;
  int mtime_pos;
 
- if(drawoldest == TRUE) {
-  tm_mtime = localtime(&oldest_st_mtime);
-  strftime(strmtime, sizeof(strmtime), _(" Oldest: %D %H:%M"), tm_mtime);
+ if(drawinfo == TRUE) {
+    tm_mtime = localtime(&oldest_st_mtime);
+    strftime(strinfo, sizeof(strinfo), _(" [Oldest: %D %H:%M]"), tm_mtime);
  }
 
  attron(uicolors[UI_COLOR_STATUS]);
@@ -538,11 +555,11 @@ void drawStatus (char *str, gboolean drawoldest)
   addnstr(str, COLS);
  }
 
- if(drawoldest == TRUE) {
-  mtime_pos = COLS - strlen(strmtime) - 1;
+ if(drawinfo == TRUE) {
+  mtime_pos = COLS < strlen(strinfo) ? COLS-1 : COLS-strlen(strinfo)-1;
 
   move(bottomDrawLine, mtime_pos);
-  addnstr(strmtime, COLS-mtime_pos);
+  addnstr(strinfo, COLS-mtime_pos);
  }
 
  attroff(uicolors[UI_COLOR_STATUS]);
@@ -626,7 +643,13 @@ void drawCategoryEntry (DrawNode *n)
   addch(n->elements > 0 && n->extended == FALSE ? '+' : '-');
  else
   addch(' ');
- addstr("] ");
+ addstr("]");
+
+ if(n->etagged)
+  addch('*');
+ else
+  addch(' ');
+
  addnstr((char *) n->p, COLS);
  attroff(n->attrs);
 
@@ -651,7 +674,13 @@ void drawGroupEntry (DrawNode *n)
  mvremln(n->scrpos, 0, COLS); 
  mvaddstr(n->scrpos, 2, " [");
  addch(n->elements > 0 && n->extended == FALSE ? '+' : '-');
- addstr("] ");
+ addstr("]");
+
+ if(n->etagged)
+  addch('*');
+ else
+  addch(' ');
+
  addnstr((char *) n->p, COLS);
  attroff(n->attrs);
 
@@ -1050,6 +1079,22 @@ guint getHostCatCnt(GList *hosts, Category category)
  }
  return(cnt);
 }
+
+
+guint getHostCatTaggedCnt(GList *hosts, Category category)
+{
+ guint cnt = 0;
+ GList *ho;
+
+ ho = g_list_first(hosts);
+ while(ho) {
+  if(((HostNode *) ho->data)->category == category &&
+     ((HostNode *) ho->data)->tagged == TRUE) cnt++;
+  ho = g_list_next(ho);
+ }
+ return(cnt);
+}
+
 
 void checkSelected()
 {
@@ -2230,7 +2275,7 @@ gboolean ctrlUI (GList *hosts)
  gboolean   retqry = FALSE;
  gboolean   refscr = FALSE;
  DrawNode   *n;
- static     gchar in[INPUT_MAX];
+ static     gchar in[INPUT_MAX], in2[INPUT_MAX];
  static     gboolean keytagactive = FALSE;
  gchar      *qrystr = NULL;
  gchar      *pkg = NULL;
@@ -2614,17 +2659,17 @@ gboolean ctrlUI (GList *hosts)
   case SC_KEY_UNTAGMATCH:
    {
     if(queryString(sc == SC_KEY_TAGMATCH ? _("Tag hosts matching: ") : 
-		    _("Untag hosts matching: "), in, 
-		    sizeof(in)-1) == FALSE) break;
-    if (strlen(in)==0) break;
+		    _("Untag hosts matching: "), in2, 
+		    sizeof(in2)-1) == FALSE) break;
+    if (strlen(in2)==0) break;
 
     GList *ho = g_list_first(hosts);
 
     while(ho) {
      HostNode *n = (HostNode *)ho->data;
      
-     if(strlen(n->hostname) >= strlen(in)) {
-      if(compHostWithPattern (n, in, strlen(in)) == TRUE) {
+     if(strlen(n->hostname) >= strlen(in2)) {
+      if(compHostWithPattern (n, in2, strlen(in2)) == TRUE) {
        n->tagged= sc == SC_KEY_TAGMATCH ? TRUE : FALSE;
        refscr= TRUE;
       }
@@ -2632,7 +2677,8 @@ gboolean ctrlUI (GList *hosts)
 
      ho = g_list_next(ho);
     }
-    *in = 0;
+    
+    if(refscr == FALSE) beep();
    }
    break; /* case SC_KEY_TAGMATCH */
 
@@ -3048,7 +3094,13 @@ gboolean ctrlUI (GList *hosts)
    if(!n) break;
    if(n->type == HOST) {
     ((HostNode *) n->p)->tagged = !((HostNode *) n->p)->tagged;
-    drawHostEntry(n);
+    DrawNode *p = n->parent;
+    while(p) {
+     p->etagged+= ((HostNode *) n->p)->tagged == TRUE ? 1 : -1;
+     drawEntry(p);
+     p = p->parent;
+    }
+    drawEntry(n);
    } else beep();
    break;
 

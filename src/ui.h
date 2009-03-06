@@ -101,6 +101,7 @@ typedef struct _drawnode {
  gboolean         selected;
  guint            scrpos;
  guint            elements;
+ guint            etagged;
  int              attrs;
  struct _drawnode *parent;
 } DrawNode;

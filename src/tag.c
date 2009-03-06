@@ -36,9 +36,19 @@
 
 gboolean compHostWithPattern(HostNode *n, const gchar *pattern, gsize s)
 {
- gint i;
- gsize maxsize;
  gboolean r = FALSE;
+
+ if(!pattern || !n || strlen(pattern) < 1) return FALSE;
+
+#if (GLIB_MAJOR_VERSION >= 2 && GLIB_MINOR_VERSION >= 14)
+ GRegex *regex = g_regex_new (pattern, G_REGEX_CASELESS, 0, NULL);
+ if(regex) {
+  r = g_regex_match (regex, n->hostname, 0, NULL);
+  g_regex_unref (regex);
+ }
+#else
+ gint     i;
+ gsize    maxsize;
 
  maxsize = s > strlen(pattern) ? strlen(pattern) : s;
 
@@ -48,6 +58,7 @@ gboolean compHostWithPattern(HostNode *n, const gchar *pattern, gsize s)
    r = TRUE;
    break;
   }
+#endif
 
  return r;
 }
