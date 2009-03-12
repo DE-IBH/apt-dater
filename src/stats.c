@@ -225,7 +225,7 @@ gboolean getUpdatesFromStat(HostNode *n)
  }
  if(n->uname_machine) {
   g_free(n->uname_machine);
-  n->uname_kernel = NULL;
+  n->uname_machine = NULL;
  }
  if(n->virt) {
   g_free(n->virt);
