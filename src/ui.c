@@ -450,7 +450,7 @@ guint getHostGrpCatCnt(GList *hosts, gchar *group, Category category)
 }
 
 
-guint getHostTaggedGrpCatCnt(GList *hosts, gchar *group, Category category)
+guint getHostGrpCatTaggedCnt(GList *hosts, const gchar *group, Category category)
 {
  guint cnt = 0;
  GList *ho;
@@ -1483,6 +1483,7 @@ void extDrawListCategory(gint atpos, gchar *category, GList *hosts)
     ) {
    if((drawnode) && (!g_strcasecmp(drawnode->p, 
 				   ((HostNode *) ho->data)->group))) {
+    if(((HostNode *) ho->data)->tagged == TRUE) drawnode->etagged++;
     ho = g_list_next(ho);
     continue;
    }
@@ -1500,6 +1501,7 @@ void extDrawListCategory(gint atpos, gchar *category, GList *hosts)
      drawnode->elements = elements;
      drawnode->attrs = A_NORMAL;
      drawnode->parent = parent;
+     if(((HostNode *) ho->data)->tagged == TRUE) drawnode->etagged++;
      drawlist = g_list_insert(drawlist, drawnode, ++atpos);
    }
   }
@@ -2679,6 +2681,34 @@ gboolean ctrlUI (GList *hosts)
     }
     
     if(refscr == FALSE) beep();
+    else {
+     GList *dl = g_list_first(drawlist);
+
+     while(dl) {
+      DrawNode *drawnode = dl->data;
+
+      if(drawnode->type == CATEGORY) {
+       i=0;
+       while(*(drawCategories+i)) {
+	if(*(drawCategories+i) == drawnode->p) 
+	 drawnode->etagged = getHostCatTaggedCnt(hosts, i);
+	i++;
+       }
+      }
+      else if(drawnode->type == GROUP) {
+       i=0;
+       while(*(drawCategories+i)) {
+	if(*(drawCategories+i) == drawnode->parent->p) 
+	 drawnode->etagged = getHostGrpCatTaggedCnt(hosts, drawnode->p, i);
+	i++;
+       }
+      }
+
+      dl = g_list_next(dl);
+     }
+
+     refscr = TRUE;
+    }
    }
    break; /* case SC_KEY_TAGMATCH */
 

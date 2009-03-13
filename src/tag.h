@@ -25,4 +25,4 @@
  *   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-gboolean compHostWithPattern(HostNode *, const gchar *, gsize);
+gboolean compHostWithPattern(HostNode *, gchar *, gsize);
