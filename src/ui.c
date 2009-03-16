@@ -198,6 +198,17 @@ static const struct HostFlag hostFlags[] = {
 };
 
 
+static int getKeyForShortcut(EShortCuts sc)
+{
+ gint i;
+ 
+ for(i = 0; shortCuts[i].keycode; i++) 
+  if(shortCuts[i].sc == sc) return shortCuts[i].keycode; 
+
+ return -1;
+}
+
+
 static gboolean freeDl(GList *dl)
 {
  if(dl) {
@@ -2721,11 +2732,11 @@ gboolean ctrlUI (GList *hosts)
      gboolean cancel = FALSE;
      HostNode *m = (HostNode *)ho->data;
 
-     GList *sc = m->screens;
+     GList *scr = m->screens;
 
-     while(sc) {
+     while(scr) {
       qrystr = g_strdup_printf(_("Attach host %s session %d [Y/n/c]: "),
-			       m->hostname, ((SessNode *)sc->data)->pid);
+			       m->hostname, ((SessNode *)scr->data)->pid);
       if(!qrystr) {
        g_warning(_("Out of memory."));
        break;
@@ -2741,22 +2752,22 @@ gboolean ctrlUI (GList *hosts)
       }
 
       if(retqry == FALSE) {
-       sc = g_list_next(sc);
+       scr = g_list_next(scr);
        continue;
       }
 
-      if (!screen_is_attached((SessNode *)sc->data)) {
+      if (!screen_is_attached((SessNode *)scr->data)) {
        cleanUI();
-       screen_attach((SessNode *)sc->data, FALSE);
+       screen_attach((SessNode *)scr->data, FALSE);
        initUI();
 
-       if(ic != 'N') {
+       if(ic != getKeyForShortcut(sc)) {
 	ho = NULL;
 	break;
        }
 
       }
-      sc = g_list_next(sc);
+      scr = g_list_next(scr);
 
      }
 
