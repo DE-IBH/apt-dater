@@ -36,6 +36,9 @@
 
 typedef enum {
  COMPCMD_ALL,
+ COMPCMD_CODENAME,
+ COMPCMD_DISTRIBUTOR,
+ COMPCMD_GROUP,
  COMPCMD_PACKAGE,
  COMPCMD_UPDATE,
  COMPCMD_HOSTNAME,
@@ -48,11 +51,14 @@ struct ValidCompCmds {
 };
 
 static struct ValidCompCmds compCmds[] = {
- {'A', "all",      COMPCMD_ALL},
- {'h', "hostname", COMPCMD_HOSTNAME},
- {'p', "package",  COMPCMD_PACKAGE},
- {'u', "update" ,  COMPCMD_UPDATE},
- {  0,      NULL,  0},
+ {'A', "all",         COMPCMD_ALL},
+ {'d', "distributor", COMPCMD_DISTRIBUTOR},
+ {'c', "codename",    COMPCMD_CODENAME},
+ {'g', "group",       COMPCMD_GROUP},
+ {'h', "hostname",    COMPCMD_HOSTNAME},
+ {'p', "package",     COMPCMD_PACKAGE},
+ {'u', "update" ,     COMPCMD_UPDATE},
+ {  0,      NULL,     0},
 };
 
 
@@ -129,6 +135,15 @@ gboolean compHostWithPattern(HostNode *n, gchar *in, gsize s)
   break; /* case COMPCMD_UPDATE */
  case COMPCMD_ALL:
   r = TRUE;
+  break;
+ case COMPCMD_DISTRIBUTOR:
+  r = n->lsb_distributor ? compStrWithPattern(n->lsb_distributor, pattern, s) : FALSE;
+  break;
+ case COMPCMD_CODENAME:
+  r = n->lsb_codename ? compStrWithPattern(n->lsb_codename, pattern, s) : FALSE;
+  break;
+ case COMPCMD_GROUP:
+  r = compStrWithPattern(n->group, pattern, s);
   break;
  case COMPCMD_HOSTNAME:
  default:
