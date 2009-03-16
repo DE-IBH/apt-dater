@@ -2712,6 +2712,7 @@ gboolean ctrlUI (GList *hosts)
    }
    break; /* case SC_KEY_TAGMATCH */
 
+  case SC_KEY_CYCLESESS:
   case SC_KEY_NEXTSESS:
    {
     GList *ho = g_list_first(hosts);
