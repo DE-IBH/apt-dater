@@ -495,6 +495,7 @@ void enableInput() {
 
 void initUI ()
 {
+ printf("\033]0;" PACKAGE_STRING "\007");
  initscr();
  ui_start_color();
  cbreak();
