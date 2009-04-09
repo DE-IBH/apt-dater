@@ -9,7 +9,7 @@
 #   Thomas Liske <liske@ibh.de>
 #
 # Copyright Holder:
-#   2008 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+#   2008-2009 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
 #
 # License:
 #   This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,7 @@ use strict;
 my $CFGFILE = '/etc/apt-dater-host.conf';
 my $DPKGTOOL = 'aptitude';
 my $GETROOT = 'sudo';
+my $CLEANUP = 0;
 my $FORBID_REFRESH = 0;
 my $FORBID_UPGRADE = 0;
 my $FORBID_INSTALL = 0;
@@ -42,7 +43,7 @@ my $FORBID_INSTALL = 0;
 eval `cat "$CFGFILE"` if (-r $CFGFILE);
 
 my $CMD = shift;
-my $ADPROTO = '0.2';
+my $ADPROTO = '0.3';
 
 delete($ENV{'LANG'});
 
@@ -71,6 +72,7 @@ elsif ($CMD eq 'upgrade') {
     }
     else {
 	&do_upgrade;
+	&do_cleanup;
     }
 }
 elsif ($CMD eq 'install') {
@@ -79,6 +81,7 @@ elsif ($CMD eq 'install') {
     }
     else {
 	&do_install(@ARGV);
+	&do_cleanup;
     }
 }
 elsif ($CMD eq 'kernel') {
@@ -275,4 +278,10 @@ sub do_kernel() {
     close(HDPKG);
 
     print "$infostr $reboot $version\n";
+}
+
+sub do_cleanup() {
+    return unless $CLEANUP;
+
+    system("$GETROOT $DPKGTOOL clean");
 }
