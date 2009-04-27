@@ -882,7 +882,7 @@ void drawPackageEntry (DrawNode *n)
 }
 
 
-gboolean refreshDumpWindow (DrawNode *n)
+static gboolean refreshDumpWindow (DrawNode *n)
 {
  gchar *dump = n->type == SESSION ? screen_get_dump((SessNode *) n->p) : NULL;
  gchar *hostname = NULL;
@@ -2320,7 +2320,10 @@ gboolean ctrlUI (GList *hosts)
    if(shortCuts[i].keycode == ic) sc = shortCuts[i].sc;
 
 #ifdef KEY_RESIZE
- if(ic == KEY_RESIZE) refscr = TRUE;
+ if(ic == KEY_RESIZE) {
+  refscr = TRUE;
+  dump_screen = FALSE;
+ }
 #endif
 
  if(sc != SC_MAX) {
