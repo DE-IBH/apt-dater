@@ -406,8 +406,10 @@ gboolean refreshStats(GList *hosts)
   HostNode *n = (HostNode *) ho->data;
 
   if(screen_get_sessions(n)) {
-   n->category = C_SESSIONS;
-   rebuilddl = TRUE;
+   if(n->category != C_SESSIONS) {
+    n->category = C_SESSIONS;
+    rebuilddl = TRUE;
+   }
   }
   else {
    if(n->category == C_UPDATES_PENDING)
