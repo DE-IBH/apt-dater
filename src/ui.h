@@ -151,5 +151,6 @@ extern gchar *drawCategories[];
 #define ctrl(c)             ((c)-'@')
 #define remln(cols)         hline(' ', cols);
 #define mvremln(y, x, cols) mvhline(y, x, ' ', cols);
+#define mvwremln(win, y, x, cols) mvwhline(win, y, x, ' ', cols);
 
 #endif /* _UI_H */

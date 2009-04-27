@@ -881,6 +881,38 @@ void drawPackageEntry (DrawNode *n)
  }
 }
 
+
+gboolean refreshDumpWindow (DrawNode *n)
+{
+ gchar *dump = n->type == SESSION ? screen_get_dump((SessNode *) n->p) : NULL;
+ gchar *hostname = NULL;
+ char   h[BUF_MAX_LEN];
+ 
+ if(dump) {
+  if (win_dump) {
+   mvwaddstr(win_dump, 1, 0, dump);
+
+   wattron(win_dump, uicolors[UI_COLOR_STATUS]);
+   mvwremln(win_dump, 0, 0, COLS);
+   if(n->parent && n->parent->type == HOST)
+    hostname = ((HostNode *) n->parent->p)->hostname;
+   snprintf(h, sizeof(h), _("Running session %s [%5d]:"), 
+	    hostname ? hostname : "", ((SessNode *) n->p)->pid);
+   mvwaddstr(win_dump, 0, 0, h);
+   wattroff(win_dump, uicolors[UI_COLOR_STATUS]);
+
+   wrefresh(win_dump);
+  }
+  
+  g_free(dump);
+
+  return TRUE;
+ }
+ else
+  return FALSE;
+}
+
+ 
 void drawSessionEntry (DrawNode *n)
 {
  char h[BUF_MAX_LEN];
@@ -903,21 +935,8 @@ void drawSessionEntry (DrawNode *n)
   drawMenu(VK_ATTACH | VK_DUMP);
 
   if (dump_screen) {
-    gchar *dump = screen_get_dump((SessNode *) n->p);
-
-    if(dump) {
-      if (win_dump) {
-	wmove(win_dump, 0, 0);
-	waddstr(win_dump, dump);
-	wrefresh(win_dump);
-      }
-
-      drawStatus(_("Running session:"), TRUE);
-
-      g_free(dump);
-    }
-    else
-     drawStatus(_("Could not read session dump."), TRUE);
+   if(refreshDumpWindow (n) == FALSE)
+    drawStatus(_("Could not read session dump."), TRUE);
   }
   else
    drawStatus("", TRUE);
@@ -1019,33 +1038,27 @@ void refreshDraw()
  detectPos();
 
  if(dump_screen) {
-   if(getSelectedDrawNode()->type == SESSION) {
-     if (!win_dump) {
-       bottomDrawLine = LINES/2;
-
-       win_dump= subwin(stdscr,bottomDrawLine-1,COLS, LINES-bottomDrawLine, 0);
-       scrollok(win_dump, TRUE);
-       syncok(win_dump, TRUE);
-       reorderScrpos(1);
-     }
-   } else {
-     bottomDrawLine = LINES - 2;
-
-     if(win_dump) {
-       delwin(win_dump);
-       win_dump = NULL;
-       reorderScrpos(1);
-     }
-
+  if(getSelectedDrawNode()->type == SESSION) {
+   if (!win_dump) {
+    win_dump= newwin((LINES/2),COLS, LINES-(LINES/2), 0);
+    scrollok(win_dump, TRUE);
+    syncok(win_dump, TRUE);
+    reorderScrpos(1);
    }
- } else {
-   bottomDrawLine = LINES - 2;
-
+  } else {
    if(win_dump) {
-     delwin(win_dump);
-     win_dump = NULL;
-     reorderScrpos(1);
+    delwin(win_dump);
+    win_dump = NULL;
+    reorderScrpos(1);
    }
+
+  }
+ } else {
+  if(win_dump) {
+   delwin(win_dump);
+   win_dump = NULL;
+   reorderScrpos(1);
+  }
  }
 
  g_list_foreach(drawlist, (GFunc) drawEntry, NULL);
@@ -3213,8 +3226,6 @@ gboolean ctrlUI (GList *hosts)
   default:
    break;
   } /* switch (sc) */
-
-
  }
 
  if(((keytagactive == TRUE && sc != SC_KEY_TAGACTION) || 
@@ -3229,6 +3240,10 @@ gboolean ctrlUI (GList *hosts)
   getOldestMtime(hosts);
   refreshDraw();
  }
+
+ /* Redraw only the an session entry if screen dump enabled. */
+ if(dump_screen && (n = getSelectedDrawNode()) && n->type==SESSION && win_dump)
+  refreshDumpWindow(n);
 
  return (ret);
 }
