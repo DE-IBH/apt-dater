@@ -67,6 +67,8 @@ int setLockForHost(HostNode *n)
      g_free(lockfile);
      return(EXIT_FAILURE);
    }
+
+   fcntl(n->fdlock, F_SETFD, FD_CLOEXEC | fcntl(n->fdlock, F_GETFD));
  }
 
 #ifdef HAVE_FLOCK
