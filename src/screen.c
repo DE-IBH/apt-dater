@@ -39,7 +39,6 @@
 #include "screen.h"
 #include "parsecmd.h"
 
-static gchar *dump_fn = NULL;
 static struct passwd *pw = NULL;
 
 const static gchar *
@@ -165,18 +164,15 @@ screen_get_dump(const SessNode *s) {
  GError *error = NULL;
  gchar **argv = NULL;
 
- if(!dump_fn)
-   dump_fn = g_strdup_printf("/tmp/%d.dump", getpid());
-
- g_unlink(dump_fn);
-
- gint fd = g_open(dump_fn, O_CREAT | O_EXCL | O_TRUNC |O_RDWR, S_IRUSR | S_IWUSR);
+ gchar *dump_fn = g_strdup_printf("%s/dump-XXXXXX", g_get_tmp_dir());
+ gint fd = g_mkstemp(dump_fn);
 
  if(fd == -1)
    return NULL;
 
  gchar *cmd = screen_dump_cmd(s, dump_fn);
  if(!cmd) {
+  g_unlink(dump_fn);
   close(fd);
   return NULL;
  }
@@ -199,6 +195,8 @@ screen_get_dump(const SessNode *s) {
  g_file_get_contents(dump_fn, &c, NULL, NULL);
 
  close(fd);
+
+ g_unlink(dump_fn);
 
  return c;
 }
