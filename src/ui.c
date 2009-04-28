@@ -1187,6 +1187,7 @@ void buildIntialDrawList(GList *hosts)
   drawnode->selected = i == 0 ? TRUE : FALSE;
   drawnode->scrpos = i == 0 ? 1 : 0;
   drawnode->elements = getHostCatCnt(hosts, i);
+  drawnode->etagged = getHostCatTaggedCnt(hosts, i);
   drawnode->parent = NULL;
   if((i == (Category) C_UPDATES_PENDING || 
       i == (Category) C_BROKEN_PKGS ||
