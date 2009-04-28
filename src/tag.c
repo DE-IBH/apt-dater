@@ -65,7 +65,6 @@ static struct ValidCompCmds compCmds[] = {
 static gboolean compStrWithPattern(const gchar *str, gchar *pattern, gsize s)
 {
  gboolean    r = FALSE;
- gint        i;
 
  if(!str || !pattern) return FALSE;
  
