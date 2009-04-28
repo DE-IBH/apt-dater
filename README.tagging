@@ -1,22 +1,31 @@
 Host tagging
 ============
 
-Since version 0.7.1, apt-dater has a 'tagging' feature like the MUA mutt.
+apt-dater has a 'tagging' feature like the MUA mutt (a poor man's host filter ;).
 
 Usage
 =====
 
 You can tag or untag a single host by pressing the `t' key. Tag multiple hosts
-matching a pattern by pressing the `T' key. Untag multiple hosts by pressing
-Ctrl + `T' key combination. You can tag hosts matching a specific hostname,
-distributor ('~d'), codename ('~c'), group ('~g'), package ('~p'),
-update ('~u') or all hosts ('~A').
+matching a pattern by pressing the `T' key. Hosts can be untagged by a pattern
+using the Ctrl + `T' key combination.
+
+The pattern is a regular expression matching the hostname. The pattern might be
+pretended by a tokens to apply the regex on the following host's values:
+
+    ~d		distributor
+    ~c		codename
+    ~g		group
+    ~p		package
+    ~u		update
+    ~A		all hosts
 
 After you have done your selection you can do some actions with the
-tagged hosts by pressing the `;' key.
- - install a package (`;-i')
- - refresh the hosts (`;-r')
- - upgrade the hosts (`;-u')
+tagged hosts by pressing the `;' key:
+
+    ; i		install a package
+    ; g		refresh the hosts
+    ; u		upgrade the hosts w/ pending updates
 
 Examples
 ========
@@ -24,5 +33,5 @@ Examples
 Tag all hosts which have installed the package apt-dater-host:
  ~p apt-dater-host
 
-Tag all hosts which are start with the word inet in their name:
+Tag all hosts which are start with the word inet in their hostname:
  ^inet
