@@ -323,7 +323,6 @@ script: script
 install-exec-hook:
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(INSTALL) script $(DESTDIR)$(pkglibdir)
-	done 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
