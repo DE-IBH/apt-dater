@@ -107,6 +107,9 @@ typedef struct _cfgfile {
  gboolean query_maintainer;
  gboolean beep;
  gboolean flash;
+#ifdef FEAT_HISTORY
+ gboolean record_history;
+#endif
  gchar **colors;
 #ifdef FEAT_TCLFILTER
  gchar *filterexp;

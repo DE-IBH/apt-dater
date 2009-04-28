@@ -7,6 +7,9 @@
 /* Define if you want 'auto refresh' support included. */
 #undef FEAT_AUTOREF
 
+/* Define if you want 'history' support included. */
+#undef FEAT_HISTORY
+
 /* Define if you want TCL filter support included. */
 #undef FEAT_TCLFILTER
 

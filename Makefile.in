@@ -189,7 +189,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-SUBDIRS = po clients man src
+SUBDIRS = po clients man src lib
 AUTOMAKE_OPTIONS = \
 	1.9								\
 	dist-bzip2

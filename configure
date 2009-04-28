@@ -1332,6 +1332,7 @@ Optional Features:
   --enable-debug      Enable debug code.
   --enable-xmlreport      Include XML reports.
   --enable-autoref      Include 'auto refresh' support.
+  --enable-history      Include 'history' support.
   --enable-tclfilter      Include Tcl interpreter.
 
 Optional Packages:
@@ -5888,6 +5889,25 @@ _ACEOF
 
 fi
 
+{ echo "$as_me:$LINENO: checking --enable-history argument" >&5
+echo $ECHO_N "checking --enable-history argument... $ECHO_C" >&6; }
+# Check whether --enable-history was given.
+if test "${enable_history+set}" = set; then
+  enableval=$enable_history; enable_history="yes"
+else
+  enable_history="no"
+fi
+
+{ echo "$as_me:$LINENO: result: $enable_history" >&5
+echo "${ECHO_T}$enable_history" >&6; }
+if test "$enable_history" = "yes"; then
+
+cat >>confdefs.h <<\_ACEOF
+#define FEAT_HISTORY 1
+_ACEOF
+
+fi
+
 
 
 
@@ -8927,7 +8947,7 @@ fi
 done
 
 
-ac_config_files="$ac_config_files po/Makefile.in Makefile man/Makefile src/Makefile clients/Makefile"
+ac_config_files="$ac_config_files po/Makefile.in Makefile lib/Makefile man/Makefile src/Makefile clients/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -9524,6 +9544,7 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "po/Makefile.in") CONFIG_FILES="$CONFIG_FILES po/Makefile.in" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "lib/Makefile") CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
     "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "clients/Makefile") CONFIG_FILES="$CONFIG_FILES clients/Makefile" ;;

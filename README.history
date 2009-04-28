@@ -1,0 +1,5 @@
+History
+=======
+
+apt-dater could use `script' from the bsdutils package to
+record sessions.

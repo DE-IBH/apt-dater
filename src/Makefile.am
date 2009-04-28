@@ -27,7 +27,9 @@ apt_dater_SOURCES =			\
 	autoref.c			\
 	autoref.h			\
 	tag.c				\
-	tag.h
+	tag.h				\
+	history.c			\
+	history.h
 
 apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS)
 

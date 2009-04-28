@@ -38,6 +38,7 @@
 
 #include "screen.h"
 #include "parsecmd.h"
+#include "history.h"
 
 static struct passwd *pw = NULL;
 
@@ -112,11 +113,30 @@ screen_new(HostNode *n, const gboolean detached) {
 
   gchar *title = parse_string(cfg->screentitle, n);
 
-  gchar *cmd = g_strdup_printf(SCREEN_BINARY"+-%sS+"SCREEN_SOCKPRE"%s_%s_%d"	\
-			       "+-t+%s+-c+%s+",
+  gchar *cmd;
+
+#ifdef FEAT_HISTORY
+  if(cfg->record_history) {
+    gchar *hp = history_rpath(n);
+
+    cmd = g_strdup_printf(SCREEN_BINARY"+-%sS+"SCREEN_SOCKPRE"%s_%s_%d"	\
+			       "+-t+%s+-c+%s%s%s+",
 			       detached ? "dm" : "",
 			       n->ssh_user, n->hostname, n->ssh_port,
-			       title, cfg->screenrcfile);
+			       title,
+			       cfg->screenrcfile,
+			       "+/usr/lib/apt-dater/script+", hp);
+
+    g_free(hp);
+  } else
+#endif
+    cmd = g_strdup_printf(SCREEN_BINARY"+-%sS+"SCREEN_SOCKPRE"%s_%s_%d"	\
+			       "+-t+%s+-c+%s",
+			       detached ? "dm" : "",
+			       n->ssh_user, n->hostname, n->ssh_port,
+			       title,
+			       cfg->screenrcfile);
+
   g_free(title);
 
   return cmd;
