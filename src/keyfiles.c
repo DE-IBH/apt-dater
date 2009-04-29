@@ -172,6 +172,7 @@ CfgFile *loadConfig (char *filename)
 
  if (!g_key_file_load_from_file (keyfile, filename, flags, &error)) {
   g_error ("%s: %s", filename, error->message);
+  g_key_file_free(keyfile);
   return (FALSE);
  }
 
@@ -325,6 +326,7 @@ GList *loadHosts (char *filename)
 
  if (!g_key_file_load_from_file (keyfile, filename, flags, &error)) {
   g_error ("%s: %s", filename, error->message);
+  g_key_file_free(keyfile);
   return (FALSE);
  }
  
