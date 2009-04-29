@@ -1,0 +1,69 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+apt-dater-host - Provding apt-dater with information about the host
+"""
+#Copyright (C) 2008 Sebastian Heinlein <devel@glatzor.de>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+__author__  = "Sebastian Heinlein <devel@glatzor.de>"
+__state__   = "experimental"
+
+import sys
+
+import apt
+
+class AptDaterHost(object):
+
+    def status(self):
+        cache = apt.Cache()
+        cache.upgrade()
+        for pkg in cache:
+            if not pkg.isInstalled:
+                continue
+            if pkg.isUpgradable:
+                if pkg.markedUpgrade and not \
+                   cache._depcache.IsNowBroken(pkg._pkg):
+                    status = "u=%s" % pkg.candidateVersion
+                else:
+                    status = "h"
+            elif not pkg.candidateDownloadable:
+                status = "x"
+            elif cache._depcache.IsInstBroken(pkg._pkg):
+                status = "b"
+            else:
+                status = "i"
+            self._status(pkg.name, pkg.installedVersion, status)
+
+    def _status(self, name, version, status):
+        print >> sys.stdout, "STATUS: %s|%s|%s" % (name, version, status)
+        sys.stdout.flush()
+
+def main():
+    if len(sys.argv) == 0:
+        print("Do not run this script directly")
+        sys.exit(1)
+    command = sys.argv[1]
+    client = AptDaterHost()
+    if command == "status":
+        client.status()
+
+
+if __name__ == "__main__":
+    main()
+
+# vim:ts=4:sw=4:et
