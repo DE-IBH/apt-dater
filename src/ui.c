@@ -3162,6 +3162,47 @@ gboolean ctrlUI (GList *hosts)
     mvwaddnstr(wp, l++,  1, _("HOST HISTORY")  , COLS - 1);
     wattroff(wp, A_BOLD);
 
+    mvwaddnstr(wp, ++l,  2, _("[Date]")               , COLS -  2);
+    mvwaddnstr(wp, l  , 21, _("[Duration]")           , COLS - 21);
+    mvwaddnstr(wp, l  , 33, _("[Maintainer]")         , COLS - 33);
+    mvwaddnstr(wp, l++, 50, _("[Action]")            , COLS -  50);
+
+    l++;
+
+    GList *hel = history_get_entries(inhost);
+    GList *hep = g_list_first(hel);
+    while(hep) {
+	    HistoryEntry *he = hep->data;
+
+	    const struct tm *ts = localtime(&(he->ts));
+	    strftime(buf, sizeof(buf), "%x %X", ts);
+	    mvwaddnstr(wp, l  ,  2, buf           , MIN(33, COLS -  2));
+	    if(he->duration > 86400)
+		snprintf(buf, sizeof(buf),   "%dd", (he->duration/86400));
+	    else if(he->duration > 3600)
+		snprintf(buf, sizeof(buf),   "%dh", (he->duration/3600));
+	    else if(he->duration > 60)
+		snprintf(buf, sizeof(buf), "%dmin", (he->duration/60));
+	    else if(he->duration > 0)
+		snprintf(buf, sizeof(buf),   "%ds", he->duration);
+	    else
+		strcpy(buf, "?");
+	    mvwaddnstr(wp, l  , 21, buf                  , COLS - 21);
+	    mvwaddnstr(wp, l  , 33, he->maintainer       , COLS - 33);
+	    mvwaddnstr(wp, l  , 50, he->action           , COLS - 50);
+	    if (he->data)
+		mvwaddnstr(wp, l  , 51+strlen(he->action), he->data           , COLS - 51 - strlen(he->action));
+
+	    l++;
+
+	    hep = g_list_next(hep);
+    }
+
+    wattron(wp, A_BOLD);
+    mvwaddnstr(wp, 4, 1, "»", COLS - 3);
+    wattroff(wp, A_BOLD);
+
+
     for(i = 0; shortCuts[i].key; i++)
      if(shortCuts[i].sc == SC_KEY_QUIT) kcquit = shortCuts[i].keycode;
 

@@ -37,7 +37,7 @@ gboolean
 ssh_cmd_upgrade(HostNode *n, const gboolean detached);
 
 gboolean
-ssh_cmd_install(HostNode *n, const gchar *package, const gboolean detached);
+ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached);
 
 gboolean
 ssh_connect(HostNode *n, const gboolean detached);

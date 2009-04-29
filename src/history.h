@@ -31,7 +31,7 @@
 #include "apt-dater.h"
 
 typedef struct _historyEntry {
-    gint ts;
+    time_t ts;
     gint duration;
     gchar *maintainer;
     gchar *action;

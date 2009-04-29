@@ -116,7 +116,7 @@ gboolean ssh_cmd_upgrade(HostNode *n, const gboolean detached)
     return(FALSE);
 
  HistoryEntry he;
- he.ts = (int)time(NULL);
+ he.ts = time(NULL);
  he.maintainer = maintainer;
  he.action = "upgrade";
  he.data = NULL;
@@ -153,7 +153,7 @@ gboolean ssh_cmd_upgrade(HostNode *n, const gboolean detached)
 }
 
 
-gboolean ssh_cmd_install(HostNode *n, const gchar *package, const gboolean detached)
+gboolean ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
 {
  gboolean r;
  GError *error = NULL;
@@ -167,7 +167,7 @@ gboolean ssh_cmd_install(HostNode *n, const gchar *package, const gboolean detac
     return(FALSE);
 
  HistoryEntry he;
- he.ts = (int)time(NULL);
+ he.ts = time(NULL);
  he.maintainer = maintainer;
  he.action = "install";
  he.data = package;
@@ -219,7 +219,7 @@ gboolean ssh_connect(HostNode *n, const gboolean detached)
  gchar **argv = NULL;
 
  HistoryEntry he;
- he.ts = (int)time(NULL);
+ he.ts = time(NULL);
  he.maintainer = maintainer;
  he.action = "connect";
  he.data = NULL;
@@ -263,7 +263,7 @@ gboolean sftp_connect(HostNode *n)
  gchar **argv = NULL;
 
  HistoryEntry he;
- he.ts = (int)time(NULL);
+ he.ts = time(NULL);
  he.maintainer = maintainer;
  he.action = "sftp";
  he.data = NULL;

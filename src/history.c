@@ -36,7 +36,7 @@
 
 #ifdef FEAT_HISTORY
 
-HistoryEntry *history_read_meta(const gchar *fn) {
+HistoryEntry *history_read_meta(const gchar *fn, const gchar *tfn) {
     GKeyFile *kf = g_key_file_new();
     if(!g_key_file_load_from_file(kf, fn, G_KEY_FILE_NONE, NULL)) {
 	g_key_file_free(kf);
@@ -49,6 +49,19 @@ HistoryEntry *history_read_meta(const gchar *fn) {
     he->maintainer = g_key_file_get_string(kf, "Meta", "Maintainer", NULL);
     he->action = g_key_file_get_string(kf, "Meta", "Action", NULL);
     he->data = g_key_file_get_string(kf, "Meta", "Data", NULL);
+
+    FILE *fp = g_fopen(tfn, "r");
+    if(fp) {
+	gchar buf[32];
+	he->duration = 0;
+	while(fgets(buf, sizeof(buf), fp)) {
+	    gint i = atoi(buf);
+	    he->duration = MAX(he->duration, i);
+	}
+	fclose(fp);
+    }
+    else
+	he->duration = -1;
 
     g_key_file_free(kf);
 
@@ -89,18 +102,21 @@ static gint cmp_he(gconstpointer a, gconstpointer b) {
 }
 
 GList *history_get_entries(const HostNode *n) {
-    gchar *fn;
+    const gchar *fn;
     GList *hel = NULL;
     gchar *path = history_path(n);
     GDir *dir = g_dir_open(path, 0, NULL);
-    g_free(path);
 
-    if(!dir)
+    if(!dir) {
+     g_free(path);
      return NULL;
+    }
 
     while((fn = g_dir_read_name(dir))) {
 	gchar *meta = g_strdup_printf("%s/%s/meta", path, fn);
-	HistoryEntry *he = history_read_meta(meta);
+	gchar *timing = g_strdup_printf("%s/%s/timingfile", path, fn);
+	HistoryEntry *he = history_read_meta(meta, timing);
+	g_free(timing);
 	g_free(meta);
 
 	if(he)
