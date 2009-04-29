@@ -2297,6 +2297,32 @@ static void filterHosts(GList *hosts)
 }
 #endif
 
+#ifdef FEAT_HISTORY
+static void drawHistoryLine(WINDOW *wp, const HistoryEntry *he, const gint l) {
+    char buf[0x1ff];
+    const struct tm *ts = localtime(&(he->ts));
+
+    strftime(buf, sizeof(buf), "%x %X", ts);
+
+    mvwaddnstr(wp, l  ,  2, buf                  , COLS -  2);
+
+    if(he->duration > 86400)
+	snprintf(buf, sizeof(buf),   "%dd", (he->duration/86400));
+    else if(he->duration > 3600)
+	snprintf(buf, sizeof(buf),   "%dh", (he->duration/3600));
+    else if(he->duration > 60)
+	snprintf(buf, sizeof(buf), "%dmin", (he->duration/60));
+    else if(he->duration > 0)
+	snprintf(buf, sizeof(buf),   "%ds", he->duration);
+    else
+	strcpy(buf, "?");
+    mvwaddnstr(wp, l  , 21, buf                  , COLS - 21);
+    mvwaddnstr(wp, l  , 33, he->maintainer       , COLS - 33);
+    mvwaddnstr(wp, l  , 50, he->action           , COLS - 50);
+    if (he->data)
+	mvwaddnstr(wp, l  , 51+strlen(he->action), he->data           , COLS - 51 - strlen(he->action));
+}
+#endif
 
 gboolean ctrlUI (GList *hosts)
 {
@@ -3152,7 +3178,6 @@ gboolean ctrlUI (GList *hosts)
    if (inhost) {
     WINDOW *wp = newpad(32 + inhost->nupdates + inhost->nholds + inhost->nextras +
 			inhost->nbrokens + g_list_length(inhost->packages), COLS);
-    char buf[0x1ff];
     gint l = 0;
     int  wic = 0, pminrow = 0, kcquit = 'q';
 
@@ -3171,48 +3196,33 @@ gboolean ctrlUI (GList *hosts)
 
     GList *hel = history_get_entries(inhost);
     GList *hep = g_list_first(hel);
-    while(hep) {
-	    HistoryEntry *he = hep->data;
+    wattron(wp, uicolors[UI_COLOR_SELECTOR]);
+    drawHistoryLine(wp, (HistoryEntry *)hep->data, l++);
+    wattroff(wp, uicolors[UI_COLOR_SELECTOR]);
 
-	    const struct tm *ts = localtime(&(he->ts));
-	    strftime(buf, sizeof(buf), "%x %X", ts);
-	    mvwaddnstr(wp, l  ,  2, buf           , MIN(33, COLS -  2));
-	    if(he->duration > 86400)
-		snprintf(buf, sizeof(buf),   "%dd", (he->duration/86400));
-	    else if(he->duration > 3600)
-		snprintf(buf, sizeof(buf),   "%dh", (he->duration/3600));
-	    else if(he->duration > 60)
-		snprintf(buf, sizeof(buf), "%dmin", (he->duration/60));
-	    else if(he->duration > 0)
-		snprintf(buf, sizeof(buf),   "%ds", he->duration);
-	    else
-		strcpy(buf, "?");
-	    mvwaddnstr(wp, l  , 21, buf                  , COLS - 21);
-	    mvwaddnstr(wp, l  , 33, he->maintainer       , COLS - 33);
-	    mvwaddnstr(wp, l  , 50, he->action           , COLS - 50);
-	    if (he->data)
-		mvwaddnstr(wp, l  , 51+strlen(he->action), he->data           , COLS - 51 - strlen(he->action));
-
-	    l++;
-
-	    hep = g_list_next(hep);
+    while((hep = g_list_next(hep))) {
+	drawHistoryLine(wp, (HistoryEntry *)hep->data, l++);
     }
-
-    wattron(wp, A_BOLD);
-    mvwaddnstr(wp, 4, 1, "»", COLS - 3);
-    wattroff(wp, A_BOLD);
-
 
     for(i = 0; shortCuts[i].key; i++)
      if(shortCuts[i].sc == SC_KEY_QUIT) kcquit = shortCuts[i].keycode;
 
+    gint crow = 0;
+    gint orow = 0;
+    gint mrow = g_list_length(hel) - 1;
     pminrow = 0;
     prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
     while((wic = tolower(wgetch(wp))) != kcquit) {
-     if(wic == KEY_UP && pminrow)
-      pminrow--;
-     else if(wic == KEY_DOWN && pminrow < l-LINES+4)
-      pminrow++;
+     orow = crow;
+     if(wic == KEY_UP && crow) {
+      crow--;
+      if(crow < pminrow && pminrow)
+       pminrow--;
+     } else if(wic == KEY_DOWN  && crow < mrow) {
+      crow++;
+      if(crow-pminrow > LINES - 10 && pminrow < l-LINES+4)
+       pminrow++;
+     }
      else if(wic == KEY_HOME)
       pminrow=0;
      else if(wic == KEY_END)
@@ -3227,11 +3237,23 @@ gboolean ctrlUI (GList *hosts)
       break;
      }
 #endif
+
+     if(crow != orow) {
+      drawHistoryLine(wp, (HistoryEntry *)(g_list_nth(hel, orow)->data), orow+4);
+      orow = crow;
+
+      wattron(wp, uicolors[UI_COLOR_SELECTOR]);
+      drawHistoryLine(wp, (HistoryEntry *)(g_list_nth(hel, crow)->data), crow+4);
+      wattroff(wp, uicolors[UI_COLOR_SELECTOR]);
+     }
+
      prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
     }
 
     delwin(wp);
     refscr = TRUE;
+
+    history_free_hel(hel);
    }
    break; /* case SC_KEY_HISTORY */
 #endif
