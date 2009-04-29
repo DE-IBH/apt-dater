@@ -29,6 +29,7 @@
 #define _SCREEN_H
 
 #include "apt-dater.h"
+#include "history.h"
 
 #ifndef SCREEN_BINARY
 # define SCREEN_BINARY  "/usr/bin/screen"
@@ -40,7 +41,7 @@
 gboolean
 screen_get_sessions(HostNode *n);
 
-gchar *screen_new(HostNode *n, const gboolean detached);
+gchar *screen_new(HostNode *n, const gboolean detached, const HistoryEntry *he);
 gboolean screen_attach(const SessNode *s, const gboolean shared);
 gchar *screen_get_dump(const SessNode *s);
 

@@ -30,6 +30,7 @@
 #include "exec.h"
 #include "stats.h"
 #include "parsecmd.h"
+#include "history.h"
 #include <glib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -114,7 +115,13 @@ gboolean ssh_cmd_upgrade(HostNode *n, const gboolean detached)
  if(n->forbid & HOST_FORBID_UPGRADE)
     return(FALSE);
 
- gchar *screen = screen_new(n, detached);
+ HistoryEntry he;
+ he.ts = (int)time(NULL);
+ he.maintainer = maintainer;
+ he.action = "upgrade";
+ he.data = NULL;
+
+ gchar *screen = screen_new(n, detached, &he);
 
  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d%s%s+%s+export MAINTAINER='%s' ; %s", 
 			screen,
@@ -159,7 +166,13 @@ gboolean ssh_cmd_install(HostNode *n, const gchar *package, const gboolean detac
  if(n->forbid & HOST_FORBID_INSTALL)
     return(FALSE);
 
- gchar *screen = screen_new(n, detached);
+ HistoryEntry he;
+ he.ts = (int)time(NULL);
+ he.maintainer = maintainer;
+ he.action = "install";
+ he.data = package;
+
+ gchar *screen = screen_new(n, detached, &he);
 
  cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d%s%s+%s+export MAINTAINER='%s' ; %s", 
 			screen,
@@ -205,7 +218,13 @@ gboolean ssh_connect(HostNode *n, const gboolean detached)
  gchar *identity_file = NULL;
  gchar **argv = NULL;
 
- gchar *screen = screen_new(n, detached);
+ HistoryEntry he;
+ he.ts = (int)time(NULL);
+ he.maintainer = maintainer;
+ he.action = "connect";
+ he.data = NULL;
+
+ gchar *screen = screen_new(n, detached, &he);
 
  cmd = g_strdup_printf ("%s%s+-l+%s+-t+-p+%d%s%s+%s+export MAINTAINER='%s' ; $SHELL",
 			screen,
@@ -243,8 +262,13 @@ gboolean sftp_connect(HostNode *n)
  gint argc = 0;
  gchar **argv = NULL;
 
+ HistoryEntry he;
+ he.ts = (int)time(NULL);
+ he.maintainer = maintainer;
+ he.action = "sftp";
+ he.data = NULL;
 
- gchar *cmd = screen_new(n, FALSE);
+ gchar *cmd = screen_new(n, FALSE, &he);
 
  cmd = g_realloc(cmd, strlen(cmd) + strlen(cfg->sftp_cmd) + 1);
  strcat(cmd, cfg->sftp_cmd);

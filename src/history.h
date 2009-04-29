@@ -30,18 +30,32 @@
 
 #include "apt-dater.h"
 
+typedef struct _historyEntry {
+    gint ts;
+    gint duration;
+    gchar *maintainer;
+    gchar *action;
+    gchar *data;
+} HistoryEntry;
+
+
 #ifdef FEAT_HISTORY
 static inline gchar *history_path(const HostNode *n) {
     return g_strdup_printf("%s/%s/history/%s:%d", g_get_user_data_dir(), PACKAGE, n->hostname, n->ssh_port);
 }
 
 static inline gchar *history_rpath(const HostNode *n) {
-    gchar *p = g_strdup_printf("%s/%s/history/%s:%d/%d", g_get_user_data_dir(), PACKAGE, n->hostname, n->ssh_port, (int)time(NULL));
+    gchar *p = g_strdup_printf("%s/%s/history/%s:%d/%d-%d", g_get_user_data_dir(), PACKAGE, n->hostname, n->ssh_port, (int)time(NULL), getpid());
 
     g_mkdir_with_parents(p, S_IRWXU);
 
     return p;
 }
+
+GList *history_get_entries(const HostNode *);
+void history_write_meta(const gchar *, const HistoryEntry *);
+void history_free_hel(GList *);
+
 #endif
 
 #endif /* _HISTORY_H */

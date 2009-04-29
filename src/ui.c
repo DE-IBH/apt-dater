@@ -173,12 +173,15 @@ static struct ShortCut shortCuts[] = {
  {SC_KEY_INSTALL, 'i', "i" , N_("install pkg") , FALSE, VK_INSTALL},
  {SC_KEY_UPGRADE, 'u', "u" , N_("upgrade host(s)") , FALSE, VK_UPGRADE},
  {SC_KEY_MORE, 'm', "m" , N_("host details") , FALSE, 0},
+#ifdef FEAT_HISTORY
+ {SC_KEY_HISTORY, 'H', "H", N_("host history") , FALSE, 0},
+#endif
  {SC_KEY_NEXTSESS, 'n', "n" , N_("next detached session") , FALSE, 0},
  {SC_KEY_CYCLESESS, 'N', "N" , N_("cycle detached sessions") , FALSE, 0},
  {SC_KEY_TAG, 't', "t" , N_("tag current host") , FALSE, 0},
  {SC_KEY_TAGMATCH, 'T', "T" , N_("tag all hosts matching") , FALSE, 0},
-  {SC_KEY_UNTAGMATCH, ctrl('T'), "^T" , N_("untag all hosts matching") , FALSE, 0},
-  {SC_KEY_TAGACTION, ';', ";" , N_("apply next function to tagged hosts") , FALSE, 0},
+ {SC_KEY_UNTAGMATCH, ctrl('T'), "^T" , N_("untag all hosts matching") , FALSE, 0},
+ {SC_KEY_TAGACTION, ';', ";" , N_("apply next function to tagged hosts") , FALSE, 0},
  {SC_MAX, 0, NULL, NULL, FALSE, 0},
 };
 
@@ -3143,6 +3146,54 @@ gboolean ctrlUI (GList *hosts)
     refscr = TRUE;
    }
    break; /* case SC_KEY_MORE */
+
+#ifdef FEAT_HISTORY
+  case SC_KEY_HISTORY:
+   if (inhost) {
+    WINDOW *wp = newpad(32 + inhost->nupdates + inhost->nholds + inhost->nextras +
+			inhost->nbrokens + g_list_length(inhost->packages), COLS);
+    char buf[0x1ff];
+    gint l = 0;
+    int  wic = 0, pminrow = 0, kcquit = 'q';
+
+    keypad(wp, TRUE);
+
+    wattron(wp, A_BOLD);
+    mvwaddnstr(wp, l++,  1, _("HOST HISTORY")  , COLS - 1);
+    wattroff(wp, A_BOLD);
+
+    for(i = 0; shortCuts[i].key; i++)
+     if(shortCuts[i].sc == SC_KEY_QUIT) kcquit = shortCuts[i].keycode;
+
+    pminrow = 0;
+    prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
+    while((wic = tolower(wgetch(wp))) != kcquit) {
+     if(wic == KEY_UP && pminrow)
+      pminrow--;
+     else if(wic == KEY_DOWN && pminrow < l-LINES+4)
+      pminrow++;
+     else if(wic == KEY_HOME)
+      pminrow=0;
+     else if(wic == KEY_END)
+      pminrow=l-LINES+4;
+     else if(wic == KEY_NPAGE)
+      pminrow = pminrow+LINES-3 > (l-LINES+4) ? l-LINES+4 : pminrow+LINES-3;
+     else if(wic == KEY_PPAGE)
+      pminrow = pminrow-(LINES-3) < 0 ? 0 : pminrow-(LINES-3);
+#ifdef KEY_RESIZE
+     else if(wic == KEY_RESIZE) {
+      refscr = TRUE;
+      break;
+     }
+#endif
+     prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
+    }
+
+    delwin(wp);
+    refscr = TRUE;
+   }
+   break; /* case SC_KEY_HISTORY */
+#endif
 
   case SC_KEY_FIND:
    searchEntry(hosts);
