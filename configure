@@ -8434,6 +8434,42 @@ _ACEOF
 	echo "/usr/bin/screen"
 fi
 
+# Check if `env' is installed on your system (used by history feature)
+if test "$enable_history" = "yes"; then
+    echo -n "checking for env... "
+    if test -x /usr/bin/env; then
+
+cat >>confdefs.h <<\_ACEOF
+#define ENV_BINARY "/usr/bin/env"
+_ACEOF
+
+	echo "/usr/bin/env"
+    elif test -x /usr/local/bin/env; then
+
+cat >>confdefs.h <<\_ACEOF
+#define ENV_BINARY "/usr/local/bin/env"
+_ACEOF
+
+	echo "/usr/local/bin/env"
+    elif test -x /bin/env; then
+
+cat >>confdefs.h <<\_ACEOF
+#define ENV_BINARY "/bin/env"
+_ACEOF
+
+	echo "/bin/env"
+    else
+	echo "not found at configure time."
+	echo "Using mostly common systemdefault /usr/bin/env."
+
+cat >>confdefs.h <<\_ACEOF
+#define ENV_BINARY "/usr/bin/env"
+_ACEOF
+
+	echo "/usr/bin/env"
+    fi
+fi
+
 # Check if `xsltproc' is installed on your system
 echo -n "checking for xsltproc... "
 if test -x /usr/bin/xsltproc ; then

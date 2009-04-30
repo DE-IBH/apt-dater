@@ -33,6 +33,7 @@
 typedef struct _historyEntry {
     time_t ts;
     gint duration;
+    gchar *path;
     gchar *maintainer;
     gchar *action;
     gchar *data;
@@ -55,6 +56,9 @@ static inline gchar *history_rpath(const HostNode *n) {
 GList *history_get_entries(const HostNode *);
 void history_write_meta(const gchar *, const HistoryEntry *);
 void history_free_hel(GList *);
+
+void history_show_less(HistoryEntry *);
+void history_show_replay(HistoryEntry *);
 
 #endif
 

@@ -54,10 +54,11 @@ HistoryEntry *history_read_meta(const gchar *fn, const gchar *tfn) {
     if(fp) {
 	gchar buf[32];
 	he->duration = 0;
+	gdouble d = 0;
 	while(fgets(buf, sizeof(buf), fp)) {
-	    gint i = atoi(buf);
-	    he->duration = MAX(he->duration, i);
+	    d += atof(buf);
 	}
+	he->duration = d;
 	fclose(fp);
     }
     else
@@ -119,8 +120,10 @@ GList *history_get_entries(const HostNode *n) {
 	g_free(timing);
 	g_free(meta);
 
-	if(he)
+	if(he) {
+	 he->path = g_strdup_printf("%s/%s", path, fn);
 	 hel = g_list_insert_sorted(hel, he, cmp_he);
+	}
     }
     g_dir_close(dir);
     g_free(path);
@@ -131,6 +134,7 @@ GList *history_get_entries(const HostNode *n) {
 static void free_hel(gpointer data, gpointer user_data) {
     HistoryEntry *he = (HistoryEntry *)data;
 
+    g_free(he->path);
     g_free(he->maintainer);
     g_free(he->action);
     g_free(he->data);
@@ -141,6 +145,31 @@ static void free_hel(gpointer data, gpointer user_data) {
 void history_free_hel(GList *hel) {
     g_list_foreach(hel, free_hel, NULL);
     g_list_free(hel);
+}
+
+static void history_show_cmd(gchar *cmd, gchar *param, HistoryEntry *he) {
+ GError *error = NULL;
+ gchar *argv[4];
+
+ argv[0] = ENV_BINARY;
+ argv[1] = cmd;
+ argv[2] = param;
+ argv[3] = NULL;
+
+ if(g_spawn_sync(he->path, argv, NULL, 
+		  G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
+		  NULL, NULL, NULL, &error) == FALSE) {
+  g_warning("%s", error->message);
+  g_clear_error (&error);
+ }
+}
+
+void history_show_less(HistoryEntry *he) {
+    history_show_cmd("less", "typescript", he);
+}
+
+void history_show_replay(HistoryEntry *he) {
+    history_show_cmd("scriptreplay", "timingfile", he);
 }
 
 #endif

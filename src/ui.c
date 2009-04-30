@@ -30,6 +30,7 @@
 #include <pwd.h>
 #include <sys/types.h>
 #include <signal.h>
+#include <termios.h>
 #include "apt-dater.h"
 #include "ui.h"
 #include "colors.h"
@@ -3176,6 +3177,14 @@ gboolean ctrlUI (GList *hosts)
 #ifdef FEAT_HISTORY
   case SC_KEY_HISTORY:
    if (inhost) {
+    GList *hel = history_get_entries(inhost);
+    if(!hel) {
+      drawQuery(_("No history data available!"));
+      refresh();
+      sleep(1);
+      break;
+    }
+
     WINDOW *wp = newpad(32 + inhost->nupdates + inhost->nholds + inhost->nextras +
 			inhost->nbrokens + g_list_length(inhost->packages), COLS);
     gint l = 0;
@@ -3194,7 +3203,6 @@ gboolean ctrlUI (GList *hosts)
 
     l++;
 
-    GList *hel = history_get_entries(inhost);
     GList *hep = g_list_first(hel);
     wattron(wp, uicolors[UI_COLOR_SELECTOR]);
     drawHistoryLine(wp, (HistoryEntry *)hep->data, l++);
@@ -3231,6 +3239,33 @@ gboolean ctrlUI (GList *hosts)
       pminrow = pminrow+LINES-3 > (l-LINES+4) ? l-LINES+4 : pminrow+LINES-3;
      else if(wic == KEY_PPAGE)
       pminrow = pminrow-(LINES-3) < 0 ? 0 : pminrow-(LINES-3);
+     else if(wic == 'l') {
+      cleanUI();
+      history_show_less((HistoryEntry *)(g_list_nth(hel, crow)->data));
+      initUI();
+     }
+     else if(wic == 'r') {
+      cleanUI();
+
+      printf("\033[2J");
+      fflush(stdout);
+
+      history_show_replay((HistoryEntry *)(g_list_nth(hel, crow)->data));
+
+      printf("\n================[ %s ]================\n", _("replay terminated"));
+      fflush(stdout);
+
+      struct termios to;
+      struct termios tn;
+      tcgetattr(STDIN_FILENO, &to);
+      memcpy(&tn, &to, sizeof(to));
+      tn.c_lflag &= ~ICANON;
+      tcsetattr(STDIN_FILENO, TCSANOW, &tn);
+      getchar();
+      tcsetattr(STDIN_FILENO, TCSANOW, &to);
+      printf("\033[2J");
+      initUI();
+     }
 #ifdef KEY_RESIZE
      else if(wic == KEY_RESIZE) {
       refscr = TRUE;

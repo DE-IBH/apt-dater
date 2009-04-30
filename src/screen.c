@@ -128,7 +128,7 @@ screen_new(HostNode *n, const gboolean detached, const HistoryEntry *he) {
 			       n->ssh_user, n->hostname, n->ssh_port,
 			       title,
 			       cfg->screenrcfile,
-			       "+/usr/lib/apt-dater/script+", hp);
+			       "+"PKGLIBDIR"/script+", hp);
 
     g_free(hp);
   } else

@@ -4,6 +4,9 @@
    language is requested. */
 #undef ENABLE_NLS
 
+/* Where is the command env located. */
+#undef ENV_BINARY
+
 /* Define if you want 'auto refresh' support included. */
 #undef FEAT_AUTOREF
 
