@@ -582,11 +582,15 @@ void drawStatus (char *str, gboolean drawinfo)
 }
 
 
-void drawQuery (const char *str)
+void drawQuery (const char *str, gulong display_ms)
 {
  attron(uicolors[UI_COLOR_QUERY]);
  mvaddstr(LINES - 1, 0, str);
  attroff(uicolors[UI_COLOR_QUERY]);
+ if(display_ms) {
+  refresh();
+  g_usleep(display_ms);
+ }
 }
 
 
@@ -598,7 +602,7 @@ gboolean queryString(const gchar *query, gchar *in, const gint size)
 
  enableInput();
 
- drawQuery(query);
+ drawQuery(query, 0);
 
  move(LINES - 1, strlen(query));
 
@@ -626,7 +630,7 @@ gboolean queryConfirm(const gchar *query, const gboolean enter_is_yes, gboolean 
 
  enableInput();
 
- drawQuery(query);
+ drawQuery(query, 0);
 
  move(LINES - 1, strlen(query));
 
@@ -940,10 +944,8 @@ void drawSessionEntry (DrawNode *n)
 
   if (dump_screen) {
    if(refreshDumpWindow (n) == FALSE)
-    drawStatus(_("Could not read session dump."), TRUE);
+    drawQuery(_("Could not read session dump."), G_USEC_PER_SEC);
   }
-  else
-   drawStatus("", TRUE);
  }
 }
 
@@ -1895,7 +1897,7 @@ void searchEntry(GList *hosts) {
 
  memset(s, 0, sizeof(s));
 
- drawQuery(query);
+ drawQuery(query, 0);
 
  while((c = getch())) {
    /* handle backspace */
@@ -2303,6 +2305,7 @@ static void drawHistoryLine(WINDOW *wp, const HistoryEntry *he, const gint l) {
     char buf[0x1ff];
     const struct tm *ts = localtime(&(he->ts));
 
+    mvwremln(wp, l, 2, COLS-4);
     strftime(buf, sizeof(buf), "%x %X", ts);
 
     mvwaddnstr(wp, l  ,  2, buf                  , COLS -  2);
@@ -2475,7 +2478,7 @@ gboolean ctrlUI (GList *hosts)
     if(ho) {
      keytagactive = !keytagactive;
      if(keytagactive == TRUE) {
-      drawQuery(_("tag-"));
+      drawQuery(_("tag-"), 0);
       curs_set(1);
      }
     } else beep();
@@ -2869,9 +2872,9 @@ gboolean ctrlUI (GList *hosts)
 
    if(getSelectedDrawNode()->type != SESSION) {
     if(dump_screen)
-     drawQuery(_("Session dumps enabled."));
+     drawQuery(_("Session dumps enabled."), G_USEC_PER_SEC/2);
     else
-     drawQuery(_("Session dumps disabled."));
+     drawQuery(_("Session dumps disabled."), G_USEC_PER_SEC/2);
    }
    else
     refscr = TRUE;
@@ -3179,9 +3182,8 @@ gboolean ctrlUI (GList *hosts)
    if (inhost) {
     GList *hel = history_get_entries(inhost);
     if(!hel) {
-      drawQuery(_("No history data available!"));
+     drawQuery(_("No history data available!"), G_USEC_PER_SEC);
       refresh();
-      sleep(1);
       break;
     }
 
