@@ -2357,6 +2357,8 @@ gboolean ctrlUI (GList *hosts)
  if(ic == KEY_RESIZE) {
   refscr = TRUE;
   dump_screen = FALSE;
+  if(bottomDrawLine != (LINES-2))
+   bottomDrawLine = LINES-2;
  }
 #endif
 
