@@ -1,0 +1,502 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+apt-dater-host - Provding apt-dater with information about the host
+"""
+# Copyright (C) 2008 Sebastian Heinlein <devel@glatzor.de>
+# Copyright (C) 2008-2009 IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+__author__  = "Sebastian Heinlein <devel@glatzor.de>"
+
+from ConfigParser import ConfigParser
+import operator
+import os
+import re
+import sys
+import subprocess
+import warnings
+
+# There have been some API changes in python-apt recently
+warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
+try:
+    import apt
+    import apt_pkg
+except:
+    HAS_APT = False
+else:
+    HAS_APT = True
+
+try:
+    import yum
+    import yum.misc
+except:
+    HAS_YUM = False
+else:
+    HAS_YUM = True
+
+KERNEL_LATEST = 0   # Running kernel is the latest installed one
+KERNEL_REBOOT = 1   # Later kernel than the running one is installed
+KERNEL_CUSTOM = 2   # Custom kernel is installed
+KERNEL_UNKOWN = 9   # Unkown kernel is installed
+
+ADPROTO = "0.3"
+
+FORBID_NONE = 0
+FORBID_REFRESH = 1
+FORBID_UPGRADE = 2
+FORBID_INSTALL = 4
+
+class AptDaterHost(object):
+    """Provides a Debian client for apt-dater."""
+    def __init__(self, config):
+        self.dist = "Unkown"
+        self.dist_release = "Unkown"
+        self.dist_codename = "Unkown"
+        self.system = "Unkown"
+        self.machine = "Unkown"
+        self.kernel_release = "Unkown"
+        self.virtual = "Unkown"
+        self._config = config
+        self._helper = []
+        self._collect_sys_info()
+
+    def kernel(self):
+        """Send information about the running kernel."""
+        self._emit_proto()
+        self._do_kernel()
+
+    def _do_kernel(self):
+        """
+        Send distro specific information about the running kernel.
+        NOTE: Should be implemented by the distro subclass.
+        """
+        self._emit_kernel_info(KERNEL_UNKOWN, self.kernel_release)
+
+    def status(self):
+        """Send status information about the system."""
+        self._emit_proto()
+        self._do_package_status()
+        # Send which actions are forbidden
+        mask = FORBID_NONE
+        if self._config.getboolean("apt-dater", "forbid_install"):
+            mask |= FORBID_INSTALL
+        if self._config.getboolean("apt-dater", "forbid_upgrade"):
+            mask |= FORBID_UPGRADE
+        if self._config.getboolean("apt-dater", "forbid_refresh"):
+            mask |= FORBID_REFRESH
+        self._emit_forbidden(mask)
+        # Send further information
+        self._emit_virtual(self.virtual)
+        self._emit_lsb_info(self.dist, self.dist_release, self.dist_codename)
+        self._emit_uname_info(self.system, self.machine)
+
+    def _do_package_status(self):
+        """
+        Send distro specific status information about installed packages.
+        NOTE: Needs to implemented by the distro subclass
+        """
+        raise NotImplemented
+
+    def refresh(self):
+        """Query for new or later software."""
+        if self._config.getboolean("apt-dater", "forbid_refresh"):
+            self._emit_error("It isn't allowed to refresh the host.")
+            return
+        self._do_refresh()
+
+    def _do_refresh(self):
+        """
+        Implement quering for new or later software.
+        NOTE: Needs to implemented by the distro subclass
+        """
+        raise NotImplemented
+
+    def upgrade(self):
+        """Upgrade the software on the system."""
+        if self._config.getboolean("apt-dater", "forbid_upgrade"):
+            self._emit_error("It isn't allowed to upgrade the host.")
+            return
+        self._do_upgrade()
+
+    def _do_upgrade(self):
+        """
+        Implement the upgrade of the system.
+        NOTE: Needs to implemented by the distro subclass.
+        """
+        raise NotImplemented
+
+    def install(self, packages):
+        """Install the given packages on the system."""
+        if self._config.getboolean("apt-dater", "forbid_install"):
+            self._emit_error("It isn't allowed to install packages "
+                             "on this host.")
+            return
+        self._do_install(packages)
+
+    def _set_defaults(self):
+        """
+        Set the desitro specific configuration defaults.
+        NOTE: Need to implemented by the distro subclass.
+        """
+        return
+
+    def _collect_sys_info(self):
+        """Collect information about the system."""
+        self.system, host, self.kernel_release, ver, self.machine = os.uname()
+        self.dist, self.dist_codename, self.dist_release = get_distro()
+        try:
+            out = subprocess.Popen(["imvirt"],
+                                   stdout=subprocess.PIPE).stdout.read()
+            self.virtual = out.strip()
+        except:
+            pass
+
+    def _call_helper(self, args):
+        """Run the helper with the given arguments."""
+        command = self._helper[:]
+        command.extend(args)
+        print self._helper
+        try:
+            ret = subprocess.call(command)
+            if ret > 0:
+                self._emit_error("Helper was terminated with %s" % ret)
+        except OSError, e:
+            self._emit_error("Helper failed: %s" % e)
+
+    def _emit_error(self, message):
+        """Emit a message to stderr."""
+        print >> sys.stderr, "ERROR: %s" % message
+        sys.stdout.flush()
+        sys.stderr.flush()
+
+    def _emit_forbidden(self, mask):
+        """Emit FORBID signal."""
+        print >> sys.stdout, "FORBID: %s" % mask
+        sys.stdout.flush()
+
+    def _emit_status(self, name, version, status):
+        """Emit STATUS signal."""
+        print >> sys.stdout, "STATUS: %s|%s|%s" % (name, version, status)
+        sys.stdout.flush()
+
+    def _emit_uname_info(self, system, machine):
+        """Emit UNAME signal."""
+        print >> sys.stdout, "UNAME: %s|%s" % (system, machine)
+        sys.stdout.flush()
+
+    def _emit_kernel_info(self, status, version):
+        """Emit KERNELINFO signal."""
+        print >> sys.stdout, "KERNELINFO: %s %s" % (status, version)
+        sys.stdout.flush()
+
+    def _emit_lsb_info(self, distro, release, codename):
+        """Emit LSBREL signal."""
+        print >> sys.stdout, "LSBREL: %s|%s|%s" % (distro, release, codename)
+        sys.stdout.flush()
+
+    def _emit_virtual(self, virtual):
+        """Emit VIRT signal."""
+        print >> sys.stdout, "VIRT: %s" % virtual
+        sys.stdout.flush()
+
+    def _emit_proto(self):
+        """Emit ADPROTO signal."""
+        print >> sys.stdout, "ADPROTO: %s" % ADPROTO
+        sys.stdout.flush()
+
+
+class DebianAptDaterHost(AptDaterHost):
+    """Provides an apt-dater host for Debian based systems."""
+    def __init__(self, config):
+        AptDaterHost.__init__(self, config)
+        self._cache = None
+        self._helper = [self._config.get("debian", "root_cmd"),
+                        self._config.get("debian", "frontend"),
+                        "--"]
+
+    def _do_kernel(self):
+        """Send information about the running kernel."""
+        try:
+            ver_file = open("/proc/version")
+            version_string = ver_file.read()
+            ver_file.close()
+        except:
+            self._emit_kernel_info(KERNEL_UNKOWN, self.kernel_release)
+            return
+        # Is the kernel provided by the distro?
+        match = re.match("^\S+? \S+? \S+? \(%s (\S+?)\)" % self.dist,
+                         version_string)
+        if match is None:
+            self._emit_kernel_info(KERNEL_CUSTOM, self.kernel_release)
+            return
+        # Is there a later kernel version than the running one installed?
+        version = match.group(1)
+        self._init_cache()
+        for pkg in self._cache:
+            if pkg.isInstalled and \
+               re.match("^linux-image-[0-9]\.[0-9]\.[0-9]+-[0-9]+-[a-z0-9-]+$",
+                        pkg.name) is not None and \
+               apt_pkg.VersionCompare(pkg.installedVersion, version) > 0:
+                self._emit_kernel_info(KERNEL_REBOOT, self.kernel_release)
+                return
+        self._emit_kernel_info(KERNEL_LATEST, self.kernel_release)
+
+    def _do_package_status(self):
+        """Send status information about installed packages."""
+        # Send status of installed packages
+        self._init_cache()
+        self._cache.upgrade()
+        for pkg in self._cache:
+            if not pkg.isInstalled:
+                continue
+            if pkg.isUpgradable:
+                if pkg.markedUpgrade and not \
+                   self._cache._depcache.IsNowBroken(pkg._pkg):
+                    status = "u=%s" % pkg.candidateVersion
+                else:
+                    status = "h"
+            elif not pkg.candidateDownloadable:
+                status = "x"
+            elif self._cache._depcache.IsInstBroken(pkg._pkg):
+                status = "b"
+            else:
+                status = "i"
+            self._emit_status(pkg.name, pkg.installedVersion, status)
+
+    def _do_refresh(self):
+        """Refreshes the package cache on a Debian system."""
+        self._call_helper(["update"])
+
+    def _do_upgrade(self):
+        """Upgrade the software on the a Debian system."""
+        if os.path.basename(self._config.get("debian", "frontend")) == "aptitude":
+            self._call_helper(["safe-upgrade"])
+        else:
+            self._call_helper(["upgrade"])
+        if self._config.getboolean("debian", "clean"):
+            self._call_helper(["clean"])
+
+    def _do_install(self, packages):
+        """
+        Implement the installation of software.
+        """
+        args = ["install"]
+        args.extend(packages)
+        self._call_helper(args)
+        if self._config.getboolean("debian", "clean"):
+            self._call_helper(["clean"])
+
+    def _init_cache(self):
+        """Initialize the APT cache or reset it if already existing."""
+        if self._cache is None:
+            self._cache = apt.Cache()
+        else:
+            self._cache._depcache.Init()
+
+
+class RedHatAptDaterHost(AptDaterHost):
+    """Provides an apt-dater host for Debian based systems."""
+    def __init__(self, config):
+        AptDaterHost.__init__(self, config)
+        self._yumbase = None
+        self._helper = [self._config.get("redhat", "root_cmd"),
+                        self._config.get("redhat", "yum"),
+                        "--"]
+ 
+    def _init_cache(self):
+        """Initialize the YUM cache."""
+        if self._yumbase is None:
+            self._yumbase = yum.YumBase()
+
+    def _do_package_status(self):
+        """Send information about the installed packages."""
+        self._init_cache()
+        inst = self._yumbase.doPackageLists(pkgnarrow="installed").installed
+        updates = {}
+        for pkg in self._yumbase.doPackageLists(pkgnarrow="updates").updates:
+            updates[pkg.name] = self._get_package_ver(pkg)
+        extras = set()
+        for pkg in self._yumbase.doPackageLists(pkgnarrow="extras").extras:
+            extras.add(pkg.name)
+        gh = self._yumbase.doPackageLists(pkgnarrow="obsoletes")
+        for (obsoleter, obsoleted) in gh.obsoletesTuples:
+            extras.add(obsoleted.name)
+            updates[obsoleter.name] = self._get_package_ver(obsoleter)
+        for pkg in inst:
+            version = self._get_package_ver(pkg)
+            if updates.has_key(pkg.name):
+                status = "u=%s" % updates[pkg.name]
+            elif pkg.name in extras:
+                status = "x"
+            else:
+                status = "i"
+            self._emit_status("%s.%s" % (pkg.name, pkg.arch), version, status)
+
+    def _get_package_ver(self, pkg):
+        """Return a complete version string taking epoch and release into account."""
+        if pkg.epoch != '0':
+            ver = "%s:%s-%s" % (pkg.epoch, pkg.version, pkg.release)
+        else:
+            ver = "%s-%s" % (pkg.version, pkg.release)
+        return ver
+
+    def _do_kernel(self):
+        """Send information about the running kernel."""
+        self._init_cache()
+        try:
+            current = self._yumbase.rpmdb.searchFiles("/boot/vmlinuz-%s" % \
+                                                       self.kernel_release)[0]
+        except IndexError:
+            self._emit_kernel_info(KERNEL_CUSTOM, self.kernel_release)
+            return
+        for kernel_pkg in self._yumbase.rpmdb.searchNevra(name=current.name,
+                                                          arch=current.arch):
+            if kernel_pkg > current:
+                self._emit_kernel_info(KERNEL_REBOOT, self.kernel_release)
+                return
+        self._emit_kernel_info(KERNEL_LATEST, self.kernel_release)
+
+    def _do_refresh(self):
+        """Refreshes the package cache on a Yum system."""
+        self._call_helper(["check-update"])
+
+    def _do_upgrade(self):
+        """Upgrade the system using yum."""
+        self._call_helper(["update"])
+        if self._config.getboolean("redhat", "clean"):
+            self._call_helper(["clean"])
+
+    def _do_install(self, packages):
+        """Install software by using yum."""
+        args = ["install"]
+        args.extend(packages)
+        self._call_helper(args)
+        if self._config.getboolean("redhat", "clean"):
+            self._call_helper(["clean"])
+
+
+def get_distro():
+    """
+    Return the distro name, release version and release code name of
+    the distribution.
+    """
+    # Hopefully lsb_release is installed
+    try:
+        lsb_out = subprocess.Popen(["lsb_release", "--short", "--id",
+                                    "--release", "--codename"],
+                                    stdout=subprocess.PIPE).stdout.read()
+        dist, release, codename = lsb_out.split()
+        return dist, release, codename
+    except:
+        pass
+    # Check for Debian
+    if os.path.exists("/etc/debian_version"):
+        # "5.0.1"
+        release_file = open("/etc/debian_version")
+        content = release_file.read()
+        release_file.close()
+        return "Debian", content.strip(), "Unkown"
+    # Check for Fedora
+    elif os.path.exists("/etc/fedora-release"):
+        release_file = open("/etc/fedora-release")
+        content = release_file.read().split(" ")
+        release_file.close()
+        return content[0], content[2], content[3]
+    # Check for RedHat/CentOS system
+    elif os.path.exists("/etc/redhat-release"):
+        # "Red Hat Enterprise Linux Server release 5.3 (Tikgana)"
+        release_file = open("/etc/redhat-release")
+        content = release_file.read().split()
+        release_file.close()
+        if content[0] == "Red" and content[1] == "Hat":
+            content[0] = "Red Hat"
+        return content[0], content[-2], content[-1][1:-1]
+    # Check for SuSE
+    elif os.path.exists("/etc/SuSE-release"):
+        # "openSUSE 11.3 (i586) Beta2\nVERSION = 11.3"
+        release_file = open("/etc/SuSE-release")
+        content = release_file.read().split()
+        return content[0], content[6], content[3]
+    return "Unkown", "Unkown", "Unkown"
+
+def parse_config():
+    """Set defaults and read the configuration from file."""
+    config = ConfigParser()
+    # Common defaults
+    config.add_section("apt-dater")
+    config.set("apt-dater", "forbid_refresh", "False")
+    config.set("apt-dater", "forbid_upgrade", "False")
+    config.set("apt-dater", "forbid_install", "False")
+    config.set("apt-dater", "distro", "auto")
+    # Debian/Ubuntu defaults
+    config.add_section("debian")
+    config.set("debian", "frontend", "/usr/bin/apt-get")
+    config.set("debian", "root_cmd", "/usr/bin/sudo")
+    config.set("debian", "clean", "False")
+    # Red Hat defaults
+    config.add_section("redhat")
+    config.set("redhat", "yum", "/usr/bin/yum")
+    config.set("redhat", "root_cmd", "/usr/bin/sudo")
+    config.set("redhat", "clean", "False")
+    # Read user customizations
+    config.read(["apt-dater-host.conf", "/etc/apt-dater-host.conf"])
+    return config
+
+def main():
+    if len(sys.argv) == 0:
+        print("Do not run this script directly")
+        sys.exit(1)
+    command = sys.argv[1]
+    config = parse_config()
+    # Get the distro
+    distro = config.get("apt-dater", "distro")
+    if distro == "auto":
+        distro = get_distro()[0]
+    if distro in ["Debian", "Ubuntu"]:
+        if not HAS_APT:
+            print("ERROR: python-apt is not installed")
+            sys.exit(1)
+        host = DebianAptDaterHost(config)
+    elif distro in ["Red Hat", "CentOS", "Fedora"]:
+        if not HAS_YUM:
+            print("ERROR: yum is not installed")
+            sys.exit(1)
+        host = RedHatAptDaterHost(config)
+    else:
+        print("Distribution is not supported: %s" % distro)
+        sys.exit(1)
+    # Perform command
+    if command == "status":
+        host.status()
+        host.kernel()
+    if command == "kernel":
+        host.kernel()
+    if command == "refresh":
+        host.refresh()
+        host.status()
+        host.kernel()
+    if command == "upgrade":
+        host.upgrade()
+    if command == "install":
+        host.install(sys.argv[2:])
+
+if __name__ == "__main__":
+    main()
+
+# vim:ts=4:sw=4:et
