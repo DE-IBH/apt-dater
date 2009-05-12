@@ -83,7 +83,7 @@ typedef enum {
     TCLM_STRING,
     TCLM_INT,
     TCLM_IGNORE,
-} ETCLMAPING;
+} ETCLMAPPING;
 
 typedef enum {
     TCLMK_CATEGORY,
@@ -109,7 +109,7 @@ typedef enum {
 struct TCLMapping {
     gint code;
     gchar *name;
-    ETCLMAPING type;
+    ETCLMAPPING type;
 };
 
 const static struct TCLMapping tclmap[] = {
@@ -2140,7 +2140,7 @@ void applyFilter(GList *hosts) {
         	Tcl_SetVar(tcl_interp, tclmap[i].name, n->virt, 0);
 		break;
 	    default:
-		g_warning(_("Internal error: unhandled TCL TCLM_STRING maping!"));
+		g_warning(_("Internal error: unhandled TCL TCLM_STRING mapping!"));
 	  }
 	  break;
 	case TCLM_INT:
@@ -2155,7 +2155,7 @@ void applyFilter(GList *hosts) {
 		    h = g_strdup_printf("%d", n->forbid);
 		    break;
 		default:
-		    g_warning(_("Internal error: unhandled TCL TCLM_INT maping!"));
+		    g_warning(_("Internal error: unhandled TCL TCLM_INT mapping!"));
 	    }
 
 	    Tcl_SetVar(tcl_interp, tclmap[i].name, h, 0);
@@ -2165,7 +2165,7 @@ void applyFilter(GList *hosts) {
 	case TCLM_IGNORE:
 	  break;
 	default:
-	  g_warning(_("Internal error: unkown TCL maping type!"));
+	  g_warning(_("Internal error: unkown TCL mapping type!"));
       }
     }
 
