@@ -675,7 +675,7 @@ static void drawHistoryLine(WINDOW *wp, const HistoryEntry *he, const gint l) {
  else if(he->duration > 0)
   snprintf(buf, sizeof(buf), "%ds", he->duration);
  else
-  strcpy(buf, "?");
+  strcpy(buf, "n/a");
  mvwaddnstr(wp, l  , 26, buf                  , MAXCOLS(26, 8));
  mvwaddnstr(wp, l  , 36, he->maintainer       , MAXCOLS(36, 13));
  mvwaddnstr(wp, l  , 51, he->action           , MAXCOLS(51, COLS-51));

@@ -49,20 +49,7 @@ HistoryEntry *history_read_meta(const gchar *fn, const gchar *tfn) {
     he->maintainer = g_key_file_get_string(kf, "Meta", "Maintainer", NULL);
     he->action = g_key_file_get_string(kf, "Meta", "Action", NULL);
     he->data = g_key_file_get_string(kf, "Meta", "Data", NULL);
-
-    FILE *fp = g_fopen(tfn, "r");
-    if(fp) {
-	gchar buf[32];
-	he->duration = 0;
-	gdouble d = 0;
-	while(fgets(buf, sizeof(buf), fp)) {
-	    d += atof(buf);
-	}
-	he->duration = d;
-	fclose(fp);
-    }
-    else
-	he->duration = -1;
+    he->duration = (gint) g_key_file_get_double(kf, "Meta", "Duration", NULL);
 
     g_key_file_free(kf);
 
@@ -85,7 +72,13 @@ void history_write_meta(const gchar *fn, const HistoryEntry *he) {
     if(!data)
 	return;
 
-    g_file_set_contents(fn, data, -1, NULL);
+    GError *error = NULL;
+    g_file_set_contents(fn, data, -1, &error);
+    if (error) {
+      g_error(error->message);
+      g_clear_error(&error);
+    }
+
     g_free(data);
 }
 

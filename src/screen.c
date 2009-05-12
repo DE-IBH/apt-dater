@@ -108,8 +108,23 @@ screen_get_sessions(HostNode *n) {
 
 gchar *
 screen_new(HostNode *n, const gboolean detached, const HistoryEntry *he) {
-  if (!cfg->use_screen)
-    return g_strdup("");
+  if (!cfg->use_screen) {
+#ifdef FEAT_HISTORY
+    if(cfg->record_history && he) {
+     gchar *hp = history_rpath(n);
+     gchar *fn_meta = g_strdup_printf("%s/meta", hp);
+     history_write_meta(fn_meta, he);
+     g_free(fn_meta);
+
+     gchar *cmd = g_strdup_printf(PKGLIBDIR"/script+%s+", hp);
+     g_free(hp);
+
+     return cmd;
+    }
+    else
+#endif
+     return g_strdup("");
+  }
 
   gchar *title = parse_string(cfg->screentitle, n);
 
