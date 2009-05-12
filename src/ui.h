@@ -48,6 +48,9 @@ typedef enum {
  VK_INSTALL=16,
  VK_REFRESH=32,
  VK_KILL=64,
+#ifdef FEAT_HISTORY
+ VK_PLAY=128,
+#endif
 } EVisKeyMask;
 
 typedef enum {
@@ -83,6 +86,7 @@ typedef enum {
  SC_KEY_MORE,
 #ifdef FEAT_HISTORY
  SC_KEY_HISTORY,
+ SC_KEY_PLAY,
 #endif
  SC_KEY_NEXTSESS,
  SC_KEY_CYCLESESS,

@@ -165,6 +165,7 @@ static struct ShortCut shortCuts[] = {
  {SC_KEY_FIND, '/', "/" , N_("search host") , TRUE , 0},
 #ifdef FEAT_TCLFILTER
  {SC_KEY_FILTER, 'f', "f" , N_("filter hosts") , FALSE, 0},
+ {SC_KEY_PLAY, 'p', "p" , N_("play") , FALSE, VK_PLAY},
 #endif
  {SC_KEY_ATTACH, 'a', "a" , N_("attach session") , FALSE, VK_ATTACH},
  {SC_KEY_CONNECT, 'c', "c" , N_("connect host") , FALSE, VK_CONNECT},
@@ -650,6 +651,158 @@ gboolean queryConfirm(const gchar *query, const gboolean enter_is_yes, gboolean 
  return ((c == 'y') || (c == 'Y') || 
 	 (enter_is_yes == TRUE && (c == 0xd || c == KEY_ENTER)));
 }
+
+
+#ifdef FEAT_HISTORY
+static void drawHistoryLine(WINDOW *wp, const HistoryEntry *he, const gint l) {
+ char  buf[0x1ff];
+ const struct tm *ts = localtime(&(he->ts));
+#define MAXCOLS(pos, s) (pos+s) <= COLS ? s : COLS-pos
+
+ mvwremln(wp, l, 0, COLS);
+ snprintf(buf, sizeof(buf), "%5d", l+1);
+ mvwaddnstr(wp, l  ,  0, buf, MAXCOLS(0, 5));
+
+ strftime(buf, sizeof(buf), "%x %X", ts);
+ mvwaddnstr(wp, l  ,  7, buf, MAXCOLS(7, 17));
+
+ if(he->duration > 86400)
+  snprintf(buf, sizeof(buf), "%dd", (he->duration/86400));
+ else if(he->duration > 3600)
+  snprintf(buf, sizeof(buf), "%dh", (he->duration/3600));
+ else if(he->duration > 60)
+  snprintf(buf, sizeof(buf), "%dmin", (he->duration/60));
+ else if(he->duration > 0)
+  snprintf(buf, sizeof(buf), "%ds", he->duration);
+ else
+  strcpy(buf, "?");
+ mvwaddnstr(wp, l  , 26, buf                  , MAXCOLS(26, 8));
+ mvwaddnstr(wp, l  , 36, he->maintainer       , MAXCOLS(36, 13));
+ mvwaddnstr(wp, l  , 51, he->action           , MAXCOLS(51, COLS-51));
+ if (he->data)
+  mvwaddnstr(wp, l  , 52+strlen(he->action), he->data, 
+	     MAXCOLS(52+strlen(he->action), COLS- 52- strlen(he->action)));
+}
+
+
+static void drawHistoryEntries (HostNode *n)
+{
+ gint   l = 0;
+ int    wic = 0, pminrow = 0, kcquit = 'q';
+ char   statusln[BUF_MAX_LEN];
+ GList  *hel = NULL, *hep = NULL;
+ WINDOW *wp = NULL;
+
+ if(!n) return;
+
+ hel = history_get_entries(inhost);
+ if(!hel) {
+  drawQuery(_("No history data available!"), G_USEC_PER_SEC);
+  refresh();
+  return;
+ }
+
+ snprintf(statusln, BUF_MAX_LEN, 
+	  g_list_length (hel) == 1 ? _("History of %s (%d entry available)") :
+	  _("History of %s (%d entries available)"), 
+	  n->hostname ? n->hostname : "", g_list_length (hel));
+ drawStatus(statusln, FALSE);
+ drawMenu(VK_PLAY);
+ refresh();
+
+ if(!(wp = newpad(g_list_length (hel) + LINES, COLS))) return;
+
+ keypad(wp, TRUE);
+
+ hep = g_list_first(hel);
+
+ while(hep) {
+  if(!l)  wattron(wp, uicolors[UI_COLOR_SELECTOR]);
+  drawHistoryLine(wp, (HistoryEntry *)hep->data, l++);
+  wattroff(wp, uicolors[UI_COLOR_SELECTOR]); 
+
+  hep = g_list_next(hep);
+ }
+
+ gint crow = 0;
+ gint orow = 0;
+ gint mrow = g_list_length(hel) - 1;
+ pminrow = 0;
+ prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
+ while((wic = tolower(wgetch(wp))) != kcquit) {
+  orow = crow;
+  if(wic == KEY_UP && crow) {
+   crow--;
+   if(crow < pminrow && pminrow)
+    pminrow--;
+  } else if(wic == KEY_DOWN  && crow < mrow) {
+   crow++;
+   if(crow-pminrow > LINES-4 && pminrow < l-LINES+3)
+    pminrow++;
+  } else if(wic == KEY_HOME) {
+   crow=pminrow=0;
+  } else if(wic == KEY_END) {
+   crow=mrow;
+   if(pminrow+LINES-4 < mrow)
+    pminrow=l-LINES+3;
+  } else if(wic == KEY_NPAGE) {
+   crow=pminrow = pminrow+LINES-3 > (l-LINES+4) ? l-LINES+4 : pminrow+LINES-3;
+  } else if(wic == KEY_PPAGE) {
+   pminrow = pminrow-(LINES-3) < 0 ? 0 : pminrow-(LINES-3);
+   crow=pminrow+(LINES-4);
+  } else if(wic == 'l') {
+   cleanUI();
+   history_show_less((HistoryEntry *)(g_list_nth(hel, crow)->data));
+   initUI();
+  } else if(wic == 'p') {
+   printf("\033[2J");
+   fflush(stdout);
+
+   history_show_replay((HistoryEntry *)(g_list_nth(hel, crow)->data));
+
+   printf("\n================[ %s ]================\n", _("replay terminated"));
+   fflush(stdout);
+
+   struct termios to;
+   struct termios tn;
+   tcgetattr(STDIN_FILENO, &to);
+   memcpy(&tn, &to, sizeof(to));
+   tn.c_lflag &= ~ICANON;
+   tcsetattr(STDIN_FILENO, TCSANOW, &tn);
+   getchar();
+   tcsetattr(STDIN_FILENO, TCSANOW, &to);
+   printf("\033[2J");
+   initUI();
+  }
+#ifdef KEY_RESIZE
+  else if(wic == KEY_RESIZE) {
+   return;
+  }
+#endif
+
+  if(crow != orow) {
+   drawHistoryLine(wp, (HistoryEntry *)(g_list_nth(hel, orow)->data), orow);
+   orow = crow;
+
+   wattron(wp, uicolors[UI_COLOR_SELECTOR]);
+   drawHistoryLine(wp, (HistoryEntry *)(g_list_nth(hel, crow)->data), crow);
+   wattroff(wp, uicolors[UI_COLOR_SELECTOR]);
+  }
+
+  prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
+ }
+
+ /*
+ for(int i = 0; shortCuts[i].key; i++)
+  if(shortCuts[i].sc == SC_KEY_QUIT) kcquit = shortCuts[i].keycode;
+ */
+
+ delwin(wp);
+
+ history_free_hel(hel);
+}
+#endif
+
 
 void drawCategoryEntry (DrawNode *n)
 {
@@ -2300,33 +2453,6 @@ static void filterHosts(GList *hosts)
 }
 #endif
 
-#ifdef FEAT_HISTORY
-static void drawHistoryLine(WINDOW *wp, const HistoryEntry *he, const gint l) {
-    char buf[0x1ff];
-    const struct tm *ts = localtime(&(he->ts));
-
-    mvwremln(wp, l, 2, COLS-4);
-    strftime(buf, sizeof(buf), "%x %X", ts);
-
-    mvwaddnstr(wp, l  ,  2, buf                  , COLS -  2);
-
-    if(he->duration > 86400)
-	snprintf(buf, sizeof(buf),   "%dd", (he->duration/86400));
-    else if(he->duration > 3600)
-	snprintf(buf, sizeof(buf),   "%dh", (he->duration/3600));
-    else if(he->duration > 60)
-	snprintf(buf, sizeof(buf), "%dmin", (he->duration/60));
-    else if(he->duration > 0)
-	snprintf(buf, sizeof(buf),   "%ds", he->duration);
-    else
-	strcpy(buf, "?");
-    mvwaddnstr(wp, l  , 21, buf                  , COLS - 21);
-    mvwaddnstr(wp, l  , 33, he->maintainer       , COLS - 33);
-    mvwaddnstr(wp, l  , 50, he->action           , COLS - 50);
-    if (he->data)
-	mvwaddnstr(wp, l  , 51+strlen(he->action), he->data           , COLS - 51 - strlen(he->action));
-}
-#endif
 
 gboolean ctrlUI (GList *hosts)
 {
@@ -2357,8 +2483,7 @@ gboolean ctrlUI (GList *hosts)
  if(ic == KEY_RESIZE) {
   refscr = TRUE;
   dump_screen = FALSE;
-  if(bottomDrawLine != (LINES-2))
-   bottomDrawLine = LINES-2;
+  bottomDrawLine = LINES-2;
  }
 #endif
 
@@ -3182,117 +3307,9 @@ gboolean ctrlUI (GList *hosts)
 #ifdef FEAT_HISTORY
   case SC_KEY_HISTORY:
    if (inhost) {
-    GList *hel = history_get_entries(inhost);
-    if(!hel) {
-     drawQuery(_("No history data available!"), G_USEC_PER_SEC);
-      refresh();
-      break;
-    }
+    drawHistoryEntries (inhost);
 
-    WINDOW *wp = newpad(32 + inhost->nupdates + inhost->nholds + inhost->nextras +
-			inhost->nbrokens + g_list_length(inhost->packages), COLS);
-    gint l = 0;
-    int  wic = 0, pminrow = 0, kcquit = 'q';
-
-    keypad(wp, TRUE);
-
-    wattron(wp, A_BOLD);
-    mvwaddnstr(wp, l++,  1, _("HOST HISTORY")  , COLS - 1);
-    wattroff(wp, A_BOLD);
-
-    mvwaddnstr(wp, ++l,  2, _("[Date]")               , COLS -  2);
-    mvwaddnstr(wp, l  , 21, _("[Duration]")           , COLS - 21);
-    mvwaddnstr(wp, l  , 33, _("[Maintainer]")         , COLS - 33);
-    mvwaddnstr(wp, l++, 50, _("[Action]")            , COLS -  50);
-
-    l++;
-
-    GList *hep = g_list_first(hel);
-    wattron(wp, uicolors[UI_COLOR_SELECTOR]);
-    drawHistoryLine(wp, (HistoryEntry *)hep->data, l++);
-    wattroff(wp, uicolors[UI_COLOR_SELECTOR]);
-
-    while((hep = g_list_next(hep))) {
-	drawHistoryLine(wp, (HistoryEntry *)hep->data, l++);
-    }
-
-    for(i = 0; shortCuts[i].key; i++)
-     if(shortCuts[i].sc == SC_KEY_QUIT) kcquit = shortCuts[i].keycode;
-
-    gint crow = 0;
-    gint orow = 0;
-    gint mrow = g_list_length(hel) - 1;
-    pminrow = 0;
-    prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
-    while((wic = tolower(wgetch(wp))) != kcquit) {
-     orow = crow;
-     if(wic == KEY_UP && crow) {
-      crow--;
-      if(crow < pminrow && pminrow)
-       pminrow--;
-     } else if(wic == KEY_DOWN  && crow < mrow) {
-      crow++;
-      if(crow-pminrow > LINES - 10 && pminrow < l-LINES+4)
-       pminrow++;
-     }
-     else if(wic == KEY_HOME)
-      pminrow=0;
-     else if(wic == KEY_END)
-      pminrow=l-LINES+4;
-     else if(wic == KEY_NPAGE)
-      pminrow = pminrow+LINES-3 > (l-LINES+4) ? l-LINES+4 : pminrow+LINES-3;
-     else if(wic == KEY_PPAGE)
-      pminrow = pminrow-(LINES-3) < 0 ? 0 : pminrow-(LINES-3);
-     else if(wic == 'l') {
-      cleanUI();
-      history_show_less((HistoryEntry *)(g_list_nth(hel, crow)->data));
-      initUI();
-     }
-     else if(wic == 'r') {
-      cleanUI();
-
-      printf("\033[2J");
-      fflush(stdout);
-
-      history_show_replay((HistoryEntry *)(g_list_nth(hel, crow)->data));
-
-      printf("\n================[ %s ]================\n", _("replay terminated"));
-      fflush(stdout);
-
-      struct termios to;
-      struct termios tn;
-      tcgetattr(STDIN_FILENO, &to);
-      memcpy(&tn, &to, sizeof(to));
-      tn.c_lflag &= ~ICANON;
-      tcsetattr(STDIN_FILENO, TCSANOW, &tn);
-      getchar();
-      tcsetattr(STDIN_FILENO, TCSANOW, &to);
-      printf("\033[2J");
-      initUI();
-     }
-#ifdef KEY_RESIZE
-     else if(wic == KEY_RESIZE) {
-      refscr = TRUE;
-      break;
-     }
-#endif
-
-     if(crow != orow) {
-      drawHistoryLine(wp, (HistoryEntry *)(g_list_nth(hel, orow)->data), orow+4);
-      orow = crow;
-
-      wattron(wp, uicolors[UI_COLOR_SELECTOR]);
-      drawHistoryLine(wp, (HistoryEntry *)(g_list_nth(hel, crow)->data), crow+4);
-      wattroff(wp, uicolors[UI_COLOR_SELECTOR]);
-     }
-
-     prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
-    }
-
-    delwin(wp);
     refscr = TRUE;
-
-    history_free_hel(hel);
    }
    break; /* case SC_KEY_HISTORY */
 #endif
