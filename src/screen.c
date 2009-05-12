@@ -134,7 +134,7 @@ screen_new(HostNode *n, const gboolean detached, const HistoryEntry *he) {
   } else
 #endif
     cmd = g_strdup_printf(SCREEN_BINARY"+-%sS+"SCREEN_SOCKPRE"%s_%s_%d"	\
-			       "+-t+%s+-c+%s",
+			       "+-t+%s+-c+%s+",
 			       detached ? "dm" : "",
 			       n->ssh_user, n->hostname, n->ssh_port,
 			       title,
