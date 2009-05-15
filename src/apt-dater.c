@@ -146,6 +146,8 @@ int main(int argc, char **argv)
       g_warning("%s", error->message);
       g_clear_error (&error);
     }
+
+    g_free(add_argv);
   }
  }
 
