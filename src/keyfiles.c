@@ -224,6 +224,9 @@ CfgFile *loadConfig (char *filename)
   return (NULL);
  }
 
+ lcfg->ssh_agent = g_key_file_get_boolean(keyfile, "SSH", "SpawnAgent", NULL);
+ lcfg->ssh_add = g_key_file_get_string_list(keyfile, "SSH", "AddKeys", &lcfg->ssh_numadd, NULL);
+
  if(!(lcfg->cmd_refresh = 
       g_key_file_get_string(keyfile, "Commands", "CmdRefresh", &error))) {
   g_error ("%s: %s", filename, error->message);

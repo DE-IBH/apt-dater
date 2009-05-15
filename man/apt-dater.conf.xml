@@ -185,6 +185,18 @@ and docbook-xsl in your Build-Depends control field.
         </listitem>
       </varlistentry>
       <varlistentry>
+        <term><symbol>SpawnAgent</symbol>=<replaceable>false</replaceable></term>
+        <listitem>
+          <para>If enabled, apt-dater tries to spawn ssh-agent(1) if none is already running. ssh-add(1) will be called to load your private keys.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><symbol>AddKeys</symbol></term>
+        <listitem>
+          <para>List of private keys which should be loaded when apt-dater calls ssh-add(1).</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
         <term><symbol>DefaultUser</symbol></term>
         <listitem>
           <para>The default user which will be used for remote login.</para>

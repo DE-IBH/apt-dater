@@ -100,6 +100,9 @@ typedef struct _cfgfile {
  gchar *ssh_optflags;
  gchar *ssh_defuser;
  gint  ssh_defport;
+ gboolean ssh_agent;
+ gchar **ssh_add;
+ gsize ssh_numadd;
  gchar *cmd_refresh;
  gchar *cmd_upgrade;
  gchar *cmd_install;

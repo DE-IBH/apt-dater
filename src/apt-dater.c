@@ -27,6 +27,7 @@
 
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <errno.h>
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -113,6 +114,40 @@ int main(int argc, char **argv)
   exit(EXIT_FAILURE);
  }
 
+ if(cfg->ssh_agent) {
+
+  /* Spawn ssh-agent if needed */
+  if(getenv("SSH_AGENT_PID") == NULL) {
+    gint i;
+    gchar **agent_argv = g_new0(gchar *, argc+2);
+
+    agent_argv[0] = "ssh-agent";
+
+    for(i=0; i<argc; i++)
+     agent_argv[i+1] = argv[i];
+
+    execvp(agent_argv[0], agent_argv);
+    g_warning("Could not spawn ssh-agent: %s", g_strerror(errno));
+  }
+  /* Add keys */
+  else {
+    gint i;
+    gchar **add_argv = g_new0(gchar *, cfg->ssh_numadd+2);
+
+    add_argv[0] = "ssh-add";
+
+    for(i=0; i<cfg->ssh_numadd; i++)
+     add_argv[i+1] = cfg->ssh_add[i];
+
+    GError *error;
+    if(g_spawn_sync(NULL, add_argv, NULL, 
+         G_SPAWN_SEARCH_PATH | G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
+         NULL, NULL, NULL, &error) == FALSE) {
+      g_warning("%s", error->message);
+      g_clear_error (&error);
+    }
+  }
+ }
 
 #ifdef FEAT_XMLREPORT
  if(!report) {
