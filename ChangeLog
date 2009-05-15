@@ -8,6 +8,16 @@ apt-dater (0.7.1) unstable; urgency=low
   * Apply 01-aptitude_safe-upgrade.dpatch from Debian.
   * Improve auto refresh feature.
   * History feature (record ssh session with script).
+  * Remove "Status file missing" category ("Unkown" is used instead).
+  * apt-dater-host (debian/yum): optional cleanup after install/upgrade
+  * apt-dater-host protocol 0.3:
+    - broken packages support
+  * Fixes:
+    - KERNELINFO status flag on Debian Lenny
+    - documentation
+    - set FD_CLOEXEC on lockfiles
+    - don't use hardcoded screen dump filenames
+    - reduce CPU cycles use by refreshing the screen more than needed
 
  -- Thomas Liske <liske@ibh.de>  
 
