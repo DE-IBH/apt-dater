@@ -40,7 +40,7 @@ eval `cat "$CFGFILE"` if (-r $CFGFILE);
 my $CMD = shift;
 my $ADPROTO = '0.3';
 
-delete($ENV{'LANG'});
+$ENV{'LC_ALL'} = 'C';
 
 die "Don't call this script directly!\n" unless (defined($CMD));
 die "Invalid command '$CMD'!\n" unless ($CMD=~/^(refresh|status|upgrade|install|kernel)$/);
