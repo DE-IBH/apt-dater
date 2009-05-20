@@ -123,12 +123,12 @@ gboolean ssh_cmd_upgrade(HostNode *n, const gboolean detached)
 
  gchar *screen = screen_new(n, detached, &he);
 
- cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d%s%s+%s+export MAINTAINER='%s' ; %s", 
+ cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d%s%s+%s+%s", 
 			screen,
 			cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
 			cfg->ssh_optflags && strlen(cfg->ssh_optflags) > 0 ? (optflags = g_strconcat("+", cfg->ssh_optflags , NULL)) : "",
 			n->identity_file && strlen(n->identity_file) > 0 ? (identity_file = g_strconcat("+-i+", n->identity_file , NULL)) : "",
-			n->hostname, maintainer, cfg->cmd_upgrade);
+			n->hostname, cfg->cmd_upgrade);
  g_free(optflags);
  g_free(identity_file);
  g_free(screen);
@@ -174,12 +174,12 @@ gboolean ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
 
  gchar *screen = screen_new(n, detached, &he);
 
- cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d%s%s+%s+export MAINTAINER='%s' ; %s", 
+ cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d%s%s+%s+%s", 
 			screen,
 			cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
 			cfg->ssh_optflags && strlen(cfg->ssh_optflags) > 0 ? (optflags = g_strconcat("+", cfg->ssh_optflags , NULL)) : "",
 			n->identity_file && strlen(n->identity_file) > 0 ? (identity_file = g_strconcat("+-i+", n->identity_file , NULL)) : "",
-			n->hostname, maintainer, cfg->cmd_install);
+			n->hostname, cfg->cmd_install);
  g_free(optflags);
  g_free(identity_file);
  g_free(screen);
@@ -226,12 +226,12 @@ gboolean ssh_connect(HostNode *n, const gboolean detached)
 
  gchar *screen = screen_new(n, detached, &he);
 
- cmd = g_strdup_printf ("%s%s+-l+%s+-t+-p+%d%s%s+%s+export MAINTAINER='%s' ; $SHELL",
+ cmd = g_strdup_printf ("%s%s+-l+%s+-t+-p+%d%s%s+%s",
 			screen,
 			cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
 			cfg->ssh_optflags && strlen(cfg->ssh_optflags) > 0 ? (optflags = g_strconcat("+", cfg->ssh_optflags , NULL)) : "",
 			n->identity_file && strlen(n->identity_file) > 0 ? (identity_file = g_strconcat("+-i+", n->identity_file , NULL)) : "",
-			n->hostname, maintainer);
+			n->hostname);
  g_free(optflags);
  g_free(identity_file);
  g_free(screen);
