@@ -18,6 +18,10 @@ apt-dater (0.7.1) unstable; urgency=low
     - set FD_CLOEXEC on lockfiles
     - don't use hardcoded screen dump filenames
     - reduce CPU cycles use by refreshing the screen more than needed
+    - don't pass MAINTAINER on commandline, use SSH's SendEnv/AcceptEnv instead
+      (Debian Bug#529200 by Alexander Barton)
+    - set LC_ALL=C on apt-dater-host rather than clear LANG env variable
+      (SF bug #2786495 by Sebastian Heinlein and #2793663 by "kepi")
 
  -- Thomas Liske <liske@ibh.de>  
 
