@@ -39,6 +39,7 @@
 #include "stats.h"
 #include "keyfiles.h"
 #include "tag.h"
+#include "sighandler.h"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -162,10 +163,11 @@ static struct ShortCut shortCuts[] = {
  {SC_KEY_PLUS, '+', "+", N_("shrink/expand node") , FALSE, 0},
  {SC_KEY_QUIT, 'q', "q" , N_("quit") , TRUE , 0},
  {SC_KEY_HELP, '?', "?" , N_("help") , TRUE , 0},
- {SC_KEY_FIND, '/', "/" , N_("search host") , TRUE , 0},
+ {SC_KEY_FIND, '/', "/" , N_("search host") , FALSE , 0},
 #ifdef FEAT_TCLFILTER
  {SC_KEY_FILTER, 'f', "f" , N_("filter hosts") , FALSE, 0},
  {SC_KEY_PLAY, 'p', "p" , N_("play") , FALSE, VK_PLAY},
+ {SC_KEY_LESS, 'l', "l" , N_("display with less") , FALSE, VK_LESS},
 #endif
  {SC_KEY_ATTACH, 'a', "a" , N_("attach session") , FALSE, VK_ATTACH},
  {SC_KEY_CONNECT, 'c', "c" , N_("connect host") , FALSE, VK_CONNECT},
@@ -523,6 +525,14 @@ void cleanUI ()
  endwin();
 }
 
+
+void blank()
+{
+ printf("\033[2J");
+ fflush(stdout);
+}
+
+
 void drawMenu (gint mask)
 {
  setMenuEntries(mask);
@@ -591,6 +601,9 @@ void drawQuery (const char *str, gulong display_ms)
  if(display_ms) {
   refresh();
   g_usleep(display_ms);
+
+  mvremln(LINES - 1, 0, COLS);
+  refresh();
  }
 }
 
@@ -688,7 +701,8 @@ static void drawHistoryLine(WINDOW *wp, const HistoryEntry *he, const gint l) {
 static void drawHistoryEntries (HostNode *n)
 {
  gint   l = 0;
- int    wic = 0, pminrow = 0, kcquit = 'q';
+ int    wic = 0, pminrow = 0, i;
+ guint  sc = SC_MAX;
  char   statusln[BUF_MAX_LEN];
  GList  *hel = NULL, *hep = NULL;
  WINDOW *wp = NULL;
@@ -707,7 +721,7 @@ static void drawHistoryEntries (HostNode *n)
 	  _("History of %s (%d entries available)"), 
 	  n->hostname ? n->hostname : "", g_list_length (hel));
  drawStatus(statusln, FALSE);
- drawMenu(VK_PLAY);
+ drawMenu(VK_PLAY|VK_LESS);
  refresh();
 
  if(!(wp = newpad(g_list_length (hel) + LINES, COLS))) return;
@@ -729,54 +743,54 @@ static void drawHistoryEntries (HostNode *n)
  gint mrow = g_list_length(hel) - 1;
  pminrow = 0;
  prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
- while((wic = tolower(wgetch(wp))) != kcquit) {
+ while(sc != SC_KEY_QUIT) {
+  wic = tolower(wgetch(wp));
+  for(i = 0; shortCuts[i].keycode; i++) 
+   if(shortCuts[i].keycode == wic) sc = shortCuts[i].sc;
+
   orow = crow;
-  if(wic == KEY_UP && crow) {
+  if(sc == SC_KEY_UP && crow) {
    crow--;
    if(crow < pminrow && pminrow)
     pminrow--;
-  } else if(wic == KEY_DOWN  && crow < mrow) {
+  } else if(sc == SC_KEY_DOWN  && crow < mrow) {
    crow++;
    if(crow-pminrow > LINES-4 && pminrow < l-LINES+3)
     pminrow++;
-  } else if(wic == KEY_HOME) {
+  } else if(sc == SC_KEY_HOME) {
    crow=pminrow=0;
-  } else if(wic == KEY_END) {
+  } else if(sc == SC_KEY_END) {
    crow=mrow;
    if(pminrow+LINES-4 < mrow)
     pminrow=l-LINES+3;
-  } else if(wic == KEY_NPAGE) {
+  } else if(sc == SC_KEY_NPAGE) {
    crow=pminrow = pminrow+LINES-3 > (l-LINES+4) ? l-LINES+4 : pminrow+LINES-3;
-  } else if(wic == KEY_PPAGE) {
+  } else if(sc == SC_KEY_PPAGE) {
    pminrow = pminrow-(LINES-3) < 0 ? 0 : pminrow-(LINES-3);
    crow=pminrow+(LINES-4);
-  } else if(wic == 'l') {
-   cleanUI();
+  } else if(sc == SC_KEY_LESS) {
+   ignoreSIGINT(TRUE);
+   endwin();
+   blank();
+
    history_show_less((HistoryEntry *)(g_list_nth(hel, crow)->data));
-   initUI();
-  } else if(wic == 'p') {
-   printf("\033[2J");
-   fflush(stdout);
+
+   ignoreSIGINT(FALSE);
+   refresh();
+  } else if(sc == SC_KEY_PLAY) {
+   ignoreSIGINT(TRUE);
+   endwin();
+   blank();
 
    history_show_replay((HistoryEntry *)(g_list_nth(hel, crow)->data));
 
-   printf("\n================[ %s ]================\n", _("replay terminated"));
-   fflush(stdout);
-
-   struct termios to;
-   struct termios tn;
-   tcgetattr(STDIN_FILENO, &to);
-   memcpy(&tn, &to, sizeof(to));
-   tn.c_lflag &= ~ICANON;
-   tcsetattr(STDIN_FILENO, TCSANOW, &tn);
-   getchar();
-   tcsetattr(STDIN_FILENO, TCSANOW, &to);
-   printf("\033[2J");
-   initUI();
+   blank();
+   ignoreSIGINT(FALSE);
+   drawQuery(_("Replay terminated!"), G_USEC_PER_SEC);
   }
 #ifdef KEY_RESIZE
   else if(wic == KEY_RESIZE) {
-   return;
+   sc = SC_KEY_QUIT;
   }
 #endif
 
@@ -791,11 +805,6 @@ static void drawHistoryEntries (HostNode *n)
 
   prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
  }
-
- /*
- for(int i = 0; shortCuts[i].key; i++)
-  if(shortCuts[i].sc == SC_KEY_QUIT) kcquit = shortCuts[i].keycode;
- */
 
  delwin(wp);
 
@@ -2908,7 +2917,19 @@ gboolean ctrlUI (GList *hosts)
   case SC_KEY_CYCLESESS:
   case SC_KEY_NEXTSESS:
    {
+    /* Count the number of screens */
     GList *ho = g_list_first(hosts);
+    i=0;
+    while(ho) {
+     HostNode *m = (HostNode *)ho->data;
+     GList *scr = m->screens;
+
+     if(scr) i+=g_list_length (scr);
+
+     ho = g_list_next(ho);
+    }
+
+    ho = g_list_first(hosts);
 
     while(ho) {
      gboolean cancel = FALSE;
@@ -2917,8 +2938,10 @@ gboolean ctrlUI (GList *hosts)
      GList *scr = m->screens;
 
      while(scr) {
-      qrystr = g_strdup_printf(_("Attach host %s session %d [Y/n/c]: "),
-			       m->hostname, ((SessNode *)scr->data)->pid);
+      qrystr = g_strdup_printf(_("Attach host %s session %d (%d %s left) [Y/n/c]: "),
+			       m->hostname, ((SessNode *)scr->data)->pid, 
+			       i, i == 1 ? _("session") : _("sessions"));
+      i--;
       if(!qrystr) {
        g_warning(_("Out of memory."));
        break;

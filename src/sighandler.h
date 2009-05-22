@@ -31,5 +31,6 @@
 #include <signal.h>
 
 void setSigHandler();
+void ignoreSIGINT(gboolean);
 
 #endif  /* SIGHANDLER_H */

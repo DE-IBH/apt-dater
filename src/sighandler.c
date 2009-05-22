@@ -35,11 +35,13 @@
 #endif
 
 static volatile int sigintcnt = 0;
+static gboolean ignsigint = FALSE;
 
 static RETSIGTYPE sigintSigHandler(int sig)
 {
  switch(sig) {
   case SIGINT:
+   if(ignsigint == TRUE) break;
    if (sigintcnt++ > 1) {
     cleanUI();
 
@@ -56,6 +58,7 @@ static RETSIGTYPE sigintSigHandler(int sig)
  } /* switch(sig) */
 }
 
+
 static RETSIGTYPE sigtermSigHandler() {
  cleanUI();
  refreshUI();
@@ -66,4 +69,11 @@ void setSigHandler()
 {
  signal(SIGINT, sigintSigHandler);
  signal(SIGTERM, sigtermSigHandler);
+}
+
+
+void ignoreSIGINT(gboolean ign)
+{
+ /* Disable SIGINT for before use exec. */
+ ignsigint=ign;
 }
