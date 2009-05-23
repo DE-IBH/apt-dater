@@ -30,7 +30,7 @@ and docbook-xsl in your Build-Depends control field.
   <!ENTITY dhfirstname "<firstname>Andre</firstname>">
   <!ENTITY dhsurname   "<surname>Ellguth</surname>">
   <!-- Please adjust the date whenever revising the manpage. -->
-  <!ENTITY dhdate      "<date>Jule  7, 2008</date>">
+  <!ENTITY dhdate      "<date>May 23, 2009</date>">
   <!-- SECTION should be 1-8, maybe w/ subsection other parameters are
        allowed: see man(7), man(1). -->
   <!ENTITY dhsection   "<manvolnum>5</manvolnum>">
@@ -72,7 +72,7 @@ and docbook-xsl in your Build-Depends control field.
     </authorgroup>
 -->
     <copyright>
-      <year>2008</year>
+      <year>2008-2009</year>
       <holder>IBH IT-Service GmbH [<ulink url="http://www.ibh.de/">http://www.ibh.de/</ulink>]</holder>
     </copyright>
     &dhdate;
@@ -148,6 +148,12 @@ and docbook-xsl in your Build-Depends control field.
 
     <variablelist>
       <varlistentry>
+        <term><symbol>Enabled</symbol>=<replaceable>true</replaceable></term>
+        <listitem>
+          <para>Enables/disables using of screen(1). (optional)</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
         <term><symbol>RCFile</symbol>=<replaceable>$XDG_CONFIG_HOME/apt-dater/screenrc</replaceable></term>
         <listitem>
           <para>Location of screen(1) config file. (optional)</para>
@@ -157,6 +163,18 @@ and docbook-xsl in your Build-Depends control field.
         <term><symbol>Title</symbol>=<replaceable>%m # %u@%h:%p</replaceable></term>
         <listitem>
           <para>Template for screen titles using string escapes. (optional)</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><symbol>NoDumps</symbol>=<replaceable>false</replaceable></term>
+        <listitem>
+          <para>Enables/disables support of screen dumps. (optional)</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><symbol>QueryMaintainer</symbol>=<replaceable>0</replaceable></term>
+        <listitem>
+          <para>If set to 1, apt-dater will ask for the maintainers name on startup. If set to 2, apt-dater will only ask if no MAINTAINER environment variable is set.</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -292,29 +310,31 @@ and docbook-xsl in your Build-Depends control field.
       <varlistentry>
         <term><symbol>bell</symbol>=<replaceable>true</replaceable></term>
         <listitem>
-	  <para>Enabled user notification by terminal bell.</para>
+	  <para>Enables user notification by terminal bell.</para>
         </listitem>
       </varlistentry>
 
       <varlistentry>
         <term><symbol>flash</symbol>=<replaceable>true</replaceable></term>
         <listitem>
-	  <para>Enabled user notification by terminal flashing.</para>
+	  <para>Enables user notification by terminal flashing.</para>
         </listitem>
       </varlistentry>
     </variablelist>
     </refsect2>
-  </refsect1>
 
-  <refsect1>
-    <title>ENVIRONMENT</title>
+    <refsect2>
+	<title>Section <symbol>[History]</symbol></title>
 
     <variablelist>
       <varlistentry>
-	<term><envar>MAINTAINER</envar></term>
-	<listitem>The maintainer's name. If not set, the GECOS entry for the current user will be used. This environment variable is forwarded to the remote hosts and used by <command>debtrack</command>.</listitem>
+        <term><symbol>record</symbol>=<replaceable>true</replaceable></term>
+        <listitem>
+	  <para>Enables session recording using script(1). (Optional)</para>
+        </listitem>
       </varlistentry>
     </variablelist>
+    </refsect2>
   </refsect1>
 
   <refsect1>
@@ -376,6 +396,6 @@ and docbook-xsl in your Build-Depends control field.
   <refsect1>
     <title>SEE ALSO</title>
 	
-    <para>apt-dater(8), aptitude(1), apt-get(1), debtrack, screen(1), ssh(1), <ulink url="http://www.freedesktop.org/Standards/basedir-spec">XDG Base Directory Specification</ulink>.</para>
+    <para>apt-dater(8), aptitude(1), apt-get(1), debtrack, screen(1), script(1), ssh(1), <ulink url="http://www.freedesktop.org/Standards/basedir-spec">XDG Base Directory Specification</ulink>.</para>
   </refsect1>
 </refentry>

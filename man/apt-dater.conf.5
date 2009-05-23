@@ -1,11 +1,11 @@
 .\"     Title: APT-DATER
 .\"    Author: 
 .\" Generator: DocBook XSL Stylesheets v1.73.2 <http://docbook.sf.net/>
-.\"      Date: Jule  7, 2008
+.\"      Date: May 23, 2009
 .\"    Manual: 
 .\"    Source: 
 .\"
-.TH "APT\-DATER" "5" "Jule 7, 2008" "" ""
+.TH "APT\-DATER" "5" "May 23, 2009" "" ""
 .\" disable hyphenation
 .nh
 .\" disable justification (adjust text to left margin only)
@@ -51,6 +51,11 @@ The location of the directory which contains the status files of any host\&. (op
 .RE
 .SS "Section [Screen]"
 .PP
+Enabled=\fItrue\fR
+.RS 4
+Enables/disables using of screen(1)\&. (optional)
+.RE
+.PP
 RCFile=\fI$XDG_CONFIG_HOME/apt\-dater/screenrc\fR
 .RS 4
 Location of screen(1) config file\&. (optional)
@@ -59,6 +64,16 @@ Location of screen(1) config file\&. (optional)
 Title=\fI%m # %u@%h:%p\fR
 .RS 4
 Template for screen titles using string escapes\&. (optional)
+.RE
+.PP
+NoDumps=\fIfalse\fR
+.RS 4
+Enables/disables support of screen dumps\&. (optional)
+.RE
+.PP
+QueryMaintainer=\fI0\fR
+.RS 4
+If set to 1, apt\-dater will ask for the maintainers name on startup\&. If set to 2, apt\-dater will only ask if no MAINTAINER environment variable is set\&.
 .RE
 .SS "Section [SSH]"
 .PP
@@ -197,18 +212,19 @@ Enabled the auto refresh feature if compiled in (see README\&.autoref)\&.
 .PP
 bell=\fItrue\fR
 .RS 4
-Enabled user notification by terminal bell\&.
+Enables user notification by terminal bell\&.
 .RE
 .PP
 flash=\fItrue\fR
 .RS 4
-Enabled user notification by terminal flashing\&.
+Enables user notification by terminal flashing\&.
 .RE
-.SH "ENVIRONMENT"
+.SS "Section [History]"
 .PP
-\fBMAINTAINER\fR
+record=\fItrue\fR
 .RS 4
-The maintainer\'s name\&. If not set, the GECOS entry for the current user will be used\&. This environment variable is forwarded to the remote hosts and used by \fBdebtrack\fR\&..RE
+Enables session recording using script(1)\&. (Optional)
+.RE
 .SH "STRING ESCAPES"
 \fBapt\-dater\fR(8) provides an string escape mechanism\&. The escape character is \'%\'\&.
 
@@ -269,10 +285,10 @@ Contains all hosts you would like to manage\&.
 .RE
 .SH "SEE ALSO"
 .PP
-apt\-dater(8), aptitude(1), apt\-get(1), debtrack, screen(1), ssh(1),
+apt\-dater(8), aptitude(1), apt\-get(1), debtrack, screen(1), script(1), ssh(1),
 \fIXDG Base Directory Specification\fR\&[1]\&.
 .SH "COPYRIGHT"
-Copyright \(co 2008 IBH IT-Service GmbH [\fIhttp://www\&.ibh\&.de/\fR]
+Copyright \(co 2008-2009 IBH IT-Service GmbH [\fIhttp://www\&.ibh\&.de/\fR]
 .br
 .SH "NOTES"
 .IP " 1." 4

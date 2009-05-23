@@ -30,7 +30,7 @@ and docbook-xsl in your Build-Depends control field.
   <!ENTITY dhfirstname "<firstname>Thomas</firstname>">
   <!ENTITY dhsurname   "<surname>Liske</surname>">
   <!-- Please adjust the date whenever revising the manpage. -->
-  <!ENTITY dhdate      "<date>Jule  3, 2008</date>">
+  <!ENTITY dhdate      "<date>May 23, 2009</date>">
   <!-- SECTION should be 1-8, maybe w/ subsection other parameters are
        allowed: see man(7), man(1). -->
   <!ENTITY dhsection   "<manvolnum>8</manvolnum>">
@@ -119,7 +119,15 @@ and docbook-xsl in your Build-Depends control field.
   <refsect1>
     <title>ENVIRONMENT</title>
 
-    <para><envar>MAINTAINER</envar>: The maintainer's name used by <command>debtrack</command> on the managed hosts.</para>
+    <variablelist>
+      <varlistentry>
+	<term><envar>MAINTAINER</envar></term>
+	<listitem>
+	    The maintainer's name (i.e. used by <command>debtrack</command>). If not set, the GECOS entry for the current user will be used.
+	    This environment variable could be forwarded to remote hosts with the ssh(1) SendEnv+AcceptEnv options.
+	</listitem>
+      </varlistentry>
+    </variablelist>
   </refsect1>
   <refsect1>
     <title>FILES</title>
