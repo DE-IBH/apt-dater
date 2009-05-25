@@ -304,6 +304,10 @@ CfgFile *loadConfig (char *filename)
    g_warning("Executable "PKGLIBDIR"/script not available, disabling history feature.");
    lcfg->record_history = FALSE;
  }
+
+ lcfg->history_errpattern = g_key_file_get_string(keyfile, "History", "ErrPattern", NULL);
+ if(!lcfg->history_errpattern)
+  lcfg->history_errpattern = "(error|warning|fail)";
 #endif
 
  g_clear_error(&error);

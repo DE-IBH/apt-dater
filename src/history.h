@@ -45,8 +45,14 @@ static inline gchar *history_path(const HostNode *n) {
     return g_strdup_printf("%s/%s/history/%s:%d", g_get_user_data_dir(), PACKAGE, n->hostname, n->ssh_port);
 }
 
-static inline gchar *history_rpath(const HostNode *n) {
-    gchar *p = g_strdup_printf("%s/%s/history/%s:%d/%d-%d", g_get_user_data_dir(), PACKAGE, n->hostname, n->ssh_port, (int)time(NULL), getpid());
+static inline gchar *history_ts_path(const HostNode *n) {
+    return g_strdup_printf("%s/%s/history/%s:%d/%d-%d", g_get_user_data_dir(), PACKAGE, n->hostname, n->ssh_port, n->hist_ts, getpid());
+}
+
+static inline gchar *history_rec_path(HostNode *n) {
+    n->hist_ts = time(NULL);
+
+    gchar *p = history_ts_path(n);
 
     g_mkdir_with_parents(p, S_IRWXU);
 
@@ -54,11 +60,18 @@ static inline gchar *history_rpath(const HostNode *n) {
 }
 
 GList *history_get_entries(const HostNode *);
+HistoryEntry *history_recent_entry(const HostNode *);
+
 void history_write_meta(const gchar *, const HistoryEntry *);
+void history_free_he(HistoryEntry *);
 void history_free_hel(GList *);
 
 void history_show_less(HistoryEntry *);
 void history_show_replay(HistoryEntry *);
+
+void history_show_less_search(HistoryEntry *, gchar *pattern);
+
+gboolean history_ts_failed(HostNode *);
 
 #endif
 

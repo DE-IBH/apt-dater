@@ -113,6 +113,7 @@ typedef struct _cfgfile {
  gboolean flash;
 #ifdef FEAT_HISTORY
  gboolean record_history;
+ gchar *history_errpattern;
 #endif
  gchar **colors;
 #ifdef FEAT_TCLFILTER
@@ -187,6 +188,10 @@ typedef struct _hostnode {
  gboolean  keptback;
 #ifdef FEAT_TCLFILTER
  gboolean  filtered;
+#endif
+#ifdef FEAT_HISTORY
+ gboolean  parse_result;
+ gint      hist_ts;
 #endif
  Category  category;
  GList     *packages;

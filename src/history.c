@@ -124,6 +124,24 @@ GList *history_get_entries(const HostNode *n) {
     return hel;
 }
 
+HistoryEntry *history_recent_entry(const HostNode *n) {
+    gchar *path = history_ts_path(n);
+    gchar *meta = g_strdup_printf("%s/meta", path);
+    gchar *timing = g_strdup_printf("%s/timingfile", path);
+
+    HistoryEntry *he = history_read_meta(meta, timing);
+    if(he) {
+	he->path = path;
+    }
+    else
+	g_free(path);
+
+    g_free(timing);
+    g_free(meta);
+
+    return he;
+}
+
 static void free_hel(gpointer data, gpointer user_data) {
     HistoryEntry *he = (HistoryEntry *)data;
 
@@ -135,6 +153,10 @@ static void free_hel(gpointer data, gpointer user_data) {
     g_free(data);
 }
 
+void history_free_he(HistoryEntry *he) {
+    free_hel(he, NULL);
+}
+
 void history_free_hel(GList *hel) {
     g_list_foreach(hel, free_hel, NULL);
     g_list_free(hel);
@@ -142,12 +164,11 @@ void history_free_hel(GList *hel) {
 
 static void history_show_cmd(gchar *cmd, gchar *param, HistoryEntry *he) {
  GError *error = NULL;
- gchar *argv[4];
-
- argv[0] = ENV_BINARY;
- argv[1] = cmd;
- argv[2] = param;
- argv[3] = NULL;
+ gchar *argv[4] = {
+  ENV_BINARY,
+  cmd,
+  param,
+  NULL};
 
  if(g_spawn_sync(he->path, argv, NULL, 
 		  G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
@@ -158,11 +179,42 @@ static void history_show_cmd(gchar *cmd, gchar *param, HistoryEntry *he) {
 }
 
 void history_show_less(HistoryEntry *he) {
-    history_show_cmd("less", "typescript", he);
+ history_show_cmd("less", "typescript", he);
 }
 
 void history_show_replay(HistoryEntry *he) {
-    history_show_cmd("scriptreplay", "timingfile", he);
+ history_show_cmd("scriptreplay", "timingfile", he);
+}
+
+void history_show_less_search(HistoryEntry *he, gchar *pattern) {
+ GError *error = NULL;
+ gchar *argv[6] = {
+  ENV_BINARY,
+  "less",
+  "-ip",
+  pattern,
+  "typescript",
+  NULL};
+
+ if(g_spawn_sync(he->path, argv, NULL, 
+		  G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
+		  NULL, NULL, NULL, &error) == FALSE) {
+  g_warning("%s", error->message);
+  g_clear_error (&error);
+ }
+}
+
+gboolean history_ts_failed(HostNode *n) {
+ gchar *p = history_ts_path(n);
+ gchar *fn = g_strdup_printf("%s/failed", p);
+
+ g_free(p);
+
+ gboolean r = g_file_test(fn, G_FILE_TEST_EXISTS);
+
+ g_free(fn);
+
+ return r;
 }
 
 #endif

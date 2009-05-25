@@ -41,7 +41,8 @@
 # include "config.h"
 #endif
 
-gboolean ssh_cmd_refresh(HostNode *n)
+gboolean
+ssh_cmd_refresh(HostNode *n)
 {
  gboolean r;
  GError *error = NULL;
@@ -53,14 +54,13 @@ gboolean ssh_cmd_refresh(HostNode *n)
  gint  standard_output;
  GIOChannel *iocstdout;
 
- if(!n) return (FALSE);
+ g_assert(n);
 
  cmd = g_strdup_printf("%s+-n+-o+BatchMode=yes+-o+ConnectTimeout=5+-q+-l+%s+-p+%d%s+%s+%s",
 		       cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
 		       n->identity_file && strlen(n->identity_file) > 0 ? (identity_file = g_strconcat("+-i+", n->identity_file , NULL)) : "",
 		       n->hostname, cfg->cmd_refresh);
  g_free(identity_file);
- if(!cmd) return(FALSE);
 
  argv = g_strsplit(cmd, "+", 0);
 
@@ -98,12 +98,13 @@ gboolean ssh_cmd_refresh(HostNode *n)
  g_free(output);
  g_free(cmd);
  g_strfreev(argv);
- 
- return (r);
+
+ return r;
 }
 
 
-gboolean ssh_cmd_upgrade(HostNode *n, const gboolean detached)
+gboolean
+ssh_cmd_upgrade(HostNode *n, const gboolean detached)
 {
  gboolean r;
  GError *error = NULL;
@@ -112,8 +113,10 @@ gboolean ssh_cmd_upgrade(HostNode *n, const gboolean detached)
  gchar *identity_file = NULL;
  gchar **argv = NULL;
 
+ g_assert(n);
+
  if(n->forbid & HOST_FORBID_UPGRADE)
-    return(FALSE);
+    return FALSE;
 
  HistoryEntry he;
  he.ts = time(NULL);
@@ -133,7 +136,9 @@ gboolean ssh_cmd_upgrade(HostNode *n, const gboolean detached)
  g_free(identity_file);
  g_free(screen);
 
- if(!cmd) return(FALSE);
+#ifdef FEAT_HISTORY
+ n->parse_result = cfg->history_errpattern && strlen(cfg->history_errpattern);;
+#endif
 
  argv = g_strsplit(cmd, "+", 0);
 
@@ -149,11 +154,18 @@ gboolean ssh_cmd_upgrade(HostNode *n, const gboolean detached)
  g_free(cmd);
  g_strfreev(argv);
 
- return (r);
+#ifdef FEAT_HISTORY
+ if(!detached && n->parse_result && !screen_get_sessions(n)) {
+    n->parse_result = FALSE;
+    return history_ts_failed(n);
+ }
+#endif
+
+ return FALSE;
 }
 
-
-gboolean ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
+gboolean
+ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
 {
  gboolean r;
  GError *error = NULL;
@@ -163,8 +175,10 @@ gboolean ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
  gchar *identity_file = NULL;
  gchar **argv = NULL;
 
+ g_assert(n);
+
  if(n->forbid & HOST_FORBID_INSTALL)
-    return(FALSE);
+    return FALSE;
 
  HistoryEntry he;
  he.ts = time(NULL);
@@ -185,12 +199,13 @@ gboolean ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
  g_free(screen);
 
  buf = g_strdup_printf (cmd, package);
- if(!buf) return(FALSE);
- 
+
  g_free(cmd);
  cmd = buf;
- 
- if(!cmd) return(FALSE);
+
+#ifdef FEAT_HISTORY
+ n->parse_result = cfg->history_errpattern && strlen(cfg->history_errpattern);
+#endif
 
  argv = g_strsplit(cmd, "+", 0);
 
@@ -205,11 +220,18 @@ gboolean ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
 
  g_free(cmd);
  g_strfreev(argv);
- 
- return (r);
+
+#ifdef FEAT_HISTORY
+ if(!detached && n->parse_result && !screen_get_sessions(n)) {
+    n->parse_result = FALSE;
+    return history_ts_failed(n);
+ }
+#endif
+
+ return FALSE;
 }
 
-gboolean ssh_connect(HostNode *n, const gboolean detached)
+void ssh_connect(HostNode *n, const gboolean detached)
 {
  gboolean r;
  GError *error = NULL;
@@ -236,8 +258,6 @@ gboolean ssh_connect(HostNode *n, const gboolean detached)
  g_free(identity_file);
  g_free(screen);
 
- if(!cmd) return(FALSE);
-
  argv = g_strsplit(cmd, "+", 0);
 
  r = g_spawn_sync(g_getenv ("HOME"), argv, NULL, 
@@ -251,16 +271,16 @@ gboolean ssh_connect(HostNode *n, const gboolean detached)
 
  g_free(cmd);
  g_strfreev(argv);
- 
- return (r);
 }
 
-gboolean sftp_connect(HostNode *n)
+void sftp_connect(HostNode *n)
 {
  gboolean r;
  GError *error = NULL;
  gint argc = 0;
  gchar **argv = NULL;
+
+ g_assert(n);
 
  HistoryEntry he;
  he.ts = time(NULL);
@@ -275,7 +295,7 @@ gboolean sftp_connect(HostNode *n)
 
  if (parse_cmdline(cmd, &argc, &argv, n) < 0) {
    g_free(cmd);
-   return FALSE;
+   return;
  }
  g_free(cmd);
 
@@ -294,6 +314,4 @@ gboolean sftp_connect(HostNode *n)
  }
 
  g_strfreev(argv);
- 
- return (r);
 }

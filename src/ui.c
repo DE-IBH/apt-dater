@@ -1415,13 +1415,17 @@ void doUI (GList *hosts)
    strncpy(maintainer, m, sizeof(maintainer));
  else {
    struct passwd *pw = getpwuid(getuid());
-   if (pw && pw->pw_gecos)
+
+   if (pw && pw->pw_gecos && strlen(pw->pw_gecos))
      strncpy(maintainer, pw->pw_gecos, sizeof(maintainer));
+   else if (pw && pw->pw_name)
+     strncpy(maintainer, pw->pw_name, sizeof(maintainer));
    else
      maintainer[0] = 0;
 
    setenv("MAINTAINER", maintainer, TRUE);
  }
+fprintf(stderr, ">>%s\n", maintainer);
 
  if ((cfg->query_maintainer == 1) ||
      ((cfg->query_maintainer > 1) && (m == NULL))) {
@@ -2466,6 +2470,72 @@ static void filterHosts(GList *hosts)
 }
 #endif
 
+#ifdef FEAT_HISTORY
+static void handleErrors(HostNode *n) {
+ int c;
+ HistoryEntry *he = history_recent_entry(n);
+
+ if(!he)
+  return;
+
+ gchar *query = g_strdup_printf("An error at %s:%d has been detected [Vic]:", n->hostname, n->ssh_port);
+
+ while(1) {
+  enableInput();
+
+  drawQuery(query, 0);
+
+  move(LINES - 1, strlen(query));
+
+  attron(uicolors[UI_COLOR_INPUT]);
+  c = getch();
+  attroff(uicolors[UI_COLOR_INPUT]);
+
+  disableInput();
+
+  move(LINES - 1, 0);
+  remln(COLS);
+
+  switch(c) {
+    /* ignore */
+    case 27:
+    case 'i':
+    case 'I':
+    case 'q':
+    case 'Q':
+	history_free_he(he);
+	return;
+
+    /* connect */
+    case 'c':
+    case 'C':
+	history_free_he(he);
+
+	ignoreSIGINT(TRUE);
+	endwin();
+
+	ssh_connect(n, FALSE);
+
+	ignoreSIGINT(FALSE);
+	refresh();
+	return;
+
+    default:
+	ignoreSIGINT(TRUE);
+	endwin();
+
+	history_show_less_search(he, cfg->history_errpattern);
+
+	ignoreSIGINT(FALSE);
+	refresh();
+
+	break;
+  }
+ }
+
+ history_free_he(he);
+}
+#endif
 
 gboolean ctrlUI (GList *hosts)
 {
@@ -2664,7 +2734,14 @@ gboolean ctrlUI (GList *hosts)
     }
 
     cleanUI();
+#ifdef FEAT_HISTORY
+    gboolean f =
+#endif
     ssh_cmd_upgrade((HostNode *) n->p, FALSE);
+#ifdef FEAT_HISTORY
+    if(f)
+     handleErrors((HostNode *) n->p);
+#endif
     ((HostNode *) n->p)->category = C_REFRESH_REQUIRED;
     rebuildDrawList(hosts);
     initUI();
@@ -2963,7 +3040,14 @@ gboolean ctrlUI (GList *hosts)
 
       if (!screen_is_attached((SessNode *)scr->data)) {
        cleanUI();
-       screen_attach((SessNode *)scr->data, FALSE);
+#ifdef FEAT_HISTORY
+       gboolean f =
+#endif
+       screen_attach(m, (SessNode *)scr->data, FALSE);
+#ifdef FEAT_HISTORY
+       if(f)
+        handleErrors(m);
+#endif
        initUI();
 
        if(ic != getKeyForShortcut(sc)) {
@@ -3013,7 +3097,14 @@ gboolean ctrlUI (GList *hosts)
 
     dump_screen = FALSE;
     cleanUI();
-    screen_attach(s, may_share);
+#ifdef FEAT_HISTORY
+    gboolean f =
+#endif
+    screen_attach(inhost, s, may_share);
+#ifdef FEAT_HISTORY
+    if(f)
+     handleErrors(inhost);
+#endif
     initUI();
    }
    refscr = TRUE;

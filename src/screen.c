@@ -111,12 +111,12 @@ screen_new(HostNode *n, const gboolean detached, const HistoryEntry *he) {
   if (!cfg->use_screen) {
 #ifdef FEAT_HISTORY
     if(cfg->record_history && he) {
-     gchar *hp = history_rpath(n);
+     gchar *hp = history_rec_path(n);
      gchar *fn_meta = g_strdup_printf("%s/meta", hp);
      history_write_meta(fn_meta, he);
      g_free(fn_meta);
 
-     gchar *cmd = g_strdup_printf(PKGLIBDIR"/script+%s+", hp);
+     gchar *cmd = g_strdup_printf(PKGLIBDIR"/script+%s+%s+", hp, cfg->history_errpattern);
      g_free(hp);
 
      return cmd;
@@ -132,18 +132,18 @@ screen_new(HostNode *n, const gboolean detached, const HistoryEntry *he) {
 
 #ifdef FEAT_HISTORY
   if(cfg->record_history && he) {
-    gchar *hp = history_rpath(n);
+    gchar *hp = history_rec_path(n);
     gchar *fn_meta = g_strdup_printf("%s/meta", hp);
     history_write_meta(fn_meta, he);
     g_free(fn_meta);
 
     cmd = g_strdup_printf(SCREEN_BINARY"+-%sS+"SCREEN_SOCKPRE"%s_%s_%d"	\
-			       "+-t+%s+-c+%s%s%s+",
+			       "+-t+%s+-c+%s+"PKGLIBDIR"/script+%s+%s+",
 			       detached ? "dm" : "",
 			       n->ssh_user, n->hostname, n->ssh_port,
 			       title,
 			       cfg->screenrcfile,
-			       "+"PKGLIBDIR"/script+", hp);
+			       hp, cfg->history_errpattern);
 
     g_free(hp);
   } else
@@ -166,13 +166,13 @@ screen_attach_cmd(const SessNode *s, const gboolean shared) {
 }
 
 gboolean
-screen_attach(const SessNode *s, const gboolean shared) {
+screen_attach(HostNode *n, const SessNode *s, const gboolean shared) {
  gboolean r;
  GError *error = NULL;
  gchar *cmd = screen_attach_cmd(s, shared);
  gchar **argv = NULL;
 
- if(!cmd) return FALSE;
+ g_assert(n);
 
  argv = g_strsplit(cmd, "+", 0);
 
@@ -187,8 +187,15 @@ screen_attach(const SessNode *s, const gboolean shared) {
 
  g_free(cmd);
  g_strfreev(argv);
- 
- return r;
+
+#ifdef FEAT_HISTORY
+ if(n->parse_result && !screen_get_sessions(n)) {
+    n->parse_result = FALSE;
+    return history_ts_failed(n);
+ }
+#endif
+
+ return FALSE;
 }
 
 static gchar *

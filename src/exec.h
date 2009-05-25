@@ -39,10 +39,10 @@ ssh_cmd_upgrade(HostNode *n, const gboolean detached);
 gboolean
 ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached);
 
-gboolean
+void
 ssh_connect(HostNode *n, const gboolean detached);
 
-gboolean
+void
 sftp_connect(HostNode *n);
 
 #endif /* _EXEC_H */

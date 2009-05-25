@@ -28,7 +28,9 @@
 #
 
 BNAME="$1"
+ERRPATTERN="$2"
 
+shift
 shift
 
 echo -n > "$BNAME/command"
@@ -41,3 +43,8 @@ script -c "$BNAME/command" -t "$BNAME/typescript" 2> "$BNAME/timingfile"
 
 echo -n "Duration=" >> "$BNAME/meta"
 cat "$BNAME/timingfile" | cut '-d ' -f1 | awk '{ s += $1 } END { print s }' >> "$BNAME/meta"
+
+if (egrep -aiqse "$ERRPATTERN" "$BNAME/typescript"); then
+    echo "ErrPattern=$ERRPATTERN" >> "$BNAME/meta"
+    touch "$BNAME/failed"
+fi
