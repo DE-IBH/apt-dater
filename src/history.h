@@ -37,6 +37,7 @@ typedef struct _historyEntry {
     gchar *maintainer;
     gchar *action;
     gchar *data;
+    gchar *errpattern;
 } HistoryEntry;
 
 

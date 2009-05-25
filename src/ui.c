@@ -673,8 +673,12 @@ static void drawHistoryLine(WINDOW *wp, const HistoryEntry *he, const gint l) {
 #define MAXCOLS(pos, s) (pos+s) <= COLS ? s : COLS-pos
 
  mvwremln(wp, l, 0, COLS);
+
+ if(he->errpattern)
+  mvwaddnstr(wp,l  ,  0, "F", MAXCOLS(0,  1));
+
  snprintf(buf, sizeof(buf), "%5d", l+1);
- mvwaddnstr(wp, l  ,  0, buf, MAXCOLS(0, 5));
+ mvwaddnstr(wp, l  ,  1, buf, MAXCOLS(0,  4));
 
  strftime(buf, sizeof(buf), "%x %X", ts);
  mvwaddnstr(wp, l  ,  7, buf, MAXCOLS(7, 17));
@@ -773,7 +777,11 @@ static void drawHistoryEntries (HostNode *n)
    endwin();
    blank();
 
-   history_show_less((HistoryEntry *)(g_list_nth(hel, crow)->data));
+   HistoryEntry *he = (HistoryEntry *)(g_list_nth(hel, crow)->data);
+   if(he->errpattern)
+    history_show_less_search(he, he->errpattern);
+   else
+    history_show_less(he);
 
    ignoreSIGINT(FALSE);
    refresh();

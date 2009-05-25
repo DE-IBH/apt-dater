@@ -50,6 +50,7 @@ HistoryEntry *history_read_meta(const gchar *fn, const gchar *tfn) {
     he->action = g_key_file_get_string(kf, "Meta", "Action", NULL);
     he->data = g_key_file_get_string(kf, "Meta", "Data", NULL);
     he->duration = (gint) g_key_file_get_double(kf, "Meta", "Duration", NULL);
+    he->errpattern = g_key_file_get_string(kf, "Meta", "ErrPattern", NULL);
 
     g_key_file_free(kf);
 
@@ -149,6 +150,7 @@ static void free_hel(gpointer data, gpointer user_data) {
     g_free(he->maintainer);
     g_free(he->action);
     g_free(he->data);
+    g_free(he->errpattern);
 
     g_free(data);
 }
@@ -180,7 +182,7 @@ static void history_show_cmd(gchar *cmd, gchar *param1, gchar *param2, HistoryEn
 }
 
 void history_show_less(HistoryEntry *he) {
- history_show_cmd("less", "-r", "typescript", he);
+ history_show_cmd("less", "-fr", "typescript", he);
 }
 
 void history_show_replay(HistoryEntry *he) {
@@ -192,7 +194,7 @@ void history_show_less_search(HistoryEntry *he, gchar *pattern) {
  gchar *argv[6] = {
   ENV_BINARY,
   "less",
-  "-irp",
+  "-ifrp",
   pattern,
   "typescript",
   NULL};
