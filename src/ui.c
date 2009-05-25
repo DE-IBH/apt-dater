@@ -677,7 +677,7 @@ static void drawHistoryLine(WINDOW *wp, const HistoryEntry *he, const gint l) {
  if(he->errpattern)
   mvwaddnstr(wp,l  ,  0, "F", MAXCOLS(0,  1));
 
- snprintf(buf, sizeof(buf), "%5d", l+1);
+ snprintf(buf, sizeof(buf), "%4d", l+1);
  mvwaddnstr(wp, l  ,  1, buf, MAXCOLS(0,  4));
 
  strftime(buf, sizeof(buf), "%x %X", ts);
