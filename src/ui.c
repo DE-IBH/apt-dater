@@ -666,6 +666,27 @@ gboolean queryConfirm(const gchar *query, const gboolean enter_is_yes, gboolean 
 }
 
 
+/* Reads a char from the terminal w/o ncurses stuff. */
+gchar termGetChar() {
+ struct termios to;
+ struct termios tn;
+
+ /* backup settings */
+ tcgetattr(STDIN_FILENO, &to);
+ memcpy(&tn, &to, sizeof(to));
+
+ /* disable line buffer */
+ tn.c_lflag &= ~ICANON;
+ tcsetattr(STDIN_FILENO, TCSANOW, &tn);
+
+ gchar r = getchar();
+
+ /* restore line buffer */
+ tcsetattr(STDIN_FILENO, TCSANOW, &to);
+
+ return r;
+}
+
 #ifdef FEAT_HISTORY
 static void drawHistoryLine(WINDOW *wp, const HistoryEntry *he, const gint l) {
  char  buf[0x1ff];
@@ -795,14 +816,7 @@ static void drawHistoryEntries (HostNode *n)
    printf("\n================[ %s ]================\n", _("replay terminated"));
    fflush(stdout);
 
-   struct termios to;
-   struct termios tn;
-   tcgetattr(STDIN_FILENO, &to);
-   memcpy(&tn, &to, sizeof(to));
-   tn.c_lflag &= ~ICANON;
-   tcsetattr(STDIN_FILENO, TCSANOW, &tn);
-   getchar();
-   tcsetattr(STDIN_FILENO, TCSANOW, &to);
+   termGetChar();
 
    blank();
    ignoreSIGINT(FALSE);
