@@ -162,12 +162,13 @@ void history_free_hel(GList *hel) {
     g_list_free(hel);
 }
 
-static void history_show_cmd(gchar *cmd, gchar *param, HistoryEntry *he) {
+static void history_show_cmd(gchar *cmd, gchar *param1, gchar *param2, HistoryEntry *he) {
  GError *error = NULL;
- gchar *argv[4] = {
+ gchar *argv[5] = {
   ENV_BINARY,
   cmd,
-  param,
+  param1,
+  param2,
   NULL};
 
  if(g_spawn_sync(he->path, argv, NULL, 
@@ -179,11 +180,11 @@ static void history_show_cmd(gchar *cmd, gchar *param, HistoryEntry *he) {
 }
 
 void history_show_less(HistoryEntry *he) {
- history_show_cmd("less", "typescript", he);
+ history_show_cmd("less", "-r", "typescript", he);
 }
 
 void history_show_replay(HistoryEntry *he) {
- history_show_cmd("scriptreplay", "timingfile", he);
+ history_show_cmd("scriptreplay", "timingfile", NULL, he);
 }
 
 void history_show_less_search(HistoryEntry *he, gchar *pattern) {
@@ -191,7 +192,7 @@ void history_show_less_search(HistoryEntry *he, gchar *pattern) {
  gchar *argv[6] = {
   ENV_BINARY,
   "less",
-  "-ip",
+  "-irp",
   pattern,
   "typescript",
   NULL};

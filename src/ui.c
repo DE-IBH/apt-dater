@@ -784,9 +784,20 @@ static void drawHistoryEntries (HostNode *n)
 
    history_show_replay((HistoryEntry *)(g_list_nth(hel, crow)->data));
 
+   printf("\n================[ %s ]================\n", _("replay terminated"));
+   fflush(stdout);
+
+   struct termios to;
+   struct termios tn;
+   tcgetattr(STDIN_FILENO, &to);
+   memcpy(&tn, &to, sizeof(to));
+   tn.c_lflag &= ~ICANON;
+   tcsetattr(STDIN_FILENO, TCSANOW, &tn);
+   getchar();
+   tcsetattr(STDIN_FILENO, TCSANOW, &to);
+
    blank();
    ignoreSIGINT(FALSE);
-   drawQuery(_("Replay terminated!"), G_USEC_PER_SEC);
   }
 #ifdef KEY_RESIZE
   else if(wic == KEY_RESIZE) {
@@ -2477,8 +2488,9 @@ static void handleErrors(HostNode *n) {
  if(!he)
   return;
 
- gchar *query = g_strdup_printf("An error at %s:%d has been detected [Vic]:", n->hostname, n->ssh_port);
+ gchar *query = g_strdup_printf(_("An error at %s:%d has been detected [Lic]: "), n->hostname, n->ssh_port);
 
+ notifyUser();
  while(1) {
   enableInput();
 
