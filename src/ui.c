@@ -1425,7 +1425,6 @@ void doUI (GList *hosts)
 
    setenv("MAINTAINER", maintainer, TRUE);
  }
-fprintf(stderr, ">>%s\n", maintainer);
 
  if ((cfg->query_maintainer == 1) ||
      ((cfg->query_maintainer > 1) && (m == NULL))) {
