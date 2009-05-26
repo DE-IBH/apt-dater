@@ -76,6 +76,7 @@ static gboolean compStrWithPattern(const gchar *str, gchar *pattern, gsize s)
  }
 #else
  gsize    maxsize;
+ gint     i;
 
  maxsize = s > strlen(pattern) ? strlen(pattern) : s;
 
