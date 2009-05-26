@@ -790,9 +790,14 @@ static void drawHistoryEntries (HostNode *n)
     pminrow=l-LINES+3;
   } else if(sc == SC_KEY_NPAGE) {
    crow=pminrow = pminrow+LINES-3 > (l-LINES+4) ? l-LINES+4 : pminrow+LINES-3;
+   if(crow < 0) {
+    crow=mrow;
+    pminrow=0;
+   }
   } else if(sc == SC_KEY_PPAGE) {
    pminrow = pminrow-(LINES-3) < 0 ? 0 : pminrow-(LINES-3);
    crow=pminrow+(LINES-4);
+   if(crow > mrow) pminrow=crow=0;
   } else if(sc == SC_KEY_LESS) {
    ignoreSIGINT(TRUE);
    endwin();

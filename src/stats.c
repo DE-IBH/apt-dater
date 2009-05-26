@@ -241,7 +241,7 @@ gboolean getUpdatesFromStat(HostNode *n)
   /* Remove any whitespace from the line. */
   g_strchomp(line);
 
-  if (sscanf((gchar *) line, "KERNELINFO: %d %255s", &status, buf)) {
+  if (sscanf((gchar *) line, "KERNELINFO: %d %255s", &status, buf) && !n->kernelrel) {
    n->kernelrel = g_strdup(buf);
    switch(status){
    case 1:
@@ -303,9 +303,11 @@ gboolean getUpdatesFromStat(HostNode *n)
 	case 'i':
 	    break;
 	default:
-	    g_free(pkgnode);
-	    g_strfreev(argv);
-	    continue;
+	 g_free(pkgnode->package);
+	 g_free(pkgnode->version);
+	 g_free(pkgnode);
+	 g_strfreev(argv);
+	 continue;
     }
     g_strfreev(argv);
 
