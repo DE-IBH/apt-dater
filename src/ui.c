@@ -818,7 +818,7 @@ static void drawHistoryEntries (HostNode *n)
 
    history_show_replay((HistoryEntry *)(g_list_nth(hel, crow)->data));
 
-   printf("\n================[ %s ]================\n", _("replay terminated"));
+   printf("\n================[ %s ]================\n", _("replay terminated, press any key to continue"));
    fflush(stdout);
 
    termGetChar();
