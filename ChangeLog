@@ -23,7 +23,7 @@ apt-dater (0.8.0) unstable; urgency=low
     - set LC_ALL=C on apt-dater-host rather than clear LANG env variable
       (SF bug #2786495 by Sebastian Heinlein and #2793663 by "kepi")
 
- -- Thomas Liske <liske@ibh.de>  
+ -- Thomas Liske <liske@ibh.de>  Tue, 26 May 2009 16:31:41 +0200 
 
 apt-dater (0.7.0) unstable; urgency=low
 
