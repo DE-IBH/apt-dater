@@ -27,6 +27,7 @@
 
 #include "apt-dater.h"
 #include "tag.h"
+#include "ui.h"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -42,6 +43,7 @@ typedef enum {
  COMPCMD_PACKAGE,
  COMPCMD_UPDATE,
  COMPCMD_HOSTNAME,
+ COMPCMD_FLAG,
 } COMPCMD;
 
 struct ValidCompCmds {
@@ -58,6 +60,7 @@ static struct ValidCompCmds compCmds[] = {
  {'h', "hostname",    COMPCMD_HOSTNAME},
  {'p', "package",     COMPCMD_PACKAGE},
  {'u', "update" ,     COMPCMD_UPDATE},
+ {'f', "flag" ,       COMPCMD_FLAG},
  {  0,      NULL,     0},
 };
 
@@ -95,7 +98,7 @@ gboolean compHostWithPattern(HostNode *n, gchar *in, gsize s)
 {
  gboolean    r = FALSE;
  gchar       *pattern = NULL;
- gint        i;
+ gint        i, j, compflags = 0;
  COMPCMD     compcmd =  COMPCMD_HOSTNAME;
 
  if(!in || !n || strlen(in) < 1) return FALSE;
@@ -144,6 +147,18 @@ gboolean compHostWithPattern(HostNode *n, gchar *in, gsize s)
   break;
  case COMPCMD_GROUP:
   r = compStrWithPattern(n->group, pattern, s);
+  break;
+ case COMPCMD_FLAG:
+  compflags=0;
+  for(i = 0; i < strlen(pattern); i++) {
+   j=0;
+   while(hostFlags[j].code) {
+    if(hostFlags[j].code[0] == pattern[i])
+     compflags |= hostFlags[j].flag;
+    j++;
+   }
+  }
+  if(n->status & compflags) r = TRUE;
   break;
  case COMPCMD_HOSTNAME:
  default:

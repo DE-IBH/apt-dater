@@ -189,13 +189,7 @@ static struct ShortCut shortCuts[] = {
  {SC_MAX, 0, NULL, NULL, FALSE, 0},
 };
 
-struct HostFlag {
-  gint flag;
-  gchar *code;
-  gchar *descr;
-};
-
-static const struct HostFlag hostFlags[] = {
+const struct HostFlag hostFlags[] = {
   {HOST_STATUS_PKGKEPTBACK    ,  "h", N_("some packages are kept back")},
   {HOST_STATUS_PKGEXTRA       ,  "x", N_("extra packages are installed")},
   {HOST_STATUS_KERNELNOTMATCH ,  "R", N_("running kernel is not the latest (reboot required)")},

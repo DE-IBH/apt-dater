@@ -115,6 +115,12 @@ typedef struct _drawnode {
  struct _drawnode *parent;
 } DrawNode;
 
+struct HostFlag {
+  gint flag;
+  gchar *code;
+  gchar *descr;
+};
+
 gboolean
 ctrlKeyEnter(GList *hosts);
 
@@ -137,6 +143,7 @@ void drawStatus (char *str, gboolean drawoldest);
 
 extern gchar maintainer[48];
 extern gchar *drawCategories[];
+extern const struct HostFlag hostFlags[];
 
 #ifndef KEY_RETURN
 # define KEY_RETURN   13
