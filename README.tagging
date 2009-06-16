@@ -13,8 +13,9 @@ using the Ctrl + `T' key combination.
 The pattern is a regular expression matching the hostname. The pattern might be
 pretended by a tokens to apply the regex on the following host's values:
 
-    ~d		distributor
     ~c		codename
+    ~d		distributor
+    ~f		host flags
     ~g		group
     ~p		package
     ~u		update
@@ -35,3 +36,6 @@ Tag all hosts which have installed the package apt-dater-host:
 
 Tag all hosts which are start with the word inet in their hostname:
  ^inet
+
+Tag all hosts which have set the flag `x' and `R':
+ ~f xR

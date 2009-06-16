@@ -150,7 +150,7 @@ gboolean compHostWithPattern(HostNode *n, gchar *in, gsize s)
   break;
  case COMPCMD_FLAG:
   compflags=0;
-  for(i = 0; i < strlen(pattern); i++) {
+  for(i = 0; i < (strlen(pattern) > s ? s : strlen(pattern)); i++) {
    j=0;
    while(hostFlags[j].code) {
     if(hostFlags[j].code[0] == pattern[i])
@@ -158,7 +158,7 @@ gboolean compHostWithPattern(HostNode *n, gchar *in, gsize s)
     j++;
    }
   }
-  if(n->status & compflags) r = TRUE;
+  if(n->status - (n->status ^ compflags) == compflags) r = TRUE;
   break;
  case COMPCMD_HOSTNAME:
  default:
