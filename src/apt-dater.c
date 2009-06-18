@@ -66,6 +66,7 @@ int main(int argc, char **argv)
  GList *hosts = NULL;
 #ifdef FEAT_XMLREPORT
  gboolean report = FALSE;
+ gboolean refresh = TRUE;
 #endif
 
  cfgdirname = g_strdup_printf("%s/%s", g_get_user_config_dir(), PACKAGE);
@@ -80,7 +81,7 @@ int main(int argc, char **argv)
  if(chkForInitialConfig(cfgdirname, cfgfilename))
   g_warning(_("Failed to create initial configuration file %s."), cfgfilename);
 
- while ((opts = getopt(argc, argv, "c:vr")) != EOF) {
+ while ((opts = getopt(argc, argv, "c:vrn")) != EOF) {
   switch(opts) {
   case 'c':
    if(cfgfilename) free(cfgfilename);
@@ -97,8 +98,17 @@ int main(int argc, char **argv)
     g_error(_("Sorry, apt-dater was compiled w/o report feature!"));
 #endif
     break;
+#ifdef FEAT_XMLREPORT
+  case 'n':
+    refresh = FALSE;
+    break;
+#endif
   default:
-   g_printerr(_("Usage: %s [-(c config|v|r)]\n"), g_get_prgname());
+#ifdef FEAT_XMLREPORT
+   g_printerr(_("Usage: %s [-(c config|v|[n]r)]\n"), g_get_prgname());
+#else
+   g_printerr(_("Usage: %s [-(c config|v)]\n"), g_get_prgname());
+#endif
    exit(EXIT_FAILURE);
   }
  }
@@ -114,7 +124,11 @@ int main(int argc, char **argv)
   exit(EXIT_FAILURE);
  }
 
- if(cfg->ssh_agent) {
+ if(cfg->ssh_agent
+#ifdef FEAT_XMLREPORT
+ && (!report || refresh)
+#endif
+ ) {
 
   /* Spawn ssh-agent if needed */
   if(getenv("SSH_AGENT_PID") == NULL) {
@@ -166,8 +180,12 @@ int main(int argc, char **argv)
    setSigHandler();
 #ifdef FEAT_XMLREPORT
  }
- else
-   initReport(hosts);
+ else {
+   if(refresh)
+    initReport(hosts);
+   else
+    initReport(NULL);
+ }
 #endif
 
  loop = g_main_loop_new (NULL, FALSE);

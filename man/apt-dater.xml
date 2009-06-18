@@ -89,7 +89,7 @@ and docbook-xsl in your Build-Depends control field.
     <cmdsynopsis>
       <command>&dhpackage;</command>
 
-      <arg><option>[-c <replaceable>config</replaceable>]</option></arg>
+      <arg><option>[-(c <replaceable>config</replaceable>|v|[n]r)]</option></arg>
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -114,6 +114,24 @@ and docbook-xsl in your Build-Depends control field.
           <para>Use alternative config file. Default is <replaceable>$XDG_CONFIG_HOME/apt-dater/apt-dater.conf</replaceable>.</para>
         </listitem>
       </varlistentry>
+      <varlistentry>
+        <term><option>-v</option></term>
+        <listitem>
+          <para>Show apt-dater version and copyright statement.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-r</option></term>
+        <listitem>
+          <para>Refresh hosts and create XML report on stdout. apt-dater must be compiled with XMLREPORT feature.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-n</option></term>
+        <listitem>
+          <para>Prevent hosts to be refreshed before create XML report (useful for cronjobs which do not have access to SSH key(s)).</para>
+        </listitem>
+      </varlistentry>
     </variablelist>
   </refsect1>
   <refsect1>
@@ -123,8 +141,8 @@ and docbook-xsl in your Build-Depends control field.
       <varlistentry>
 	<term><envar>MAINTAINER</envar></term>
 	<listitem>
-	    The maintainer's name (i.e. used by <command>debtrack</command>). If not set, the GECOS entry for the current user will be used.
-	    This environment variable could be forwarded to remote hosts with the ssh(1) SendEnv+AcceptEnv options.
+	    <para>The maintainer's name (i.e. used by <command>debtrack</command>). If not set, the GECOS entry for the current user will be used.
+	    This environment variable could be forwarded to remote hosts with the ssh(1) SendEnv+AcceptEnv options.</para>
 	</listitem>
       </varlistentry>
     </variablelist>

@@ -14,7 +14,7 @@
 apt-dater \- terminal-based remote package update manager
 .SH "SYNOPSIS"
 .HP 10
-\fBapt\-dater\fR [\fB[\-c\ \fR\fB\fIconfig\fR\fR\fB]\fR]
+\fBapt\-dater\fR [\fB[\-(c\ \fR\fB\fIconfig\fR\fR\fB|v|[n]r)]\fR]
 .SH "DESCRIPTION"
 .PP
 This manual page documents briefly the
@@ -33,14 +33,28 @@ accepts the following command parameters:
 Use alternative config file\&. Default is
 \fI$XDG_CONFIG_HOME/apt\-dater/apt\-dater\&.conf\fR\&.
 .RE
+.PP
+\fB\-v\fR
+.RS 4
+Show apt\-dater version and copyright statement\&.
+.RE
+.PP
+\fB\-r\fR
+.RS 4
+Refresh hosts and create XML report on stdout\&. apt\-dater must be compiled with XMLREPORT feature\&.
+.RE
+.PP
+\fB\-n\fR
+.RS 4
+Prevent hosts to be refreshed before create XML report (useful for cronjobs which do not have access to SSH key(s))\&.
+.RE
 .SH "ENVIRONMENT"
 .PP
 \fBMAINTAINER\fR
 .RS 4
-
-	    The maintainer\'s name (i\&.e\&. used by \fBdebtrack\fR)\&. If not set, the GECOS entry for the current user will be used\&.
-	    This environment variable could be forwarded to remote hosts with the ssh(1) SendEnv+AcceptEnv options\&.
-	.RE
+The maintainer\'s name (i\&.e\&. used by
+\fBdebtrack\fR)\&. If not set, the GECOS entry for the current user will be used\&. This environment variable could be forwarded to remote hosts with the ssh(1) SendEnv+AcceptEnv options\&.
+.RE
 .SH "FILES"
 .PP
 \fI~/\&.config/apt\-dater/apt\-dater\&.conf\fR
