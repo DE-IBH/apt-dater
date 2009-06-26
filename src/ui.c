@@ -2799,8 +2799,16 @@ gboolean ctrlUI (GList *hosts)
 
      while(ho) {
       HostNode *m = (HostNode *)ho->data;
-      if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) && m->category == cat) ||
+#ifdef FEAT_TCLFILTER
+      if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) && 
+	  ((cat == C_FILTERED && m->filtered == TRUE) || m->category == cat)) ||
+	 (n->type == CATEGORY && 
+	  ((cat == C_FILTERED && m->filtered == TRUE) || m->category == cat))) {
+#else
+      if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) && 
+	  m->category == cat) ||
 	 (n->type == CATEGORY && m->category == cat)) {
+#endif
        if(m->forbid ^ HOST_FORBID_UPGRADE)
         ssh_cmd_upgrade(m, TRUE);
       }
@@ -2921,8 +2929,16 @@ gboolean ctrlUI (GList *hosts)
 
      while(ho) {
       HostNode *m = (HostNode *)ho->data;
-      if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) && m->category == cat) ||
+#ifdef FEAT_TCLFILTER
+      if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) && 
+	  ((cat == C_FILTERED && m->filtered == TRUE) || m->category == cat)) ||
+	 (n->type == CATEGORY && 
+	  ((cat == C_FILTERED && m->filtered == TRUE) || m->category == cat))) {
+#else
+      if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) && 
+	  m->category == cat) ||
 	 (n->type == CATEGORY && m->category == cat)) {
+#endif
 
        if(m->forbid ^ HOST_FORBID_INSTALL)
         ssh_cmd_install(m, in, TRUE);
