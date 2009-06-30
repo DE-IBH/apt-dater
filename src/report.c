@@ -7,7 +7,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008-2009 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -41,6 +41,10 @@
 static xmlTextWriterPtr writer;
 static xmlDocPtr doc;
 
+#ifdef FEAT_HISTORY
+#include "history.h"
+#endif
+
 void initReport(GList *hosts) {
   /*
    * this initialize the library and check potential ABI mismatches
@@ -65,6 +69,29 @@ void initReport(GList *hosts) {
     n = g_list_next(n);
   }
 }
+
+#ifdef FEAT_HISTORY
+static void reportHistory(gpointer data, gpointer user_data) {
+  HistoryEntry *h = (HistoryEntry *)data;
+
+  xmlTextWriterStartElement(writer, BAD_CAST(h->action));
+
+  xmlTextWriterWriteFormatElement(writer, BAD_CAST("timestamp"), "%d", h->ts);
+  xmlTextWriterWriteFormatElement(writer, BAD_CAST("duration"), "%d", h->duration);
+
+  xmlTextWriterStartElement(writer, BAD_CAST("path"));
+  xmlTextWriterWriteString(writer, BAD_CAST(h->path));
+  xmlTextWriterEndElement(writer);
+
+  if(h->maintainer && strlen(h->maintainer)) {
+    xmlTextWriterStartElement(writer, BAD_CAST("maintainer"));
+    xmlTextWriterWriteString(writer, BAD_CAST(h->maintainer));
+    xmlTextWriterEndElement(writer);
+  }
+
+  xmlTextWriterEndElement(writer);
+}
+#endif
 
 static void reportPackage(gpointer data, gpointer user_data) {
   PkgNode *n = (PkgNode *)data;
@@ -158,6 +185,18 @@ static void reportHost(gpointer data, gpointer lgroup) {
     xmlTextWriterWriteElement(writer, BAD_CAST("virt"), BAD_CAST(n->virt));
   else
     xmlTextWriterWriteElement(writer, BAD_CAST("virt"), BAD_CAST("Unknown"));
+
+#ifdef FEAT_HISTORY
+  /* history data */
+  GList *hel = history_get_entries(n);
+  if(hel) {
+    xmlTextWriterStartElement(writer, BAD_CAST("history"));
+    g_list_foreach(hel, reportHistory, NULL);
+    xmlTextWriterEndElement(writer);
+
+    history_free_hel(hel);
+  }
+#endif
 
   /* Packages */
   xmlTextWriterStartElement(writer, BAD_CAST("packages"));

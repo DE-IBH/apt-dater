@@ -7,7 +7,7 @@
 <!ATTLIST group name CDATA #REQUIRED>
 
 <!-- Host node -->
-<!ELEMENT host (status,ssh,kernel,lsb,packages)>
+<!ELEMENT host (status,ssh,kernel,lsb,history?,packages)>
 <!ATTLIST host hostname CDATA #REQUIRED>
 
 <!-- Host apt-dater status -->
@@ -28,6 +28,9 @@
 <!ELEMENT distri (#PCDATA)>
 <!ELEMENT release (#PCDATA)>
 <!ELEMENT codename (#PCDATA)>
+
+<!-- History data -->
+<!ELEMENT history (install|upgrade)+>
 
 <!-- Package list -->
 <!ELEMENT packages (pkg)>
