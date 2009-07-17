@@ -310,6 +310,16 @@ CfgFile *loadConfig (char *filename)
   lcfg->history_errpattern = "(error|warning|fail)";
 #endif
 
+ lcfg->hook_pre_update = g_key_file_get_string(keyfile, "Hooks", "PreUpdate", NULL);
+ lcfg->hook_pre_refresh = g_key_file_get_string(keyfile, "Hooks", "PreRefresh", NULL);
+ lcfg->hook_pre_install = g_key_file_get_string(keyfile, "Hooks", "PreInstall", NULL);
+ lcfg->hook_pre_connect = g_key_file_get_string(keyfile, "Hooks", "PreConnect", NULL);
+
+ lcfg->hook_post_update = g_key_file_get_string(keyfile, "Hooks", "PostUpdate", NULL);
+ lcfg->hook_post_refresh = g_key_file_get_string(keyfile, "Hooks", "PostRefresh", NULL);
+ lcfg->hook_post_install = g_key_file_get_string(keyfile, "Hooks", "PostInstall", NULL);
+ lcfg->hook_post_connect = g_key_file_get_string(keyfile, "Hooks", "PostConnect", NULL);
+
  g_clear_error(&error);
  g_key_file_free(keyfile);
 
