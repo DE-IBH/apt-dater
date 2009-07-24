@@ -335,6 +335,30 @@ and docbook-xsl in your Build-Depends control field.
       </varlistentry>
     </variablelist>
     </refsect2>
+
+    <refsect2>
+	<title>Section <symbol>[Hooks]</symbol></title>
+
+    <variablelist>
+      <varlistentry>
+        <term><symbol>PreUpdate</symbol>=<replaceable>/etc/apt-dater/hooks/pre-upd.d</replaceable></term>
+        <term><symbol>PreRefresh</symbol>=<replaceable>/etc/apt-dater/hooks/pre-ref.d</replaceable></term>
+        <term><symbol>PreInstall</symbol>=<replaceable>/etc/apt-dater/hooks/pre-ins.d</replaceable></term>
+        <term><symbol>PreConnect</symbol>=<replaceable>/etc/apt-dater/hooks/pre-con.d</replaceable></term>
+        <term><symbol>PostUpdate</symbol>=<replaceable>/etc/apt-dater/hooks/post-upd.d</replaceable></term>
+        <term><symbol>PostRefresh</symbol>=<replaceable>/etc/apt-dater/hooks/post-ref.d</replaceable></term>
+        <term><symbol>PostInstall</symbol>=<replaceable>/etc/apt-dater/hooks/post-ins.d</replaceable></term>
+        <term><symbol>PostConnect</symbol>=<replaceable>/etc/apt-dater/hooks/post-con.d</replaceable></term>
+        <listitem>
+	  <para>
+	    Hooks to be run before and after an action on a host is done.
+	    The values should be path names, any executable script within
+	    these directories will be run by <command>run-parts</command>(8).
+	  </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+    </refsect2>
   </refsect1>
 
   <refsect1>

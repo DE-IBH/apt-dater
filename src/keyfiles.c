@@ -310,15 +310,20 @@ CfgFile *loadConfig (char *filename)
   lcfg->history_errpattern = "(error|warning|fail)";
 #endif
 
- lcfg->hook_pre_update = g_key_file_get_string(keyfile, "Hooks", "PreUpdate", NULL);
- lcfg->hook_pre_refresh = g_key_file_get_string(keyfile, "Hooks", "PreRefresh", NULL);
- lcfg->hook_pre_install = g_key_file_get_string(keyfile, "Hooks", "PreInstall", NULL);
- lcfg->hook_pre_connect = g_key_file_get_string(keyfile, "Hooks", "PreConnect", NULL);
+#define KEY_FILE_GET_STRING_DEFAULT(var, sec, val, default) \
+ (var) = g_key_file_get_string(keyfile, sec, val, NULL); \
+ if(!(var)) \
+  (var) = (default);
 
- lcfg->hook_post_update = g_key_file_get_string(keyfile, "Hooks", "PostUpdate", NULL);
- lcfg->hook_post_refresh = g_key_file_get_string(keyfile, "Hooks", "PostRefresh", NULL);
- lcfg->hook_post_install = g_key_file_get_string(keyfile, "Hooks", "PostInstall", NULL);
- lcfg->hook_post_connect = g_key_file_get_string(keyfile, "Hooks", "PostConnect", NULL);
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_update , "Hooks", "PreUpdate" , "/etc/apt-dater/hooks/pre-upd.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_refresh, "Hooks", "PreRefresh", "/etc/apt-dater/hooks/pre-ref.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_install, "Hooks", "PreInstall", "/etc/apt-dater/hooks/pre-ins.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_connect, "Hooks", "PreConnect", "/etc/apt-dater/hooks/pre-con.d");
+
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_update , "Hooks", "PostUpdate" , "/etc/apt-dater/hooks/post-upd.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_refresh, "Hooks", "PostRefresh", "/etc/apt-dater/hooks/post-ref.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_install, "Hooks", "PostInstall", "/etc/apt-dater/hooks/post-ins.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_connect, "Hooks", "PostConnect", "/etc/apt-dater/hooks/post-con.d");
 
  g_clear_error(&error);
  g_key_file_free(keyfile);

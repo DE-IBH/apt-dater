@@ -225,6 +225,13 @@ record=\fItrue\fR
 .RS 4
 Enables session recording using script(1)\&. (Optional)
 .RE
+.SS "Section [Hooks]"
+.PP
+PreUpdate=\fI/etc/apt\-dater/hooks/pre\-upd\&.d\fR, PreRefresh=\fI/etc/apt\-dater/hooks/pre\-ref\&.d\fR, PreInstall=\fI/etc/apt\-dater/hooks/pre\-ins\&.d\fR, PreConnect=\fI/etc/apt\-dater/hooks/pre\-con\&.d\fR, PostUpdate=\fI/etc/apt\-dater/hooks/post\-upd\&.d\fR, PostRefresh=\fI/etc/apt\-dater/hooks/post\-ref\&.d\fR, PostInstall=\fI/etc/apt\-dater/hooks/post\-ins\&.d\fR, PostConnect=\fI/etc/apt\-dater/hooks/post\-con\&.d\fR
+.RS 4
+Hooks to be run before and after an action on a host is done\&. The values should be path names, any executable script within these directories will be run by
+\fBrun\-parts\fR(8)\&.
+.RE
 .SH "STRING ESCAPES"
 \fBapt\-dater\fR(8) provides an string escape mechanism\&. The escape character is \'%\'\&.
 
