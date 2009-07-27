@@ -341,14 +341,14 @@ and docbook-xsl in your Build-Depends control field.
 
     <variablelist>
       <varlistentry>
-        <term><symbol>PreUpdate</symbol>=<replaceable>/etc/apt-dater/hooks/pre-upd.d</replaceable></term>
-        <term><symbol>PreRefresh</symbol>=<replaceable>/etc/apt-dater/hooks/pre-ref.d</replaceable></term>
-        <term><symbol>PreInstall</symbol>=<replaceable>/etc/apt-dater/hooks/pre-ins.d</replaceable></term>
-        <term><symbol>PreConnect</symbol>=<replaceable>/etc/apt-dater/hooks/pre-con.d</replaceable></term>
-        <term><symbol>PostUpdate</symbol>=<replaceable>/etc/apt-dater/hooks/post-upd.d</replaceable></term>
-        <term><symbol>PostRefresh</symbol>=<replaceable>/etc/apt-dater/hooks/post-ref.d</replaceable></term>
-        <term><symbol>PostInstall</symbol>=<replaceable>/etc/apt-dater/hooks/post-ins.d</replaceable></term>
-        <term><symbol>PostConnect</symbol>=<replaceable>/etc/apt-dater/hooks/post-con.d</replaceable></term>
+        <term><symbol>PreUpdate</symbol>=<replaceable>/etc/apt-dater/pre-upd.d</replaceable></term>
+        <term><symbol>PreRefresh</symbol>=<replaceable>/etc/apt-dater/pre-ref.d</replaceable></term>
+        <term><symbol>PreInstall</symbol>=<replaceable>/etc/apt-dater/pre-ins.d</replaceable></term>
+        <term><symbol>PreConnect</symbol>=<replaceable>/etc/apt-dater/pre-con.d</replaceable></term>
+        <term><symbol>PostUpdate</symbol>=<replaceable>/etc/apt-dater/post-upd.d</replaceable></term>
+        <term><symbol>PostRefresh</symbol>=<replaceable>/etc/apt-dater/post-ref.d</replaceable></term>
+        <term><symbol>PostInstall</symbol>=<replaceable>/etc/apt-dater/post-ins.d</replaceable></term>
+        <term><symbol>PostConnect</symbol>=<replaceable>/etc/apt-dater/post-con.d</replaceable></term>
         <listitem>
 	  <para>
 	    Hooks to be run before and after an action on a host is done.

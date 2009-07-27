@@ -39,6 +39,7 @@
 #include "stats.h"
 #include "sighandler.h"
 #include "lock.h"
+#include "env.h"
 
 #ifdef FEAT_XMLREPORT
 #include "report.h"
@@ -58,7 +59,7 @@ GMainLoop *loop = NULL;
 gboolean rebuilddl = FALSE;
 time_t oldest_st_mtime;
 
-int main(int argc, char **argv)
+int main(int argc, char **argv, char **envp)
 {
  char opts;
  char *cfgfilename = NULL;
@@ -164,6 +165,8 @@ int main(int argc, char **argv)
     g_free(add_argv);
   }
  }
+
+ env_init(envp);
 
 #ifdef FEAT_XMLREPORT
  if(!report) {

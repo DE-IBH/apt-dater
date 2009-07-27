@@ -107,48 +107,14 @@ screen_get_sessions(HostNode *n) {
 }
 
 gchar *
-screen_new(HostNode *n, const gboolean detached, const HistoryEntry *he) {
-  if (!cfg->use_screen) {
-#ifdef FEAT_HISTORY
-    if(cfg->record_history && he) {
-     gchar *hp = history_rec_path(n);
-     gchar *fn_meta = g_strdup_printf("%s/meta", hp);
-     history_write_meta(fn_meta, he);
-     g_free(fn_meta);
+screen_new(HostNode *n, const gboolean detached) {
 
-     gchar *cmd = g_strdup_printf(PKGLIBDIR"/script+%s+%s+", hp, cfg->history_errpattern);
-     g_free(hp);
-
-     return cmd;
-    }
-    else
-#endif
+  if (!cfg->use_screen)
      return g_strdup("");
-  }
 
   gchar *title = parse_string(cfg->screentitle, n);
 
-  gchar *cmd;
-
-#ifdef FEAT_HISTORY
-  if(cfg->record_history && he) {
-    gchar *hp = history_rec_path(n);
-    gchar *fn_meta = g_strdup_printf("%s/meta", hp);
-    history_write_meta(fn_meta, he);
-    g_free(fn_meta);
-
-    cmd = g_strdup_printf(SCREEN_BINARY"+-%sS+"SCREEN_SOCKPRE"%s_%s_%d"	\
-			       "+-t+%s+-c+%s+"PKGLIBDIR"/script+%s+%s+",
-			       detached ? "dm" : "",
-			       n->ssh_user, n->hostname, n->ssh_port,
-			       title,
-			       cfg->screenrcfile,
-			       hp, cfg->history_errpattern);
-
-    g_free(hp);
-  } else
-#endif
-    cmd = g_strdup_printf(SCREEN_BINARY"+-%sS+"SCREEN_SOCKPRE"%s_%s_%d"	\
+  gchar *cmd = g_strdup_printf(SCREEN_BINARY"+-%sS+"SCREEN_SOCKPRE"%s_%s_%d"	\
 			       "+-t+%s+-c+%s+",
 			       detached ? "dm" : "",
 			       n->ssh_user, n->hostname, n->ssh_port,

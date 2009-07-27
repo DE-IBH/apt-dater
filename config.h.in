@@ -138,6 +138,9 @@
 /* Define as the return type of signal handlers (`int' or `void'). */
 #undef RETSIGTYPE
 
+/* Where is the command run-parts located. */
+#undef RUN_PARTS_BINARY
+
 /* Where is the command screen located. */
 #undef SCREEN_BINARY
 

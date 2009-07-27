@@ -300,10 +300,6 @@ CfgFile *loadConfig (char *filename)
    lcfg->record_history = TRUE;
    g_clear_error(&error);
  }
- if(lcfg->record_history && (g_access(PKGLIBDIR"/script", X_OK) != 0)) {
-   g_warning("Executable "PKGLIBDIR"/script not available, disabling history feature.");
-   lcfg->record_history = FALSE;
- }
 
  lcfg->history_errpattern = g_key_file_get_string(keyfile, "History", "ErrPattern", NULL);
  if(!lcfg->history_errpattern)
@@ -315,15 +311,15 @@ CfgFile *loadConfig (char *filename)
  if(!(var)) \
   (var) = (default);
 
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_update , "Hooks", "PreUpdate" , "/etc/apt-dater/hooks/pre-upd.d");
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_refresh, "Hooks", "PreRefresh", "/etc/apt-dater/hooks/pre-ref.d");
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_install, "Hooks", "PreInstall", "/etc/apt-dater/hooks/pre-ins.d");
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_connect, "Hooks", "PreConnect", "/etc/apt-dater/hooks/pre-con.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_update , "Hooks", "PreUpdate" , "/etc/apt-dater/pre-upd.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_refresh, "Hooks", "PreRefresh", "/etc/apt-dater/pre-ref.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_install, "Hooks", "PreInstall", "/etc/apt-dater/pre-ins.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_connect, "Hooks", "PreConnect", "/etc/apt-dater/pre-con.d");
 
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_update , "Hooks", "PostUpdate" , "/etc/apt-dater/hooks/post-upd.d");
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_refresh, "Hooks", "PostRefresh", "/etc/apt-dater/hooks/post-ref.d");
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_install, "Hooks", "PostInstall", "/etc/apt-dater/hooks/post-ins.d");
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_connect, "Hooks", "PostConnect", "/etc/apt-dater/hooks/post-con.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_update , "Hooks", "PostUpdate" , "/etc/apt-dater/post-upd.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_refresh, "Hooks", "PostRefresh", "/etc/apt-dater/post-ref.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_install, "Hooks", "PostInstall", "/etc/apt-dater/post-ins.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_connect, "Hooks", "PostConnect", "/etc/apt-dater/post-con.d");
 
  g_clear_error(&error);
  g_key_file_free(keyfile);

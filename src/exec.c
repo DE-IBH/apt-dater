@@ -31,6 +31,7 @@
 #include "stats.h"
 #include "parsecmd.h"
 #include "history.h"
+#include "env.h"
 #include <glib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -109,8 +110,6 @@ ssh_cmd_upgrade(HostNode *n, const gboolean detached)
  gboolean r;
  GError *error = NULL;
  gchar *cmd = NULL;
- gchar *optflags = NULL;
- gchar *identity_file = NULL;
  gchar **argv = NULL;
 
  g_assert(n);
@@ -124,16 +123,10 @@ ssh_cmd_upgrade(HostNode *n, const gboolean detached)
  he.action = "upgrade";
  he.data = NULL;
 
- gchar *screen = screen_new(n, detached, &he);
+ gchar *screen = screen_new(n, detached);
 
- cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d%s%s+%s+%s", 
-			screen,
-			cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
-			cfg->ssh_optflags && strlen(cfg->ssh_optflags) > 0 ? (optflags = g_strconcat("+", cfg->ssh_optflags , NULL)) : "",
-			n->identity_file && strlen(n->identity_file) > 0 ? (identity_file = g_strconcat("+-i+", n->identity_file , NULL)) : "",
-			n->hostname, cfg->cmd_upgrade);
- g_free(optflags);
- g_free(identity_file);
+ cmd = g_strdup_printf ("%s%s",
+			screen, PKGLIBDIR"/cmd");
  g_free(screen);
 
 #ifdef FEAT_HISTORY
@@ -142,17 +135,21 @@ ssh_cmd_upgrade(HostNode *n, const gboolean detached)
 
  argv = g_strsplit(cmd, "+", 0);
 
- r = g_spawn_sync(g_getenv ("HOME"), argv, NULL, 
+ g_free(cmd);
+
+ gchar **env = env_build(n, "upgrade", NULL, &he);
+
+ r = g_spawn_sync(g_getenv ("HOME"), argv, env,
 		  G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
 		  NULL, NULL, NULL, &error);
+
+ g_strfreev(env);
+ g_strfreev(argv);
 
  if(r == FALSE) {
   g_warning("%s", error->message);
   g_clear_error (&error);
  }
-
- g_free(cmd);
- g_strfreev(argv);
 
 #ifdef FEAT_HISTORY
  if(!detached && n->parse_result && !screen_get_sessions(n)) {
@@ -170,9 +167,6 @@ ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
  gboolean r;
  GError *error = NULL;
  gchar *cmd = NULL;
- gchar *buf = NULL;
- gchar *optflags = NULL;
- gchar *identity_file = NULL;
  gchar **argv = NULL;
 
  g_assert(n);
@@ -186,22 +180,12 @@ ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
  he.action = "install";
  he.data = package;
 
- gchar *screen = screen_new(n, detached, &he);
+ gchar *screen = screen_new(n, detached);
 
- cmd = g_strdup_printf ("%s%s+-l+%s+-p+%d%s%s+%s+%s", 
-			screen,
-			cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
-			cfg->ssh_optflags && strlen(cfg->ssh_optflags) > 0 ? (optflags = g_strconcat("+", cfg->ssh_optflags , NULL)) : "",
-			n->identity_file && strlen(n->identity_file) > 0 ? (identity_file = g_strconcat("+-i+", n->identity_file , NULL)) : "",
-			n->hostname, cfg->cmd_install);
- g_free(optflags);
- g_free(identity_file);
+ cmd = g_strdup_printf ("%s%s",
+			screen, PKGLIBDIR"/cmd");
+
  g_free(screen);
-
- buf = g_strdup_printf (cmd, package);
-
- g_free(cmd);
- cmd = buf;
 
 #ifdef FEAT_HISTORY
  n->parse_result = cfg->history_errpattern && strlen(cfg->history_errpattern);
@@ -209,17 +193,21 @@ ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
 
  argv = g_strsplit(cmd, "+", 0);
 
- r = g_spawn_sync(g_getenv ("HOME"), argv, NULL, 
+ g_free(cmd);
+
+ gchar **env = env_build(n, "install", package, &he);
+
+ r = g_spawn_sync(g_getenv ("HOME"), argv, env,
 		  G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
 		  NULL, NULL, NULL, &error);
+
+ g_strfreev(env);
+ g_strfreev(argv);
 
  if(r == FALSE) {
   g_warning("%s", error->message);
   g_clear_error (&error);
  }
-
- g_free(cmd);
- g_strfreev(argv);
 
 #ifdef FEAT_HISTORY
  if(!detached && n->parse_result && !screen_get_sessions(n)) {
@@ -236,9 +224,7 @@ void ssh_connect(HostNode *n, const gboolean detached)
  gboolean r;
  GError *error = NULL;
  gchar *cmd = NULL;
- gchar *optflags = NULL;
- gchar *identity_file = NULL;
- gchar **argv = NULL;
+ gchar **argv;
 
  HistoryEntry he;
  he.ts = time(NULL);
@@ -246,31 +232,30 @@ void ssh_connect(HostNode *n, const gboolean detached)
  he.action = "connect";
  he.data = NULL;
 
- gchar *screen = screen_new(n, detached, &he);
+ gchar *screen = screen_new(n, detached);
 
- cmd = g_strdup_printf ("%s%s+-l+%s+-t+-p+%d%s%s+%s",
-			screen,
-			cfg->ssh_cmd, n->ssh_user, n->ssh_port, 
-			cfg->ssh_optflags && strlen(cfg->ssh_optflags) > 0 ? (optflags = g_strconcat("+", cfg->ssh_optflags , NULL)) : "",
-			n->identity_file && strlen(n->identity_file) > 0 ? (identity_file = g_strconcat("+-i+", n->identity_file , NULL)) : "",
-			n->hostname);
- g_free(optflags);
- g_free(identity_file);
+ cmd = g_strdup_printf ("%s%s",
+			screen, PKGLIBDIR"/cmd");
+
  g_free(screen);
 
  argv = g_strsplit(cmd, "+", 0);
 
- r = g_spawn_sync(g_getenv ("HOME"), argv, NULL, 
+ g_free(cmd);
+
+ gchar **env = env_build(n, "connect", NULL, &he);
+
+ r = g_spawn_sync(g_getenv("HOME"), argv, env,
 		  G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
 		  NULL, NULL, NULL, &error);
+
+ g_strfreev(env);
+ g_strfreev(argv);
 
  if(r == FALSE) {
   g_warning("%s", error->message);
   g_clear_error (&error);
  }
-
- g_free(cmd);
- g_strfreev(argv);
 }
 
 void sftp_connect(HostNode *n)
@@ -288,7 +273,7 @@ void sftp_connect(HostNode *n)
  he.action = "sftp";
  he.data = NULL;
 
- gchar *cmd = screen_new(n, FALSE, &he);
+ gchar *cmd = screen_new(n, FALSE);
 
  cmd = g_realloc(cmd, strlen(cmd) + strlen(cfg->sftp_cmd) + 1);
  strcat(cmd, cfg->sftp_cmd);
@@ -304,9 +289,13 @@ void sftp_connect(HostNode *n)
 
  argv = g_strsplit(cmd, "+", 0);
 
- r = g_spawn_sync(g_getenv ("HOME"), argv, NULL, 
+ gchar **env = env_build(n, "connect", NULL, &he);
+
+ r = g_spawn_sync(g_getenv ("HOME"), argv, env,
 		  G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
 		  NULL, NULL, NULL, &error);
+
+ g_strfreev(env);
 
  if(r == FALSE) {
   g_warning("%s", error->message);

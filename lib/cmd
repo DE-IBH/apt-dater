@@ -1,0 +1,75 @@
+#!/bin/sh
+
+# apt-dater - terminal-based remote package update manager
+#
+# $Id$
+#
+# Authors:
+#   Andre Ellguth <ellguth@ibh.de>
+#   Thomas Liske <liske@ibh.de>
+#
+# Copyright Holder:
+#   2009 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+#
+# License:
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this package; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+run_hist_cmd () {
+    echo -n > "$AD_HIST_PATH/command"
+    for i in "$@"; do
+	echo -n "\"$i\" " >> "$AD_HIST_PATH/command"
+    done
+
+    chmod +x "$AD_HIST_PATH/command"
+    script -c "$AD_HIST_PATH/command" -t "$AD_HIST_PATH/typescript" 2> "$AD_HIST_PATH/timingfile"
+
+    echo -n "Duration=" >> "$AD_HIST_PATH/meta"
+    cat "$AD_HIST_PATH/timingfile" | cut '-d ' -f1 | awk '{ s += $1 } END { print s }' >> "$AD_HIST_PATH/meta"
+
+    if (egrep -aiqse "$AD_HIST_ERRPATTERN" "$AD_HIST_PATH/typescript"); then
+	echo "ERRPATTERN=$AD_HIST_ERRPATTERN" >> "$AD_HIST_PATH/meta"
+	touch "$AD_HIST_PATH/failed"
+    fi
+}
+
+run_cmd () {
+    $@
+}
+
+if [ "$AD_HIST_RECORD" = "true" ]; then
+    WRAP="run_hist_cmd"
+else
+    WRAP="run_cmd"
+fi
+
+case "$AD_ACTION" in
+    connect)
+	$WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME"
+	;;
+    install)
+	$WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME" `printf "$AD_CMD_INSTALL" "$AD_PARAM"`
+	;;
+    upgrade)
+	$WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME" $AD_CMD_UPGRADE
+	;;
+    *)
+	echo "Unhandled action '$AD_ACTION'!" 1>&2
+	echo 1>&2
+	set | grep ^AD_ 1>&2
+	echo 1>&2
+	exit 1;
+	;;
+esac

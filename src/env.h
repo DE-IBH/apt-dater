@@ -7,7 +7,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2009 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -25,29 +25,16 @@
  *   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#ifndef _SCREEN_H
-#define _SCREEN_H
+#ifndef _ENV_H
+#define _ENV_H
 
 #include "apt-dater.h"
 #include "history.h"
 
-#define SCREEN_SDFORMT "%s/S-%s"
-#define SCREEN_SOCKDIR "/var/run/screen"
-#define SCREEN_SOCKPRE "apt-dater_"
+void
+env_init(gchar **envp);
 
-gboolean
-screen_get_sessions(HostNode *n);
+gchar **
+env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEntry *he);
 
-gchar *screen_new(HostNode *n, const gboolean detached);
-gboolean screen_attach(HostNode *n, const SessNode *s, const gboolean shared);
-gchar *screen_get_dump(const SessNode *s);
-
-static inline gboolean
-screen_is_attached(const SessNode *s) {
-  if (s->st.st_mode & S_IXUSR)
-    return TRUE;
-
-  return FALSE;
-}
-
-#endif /* _SCREEN_H */
+#endif /* _ENV_H */
