@@ -1,8 +1,8 @@
 
-EXTRA_DISTS=script
+EXTRA_DISTS=cmd
 
-script: script
+cmd: cmd
 
 install-exec-hook:
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL) script $(DESTDIR)$(pkglibdir)
+	$(INSTALL) cmd $(DESTDIR)$(pkglibdir)

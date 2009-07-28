@@ -1,0 +1,55 @@
+Hooks
+=====
+
+Since version 0.8.1, apt-dater can call hooks before and after doing an
+action on a host. Hooks executables are located in:
+
++---------+---------------------------+
+| action  | path                      |
++---------+---------------------------+
+| connect | /etc/apt-dater/pre-con.d  |
+|         | /etc/apt-dater/post-con.d |
+| install | /etc/apt-dater/pre-ins.d  |
+|         | /etc/apt-dater/post-ins.d |
+| refresh | /etc/apt-dater/pre-ref.d  |
+|         | /etc/apt-dater/post-ref.d |
+| update  | /etc/apt-dater/pre-upd.d  |
+|         | /etc/apt-dater/post-upd.d |
++---------+---------------------------+
+
+The executables are run by run-parts(8). The environment contains
+informations about the action, the host and the configuration
+of apt-dater.
+
+action:
+ AD_ACTION
+ AD_PARAM
+
+host data:
+ AD_HIST_PATH
+ AD_HOSTNAME
+ AD_GROUP
+ AD_SSH_ID
+ AD_SSH_PORT
+ AD_SSH_USER
+
+apt-dater configuration:
+ AD_CMD_INSTALL
+ AD_CMD_REFRESH
+ AD_CMD_UPGRADE
+ AD_HIST_ERRPATTERN
+ AD_HIST_RECORD
+ AD_HOOK_POST_CONNECT
+ AD_HOOK_POST_INSTALL
+ AD_HOOK_POST_REFRESH
+ AD_HOOK_POST_UPDATE
+ AD_HOOK_PRE_CONNECT
+ AD_HOOK_PRE_INSTALL
+ AD_HOOK_PRE_REFRESH
+ AD_HOOK_PRE_UPDATE
+ AD_HOSTSFILE
+ AD_SCREENRCFILE
+ AD_SFTP_CMD
+ AD_SSH_CMD
+ AD_SSH_OPTFLAGS
+ AD_STATSDIR

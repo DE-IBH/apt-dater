@@ -164,7 +164,7 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-EXTRA_DISTS = script
+EXTRA_DISTS = cmd
 all: all-am
 
 .SUFFIXES:
@@ -318,11 +318,11 @@ uninstall-am: uninstall-info-am
 	uninstall-am uninstall-info-am
 
 
-script: script
+cmd: cmd
 
 install-exec-hook:
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL) script $(DESTDIR)$(pkglibdir)
+	$(INSTALL) cmd $(DESTDIR)$(pkglibdir)
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

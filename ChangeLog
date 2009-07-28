@@ -1,3 +1,15 @@
+apt-dater (0.8.1) unstable; urgency=low
+
+  * Add hooks on connect/install/refresh/upgrade.
+  * Run external commands via shell script helper.
+  * Add host history data to XML reports.
+  * Add -n command line argument (report w/o refresh).
+  * Extended tagging by host flags.
+  * Fixes:
+    - upgrade & install on filtered categories
+
+ -- Thomas Liske <liske@ibh.de>  
+
 apt-dater (0.8.0) unstable; urgency=low
 
   * Add gettext support.
