@@ -40,32 +40,17 @@
 
 gchar *getStatsFile(const HostNode *n)
 {
- gchar *statsfile = getStatsFileName(n);
+ if(g_file_test(n->statsfile, G_FILE_TEST_IS_REGULAR | G_FILE_TEST_EXISTS) == FALSE)
+   return NULL;
 
- if(g_file_test(statsfile, G_FILE_TEST_IS_REGULAR | G_FILE_TEST_EXISTS) == FALSE) {
-   g_free(statsfile);
-   statsfile = NULL;
- }
-
- return(statsfile);
+ return n->statsfile;
 }
-
-
-gchar *getStatsFileName(const HostNode *n)
-{
- return g_strdup_printf("%s/%s:%d.stat", cfg->statsdir, n->hostname, n->ssh_port);
-}
-
 
 gboolean prepareStatsFile(HostNode *n)
 {
- gchar *statsfile = getStatsFileName(n);
+ g_unlink(n->statsfile);
 
- g_unlink(statsfile);
-
- n->fpstat = fopen(statsfile, "wx");
-
- g_free(statsfile);
+ n->fpstat = fopen(n->statsfile, "wx");
 
  return n->fpstat != NULL;
 }

@@ -311,12 +311,12 @@ CfgFile *loadConfig (char *filename)
  if(!(var)) \
   (var) = (default);
 
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_upgrade, "Hooks", "PreUpgrade" , "/etc/apt-dater/pre-upd.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_upgrade, "Hooks", "PreUpgrade" , "/etc/apt-dater/pre-upg.d");
  KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_refresh, "Hooks", "PreRefresh", "/etc/apt-dater/pre-ref.d");
  KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_install, "Hooks", "PreInstall", "/etc/apt-dater/pre-ins.d");
  KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_connect, "Hooks", "PreConnect", "/etc/apt-dater/pre-con.d");
 
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_upgrade, "Hooks", "PostUpgrade" , "/etc/apt-dater/post-upd.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_upgrade, "Hooks", "PostUpgrade" , "/etc/apt-dater/post-upg.d");
  KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_refresh, "Hooks", "PostRefresh", "/etc/apt-dater/post-ref.d");
  KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_install, "Hooks", "PostInstall", "/etc/apt-dater/post-ins.d");
  KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_connect, "Hooks", "PostConnect", "/etc/apt-dater/post-con.d");
@@ -387,6 +387,8 @@ GList *loadHosts (char *filename)
    hostnode->hostname = g_strdup(hostname);
    hostnode->ssh_user = *ssh_user ? g_strdup(ssh_user) : g_strdup(cfg->ssh_defuser);
    hostnode->ssh_port = ssh_port ? ssh_port : cfg->ssh_defport;
+
+   hostnode->statsfile = g_strdup_printf("%s/%s:%d.stat", cfg->statsdir, hostnode->hostname, hostnode->ssh_port);
 
    hostnode->fdlock = -1;
    hostnode->identity_file = g_key_file_get_string(keyfile, groups[i], 

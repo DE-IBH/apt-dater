@@ -210,6 +210,7 @@ typedef struct _hostnode {
  GList     *screens;
  gint      fdlock;
  FILE      *fpstat;
+ gchar     *statsfile;
  gchar     *lsb_distributor;
  gchar     *lsb_release;
  gchar     *lsb_codename;

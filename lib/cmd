@@ -68,14 +68,14 @@ case "$AD_ACTION" in
 	run_hook "$AD_HOOK_POST_CONNECT"
 	;;
     install)
-	run_hook "AD_HOOK_PRE_INSTALL"
+	run_hook "$AD_HOOK_PRE_INSTALL"
 	$WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME" `printf "$AD_CMD_INSTALL" "$AD_PARAM"`
-	run_hook "AD_HOOK_POST_INSTALL"
+	run_hook "$AD_HOOK_POST_INSTALL"
 	;;
     upgrade)
-	run_hook "AD_HOOK_PRE_UPGRADE"
+	run_hook "$AD_HOOK_PRE_UPGRADE"
 	$WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME" $AD_CMD_UPGRADE
-	run_hook "AD_HOOK_POST_UPGRADE"
+	run_hook "$AD_HOOK_POST_UPGRADE"
 	;;
     *)
 	echo "Unhandled action '$AD_ACTION'!" 1>&2

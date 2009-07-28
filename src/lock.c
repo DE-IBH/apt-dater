@@ -40,12 +40,8 @@ static GList *lockList = NULL;
 static gchar *getLockFile(const HostNode *n)
 {
  gchar *lockfile = NULL;
- gchar *statsfile = NULL;
 
- statsfile = getStatsFileName(n);
-
- lockfile = g_strdup_printf("%s.lck", statsfile);
- g_free(statsfile);
+ lockfile = g_strdup_printf("%s.lck", n->statsfile);
 
  return(lockfile);
 }

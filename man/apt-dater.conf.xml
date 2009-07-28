@@ -341,11 +341,11 @@ and docbook-xsl in your Build-Depends control field.
 
     <variablelist>
       <varlistentry>
-        <term><symbol>PreUpdate</symbol>=<replaceable>/etc/apt-dater/pre-upd.d</replaceable></term>
+        <term><symbol>PreUpdate</symbol>=<replaceable>/etc/apt-dater/pre-upg.d</replaceable></term>
         <term><symbol>PreRefresh</symbol>=<replaceable>/etc/apt-dater/pre-ref.d</replaceable></term>
         <term><symbol>PreInstall</symbol>=<replaceable>/etc/apt-dater/pre-ins.d</replaceable></term>
         <term><symbol>PreConnect</symbol>=<replaceable>/etc/apt-dater/pre-con.d</replaceable></term>
-        <term><symbol>PostUpdate</symbol>=<replaceable>/etc/apt-dater/post-upd.d</replaceable></term>
+        <term><symbol>PostUpdate</symbol>=<replaceable>/etc/apt-dater/post-upg.d</replaceable></term>
         <term><symbol>PostRefresh</symbol>=<replaceable>/etc/apt-dater/post-ref.d</replaceable></term>
         <term><symbol>PostInstall</symbol>=<replaceable>/etc/apt-dater/post-ins.d</replaceable></term>
         <term><symbol>PostConnect</symbol>=<replaceable>/etc/apt-dater/post-con.d</replaceable></term>

@@ -42,7 +42,6 @@ env_init(gchar **envp) {
     base_env = g_slist_prepend(base_env, g_strdup_printf("AD_"name"=%s", value))
 
     ADD_GENV("HOSTSFILE"        , cfg->hostsfile);
-    ADD_GENV("HOSTSFILE"        , cfg->hostsfile);
     ADD_GENV("SCREENRCFILE"     , cfg->screenrcfile);
     ADD_GENV("STATSDIR"         , cfg->statsdir);
     ADD_GENV("SSH_CMD"          , cfg->ssh_cmd);
@@ -87,12 +86,14 @@ env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEnt
      new_env[i++] = g_strdup_printf("AD_SSH_ID=-i %s", n->identity_file);
     else
      ADD_HENV("SSH_ID"          , "");
-
-    ADD_HENV("ACTION"           , action);
-    if(param)
-     ADD_HENV("PARAM"           , param);
-    else
-     ADD_HENV("PARAM"           , "");
+    ADD_HENV("STATSFILE"        , n->statsfile);
+    ADD_HENV("KERNEL"           , n->kernelrel);
+    ADD_HENV("LSB_DISTRI"       , n->lsb_distributor);
+    ADD_HENV("LSB_RELEASE"      , n->lsb_release);
+    ADD_HENV("LSB_CODENAME"     , n->lsb_codename);
+    ADD_HENV("UNAME_KERNEL"     , n->uname_kernel);
+    ADD_HENV("UNAME_MACHINE"    , n->uname_machine);
+    ADD_HENV("VIRT"             , n->virt);
 
 #ifdef FEAT_HISTORY
     if(cfg->record_history && he) {
@@ -110,6 +111,13 @@ env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEnt
     else
 #endif
      ADD_HENV("HIST_PATH"       , "");
+
+
+    ADD_HENV("ACTION"           , action);
+    if(param)
+     ADD_HENV("PARAM"           , param);
+    else
+     ADD_HENV("PARAM"           , "");
 
     return new_env;
 }
