@@ -156,7 +156,6 @@ static gint cmpPackages(gconstpointer a, gconstpointer b) {
 
 gboolean getUpdatesFromStat(HostNode *n)
 {
- gchar *statsfile;
  char line[STATS_MAX_LINE_LEN];
  char buf[256] = "\0";
  FILE  *fp;
@@ -166,20 +165,19 @@ gboolean getUpdatesFromStat(HostNode *n)
 
  if(!n) return (FALSE);
 
- if(!(statsfile = getStatsFile(n))) {
+ if(!getStatsFile(n)) {
   n->category = C_UNKNOWN;
   return (TRUE);
  }
 
 #ifdef FEAT_AUTOREF
  struct stat sbuf;
- if(!stat(statsfile, &sbuf))
+ if(!stat(n->statsfile, &sbuf))
   n->last_upd = sbuf.st_mtime;
 #endif
 
- if(!(fp = (FILE *) g_fopen(statsfile, "r"))) {
+ if(!(fp = (FILE *) g_fopen(n->statsfile, "r"))) {
   n->category = C_UNKNOWN;
-  g_free(statsfile);
   return (TRUE);
  }
 
@@ -370,7 +368,6 @@ gboolean getUpdatesFromStat(HostNode *n)
     n->category = C_UNKNOWN;
 
  fclose(fp);
- g_free(statsfile);
 
  return(TRUE);
 }
@@ -474,7 +471,6 @@ gboolean refreshStats(GList *hosts)
 void getOldestMtime(GList *hosts)
 {
  GList *ho;
- gchar *statsfile;
  struct stat stat_p;
  HostNode *n;
 
@@ -485,14 +481,12 @@ void getOldestMtime(GList *hosts)
  while(ho) {
   n = (HostNode *) ho->data;
 
-  if((statsfile = getStatsFile(n)))
+  if(getStatsFile(n))
    {
-    if(!stat(statsfile, &stat_p)) {
+    if(!stat(n->statsfile, &stat_p)) {
      if(difftime(stat_p.st_mtime, oldest_st_mtime) < 0)
       oldest_st_mtime = stat_p.st_mtime;
     }
-
-    g_free(statsfile);
    }
 
   ho = g_list_next(ho);
