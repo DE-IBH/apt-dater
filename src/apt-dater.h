@@ -123,11 +123,11 @@ typedef struct _cfgfile {
 #ifdef FEAT_AUTOREF
  gboolean auto_refresh;
 #endif
- gchar     *hook_pre_update;
+ gchar     *hook_pre_upgrade;
  gchar     *hook_pre_refresh;
  gchar     *hook_pre_install;
  gchar     *hook_pre_connect;
- gchar     *hook_post_update;
+ gchar     *hook_post_upgrade;
  gchar     *hook_post_refresh;
  gchar     *hook_post_install;
  gchar     *hook_post_connect;

@@ -311,12 +311,12 @@ CfgFile *loadConfig (char *filename)
  if(!(var)) \
   (var) = (default);
 
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_update , "Hooks", "PreUpdate" , "/etc/apt-dater/pre-upd.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_upgrade, "Hooks", "PreUpgrade" , "/etc/apt-dater/pre-upd.d");
  KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_refresh, "Hooks", "PreRefresh", "/etc/apt-dater/pre-ref.d");
  KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_install, "Hooks", "PreInstall", "/etc/apt-dater/pre-ins.d");
  KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_connect, "Hooks", "PreConnect", "/etc/apt-dater/pre-con.d");
 
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_update , "Hooks", "PostUpdate" , "/etc/apt-dater/post-upd.d");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_upgrade, "Hooks", "PostUpgrade" , "/etc/apt-dater/post-upd.d");
  KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_refresh, "Hooks", "PostRefresh", "/etc/apt-dater/post-ref.d");
  KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_install, "Hooks", "PostInstall", "/etc/apt-dater/post-ins.d");
  KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_connect, "Hooks", "PostConnect", "/etc/apt-dater/post-con.d");

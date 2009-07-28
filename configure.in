@@ -241,22 +241,6 @@ if test "$enable_history" = "yes"; then
     fi
 fi
 
-# Check if `run-parts' is installed on your system (used for hooks)
-echo -n "checking for env... "
-if test -x /usr/bin/run-parts; then
-	AC_DEFINE(RUN_PARTS_BINARY,"/usr/bin/run-parts",[ Where is the command run-parts located. ])
-	echo "/usr/bin/run-parts"
-elif test -x /usr/local/bin/run-parts; then
-	AC_DEFINE(RUN_PARTS_BINARY,"/usr/local/bin/run-parts",[ Where is the command run-parts located. ])
-	echo "/usr/local/bin/run-parts"
-elif test -x /bin/run-parts; then
-	AC_DEFINE(RUN_PARTS_BINARY,"/bin/run-parts",[ Where is the command run-parts located. ])
-	echo "/bin/run-parts"
-else
-	echo "not found at configure time."
-	echo "Hooks are disabled."
-fi
-
 # Check if `xsltproc' is installed on your system
 echo -n "checking for xsltproc... "
 if test -x /usr/bin/xsltproc ; then

@@ -36,4 +36,6 @@ apt_dater_SOURCES =			\
 apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS)
 
 AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"'
+AM_LDFLAGS = -Wl,--as-needed
+
 INCLUDES = $(GLIB_CFLAGS) $(TCL_CFLAGS) $(LIBXML2_CFLAGS)

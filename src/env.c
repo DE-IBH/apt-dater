@@ -57,11 +57,11 @@ env_init(gchar **envp) {
 #else
     ADD_GENV("HIST_RECORD"      , "false");
 #endif
-    ADD_GENV("HOOK_PRE_UPDATE"  , cfg->hook_pre_update);
+    ADD_GENV("HOOK_PRE_UPGRADE"  , cfg->hook_pre_upgrade);
     ADD_GENV("HOOK_PRE_REFRESH" , cfg->hook_pre_refresh);
     ADD_GENV("HOOK_PRE_INSTALL" , cfg->hook_pre_install);
     ADD_GENV("HOOK_PRE_CONNECT" , cfg->hook_pre_connect);
-    ADD_GENV("HOOK_POST_UPDATE" , cfg->hook_post_update);
+    ADD_GENV("HOOK_POST_UPGRADE" , cfg->hook_post_upgrade);
     ADD_GENV("HOOK_POST_REFRESH", cfg->hook_post_refresh);
     ADD_GENV("HOOK_POST_INSTALL", cfg->hook_post_install);
     ADD_GENV("HOOK_POST_CONNECT", cfg->hook_post_connect);
