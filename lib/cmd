@@ -55,38 +55,54 @@ run_hook () {
     fi
 }
 
-if [ "$AD_HIST_RECORD" = "true" ]; then
-    WRAP="run_hist_cmd"
-else
-    WRAP="run_cmd"
-fi
+handle_generic_ssh () {
+    if [ "$AD_HIST_RECORD" = "true" ]; then
+	WRAP="run_hist_cmd"
+    else
+	WRAP="run_cmd"
+    fi
 
-case "$AD_ACTION" in
-    connect)
-	run_hook "$AD_HOOK_PRE_CONNECT"
-	$WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME"
-	run_hook "$AD_HOOK_POST_CONNECT"
+    case "$AD_ACTION" in
+	connect)
+	    run_hook "$AD_HOOK_PRE_CONNECT"
+	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME"
+	    run_hook "$AD_HOOK_POST_CONNECT"
+	    ;;
+	install)
+	    run_hook "$AD_HOOK_PRE_INSTALL"
+	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME" `printf "$AD_CMD_INSTALL" "$AD_PARAM"`
+	    run_hook "$AD_HOOK_POST_INSTALL"
+	    ;;
+	upgrade)
+	    run_hook "$AD_HOOK_PRE_UPGRADE"
+	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME" $AD_CMD_UPGRADE
+	    run_hook "$AD_HOOK_POST_UPGRADE"
+	    ;;
+	refresh)
+	    run_hook "$AD_HOOK_PRE_REFRESH"
+	    $AD_SSH_CMD $AD_SSH_ID -n -o BatchMode=yes -o ConnectTimeout=5 -q -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME" $AD_CMD_REFRESH
+	    run_hook "$AD_HOOK_POST_REFRESH"
+	    ;;
+	*)
+	    echo "Unhandled action '$AD_ACTION'!" 1>&2
+	    echo 1>&2
+	    set | grep ^AD_ 1>&2
+	    echo 1>&2
+	    exit 1;
 	;;
-    install)
-	run_hook "$AD_HOOK_PRE_INSTALL"
-	$WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME" `printf "$AD_CMD_INSTALL" "$AD_PARAM"`
-	run_hook "$AD_HOOK_POST_INSTALL"
-	;;
-    upgrade)
-	run_hook "$AD_HOOK_PRE_UPGRADE"
-	$WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME" $AD_CMD_UPGRADE
-	run_hook "$AD_HOOK_POST_UPGRADE"
-	;;
-    refresh)
-	run_hook "$AD_HOOK_PRE_REFRESH"
-	$AD_SSH_CMD $AD_SSH_ID -n -o BatchMode=yes -o ConnectTimeout=5 -q -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME" $AD_CMD_REFRESH
-	run_hook "$AD_HOOK_POST_REFRESH"
-	;;
-    *)
-	echo "Unhandled action '$AD_ACTION'!" 1>&2
+    esac
+}
+
+if [ -z "$AD_TYPE" -o "$AD_TYPE" = 'generic-ssh' ]; then
+    handle_generic_ssh
+else
+    if [ -x "$AD_PLUGINDIR/$AD_TYPE" ]; then
+	exec "$AD_PLUGINDIR/$AD_TYPE"
+    else
+	echo "No plugin to handle type '$AD_TYPE'!" 1>&2
 	echo 1>&2
 	set | grep ^AD_ 1>&2
 	echo 1>&2
-	exit 1;
-	;;
-esac
+	exit 2;
+    fi
+fi

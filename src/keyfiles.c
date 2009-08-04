@@ -321,6 +321,8 @@ CfgFile *loadConfig (char *filename)
  KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_install, "Hooks", "PostInstall", "/etc/apt-dater/post-ins.d");
  KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_connect, "Hooks", "PostConnect", "/etc/apt-dater/post-con.d");
 
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_connect, "Hooks", "PluginDir", "/etc/apt-dater/plugins");
+
  g_clear_error(&error);
  g_key_file_free(keyfile);
 
@@ -351,7 +353,7 @@ GList *loadHosts (char *filename)
   g_key_file_free(keyfile);
   return (FALSE);
  }
- 
+
  groups = g_key_file_get_groups (keyfile, &lengrp);
  qsort(groups, lengrp, sizeof(gchar *), cmpStringP);
 
@@ -364,6 +366,10 @@ GList *loadHosts (char *filename)
   }
 
   qsort(khosts, lenkey, sizeof(gchar *), cmpStringP);
+
+  gchar *host_type = g_key_file_get_string(keyfile, groups[i], "Type", NULL);
+  if(!host_type)
+   host_type = "generic-ssh";
 
   for(j = 0; j < lenkey; j++) {
    hostnode = g_new0(HostNode, 1);
@@ -391,12 +397,13 @@ GList *loadHosts (char *filename)
    hostnode->statsfile = g_strdup_printf("%s/%s:%d.stat", cfg->statsdir, hostnode->hostname, hostnode->ssh_port);
 
    hostnode->fdlock = -1;
-   hostnode->identity_file = g_key_file_get_string(keyfile, groups[i], 
+   hostnode->identity_file = g_key_file_get_string(keyfile, groups[i],
 						  "IdentityFile", &error);
    hostnode->tagged = FALSE;
    g_clear_error(&error);
 
-   hostnode->group = g_strdup(groups[i]);
+   hostnode->group = groups[i];
+   hostnode->type = host_type;
    getUpdatesFromStat(hostnode);
 
    hosts = g_list_append(hosts, hostnode);
@@ -405,7 +412,6 @@ GList *loadHosts (char *filename)
   }
 
   g_free(khosts);
-  g_free(groups[i]);
  }
 
  g_free(groups);

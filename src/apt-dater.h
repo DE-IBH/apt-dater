@@ -95,6 +95,7 @@ typedef struct _cfgfile {
  gchar *screenrcfile;
  gchar *screentitle;
  gchar *statsdir;
+ gchar *plugindir;
  gchar *ssh_cmd;
  gchar *sftp_cmd;
  gchar *ssh_optflags;
@@ -187,6 +188,7 @@ typedef struct _hostnode {
 #endif
  gchar     *hostname;
  gchar     *group;
+ gchar     *type;
  gchar     *ssh_user;
  gint      ssh_port;
 #ifdef FEAT_AUTOREF
