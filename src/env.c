@@ -64,6 +64,8 @@ env_init(gchar **envp) {
     ADD_GENV("HOOK_POST_REFRESH", cfg->hook_post_refresh);
     ADD_GENV("HOOK_POST_INSTALL", cfg->hook_post_install);
     ADD_GENV("HOOK_POST_CONNECT", cfg->hook_post_connect);
+
+    ADD_GENV("PLUGINDIR", cfg->plugindir);
 }
 
 gchar **

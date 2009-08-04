@@ -162,6 +162,7 @@ gboolean getUpdatesFromStat(HostNode *n)
  PkgNode *pkgnode = NULL;
  gint status=0, i;
  gchar **argv = NULL;
+ gboolean adproto = FALSE;
 
  if(!n) return (FALSE);
 
@@ -236,6 +237,11 @@ gboolean getUpdatesFromStat(HostNode *n)
    }
    linesok++;
    continue;
+  }
+
+  if(!strncmp("ADPROTO: ", line, 9)) {
+    adproto = TRUE;
+    continue;
   }
 
   if(!strncmp("STATUS: ", line, 8)) {
@@ -353,7 +359,7 @@ gboolean getUpdatesFromStat(HostNode *n)
    continue;
  }
 
- if(linesok>5) {
+ if(linesok>5 || adproto) {
    if (n->status & HOST_STATUS_PKGBROKEN)
     n->category = C_BROKEN_PKGS;
    else if(n->status & HOST_STATUS_PKGUPDATE)

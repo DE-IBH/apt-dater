@@ -55,13 +55,13 @@ run_hook () {
     fi
 }
 
-handle_generic_ssh () {
-    if [ "$AD_HIST_RECORD" = "true" ]; then
-	WRAP="run_hist_cmd"
-    else
-	WRAP="run_cmd"
-    fi
+if [ "$AD_HIST_RECORD" = "true" -a "$AD_ACTION" != 'refresh' ]; then
+    WRAP="run_hist_cmd"
+else
+    WRAP="run_cmd"
+fi
 
+handle_generic_ssh () {
     case "$AD_ACTION" in
 	connect)
 	    run_hook "$AD_HOOK_PRE_CONNECT"
@@ -96,8 +96,8 @@ handle_generic_ssh () {
 if [ -z "$AD_TYPE" -o "$AD_TYPE" = 'generic-ssh' ]; then
     handle_generic_ssh
 else
-    if [ -x "$AD_PLUGINDIR/$AD_TYPE" ]; then
-	exec "$AD_PLUGINDIR/$AD_TYPE"
+    if [ -x "$AD_PLUGINDIR/$AD_TYPE/cmd" ]; then
+	$WRAP "$AD_PLUGINDIR/$AD_TYPE/cmd"
     else
 	echo "No plugin to handle type '$AD_TYPE'!" 1>&2
 	echo 1>&2

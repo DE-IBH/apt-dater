@@ -321,7 +321,7 @@ CfgFile *loadConfig (char *filename)
  KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_install, "Hooks", "PostInstall", "/etc/apt-dater/post-ins.d");
  KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_connect, "Hooks", "PostConnect", "/etc/apt-dater/post-con.d");
 
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_connect, "Hooks", "PluginDir", "/etc/apt-dater/plugins");
+ KEY_FILE_GET_STRING_DEFAULT(lcfg->plugindir, "Hooks", "PluginDir", "/etc/apt-dater/plugins");
 
  g_clear_error(&error);
  g_key_file_free(keyfile);
