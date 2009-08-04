@@ -68,7 +68,7 @@ env_init(gchar **envp) {
 
 gchar **
 env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEntry *he) {
-    gchar **new_env = (gchar **) g_new0(gchar**, g_slist_length(base_env) + 9);
+    gchar **new_env = (gchar **) g_new0(gchar**, g_slist_length(base_env) + 20);
     gint i = 0;
 
     GSList *p;

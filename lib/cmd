@@ -77,6 +77,11 @@ case "$AD_ACTION" in
 	$WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME" $AD_CMD_UPGRADE
 	run_hook "$AD_HOOK_POST_UPGRADE"
 	;;
+    refresh)
+	run_hook "$AD_HOOK_PRE_REFRESH"
+	$AD_SSH_CMD $AD_SSH_ID -n -o BatchMode=yes -o ConnectTimeout=5 -q -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME" $AD_CMD_REFRESH
+	run_hook "$AD_HOOK_POST_REFRESH"
+	;;
     *)
 	echo "Unhandled action '$AD_ACTION'!" 1>&2
 	echo 1>&2
