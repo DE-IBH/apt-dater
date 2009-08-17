@@ -97,6 +97,7 @@ env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEnt
     ADD_HENV("UNAME_MACHINE"    , n->uname_machine);
     ADD_HENV("VIRT"             , n->virt);
     ADD_HENV("TYPE"             , n->type);
+    ADD_HENV("UUID"             , n->uuid);
 
 #ifdef FEAT_HISTORY
     if(cfg->record_history && he) {

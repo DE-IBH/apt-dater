@@ -39,6 +39,7 @@ host data:
  AD_LSB_CODENAME
  AD_UNAME_KERNEL
  AD_UNAME_MACHINE
+ AD_UUID
  AD_VIRT
 
 apt-dater configuration:

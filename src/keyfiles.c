@@ -406,6 +406,8 @@ GList *loadHosts (char *filename)
    hostnode->type = host_type;
    getUpdatesFromStat(hostnode);
 
+   hostnode->uuid[0] = 0;
+
    hosts = g_list_append(hosts, hostnode);
 
    g_free(khosts[j]);

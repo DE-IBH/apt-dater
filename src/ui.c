@@ -3259,20 +3259,24 @@ gboolean ctrlUI (GList *hosts)
     keypad(wp, TRUE);
 
     wattron(wp, A_BOLD);
-    mvwaddnstr(wp, l++,  1, _("HOST DETAILS")  , COLS - 1);
+    mvwaddnstr(wp, l++,  1, _("HOST DETAILS"), COLS - 1);
     wattroff(wp, A_BOLD);
 
-    mvwaddnstr(wp, l  ,  2, _("Group:")               , COLS -  2);
-    mvwaddnstr(wp, l++, 20, inhost->group          , COLS - 20);
-    mvwaddnstr(wp, l  ,  2, _("Hostname:")            , COLS -  2);
-    mvwaddnstr(wp, l++, 20, inhost->hostname       , COLS - 20);
+    mvwaddnstr(wp, l  ,  2, _("Group:"), COLS -  2);
+    mvwaddnstr(wp, l++, 20, inhost->group, COLS - 20);
+    mvwaddnstr(wp, l  ,  2, _("Hostname:"), COLS -  2);
+    mvwaddnstr(wp, l++, 20, inhost->hostname, COLS - 20);
     if (inhost->virt) {
-	mvwaddnstr(wp, l  ,  2, _("Machine Type:")        , COLS -  2);
-	mvwaddnstr(wp, l++, 20, inhost->virt           , COLS - 20);
+	mvwaddnstr(wp, l  ,  2, _("Machine Type:"), COLS -  2);
+	mvwaddnstr(wp, l++, 20, inhost->virt, COLS - 20);
     }
     if (inhost->uname_machine && inhost->uname_machine[0]) {
-	mvwaddnstr(wp, l  ,  2, _("Architecture:")        , COLS -  2);
-	mvwaddnstr(wp, l++, 20, inhost->uname_machine  , COLS - 20);
+	mvwaddnstr(wp, l  ,  2, _("Architecture:"), COLS -  2);
+	mvwaddnstr(wp, l++, 20, inhost->uname_machine, COLS - 20);
+    }
+    if (inhost->uuid[0]) {
+	mvwaddnstr(wp, l  ,  2, _("UUID:"), COLS -  2);
+	mvwaddnstr(wp, l++, 20, inhost->uuid, COLS - 20);
     }
     if (inhost->forbid & HOST_FORBID_MASK) {
 	mvwaddnstr(wp, l  , 2, _("Forbidden:"), COLS - 2);
@@ -3301,22 +3305,22 @@ gboolean ctrlUI (GList *hosts)
     l++;
 
     if (inhost->lsb_distributor) {
-	mvwaddnstr(wp, l  ,  2, _("Distri:")              , COLS -  2);
+	mvwaddnstr(wp, l  ,  2, _("Distri:"), COLS -  2);
         mvwaddnstr(wp, l++, 20, inhost->lsb_distributor, COLS - 20);
         if (inhost->lsb_codename)
 	    snprintf(buf, sizeof(buf), "%s (%s)", inhost->lsb_release, inhost->lsb_codename);
 	else
 	    snprintf(buf, sizeof(buf), "%s", inhost->lsb_release);
-	mvwaddnstr(wp, l  ,  2, _("Release:")             , COLS -  2);
-        mvwaddnstr(wp, l++, 20, buf                    , COLS - 20);
+	mvwaddnstr(wp, l  ,  2, _("Release:"), COLS -  2);
+        mvwaddnstr(wp, l++, 20, buf, COLS - 20);
     }
     if (inhost->uname_kernel && inhost->uname_kernel[0]) {
-	mvwaddnstr(wp, l  ,  2, _("Kernel name:")         , COLS -  2);
-	mvwaddnstr(wp, l++, 20, inhost->uname_kernel   , COLS - 20);
+	mvwaddnstr(wp, l  ,  2, _("Kernel name:"), COLS -  2);
+	mvwaddnstr(wp, l++, 20, inhost->uname_kernel, COLS - 20);
     }
     if (inhost->kernelrel) {
-	mvwaddnstr(wp, l  ,  2, _("Kernel version:")      , COLS -  2);
-	mvwaddnstr(wp, l++, 20, inhost->kernelrel      , COLS - 20);
+	mvwaddnstr(wp, l  ,  2, _("Kernel version:"), COLS -  2);
+	mvwaddnstr(wp, l++, 20, inhost->kernelrel, COLS - 20);
 	
 	switch(inhost->status & (HOST_STATUS_KERNELNOTMATCH | HOST_STATUS_KERNELSELFBUILD)) {
 	    case HOST_STATUS_KERNELNOTMATCH:
@@ -3341,14 +3345,14 @@ gboolean ctrlUI (GList *hosts)
 	snprintf(buf, sizeof(buf), "%d installed (%d update%s, %d hold back, %d broken, %d extra)",
 		 g_list_length(inhost->packages), inhost->nupdates, inhost->nupdates == 1 ? "" : "s",
 		 inhost->nholds, inhost->nbrokens, inhost->nextras);
-	mvwaddnstr(wp, l++, 20, buf        , COLS - 20);
+	mvwaddnstr(wp, l++, 20, buf, COLS - 20);
     }
 
     if (inhost->nbrokens) {
 	l++;
 
 	wattron(wp, A_BOLD);
-	mvwaddnstr(wp, l++,  1, _("BROKEN PACKAGES")  , COLS - 1);
+	mvwaddnstr(wp, l++,  1, _("BROKEN PACKAGES"), COLS - 1);
 	wattroff(wp, A_BOLD);
 
 	GList *p = g_list_first(inhost->packages);

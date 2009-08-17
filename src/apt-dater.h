@@ -182,6 +182,10 @@ typedef enum {
 
 #define HOST_FORBID_MASK     (HOST_FORBID_REFRESH | HOST_FORBID_UPGRADE | HOST_FORBID_INSTALL)
 
+#define _QUOTE(x)                    #x
+#define QUOTE(x)              _QUOTE(x)
+#define UUID_STRLEN                  36
+
 typedef struct _hostnode {
 #ifndef NDEBUG
  etype _type;
@@ -223,6 +227,7 @@ typedef struct _hostnode {
  gchar     *identity_file;
  gint      forbid;
  gboolean  tagged;
+ gchar     uuid[UUID_STRLEN+1];
 } HostNode;
 
 struct mapping_t {

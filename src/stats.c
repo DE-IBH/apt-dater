@@ -188,6 +188,7 @@ gboolean getUpdatesFromStat(HostNode *n)
  n->nholds = 0;
  n->nbrokens = 0;
  n->forbid = 0;
+ n->uuid[0] = 0;
 
  freePackages(n);
 
@@ -357,6 +358,13 @@ gboolean getUpdatesFromStat(HostNode *n)
 
   if (sscanf((gchar *) line, "FORBID: %d", &n->forbid))
    continue;
+
+  if (sscanf((gchar *) line, "UUID: %" QUOTE(UUID_STRLEN) "s", n->uuid)) {
+   n->uuid[UUID_STRLEN] = 0;
+
+   linesok++;
+   continue;
+  }
  }
 
  if(linesok>5 || adproto) {
