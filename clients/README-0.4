@@ -1,0 +1,193 @@
+apt-dater-host
+==============
+
+This directory contains the client perl scripts providing a generic
+package management interface for several GNU/Linux distributions.
+
+Hosts managed by apt-dater musst have the apt-dater-host command in
+the search path.
+
+User interactive commands (see below) will be shown to the user
+unfiltered. Non-user interactive commands are parse by apt-dater.
+
+Non-user interactive sessions should start with the protocol version:
+
+    ADPROTO: ${ProtoVersion}
+
+The current protocol version is 0.4. Example:
+
+    ADPROTO: 0.4
+
+
+Calling syntax
+==============
+
+An apt-dater-host script must accept the following command parameters:
+
+
+refresh
+-------
+
+Updates the package list (i.e. apt-get update) and retrieve status
+informations (see next command). This command is called none user
+interactive.
+
+
+status
+------
+
+Prints status informations about installed distribution and packages.
+This command is non user interactive.
+
+There should be an LSB release line of the format:
+
+    LSBREL: ${Distri}|{Version}|${Codename}
+
+Example for Debian Etch:
+
+    LSBREL: Debian|4.0|etch
+
+
+There sould be an VIRTualization line of the format:
+
+    VIRT: ${Name}
+
+This will only work if the remote host has the imvirt script
+installed. Detected virtualizations:
+
+  Microsoft Corporation / Virtual Machine:
+    VIRT: Virtual Machine
+
+  VMware, Inc. / VMware Virtual Platform:
+    VIRT: VMware Virtual Platform
+
+  QEMU or KVM:
+    VIRT: QEMU
+
+  Xen:
+    VIRT: Xen
+
+  non detected:
+    VIRT: Physical
+
+  imvirt not installed:
+    VIRT: Unknown
+
+
+There sould be an UNAME line of the format:
+
+    UNAME: ${KERNEL-NAME}|${MACHINE}
+
+The values are taken from the uname command:
+
+    KERNEL-NAME: uname -s
+    MACHINE    : uname -m
+
+
+There might be a FORBID line of the format:
+
+    FORBID: ${Operations}
+
+This is a mask of forbidded apt-dater-host operations.
+An single operation is represented by the following values:
+
+    1:	refresh
+    2:	upgrade
+    4:	install
+
+These values are binary ORed. Default value is 0 if no
+there is no FORBID line (allows all operations).
+
+The apt-dater-host executable on the client will refused
+operations marked as forbidden.
+
+
+There should be an UUID line:
+
+UUID: {$UUID}
+
+This is the DCE 1.1, ISO/IEC 11578:1996 and RFC 4122
+compliant Universally Unique Identifier (UUID) of the host.
+It should be a DCE version 1 (time and node based) UUID,
+generated at the installation time of the apt-dater-host
+client.
+
+
+For each installed package there must be a status line:
+
+    STATUS: ${Package}|${InstVersion}|${Status}...
+
+    Supported status values:
+	i		: installed
+	h		: hold back
+	u=${NewVersion}	: update available
+	x		: extra (no version found in any repository, this
+			  might be an obsoleted package)
+	b=${AddInfo}	: package is installed but broken
+			  (i.e. not configured)
+
+Example for an installed package:
+
+    STATUS: g++-4.1|4.1.1-21|i
+
+Example for an installed package with an update available:
+
+    STATUS: dnsutils|1:9.3.4-2etch1|u=1:9.3.4-2etch3
+
+There should be a kernel info line (see also 'kernel' command).
+
+
+upgrade
+-------
+
+Install all available upgrades, this is user interactive.
+
+
+install
+-------
+
+Install package(s) given as parameters to this command. This command
+is user interactive.
+
+
+kernel
+------
+
+Retrieves informations about the running kernel. This command is non user
+interactive.
+
+The result line has the following format:
+
+    KERNELINFO: ${Code} ${Release}
+
+The following codes are supported:
+    0 - The running kernel is the latest distri kernel. No reboot required.
+    1 - The running kernel is an distri kernel but it's older then the latest
+        installed. A reboot is recommended.
+    2 - No distri kernel is running.
+    9 - Unknown.
+
+The release field should be the output of `uname -r`.
+
+
+Example
+=======
+
+The following lines show an example output of the 'status' command for a
+Debian Etch installation (the 'STATUS:' lines are truncated):
+
+ADPROTO: 0.3
+LSBREL: Debian|4.0|etch
+VIRT: Physical
+UNAME: Linux|i686
+STATUS: groff-base|1.18.1.1-12|i
+STATUS: libgnome2-0|2.16.0-2|i
+STATUS: m4|1.4.8-2|i
+STATUS: liblwres9|1:9.3.4-2etch1|u=1:9.3.4-2etch3
+STATUS: linux-image-2.6-686|2.6.24+13|h
+STATUS: apache2-mpm-prefork|2.2.3-4+etch4|i
+STATUS: iceweasel-l10n-de|2.0.0.3+debian-1etch1|i
+STATUS: mutt|1.5.17+20080114-1~bpo40+1|u=1.5.18-2~bpo40+1
+STATUS: libperl5.8|5.8.8-7etch3|i
+STATUS: autoconf|2.61-4|i
+KERNELINFO: 2 2.6.18-028stab053.5-openvz

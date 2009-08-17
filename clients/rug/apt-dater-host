@@ -33,11 +33,12 @@ my $CFGFILE = '/etc/apt-dater-host.conf';
 my $GETROOT = 'sudo';
 my $FORBID_UPGRADE = 0;
 my $FORBID_INSTALL = 0;
+my $UUIDFILE = '/etc/apt-dater-host.uuid';
 
 eval `cat "$CFGFILE"` if (-r $CFGFILE);
 
 my $CMD = shift;
-my $ADPROTO = '0.2';
+my $ADPROTO = '0.4';
 
 $ENV{'LC_ALL'} = 'C';
 
@@ -120,6 +121,12 @@ sub do_status() {
     $mask |= 2 if ($FORBID_UPGRADE);
     $mask |= 4 if ($FORBID_INSTALL);
     print "FORBID: $mask\n";
+
+    # add installation UUID if available
+    if(-r $UUIDFILE && -s $UUIDFILE) {
+	print "UUID: ", `head -n 1 "$UUIDFILE"`;
+    }
+
 
     # get packages which might be upgraded
     my %updates;

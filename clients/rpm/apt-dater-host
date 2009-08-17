@@ -30,7 +30,8 @@
 use strict;
 
 my $CMD = shift;
-my $ADPROTO = '0.2';
+my $ADPROTO = '0.4';
+my $UUIDFILE = '/etc/apt-dater-host.uuid';
 
 $ENV{'LC_ALL'} = 'C';
 
@@ -99,6 +100,11 @@ sub do_status() {
 
     # rpm is readonly, so forbid anything!
     print "FORBID: 255\n";
+
+    # add installation UUID if available
+    if(-r $UUIDFILE && -s $UUIDFILE) {
+	print "UUID: ", `head -n 1 "$UUIDFILE"`;
+    }
 
     # get version of installed packages
     my %installed;
