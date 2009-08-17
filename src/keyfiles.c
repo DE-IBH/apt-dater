@@ -404,9 +404,10 @@ GList *loadHosts (char *filename)
 
    hostnode->group = groups[i];
    hostnode->type = host_type;
-   getUpdatesFromStat(hostnode);
 
    hostnode->uuid[0] = 0;
+
+   getUpdatesFromStat(hostnode);
 
    hosts = g_list_append(hosts, hostnode);
 
