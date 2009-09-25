@@ -1126,6 +1126,7 @@ void drawSessionEntry (DrawNode *n)
 {
  char h[BUF_MAX_LEN];
  struct tm *tm_mtime;
+ char statusln[BUF_MAX_LEN];
 
  snprintf(h, sizeof(h), "%5d: ", ((SessNode *) n->p)->pid);
 
@@ -1146,6 +1147,10 @@ void drawSessionEntry (DrawNode *n)
   if (dump_screen) {
    if(refreshDumpWindow (n) == FALSE)
     drawQuery(_("Could not read session dump."), G_USEC_PER_SEC);
+  } else {
+   snprintf(statusln, sizeof(statusln), "Session is %s",
+	    (screen_is_attached((SessNode *) n->p) ? _("attached") : _("detached")));
+   drawStatus(statusln, TRUE);
   }
  }
 }
