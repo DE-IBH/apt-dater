@@ -2612,6 +2612,7 @@ gboolean ctrlUI (GList *hosts)
   refscr = TRUE;
   dump_screen = FALSE;
   bottomDrawLine = LINES-2;
+  clear();
  }
 #endif
 
