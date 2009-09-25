@@ -1246,7 +1246,8 @@ void drawEntry (DrawNode *n)
 
 void refreshDraw()
 {
- clear();
+ /* clear(); Don't clear stupid the hole screen. */
+ cleanBetween();
  detectPos();
 
  if(dump_screen) {

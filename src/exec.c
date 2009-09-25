@@ -50,7 +50,7 @@ ssh_cmd_refresh(HostNode *n)
  gchar *cmd = NULL;
  gchar *argv[2] = {PKGLIBDIR"/cmd", NULL};
  gchar *output = NULL;
- gchar *identity_file = NULL;
+ /* gchar *identity_file = NULL; */
  GPid  child_pid;
  gint  standard_output;
  GIOChannel *iocstdout;
