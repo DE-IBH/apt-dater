@@ -8,6 +8,8 @@ apt-dater (0.8.1) unstable; urgency=low
   * Fixes:
     - upgrade & install on filtered categories
     - pass --as-needed to ld
+  * Add Italian translation - contributed by
+    Milo Casagrande <milo@ubuntu.com>.
 
  -- Thomas Liske <liske@ibh.de>  
 
