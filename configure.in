@@ -74,11 +74,47 @@ AC_DEFINE(HAVE_FLOCK,1,[ Define if funtion flock avaible. ])
 AC_PROG_CC
 
 # Checks for libraries.
-AC_CHECK_LIB([curses], [initscr])
+if eval "test x$CURSES_LIB_NAME = x"; then
+    AC_CHECK_HEADERS(ncurses.h)
+
+    if test x$enable_utf8 != xno; then
+	AC_CHECK_LIB(ncursesw, get_wch, [CURSES_LIB="-lncursesw" CURSES_LIB_NAME=ncursesw CURSES_LIB_WIDE=yes])
+    fi
+
+    if eval "test x$CURSES_LIB_NAME = x"; then
+	AC_CHECK_LIB(ncurses, initscr, [CURSES_LIB="-lncurses" CURSES_LIB_NAME=ncurses])
+    fi
+fi
+
+if eval "test x$CURSES_LIB_NAME = x"; then
+    AC_CHECK_HEADERS(curses.h)
+
+    if test x$enable_utf8 != xno; then
+	AC_CHECK_LIB(curses, get_wch, [CURSES_LIB="-lcurses" CURSES_LIB_NAME=curses CURSES_LIB_WIDE=yes])
+    fi
+
+    if eval "test x$CURSES_LIB_NAME = x"; then
+	 AC_CHECK_LIB(curses, initscr, [CURSES_LIB="-lcurses" CURSES_LIB_NAME=curses])
+    fi
+fi
+
+if eval "test x$CURSES_LIB_NAME = x"; then
+    AC_MSG_WARN([
+*** No curses lib available.  Consider getting the official ncurses
+*** distribution from ftp://ftp.gnu.org/pub/gnu/ncurses if you get
+*** errors compiling nano.])
+else
+    AC_MSG_RESULT([Using $CURSES_LIB_NAME as the curses library])
+fi
+
+LIBS="$LIBS $CURSES_LIB"
+
+AC_SUBST(CURSES_LIB)
+
 AC_CHECK_LIB([popt], [poptParseArgvString])
 AC_CHECK_LIB([glib-2.0], [g_main_loop_run])
 AC_CHECK_LIB([glib-2.0], [g_timeout_add_seconds],
-             AC_DEFINE(HAVE_GLIB_TIMEOUT_ADD_SECONDS, 1, [ Define if your GLIB supports the g_timeout_add_seconds call. ]))
+AC_DEFINE(HAVE_GLIB_TIMEOUT_ADD_SECONDS, 1, [ Define if your GLIB supports the g_timeout_add_seconds call. ]))
 
 # Checks for header files.
 AC_HEADER_STDC

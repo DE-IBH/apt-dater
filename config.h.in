@@ -30,6 +30,9 @@
 /* Define if your curses library supports color. */
 #undef HAVE_COLOR
 
+/* Define to 1 if you have the <curses.h> header file. */
+#undef HAVE_CURSES_H
+
 /* Define if the GNU dcgettext() function is already present or preinstalled.
    */
 #undef HAVE_DCGETTEXT
@@ -52,9 +55,6 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if you have the `curses' library (-lcurses). */
-#undef HAVE_LIBCURSES
-
 /* Define to 1 if you have the `glib-2.0' library (-lglib-2.0). */
 #undef HAVE_LIBGLIB_2_0
 
@@ -66,6 +66,9 @@
 
 /* Define to 1 if you have the `memset' function. */
 #undef HAVE_MEMSET
+
+/* Define to 1 if you have the <ncurses.h> header file. */
+#undef HAVE_NCURSES_H
 
 /* Define to 1 if `stat' has the bug that it succeeds when given the
    zero-length file name argument. */
@@ -131,9 +134,6 @@
 
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
-
-/* Define to the home page for this package. */
-#undef PACKAGE_URL
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
