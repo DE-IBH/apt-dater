@@ -548,8 +548,8 @@ void drawMenu (gint mask)
    addnstr(":", MAX(0, p));
    p--;
 
-   addnstr(shortCuts[i].descr, MAX(0, p));
-   p -= strlen(shortCuts[i].descr);
+   addnstr(_(shortCuts[i].descr), MAX(0, p));
+   p -= strlen(_(shortCuts[i].descr));
 
    addnstr("  ", MAX(0, p));
    p-=2;
@@ -871,15 +871,15 @@ void drawCategoryEntry (DrawNode *n)
  else
   addch(' ');
 
- addnstr((char *) n->p, COLS);
+ addnstr(_((char *) n->p), COLS);
  attroff(n->attrs);
 
  if(n->selected == TRUE) {
   if (n->elements > 1 || n->elements == 0) {
-   snprintf(statusln, BUF_MAX_LEN, _("%d Hosts in status \"%s\""), n->elements, (char *) n->p);
+   snprintf(statusln, BUF_MAX_LEN, _("%d Hosts in status \"%s\""), n->elements, _((char *) n->p));
   }
   else {
-   snprintf(statusln, BUF_MAX_LEN, _("%d Host in status \"%s\""), n->elements, (char *) n->p);
+   snprintf(statusln, BUF_MAX_LEN, _("%d Host in status \"%s\""), n->elements, _((char *) n->p));
   }
 
   drawMenu(VK_REFRESH);
@@ -907,10 +907,10 @@ void drawGroupEntry (DrawNode *n)
 
  if(n->selected == TRUE) {
   if (n->elements > 1 || n->elements == 0) {
-   snprintf(statusln, BUF_MAX_LEN, _("%d Hosts in status \"%s\""), n->elements, incategory);
+   snprintf(statusln, BUF_MAX_LEN, _("%d Hosts in status \"%s\""), n->elements, _(incategory));
   }
   else {
-   snprintf(statusln, BUF_MAX_LEN, _("%d Host in status \"%s\""), n->elements, incategory);
+   snprintf(statusln, BUF_MAX_LEN, _("%d Host in status \"%s\""), n->elements, _(incategory));
   }
 
   drawMenu(VK_REFRESH);
@@ -3204,7 +3204,7 @@ gboolean ctrlUI (GList *hosts)
     gint i = -1;
     while(hostFlags[++i].flag) {
      mvwaddch  (wp, l,  2, hostFlags[i].code[0]);
-     mvwaddnstr(wp, l, 16, hostFlags[i].descr, COLS - 16);
+     mvwaddnstr(wp, l, 16, _(hostFlags[i].descr), COLS - 16);
      l++;
     }
     l++;
@@ -3216,8 +3216,8 @@ gboolean ctrlUI (GList *hosts)
 
     i = -1;
     while(shortCuts[++i].key) {
-     mvwaddnstr(wp, l,  2, shortCuts[i].key  , COLS - 2);
-     mvwaddnstr(wp, l, 16, shortCuts[i].descr, COLS - 16);
+     mvwaddnstr(wp, l,  2, _(shortCuts[i].key)  , COLS - 2);
+     mvwaddnstr(wp, l, 16, _(shortCuts[i].descr), COLS - 16);
        
      l++;
     }
@@ -3290,21 +3290,21 @@ gboolean ctrlUI (GList *hosts)
 
 	strcpy(buf, " ");
 	if (inhost->forbid & HOST_FORBID_REFRESH) {
-	    strcat(buf, "refresh");
+	    strcat(buf, _("refresh"));
 	}
 
 	if (inhost->forbid & HOST_FORBID_UPGRADE) {
 	    if(strlen(buf) > 1) {
 		strcat(buf, ", ");
 	    }
-	    strcat(buf, "upgrade");
+	    strcat(buf, _("upgrade"));
 	}
 
 	if (inhost->forbid & HOST_FORBID_INSTALL) {
 	    if(strlen(buf) > 1) {
 		strcat(buf, ", ");
 	    }
-	    strcat(buf, "install");
+	    strcat(buf, _("install"));
 	}
 	mvwaddnstr(wp, l++, 15, buf        , COLS - 15);
     }

@@ -70,6 +70,11 @@ int main(int argc, char **argv, char **envp)
  gboolean refresh = TRUE;
 #endif
 
+#ifdef HAVE_GETTEXT
+ setlocale(LC_ALL, "");
+ textdomain(PACKAGE);
+#endif
+
  cfgdirname = g_strdup_printf("%s/%s", g_get_user_config_dir(), PACKAGE);
  if(!cfgdirname) g_error(_("Out of memory."));
 
