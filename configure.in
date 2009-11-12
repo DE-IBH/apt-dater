@@ -99,7 +99,7 @@ if eval "test x$CURSES_LIB_NAME = x"; then
 fi
 
 if eval "test x$CURSES_LIB_NAME = x"; then
-    AC_MSG_WARN([
+    AC_MSG_ERROR([
 *** No curses lib available.  Consider getting the official ncurses
 *** distribution from ftp://ftp.gnu.org/pub/gnu/ncurses if you get
 *** errors compiling nano.])

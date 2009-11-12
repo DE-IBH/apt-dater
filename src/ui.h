@@ -29,7 +29,14 @@
 #ifndef _UI_H
 #define _UI_H
 
+#ifdef HAVE_NCURSES_H
+#include <ncurses.h>
+#else
+#ifdef HAVE_CURSES_H
 #include <curses.h>
+#endif
+#endif
+
 #include <glib-2.0/glib.h>
 
 typedef enum {

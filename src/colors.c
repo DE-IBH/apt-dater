@@ -25,9 +25,9 @@
  *   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#include <curses.h>
 #include "apt-dater.h"
 #include "colors.h"
+#include "ui.h"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
