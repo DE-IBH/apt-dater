@@ -48,6 +48,8 @@ my $ADPROTO = '0.4';
 
 $ENV{'LC_ALL'} = 'C';
 
+$GETROOT = '' if($> == 0);
+
 die "Don't call this script directly!\n" unless (defined($CMD));
 die "Invalid command '$CMD'!\n" unless ($CMD=~/^(refresh|status|upgrade|install|kernel)$/);
 
