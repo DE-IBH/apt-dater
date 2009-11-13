@@ -420,7 +420,7 @@ msgid "Internal error: unhandled TCL TCLM_INT mapping!"
 msgstr "Errore interno: mappatura TCL TCLM_INT."
 
 #: .././src/ui.c:2382
-msgid "Internal error: unkown TCL mapping type!"
+msgid "Internal error: unknown TCL mapping type!"
 msgstr "Errore interno: tipologia di mappatura TCL sconosciuta."
 
 #: .././src/ui.c:2438

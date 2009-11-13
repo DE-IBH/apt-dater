@@ -394,7 +394,7 @@ msgid "Internal error: unhandled TCL TCLM_INT maping!"
 msgstr "Interner Fehler: unbekannte TCL TCLM_INT Zuordnung!"
 
 #: src/ui.c:2089
-msgid "Internal error: unkown TCL maping type!"
+msgid "Internal error: unknown TCL maping type!"
 msgstr "Interner Fehler: unbekannter TCL Zuordnungstyp!"
 
 #: src/ui.c:2145

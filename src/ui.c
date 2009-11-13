@@ -2379,7 +2379,7 @@ void applyFilter(GList *hosts) {
 	case TCLM_IGNORE:
 	  break;
 	default:
-	  g_warning(_("Internal error: unkown TCL mapping type!"));
+	  g_warning(_("Internal error: unknown TCL mapping type!"));
       }
     }
 
