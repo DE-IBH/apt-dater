@@ -44,7 +44,7 @@ my $UUIDFILE = '/etc/apt-dater-host.uuid';
 eval `cat "$CFGFILE"` if (-r $CFGFILE);
 
 my $CMD = shift;
-my $ADPROTO = '0.4';
+my $ADPROTO = '0.5';
 
 $ENV{'LC_ALL'} = 'C';
 
@@ -97,7 +97,10 @@ else {
 
 
 sub do_refresh() {
-    system("$GETROOT $DPKGTOOL update");
+    if(system("$GETROOT $DPKGTOOL update")) {
+	print "\nADPERR: Failed to execute '$GETROOT $DPKGTOOL update' ($?).\n";
+	exit(1);
+    }
 }
 
 sub get_virt() {
@@ -131,7 +134,10 @@ sub do_status() {
     my $cache = AptPkg::Cache->new;
 
     # retrieve lsb informations
-    open(HLSB, "lsb_release -a 2> /dev/null |") or die "Can't fork: $!\n";
+    unless (open(HLSB, "lsb_release -a 2> /dev/null |")) {
+	print "\nADPERR: Failed to execute 'lsb_release -a' ($!).\n";
+	exit(1);
+    }
     my %lsb;
     while(<HLSB>) {
 	chomp;
@@ -139,6 +145,10 @@ sub do_status() {
 	$lsb{$1}=$2 if (/^(Distributor ID|Release|Codename):\s+(\S.*)$/);
     }
     close(HLSB);
+    if($?) {
+	print "\nADPERR: Error executing 'lsb_release -a' ($?).\n";
+	exit(1);
+    }
     print "LSBREL: $lsb{'Distributor ID'}|$lsb{'Release'}|$lsb{'Codename'}\n";
 
     # retrieve virtualization informations
@@ -164,7 +174,10 @@ sub do_status() {
     my %updates;
     my %holds;
     my $pos = 0;
-    open(HAPT, "$GETROOT apt-get -q -s upgrade |") or die "Can't fork: $!\n";
+    unless(open(HAPT, "$GETROOT apt-get -q -s upgrade |")) {
+	print "\nADPERR: Failed to execute '$GETROOT apt-get -q -s upgrade' ($!).\n";
+	exit(1);
+    }
     while(<HAPT>) {
 	chomp;
 	
@@ -193,11 +206,18 @@ sub do_status() {
 	$updates{$1} = $2 if (/^Inst (\S+) \[.+\] \((\S+) /);
     }
     close(HAPT);
+    if($?) {
+	print "\nADPERR: Error executing '$GETROOT apt-get -q -s upgrade' ($?).\n";
+	exit(1);
+    }
 
     # get version of installed packages
     my %installed;
     my %status;
-    open(HDPKG, "dpkg-query --show --showformat='\${Package} \${Version} \${Status}\\n' |") or die "Can't fork: $!\n";
+    unless(open(HDPKG, "dpkg-query --show --showformat='\${Package} \${Version} \${Status}\\n' |")) {
+	print "\nADPERR: Failed to execute \"dpkg-query --show --showformat='\${Package} \${Version} \${Status}\\n'\" ($!).\n";
+	exit(1);
+    }
     while(<HDPKG>) {
 	chomp;
 
@@ -234,7 +254,11 @@ sub do_status() {
 	}
     }
     close(HDPKG);
-    
+    if($?) {
+	print "\nADPERR: Error executing \"dpkg-query --show --showformat='\${Package} \${Version} \${Status}\\n'\" ($?).\n";
+	exit(1);
+    }
+
     foreach my $pkg (keys %installed) {
 	print "STATUS: $pkg|$installed{$pkg}|$status{$pkg}";
 	if (exists($updates{$pkg})) {
@@ -278,13 +302,20 @@ sub do_kernel() {
     my $vers = $1;
 
     my $reboot = 0;
-    open(HDPKG, "dpkg-query -W -f='\${Version} \${Status;20} \${Maintainer} \${Provides}\n' 'linux-image*'|grep 'install ok installed Debian Kernel Team'|grep linux-image|") or die "Could not fork: $!\n";
+    unless(open(HDPKG, "dpkg-query -W -f='\${Version} \${Status;20} \${Maintainer} \${Provides}\n' 'linux-image*'|grep 'install ok installed Debian Kernel Team'|grep linux-image|")) {
+	print "\nADPERR: Failed to execute \"dpkg-query --show --showformat='\${Package} \${Version} \${Status}\\n'\" ($!).\n";
+	exit(1);
+    }
     while(<HDPKG>) {
 	next unless (/^(\S+)\s/);
 	
 	$reboot=1 unless (system("dpkg", "--compare-versions", $vers, "lt", $1) >> 8);
     }
     close(HDPKG);
+    if($?) {
+	print "\nADPERR: Error executing \"dpkg-query --show --showformat='\${Package} \${Version} \${Status}\\n'\" ($?).\n";
+	exit(1);
+    }
 
     print "$infostr $reboot $version\n";
 }

@@ -39,7 +39,7 @@ my $UUIDFILE = '/etc/apt-dater-host.uuid';
 eval `cat "$CFGFILE"` if (-r $CFGFILE);
 
 my $CMD = shift;
-my $ADPROTO = '0.4';
+my $ADPROTO = '0.5';
 
 $ENV{'LC_ALL'} = 'C';
 
@@ -104,7 +104,10 @@ sub get_uname() {
 
 sub do_status() {
     # retrieve lsb informations
-    open(HLSB, "lsb_release -a 2> /dev/null |") or die "Can't fork: $!\n";
+    unless(open(HLSB, "lsb_release -a 2> /dev/null |")) {
+	print "\nADPERR: Failed to execute 'lsb_release -a' ($!).\n";
+	exit(1);
+    };
     my %lsb;
     while(<HLSB>) {
 	chomp;
@@ -112,6 +115,11 @@ sub do_status() {
 	$lsb{$1}=$2 if (/^(Distributor ID|Release|Codename):\s+(\S.*)$/);
     }
     close(HLSB);
+    if($?) {
+	print "\nADPERR: Error executing 'lsb_release -a' ($?).\n";
+	exit(1);
+    };
+
     print "LSBREL: $lsb{'Distributor ID'}|$lsb{'Release'}|$lsb{'Codename'}\n";
 
     # retrieve virtualization informations
@@ -135,7 +143,10 @@ sub do_status() {
 
     # get packages which might be upgraded
     my %updates;
-    open(HAPT, "$GETROOT yum list updates |") or die "Can't fork: $!\n";
+    unless(open(HAPT, "$GETROOT yum list updates |")) {
+	print "\nADPERR: Failed to execute '$GETROOT yum list updates' ($!).\n";
+	exit(1);
+    };
     while(<HAPT>) {
 	chomp;
 
@@ -145,18 +156,28 @@ sub do_status() {
 
     # get packages which are obsolete (extra - no downloadable version available)
     my %extras;
-    open(HYUM, "$GETROOT yum list extras |") or die "Can't fork: $!\n";
+    unless(open(HYUM, "$GETROOT yum list extras |")) {
+	print "\nADPERR: Failed to execute '$GETROOT yum list extras' ($!).\n";
+	exit(1);
+    }
     while(<HYUM>) {
 	chomp;
 
 	$extras{$1} = $2 if (/^(\S+)\s+(\d\S*)\s+(\S+)/);
     }
     close(HYUM);
+    if($?) {
+	print "\nADPERR: Error executing '$GETROOT yum list extras' ($?).\n";
+	exit(1);
+    }
 
     # get version of installed packages
     my %installed;
     my %status;
-    open(HDPKG, "$GETROOT yum list installed |") or die "Can't fork: $!\n";
+    unless(open(HDPKG, "$GETROOT yum list installed |")) {
+	print "\nADPERR: Failed to execute '$GETROOT yum list installed' ($!).\n";
+	exit(1);
+    }
     while(<HDPKG>) {
 	chomp;
 
@@ -174,7 +195,11 @@ sub do_status() {
 	}
     }
     close(HDPKG);
-    
+    if($?) {
+	print "\nADPERR: Error executing '$GETROOT yum list installed' ($?).\n";
+	exit(1);
+    }
+
     foreach my $pkg (keys %installed) {
 	print "STATUS: $pkg|$installed{$pkg}|$status{$pkg}";
 	if (exists($updates{$pkg})) {
@@ -205,7 +230,10 @@ sub do_kernel() {
 
     my $kinstalled;
     my %distri;
-    open(HKERNEL, "$GETROOT yum list 'kernel*' |") or die "Can't fork: $!\n";
+    unless(open(HKERNEL, "$GETROOT yum list 'kernel*' |")) {
+	print "\nADPERR: Failed to execute \"$GETROOT yum list 'kernel*'\" ($!).\n";
+	exit(1);
+    };
     while(<HKERNEL>) {
 	chomp;
 	
@@ -232,6 +260,10 @@ sub do_kernel() {
 	}
     }
     close(HKERNEL);
+    if($?) {
+	print "\nADPERR: Error executing \"$GETROOT yum list 'kernel*'\" ($?).\n";
+	exit(1);
+    };
 
     unless($distri{$version}) {
 	print "$infostr 2 $version\n";

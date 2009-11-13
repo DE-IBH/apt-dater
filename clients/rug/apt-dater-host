@@ -38,7 +38,7 @@ my $UUIDFILE = '/etc/apt-dater-host.uuid';
 eval `cat "$CFGFILE"` if (-r $CFGFILE);
 
 my $CMD = shift;
-my $ADPROTO = '0.4';
+my $ADPROTO = '0.5';
 
 $ENV{'LC_ALL'} = 'C';
 
@@ -101,7 +101,11 @@ sub get_uname() {
 
 sub do_status() {
     # retrieve lsb informations
-    open(HLSB, "lsb_release -a 2> /dev/null |") or die "Can't fork: $!\n";
+    unless(open(HLSB, "lsb_release -a 2> /dev/null |")) {
+	print "\nADPERR: Failed to execute 'lsb_release -a' ($!).\n";
+	exit(1);
+    }
+
     my %lsb;
     while(<HLSB>) {
 	chomp;
@@ -109,6 +113,11 @@ sub do_status() {
 	$lsb{$1}=$2 if (/^(Distributor ID|Release|Codename):\s+(\S.*)$/);
     }
     close(HLSB);
+    if($?) {
+	print "\nADPERR: Error executing 'lsb_release -a' ($?).\n";
+	exit(1);
+    }
+
     print "LSBREL: $lsb{'Distributor ID'}|$lsb{'Release'}|$lsb{'Codename'}\n";
 
     # retrieve virtualization informations
@@ -118,7 +127,7 @@ sub do_status() {
     print "UNAME: ".&get_uname."\n";
 
     # calculate forbid mask
-    my $mask = 0;
+    my $mask = 1;
 #    $mask |= 1 if ($FORBID_REFRESH); NOT SUPPORTED
     $mask |= 2 if ($FORBID_UPGRADE);
     $mask |= 4 if ($FORBID_INSTALL);
@@ -132,18 +141,29 @@ sub do_status() {
 
     # get packages which might be upgraded
     my %updates;
-    open(HAPT, "$GETROOT rug --terse list-updates |") or die "Can't fork: $!\n";
+    unless(open(HAPT, "$GETROOT rug --terse list-updates |")) {
+	print "\nADPERR: Failed to execute '$GETROOT rug --terse list-updates' ($!).\n";
+	exit(1);
+    };
     while(<HAPT>) {
 	chomp;
 
 	$updates{$1} = $2 if (/^.*\|.*\|.*\|([^|]+)\|([^|]+)\|/);
     }
     close(HAPT);
+    if($?) {
+	print "\nADPERR: Error executing '$GETROOT rug --terse list-updates' ($?).\n";
+	exit(1);
+    }
 
     # get version of installed packages
     my %installed;
     my %status;
-    open(HDPKG, "rpm -qa --qf '%{NAME}|%{VERSION}|\n' |") or die "Can't fork: $!\n";
+    unless(open(HDPKG, "rpm -qa --qf '%{NAME}|%{VERSION}|\n' |")) {
+	print "\nADPERR: Failed to execute \"rpm -qa --qf '%{NAME}|%{VERSION}|\\n'\" ($!).\n";
+	exit(1);
+    };
+
     while(<HDPKG>) {
 	chomp;
 
@@ -162,6 +182,11 @@ sub do_status() {
 	print "\n";
     }
     close(HDPKG);
+    if($?) {
+	print "\nADPERR: Error executing \"rpm -qa --qf '%{NAME}|%{VERSION}|\\n'\" ($?).\n";
+	exit(1);
+    };
+
 }
 
 sub do_upgrade() {
@@ -184,7 +209,10 @@ sub do_kernel() {
 
     my $kinstalled;
     my %distri;
-    open(HKERNEL, "rpm -q --whatprovides kernel --qf '%{NAME}|%{VERSION}-%{RELEASE}\n' |") or die "Can't fork: $!\n";
+    unless(open(HKERNEL, "rpm -q --whatprovides kernel --qf '%{NAME}|%{VERSION}-%{RELEASE}\n' |")) {
+	print "\nADPERR: Failed to execute \"rpm -q --whatprovides kernel --qf '%{NAME}|%{VERSION}-%{RELEASE}\\n'\" ($!).\n";
+	exit(1);
+    }
     while(<HKERNEL>) {
 	chomp;
 
@@ -201,6 +229,10 @@ sub do_kernel() {
 	}
     }
     close(HKERNEL);
+    if($?) {
+	print "\nADPERR: Failed to execute \"rpm -q --whatprovides kernel --qf '%{NAME}|%{VERSION}-%{RELEASE}\\n'\" ($?).\n";
+	exit(1);
+    }
 
     unless($distri{$version}) {
 	print "$infostr 2 $version\n";
