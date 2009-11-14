@@ -43,7 +43,7 @@
 #include <glib-2.0/glib/gstdio.h>
 
 #include "../config.h"
-
+#include "adproto.h"
 
 #ifdef HAVE_GETTEXT
 

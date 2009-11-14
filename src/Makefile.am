@@ -1,6 +1,7 @@
 bin_PROGRAMS = apt-dater
 
 apt_dater_SOURCES =			\
+	adproto.h			\
 	apt-dater.c			\
 	apt-dater.h			\
 	colors.c			\

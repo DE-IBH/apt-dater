@@ -163,6 +163,8 @@ gboolean getUpdatesFromStat(HostNode *n)
  gint status=0, i;
  gchar **argv = NULL;
  gboolean adproto = FALSE;
+ gfloat adpver = 0;
+ gboolean adperr = FALSE;
 
  if(!n) return (FALSE);
 
@@ -240,8 +242,13 @@ gboolean getUpdatesFromStat(HostNode *n)
    continue;
   }
 
-  if(!strncmp("ADPROTO: ", line, 9)) {
+  if(!sscanf(line, "ADPROTO: %f", &adpver)) {
     adproto = TRUE;
+    continue;
+  }
+
+  if(!strncmp("ADPERR: ", line, 8)) {
+    adperr = TRUE;
     continue;
   }
 
@@ -367,7 +374,9 @@ gboolean getUpdatesFromStat(HostNode *n)
   }
  }
 
- if(linesok>5 || adproto) {
+ if((!adproto && linesok > 10) ||
+    (adproto && adpver < ADP_FEATVER_ADPERR && linesok > 10) ||
+    (adproto && adpver >= ADP_FEATVER_ADPERR && !adperr)) {
    if (n->status & HOST_STATUS_PKGBROKEN)
     n->category = C_BROKEN_PKGS;
    else if(n->status & HOST_STATUS_PKGUPDATE)
