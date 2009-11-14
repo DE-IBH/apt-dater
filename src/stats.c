@@ -228,7 +228,7 @@ gboolean getUpdatesFromStat(HostNode *n)
   /* Remove any whitespace from the line. */
   g_strchomp(line);
 
-  if (sscanf((gchar *) line, "KERNELINFO: %d %255s", &status, buf) && !n->kernelrel) {
+  if (sscanf((gchar *) line, ADP_PATTERN_KERNELINFO, &status, buf) && !n->kernelrel) {
    n->kernelrel = g_strdup(buf);
    switch(status){
    case 1:
@@ -242,11 +242,12 @@ gboolean getUpdatesFromStat(HostNode *n)
    continue;
   }
 
-  if(!sscanf(line, "ADPROTO: %f", &adpver)) {
+  if(!sscanf(line, ADP_PATTERN_ADPROTO, &adpver)) {
     adproto = TRUE;
     continue;
   }
 
+// ADP_PATTERN_ADPERR
   if(!strncmp("ADPERR: ", line, 8)) {
     adperr = TRUE;
     continue;
@@ -340,7 +341,7 @@ gboolean getUpdatesFromStat(HostNode *n)
    continue;
   }
 
-  if (sscanf((gchar *) line, "VIRT: %255s", buf)) {
+  if (sscanf((gchar *) line, ADP_PATTERN_VIRT, buf)) {
    n->virt = g_strdup(buf);
 
    if (strcmp(n->virt, "Unknown") && strcmp(n->virt, "Physical"))
@@ -350,7 +351,7 @@ gboolean getUpdatesFromStat(HostNode *n)
    continue;
   }
 
-  if (sscanf((gchar *) line, "UNAME: %255s", buf)) {
+  if (sscanf((gchar *) line, ADP_PATTERN_UNAME, buf)) {
    gchar *s = strchr(buf, '|');
    if (s) {
     s[0] = 0;
@@ -363,7 +364,7 @@ gboolean getUpdatesFromStat(HostNode *n)
    continue;
   }
 
-  if (sscanf((gchar *) line, "FORBID: %d", &n->forbid))
+  if (sscanf((gchar *) line, ADP_PATTERN_FORBID, &n->forbid))
    continue;
 
   if (sscanf((gchar *) line, "UUID: %" QUOTE(UUID_STRLEN) "s", n->uuid)) {

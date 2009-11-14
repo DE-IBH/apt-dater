@@ -76,7 +76,7 @@ static void reportHistory(gpointer data, gpointer user_data) {
 
   xmlTextWriterStartElement(writer, BAD_CAST(h->action));
 
-  xmlTextWriterWriteFormatElement(writer, BAD_CAST("timestamp"), "%d", h->ts);
+  xmlTextWriterWriteFormatElement(writer, BAD_CAST("timestamp"), "%d", (int)h->ts);
   xmlTextWriterWriteFormatElement(writer, BAD_CAST("duration"), "%d", h->duration);
 
   xmlTextWriterStartElement(writer, BAD_CAST("path"));
@@ -224,7 +224,7 @@ gboolean ctrlReport(GList *hosts) {
   if(torefresh == 0) {
     /* Create root node. */
     xmlTextWriterStartElement(writer, BAD_CAST("report"));
-    xmlTextWriterWriteFormatElement(writer, BAD_CAST("timestamp"), "%d", time(NULL));
+    xmlTextWriterWriteFormatElement(writer, BAD_CAST("timestamp"), "%d", (int)time(NULL));
 
     /* Put node stats to file. */
     g_list_foreach(hosts, reportHost, &lgroup);
