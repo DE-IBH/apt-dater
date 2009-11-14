@@ -3,13 +3,12 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-dater 0.7.1\n"
+"Project-Id-Version: apt-dater 0.8.1\n"
 "Report-Msgid-Bugs-To: apt-dater@ibh.de\n"
 "POT-Creation-Date: 2009-03-05 14:19+0100\n"
-"PO-Revision-Date: 2009-03-05 13:43+0100\n"
+"PO-Revision-Date: 2009-11-14 09:26+0100\n"
 "Last-Translator: Thomas Liske <liske@ibh.de>\n"
 "Language-Team: apt-dater@ibh.de\n"
 "MIME-Version: 1.0\n"
@@ -291,8 +290,8 @@ msgid "this is a virtualized machine"
 msgstr "Host ist virtualisiert"
 
 #: src/ui.c:531
-msgid " Oldest: %D %H:%M"
-msgstr " Ältester: %D %H:%M"
+msgid " [Oldest: %D %H:%M]"
+msgstr " [Ältester: %D %H:%M]"
 
 #: src/ui.c:635 src/ui.c:660
 #, c-format
@@ -357,7 +356,6 @@ msgid "Attached"
 msgstr "verbunden"
 
 #: src/ui.c:854 src/ui.c:938
-#, fuzzy
 msgid "Detached"
 msgstr "nicht verbunden"
 
