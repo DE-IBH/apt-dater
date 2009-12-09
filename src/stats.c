@@ -242,7 +242,7 @@ gboolean getUpdatesFromStat(HostNode *n)
    continue;
   }
 
-  if(!sscanf(line, ADP_PATTERN_ADPROTO, &adpver)) {
+  if(sscanf(line, ADP_PATTERN_ADPROTO, &adpver)) {
     adproto = TRUE;
     continue;
   }
