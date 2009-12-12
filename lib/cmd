@@ -62,25 +62,37 @@ else
 fi
 
 handle_generic_ssh () {
+    if [ -n "$AD_SSH_USER" ]; then
+	my_ssh_user="-l $AD_SSH_USER";
+    else
+	my_ssh_user=""
+    fi
+
+    if [ -n "$AD_SSH_PORT" ]; then
+	my_ssh_port="-p $AD_SSH_PORT";
+    else
+	my_ssh_port=""
+    fi
+
     case "$AD_ACTION" in
 	connect)
 	    run_hook "$AD_HOOK_PRE_CONNECT"
-	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME"
+	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS $my_ssh_user $my_ssh_port "$AD_HOSTNAME"
 	    run_hook "$AD_HOOK_POST_CONNECT"
 	    ;;
 	install)
 	    run_hook "$AD_HOOK_PRE_INSTALL"
-	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME" `printf "$AD_CMD_INSTALL" "$AD_PARAM"`
+	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS $my_ssh_user $my_ssh_port "$AD_HOSTNAME" `printf "$AD_CMD_INSTALL" "$AD_PARAM"`
 	    run_hook "$AD_HOOK_POST_INSTALL"
 	    ;;
 	upgrade)
 	    run_hook "$AD_HOOK_PRE_UPGRADE"
-	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME" $AD_CMD_UPGRADE
+	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS $my_ssh_user $my_ssh_port "$AD_HOSTNAME" $AD_CMD_UPGRADE
 	    run_hook "$AD_HOOK_POST_UPGRADE"
 	    ;;
 	refresh)
 	    run_hook "$AD_HOOK_PRE_REFRESH"
-	    $AD_SSH_CMD $AD_SSH_ID -n -o BatchMode=yes -o ConnectTimeout=5 -q -l $AD_SSH_USER -p $AD_SSH_PORT "$AD_HOSTNAME" $AD_CMD_REFRESH
+	    $AD_SSH_CMD $AD_SSH_ID -n -o BatchMode=yes -o ConnectTimeout=5 -q $my_ssh_user $my_ssh_port "$AD_HOSTNAME" $AD_CMD_REFRESH
 	    run_hook "$AD_HOOK_POST_REFRESH"
 	    ;;
 	*)

@@ -99,8 +99,6 @@ typedef struct _cfgfile {
  gchar *ssh_cmd;
  gchar *sftp_cmd;
  gchar *ssh_optflags;
- gchar *ssh_defuser;
- gint  ssh_defport;
  gboolean ssh_agent;
  gchar **ssh_add;
  gsize ssh_numadd;

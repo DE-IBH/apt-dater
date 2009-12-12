@@ -985,7 +985,7 @@ void drawHostEntry (DrawNode *n)
   addnstr((char *) hostentry, COLS - 11);
   g_free(hostentry);
  } else {
-  if(((HostNode *) n->p)->ssh_port == cfg->ssh_defport)
+  if(!((HostNode *) n->p)->ssh_port)
    addnstr((char *) ((HostNode *) n->p)->hostname, COLS - 11);
   else {
    hostentry = g_strdup_printf("%s:%d",

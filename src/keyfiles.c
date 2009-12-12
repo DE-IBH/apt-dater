@@ -40,10 +40,10 @@ static char apt_dater_conf[] = "# Config file of apt-dater in the form of the"
  " glib GKeyFile required\n\n[Paths]\n# Default: $XDG_CONFIG_HOME/apt-dater/h"
  "osts.conf\n#HostsFile=path-to/hosts.conf\n\n# Default: $XDG_DATA_HOME/apt-d"
  "ater\n#StatsDir=path-to/stats\n\n[SSH]\n# SSH binary\nCmd=/usr/bin/ssh\nOpt"
- "ionalCmdFlags=-t\n\n# SFTP binary\nSFTPCmd=/usr/bin/mc /#sh:%u@%h:C/\n\nDefau"
- "ltUser=apt-dater\nDefaultPort=22\n\n#[Screen]\n## Default: $XDG_CONFIG_HOME"
+ "ionalCmdFlags=-t\n\n# SFTP binary\nSFTPCmd=/usr/bin/mc /#sh:%U%h:C/\n\n"
+ "#[Screen]\n## Default: $XDG_CONFIG_HOME"
  "/apt-dater/screenrc\n#RCFile=path-to/screenrc\n#\n## Default: %m # %u@%h:%p"
- "\n#Title=%m # %u@%h:%p\n#\n\n# These values requires apt-dater-host to be i"
+ "\n#Title=%m # %U%H\n#\n\n# These values requires apt-dater-host to be i"
  "nstalled on the target host.\n# You could call apt/aptitude directly (see a"
  "pt-dater-host source),\n# but this is not recommended.\n[Commands]\nCmdRefr"
  "esh=apt-dater-host refresh\nCmdUpgrade=apt-dater-host upgrade\nCmdInstall=a"
@@ -148,7 +148,6 @@ void freeConfig (CfgFile *cfg)
  g_free(cfg->statsdir);
  g_free(cfg->ssh_cmd);
  g_free(cfg->ssh_optflags);
- g_free(cfg->ssh_defuser);
  g_free(cfg->sftp_cmd);
  g_free(cfg->cmd_refresh);
  g_free(cfg->cmd_upgrade);
@@ -198,22 +197,10 @@ CfgFile *loadConfig (char *filename)
     lcfg->screenrcfile = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc");
  if(!(lcfg->screentitle = 
       g_key_file_get_string(keyfile, "Screen", "Title", NULL)))
-    lcfg->screentitle = g_strdup("%m # %u@%h:%p");
+    lcfg->screentitle = g_strdup("%m # %U%H");
 
  if(!(lcfg->ssh_cmd = 
       g_key_file_get_string(keyfile, "SSH", "Cmd", &error))) {
-  g_error ("%s: %s", filename, error->message);
-  return (NULL);
- }
-
- if(!(lcfg->ssh_defuser = 
-      g_key_file_get_string(keyfile, "SSH", "DefaultUser", &error))) {
-  g_error ("%s: %s", filename, error->message);
-  return (NULL);
- }
-
- if(!(lcfg->ssh_defport = 
-      g_key_file_get_integer(keyfile, "SSH", "DefaultPort", &error))) {
   g_error ("%s: %s", filename, error->message);
   return (NULL);
  }
@@ -391,8 +378,8 @@ GList *loadHosts (char *filename)
    }
 
    hostnode->hostname = g_strdup(hostname);
-   hostnode->ssh_user = *ssh_user ? g_strdup(ssh_user) : g_strdup(cfg->ssh_defuser);
-   hostnode->ssh_port = ssh_port ? ssh_port : cfg->ssh_defport;
+   hostnode->ssh_user = *ssh_user ? g_strdup(ssh_user) : NULL;
+   hostnode->ssh_port = ssh_port ? ssh_port : 0;
 
    hostnode->statsfile = g_strdup_printf("%s/%s:%d.stat", cfg->statsdir, hostnode->hostname, hostnode->ssh_port);
 

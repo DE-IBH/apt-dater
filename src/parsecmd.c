@@ -56,8 +56,21 @@ gchar *parse_string(const gchar *src, const HostNode *n) {
     case 'h':
       g_string_append(h, n->hostname);
       break;
+    case 'H':
+      g_string_append(h, n->hostname);
+      if(n->ssh_port) {
+        g_string_append(h, ":");
+        g_string_append_printf(h, "%d", n->ssh_port);
+      }
+      break;
     case 'u':
       g_string_append(h, n->ssh_user);
+      break;
+    case 'U':
+      if(n->ssh_user) {
+        g_string_append(h, n->ssh_user);
+        g_string_append(h, "@");
+      }
       break;
     case 'p':
       g_string_append_printf(h, "%d", n->ssh_port);

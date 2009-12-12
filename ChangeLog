@@ -10,6 +10,9 @@ apt-dater (0.8.1) unstable; urgency=low
     - pass --as-needed to ld
   * Add Italian translation - contributed by
     Milo Casagrande <milo@ubuntu.com>.
+  * Drop DefaultUser and DefaultPort configuration. If a host has no
+    username or port given, let ssh select the right one.
+    (Closes Debian Bug#559366 by "chrysn")
 
  -- Thomas Liske <liske@ibh.de>  
 

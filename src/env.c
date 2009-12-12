@@ -82,8 +82,14 @@ env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEnt
 
     ADD_HENV("HOSTNAME"         , n->hostname);
     ADD_HENV("GROUP"            , n->group);
-    ADD_HENV("SSH_USER"         , n->ssh_user);
-    new_env[i++] = g_strdup_printf("AD_SSH_PORT=%d", n->ssh_port);
+    if(n->ssh_user)
+     ADD_HENV("SSH_USER"        , n->ssh_user);
+    else
+     ADD_HENV("SSH_USER"        , "");
+    if(n->ssh_port)
+     new_env[i++] = g_strdup_printf("AD_SSH_PORT=%d", n->ssh_port);
+    else
+     ADD_HENV("SSH_PORT"        , "");
     if(n->identity_file && strlen(n->identity_file) > 0)
      new_env[i++] = g_strdup_printf("AD_SSH_ID=-i %s", n->identity_file);
     else
