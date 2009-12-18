@@ -8,13 +8,15 @@ apt-dater (0.8.1) unstable; urgency=low
   * Fixes:
     - upgrade & install on filtered categories
     - pass --as-needed to ld
+    - minor ui glitches (no more flicker)
   * Add Italian translation - contributed by
     Milo Casagrande <milo@ubuntu.com>.
   * Drop DefaultUser and DefaultPort configuration. If a host has no
     username or port given, let ssh select the right one.
     (Closes Debian Bug#559366 by "chrysn")
+  * Update adproto to version 0.5.
 
- -- Thomas Liske <liske@ibh.de>  
+ -- Andre Ellguth <ellguth@ibh.de>  Fri, 18 Dec 2009 13:39:52 +0100
 
 apt-dater (0.8.0) unstable; urgency=low
 
