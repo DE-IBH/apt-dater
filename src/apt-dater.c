@@ -61,7 +61,7 @@ time_t oldest_st_mtime;
 
 int main(int argc, char **argv, char **envp)
 {
- char opts;
+ int opts;
  char *cfgfilename = NULL;
  char *cfgdirname = NULL;
  GList *hosts = NULL;
