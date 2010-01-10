@@ -1,3 +1,10 @@
+apt-dater (x.y.z) unstable; urgency=low
+
+  * Fix apt-dater not working on PPC
+    (Debian Bug#563159, solved by "GyrosGeier" #debian.de).
+
+ -- 
+
 apt-dater (0.8.1) unstable; urgency=low
 
   * Add hooks on connect/install/refresh/upgrade.
