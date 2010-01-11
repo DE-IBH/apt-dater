@@ -80,6 +80,23 @@ handle_generic_ssh () {
 	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS $my_ssh_user $my_ssh_port "$AD_HOSTNAME"
 	    run_hook "$AD_HOOK_POST_CONNECT"
 	    ;;
+	transfer)
+	    if [ -n "$AD_SSH_USER" ]; then
+		my_sftp_user="$AD_SSH_USER@";
+	    else
+		my_sftp_user=""
+	    fi
+
+	    if [ -n "$AD_SSH_PORT" ]; then
+		my_sftp_port="-oPort=$AD_SSH_PORT";
+	    else
+		my_sftp_port=""
+	    fi
+
+	    run_hook "$AD_HOOK_PRE_CONNECT"
+	    $WRAP $AD_SFTP_CMD $AD_SSH_ID $my_ssh_port $my_sftp_user"$AD_HOSTNAME"
+	    run_hook "$AD_HOOK_POST_CONNECT"
+	    ;;
 	install)
 	    run_hook "$AD_HOOK_PRE_INSTALL"
 	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS $my_ssh_user $my_ssh_port "$AD_HOSTNAME" `printf "$AD_CMD_INSTALL" "$AD_PARAM"`

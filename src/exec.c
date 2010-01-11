@@ -257,45 +257,39 @@ void sftp_connect(HostNode *n)
 {
  gboolean r;
  GError *error = NULL;
- gint argc = 0;
- gchar **argv = NULL;
+ gchar *cmd = NULL;
+ gchar **argv;
 
  g_assert(n);
 
  HistoryEntry he;
  he.ts = time(NULL);
  he.maintainer = maintainer;
- he.action = "sftp";
+ he.action = "transfer";
  he.data = NULL;
 
- gchar *cmd = screen_new(n, FALSE);
+ gchar *screen = screen_new(n, FALSE);
 
- cmd = g_realloc(cmd, strlen(cmd) + strlen(cfg->sftp_cmd) + 1);
- strcat(cmd, cfg->sftp_cmd);
+ cmd = g_strdup_printf ("%s%s",
+			screen, PKGLIBDIR"/cmd");
 
- if (parse_cmdline(cmd, &argc, &argv, n) < 0) {
-   g_free(cmd);
-   return;
- }
- g_free(cmd);
-
- cmd = g_strjoinv("+", argv);
- g_strfreev(argv);
+ g_free(screen);
 
  argv = g_strsplit(cmd, "+", 0);
 
- gchar **env = env_build(n, "connect", NULL, &he);
+ g_free(cmd);
 
- r = g_spawn_sync(g_getenv ("HOME"), argv, env,
+ gchar **env = env_build(n, "transfer", NULL, &he);
+
+ r = g_spawn_sync(g_getenv("HOME"), argv, env,
 		  G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
 		  NULL, NULL, NULL, &error);
 
  g_strfreev(env);
+ g_strfreev(argv);
 
  if(r == FALSE) {
   g_warning("%s", error->message);
   g_clear_error (&error);
  }
-
- g_strfreev(argv);
 }
