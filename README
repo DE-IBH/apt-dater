@@ -36,4 +36,4 @@ Management server:
     ssh-keygen [-t TYPE]
 
   Distribute the public key(s) e.g.:
-    ssh-copy-id -i .ssh/your-public-key managed-host
+    ssh-copy-id -i ~/.ssh/your-public-key managed-host
