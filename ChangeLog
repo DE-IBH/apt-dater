@@ -1,7 +1,13 @@
-apt-dater (x.y.z) unstable; urgency=low
+apt-dater (0.8.z) unstable; urgency=low
 
   * Fix apt-dater not working on PPC
-    (Debian Bug#563159, solved by "GyrosGeier" #debian.de).
+    (Closes Debian Bug#563159 by Gefried Fuchs; thanks to Simon Richter).
+  * Fix hotkey l for expanding not working
+    (Closes Debian Bug#564450 by Gefried Fuchs)
+  * Fix pressing C for file transfer gives error message
+    (Closes Debian Bug#564459 by Gefried Fuchs)
+    The SFTPCmd config parameter should be set to /usr/bin/sftp -
+    the old default value does not work any more.
 
  -- 
 

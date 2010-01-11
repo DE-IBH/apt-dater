@@ -193,7 +193,7 @@ and docbook-xsl in your Build-Depends control field.
       <varlistentry>
         <term><symbol>SFTPCmd</symbol></term>
         <listitem>
-          <para>The command to initiate a file transfer e.g. <command>/usr/bin/mc /#sh:%u@%h:C/</command></para>
+          <para>The command to initiate sftp file transfer e.g. <command>/usr/bin/sftp</command></para>
         </listitem>
       </varlistentry>
       <varlistentry>

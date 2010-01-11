@@ -178,7 +178,7 @@ static struct ShortCut shortCuts[] = {
 #ifdef FEAT_HISTORY
  {SC_KEY_HISTORY, 'H', "H", N_("host history") , FALSE, 0},
  {SC_KEY_PLAY, 'p', "p" , N_("play") , FALSE, VK_PLAY},
- {SC_KEY_LESS, 'l', "l" , N_("display with less") , FALSE, VK_LESS},
+ {SC_KEY_LESS, 'L', "L" , N_("display with less") , FALSE, VK_LESS},
 #endif
  {SC_KEY_NEXTSESS, 'n', "n" , N_("next detached session") , FALSE, 0},
  {SC_KEY_CYCLESESS, 'N', "N" , N_("cycle detached sessions") , FALSE, 0},
