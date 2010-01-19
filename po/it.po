@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-dater 0.8.0\n"
 "Report-Msgid-Bugs-To: apt-dater@ibh.de\n"
-"POT-Creation-Date: 2009-11-14 09:22+0100\n"
+"POT-Creation-Date: 2010-01-19 21:39+0100\n"
 "PO-Revision-Date: 2009-11-11 22:34+0100\n"
 "Last-Translator: Milo Casagrande <milo@ubuntu.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -308,6 +308,22 @@ msgstr "questa è una macchina virtualizzata"
 msgid " [Oldest: %D %H:%M]"
 msgstr " [Più vecchio: %D %H.%M]"
 
+#: src/ui.c:655
+msgid "c"
+msgstr "c"
+
+#: src/ui.c:655
+msgid "C"
+msgstr "C"
+
+#: src/ui.c:658
+msgid "y"
+msgstr "y"
+
+#: src/ui.c:658
+msgid "Y"
+msgstr "Y"
+
 #: src/ui.c:733
 msgid "No history data available!"
 msgstr "Nessun dato di cronologia."
@@ -580,7 +596,7 @@ msgstr "Architettura:"
 
 #: src/ui.c:3285
 msgid "UUID:"
-msgstr ""
+msgstr "UUID:"
 
 #: src/ui.c:3289
 msgid "Forbidden:"
