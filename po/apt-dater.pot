@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-dater 0.8.1\n"
 "Report-Msgid-Bugs-To: apt-dater@ibh.de\n"
-"POT-Creation-Date: 2009-11-14 09:22+0100\n"
+"POT-Creation-Date: 2010-01-19 21:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -305,6 +305,22 @@ msgstr ""
 
 #: src/ui.c:569
 msgid " [Oldest: %D %H:%M]"
+msgstr ""
+
+#: src/ui.c:655
+msgid "c"
+msgstr ""
+
+#: src/ui.c:655
+msgid "C"
+msgstr ""
+
+#: src/ui.c:658
+msgid "y"
+msgstr ""
+
+#: src/ui.c:658
+msgid "Y"
 msgstr ""
 
 #: src/ui.c:733

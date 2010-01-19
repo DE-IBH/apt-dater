@@ -8,6 +8,8 @@ apt-dater (0.8.z) unstable; urgency=low
     (Closes Debian Bug#564459 by Gefried Fuchs)
     The SFTPCmd config parameter should be set to /usr/bin/sftp -
     the old default value does not work any more.
+  * Fix translated confirmation questions.
+    (Closes Debian Bug#565931 by Pattrick Matthäi).
 
  -- 
 

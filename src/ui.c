@@ -652,10 +652,10 @@ gboolean queryConfirm(const gchar *query, const gboolean enter_is_yes, gboolean 
  remln(COLS);
 
  if (has_canceled) {
-    *has_canceled = ((c == 'c') || (c == 'C') || (c == 27));
+    *has_canceled = ((c == _("c")[0]) || (c == _("C")[0]) || (c == 27));
  }
 
- return ((c == 'y') || (c == 'Y') || 
+ return ((c == _("y")[0]) || (c == _("Y")[0]) || 
 	 (enter_is_yes == TRUE && (c == 0xd || c == KEY_ENTER)));
 }
 
