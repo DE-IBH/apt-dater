@@ -541,7 +541,7 @@ msgstr "Pakete: "
 
 #: src/ui.c:2855
 msgid "BROKEN PACKAGES"
-msgstr "DEKETE PAKETE"
+msgstr "DEFEKTE PAKETE"
 
 #: src/ui.c:2876
 msgid "UPDATE PACKAGES"
