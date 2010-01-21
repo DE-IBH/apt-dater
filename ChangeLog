@@ -10,6 +10,8 @@ apt-dater (x.y.z) unstable; urgency=low
     the old default value does not work any more.
   * Fix translated confirmation questions.
     (Closes Debian Bug#565931 by Pattrick Matthäi).
+  * Fix Debian hosts got 'Unknown' if the had upgrades which depends
+    on broken packages.
 
  -- 
 
