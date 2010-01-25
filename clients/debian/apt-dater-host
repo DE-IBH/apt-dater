@@ -34,7 +34,7 @@ use strict;
 
 my $CFGFILE = '/etc/apt-dater-host.conf';
 my $DPKGTOOL = 'aptitude';
-my $ASSUMEYES = 1;
+my $ASSUMEYES = 0;
 my $GETROOT = 'sudo';
 my $CLEANUP = 0;
 my $FORBID_REFRESH = 0;
