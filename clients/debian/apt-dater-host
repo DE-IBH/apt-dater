@@ -34,6 +34,7 @@ use strict;
 
 my $CFGFILE = '/etc/apt-dater-host.conf';
 my $DPKGTOOL = 'aptitude';
+my $ASSUMEYES = 1;
 my $GETROOT = 'sudo';
 my $CLEANUP = 0;
 my $FORBID_REFRESH = 0;
@@ -270,7 +271,9 @@ sub do_status() {
 }
 
 sub do_upgrade() {
-    my $UpgradeCmd = $GETROOT . ' ' . $DPKGTOOL . ' ';
+    my $UpgradeCmd = "$GETROOT $DPKGTOOL ";
+
+    $UpgradeCmd .= '--assume-yes ' if($ASSUMEYES);
 
     if($DPKGTOOL eq 'aptitude'){
 	$UpgradeCmd .= 'safe-';
