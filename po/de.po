@@ -252,7 +252,7 @@ msgstr "Host Historie"
 
 #: src/ui.c:180
 msgid "play"
-msgstr "anspielen"
+msgstr "wiedergeben"
 
 #: src/ui.c:181
 msgid "display with less"
