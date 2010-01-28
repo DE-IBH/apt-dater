@@ -16,6 +16,8 @@ apt-dater (x.y.z) unstable; urgency=low
     Stephan Sürken. This is now default but could disabled in the
     apt-dater-host.conf file.
     (Closes Debian Bug#565930)
+  * Fix German localisation typos.
+    (Closes SF Bug#2941509 by Micha vor dem Berge)
 
  -- 
 

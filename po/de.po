@@ -78,11 +78,11 @@ msgstr "Fehler beim Erstellen der XML-Ausgabe."
 #: src/report.c:63
 #, c-format
 msgid "apt-dater is refreshing %d hosts, please standby...\n"
-msgstr "apt-dater aktuallisiert %d Hosts, bitte warten...\n"
+msgstr "apt-dater aktualisiert %d Hosts, bitte warten...\n"
 
 #: src/stats.c:482
 msgid "Auto refresh triggered..."
-msgstr "Aktuallisierung ausgelöst..."
+msgstr "Aktualisierung ausgelöst..."
 
 #: src/ui.c:54
 msgid "Updates pending"
@@ -99,12 +99,12 @@ msgstr "Defekte Pakete"
 #: src/ui.c:57 src/ui.c:1031
 #, c-format
 msgid "Refresh required"
-msgstr "Aktuallisierung benötigt"
+msgstr "Aktualisierung benötigt"
 
 #: src/ui.c:58 src/ui.c:1034
 #, c-format
 msgid "In refresh"
-msgstr "Wird aktuallisiert"
+msgstr "Wird aktualisiert"
 
 #: src/ui.c:59
 msgid "Sessions"
@@ -232,7 +232,7 @@ msgstr "Ausgabe an/aus"
 
 #: src/ui.c:174
 msgid "refresh host"
-msgstr "Host aktuallisieren"
+msgstr "Host aktualisieren"
 
 #: src/ui.c:175
 msgid "install pkg"
