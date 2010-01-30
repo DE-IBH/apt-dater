@@ -306,7 +306,7 @@ sub do_kernel() {
 
     my $reboot = 0;
     unless(open(HDPKG, "dpkg-query -W -f='\${Version} \${Status;20} \${Maintainer} \${Provides}\n' 'linux-image*'|grep 'install ok installed Debian Kernel Team'|grep linux-image|")) {
-	print "\nADPERR: Failed to execute \"dpkg-query --show --showformat='\${Package} \${Version} \${Status}\\n'\" ($!).\n";
+	print "\nADPERR: Failed to execute \"dpkg-query -W -f='\${Version} \${Status;20} \${Maintainer} \${Provides}\\n' 'linux-image*'|grep 'install ok installed Debian Kernel Team'|grep linux-image\" ($!).\n";
 	exit(1);
     }
     while(<HDPKG>) {
@@ -315,10 +315,6 @@ sub do_kernel() {
 	$reboot=1 unless (system("dpkg", "--compare-versions", $vers, "lt", $1) >> 8);
     }
     close(HDPKG);
-    if($?) {
-	print "\nADPERR: Error executing \"dpkg-query --show --showformat='\${Package} \${Version} \${Status}\\n'\" ($?).\n";
-	exit(1);
-    }
 
     print "$infostr $reboot $version\n";
 }
