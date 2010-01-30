@@ -148,8 +148,10 @@ static void reportHost(gpointer data, gpointer lgroup) {
 
   /* SSH config */
   xmlTextWriterStartElement(writer, BAD_CAST("ssh"));
-  xmlTextWriterWriteElement(writer, BAD_CAST("user"), BAD_CAST(n->ssh_user));
-  xmlTextWriterWriteFormatElement(writer, BAD_CAST("port"), "%d", n->ssh_port);
+  if(n->ssh_user)
+    xmlTextWriterWriteElement(writer, BAD_CAST("user"), BAD_CAST(n->ssh_user));
+  if(n->ssh_port)
+    xmlTextWriterWriteFormatElement(writer, BAD_CAST("port"), "%d", n->ssh_port);
   xmlTextWriterEndElement(writer);
 
   /* Kernel info */
