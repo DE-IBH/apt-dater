@@ -21,7 +21,7 @@ apt-dater (0.8.2) unstable; urgency=low
   * Fix Debian hosts become 'Unknown' if they hadn't a stock Debian kernel installed.
     (Closes SF Bug#2933741 by alma@arwin.hu)
 
- -- 
+ -- Andre Ellguth <ellguth@ibh.de>  Wed, 03 Feb 2010 15:27:39 +0100
 
 apt-dater (0.8.1) unstable; urgency=low
 
