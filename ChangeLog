@@ -21,6 +21,8 @@ apt-dater (x.y.z) unstable; urgency=low
   * Fix Debian hosts become 'Unknown' if they hadn't a stock Debian kernel installed.
     (Closes SF Bug#2933741 by alma@arwin.hu)
   * Add apt-dater-host manpage, thanks to Patrick Matthäi.
+  * Parameters on 'apt-dater-host install' must not be interpreted by
+    the shell, thanks to Henri Salo.
 
  -- 
 

@@ -194,7 +194,12 @@ sub do_upgrade() {
 }
 
 sub do_install() {
-    system("$GETROOT rug install ".join(' ', @_));
+    if($GETROOT) {
+	system($GETROOT, 'rug', 'install', @_);
+    }
+    else {
+	system('rug', 'install', @_);
+    }
 }
 
 sub do_kernel() {
