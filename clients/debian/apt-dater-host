@@ -284,7 +284,12 @@ sub do_upgrade() {
 }
 
 sub do_install() {
-    system("$GETROOT $DPKGTOOL install ".join(' ', @_));
+    if($GETROOT) {
+	system($GETROOT, $DPKGTOOL, 'install', @_);
+    }
+    else {
+	system($DPKGTOOL, 'install', @_);
+    }
 }
 
 sub do_kernel() {
