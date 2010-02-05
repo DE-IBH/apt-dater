@@ -23,6 +23,8 @@ apt-dater (x.y.z) unstable; urgency=low
   * Add apt-dater-host manpage, thanks to Patrick Matthäi.
   * Parameters on 'apt-dater-host install' must not be interpreted by
     the shell, thanks to Henri Salo.
+  * Remove obsolete DefaultUser/DefaultPort lines from conf/apt-dater.conf.example.
+    (Closes SF Bug#2946417 by Mathieu PARENT)
 
  -- 
 
