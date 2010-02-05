@@ -2522,7 +2522,7 @@ static void handleErrors(HostNode *n) {
  if(!he)
   return;
 
- gchar *query = g_strdup_printf(_("An error at %s:%d has been detected [Lic]: "), n->hostname, n->ssh_port);
+ gchar *query = g_strdup_printf(_("An error at %s:%d detected [Less/ignore/connect]: "), n->hostname, n->ssh_port);
 
  notifyUser();
  while(1) {

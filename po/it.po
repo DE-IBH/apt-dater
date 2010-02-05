@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-dater 0.8.0\n"
 "Report-Msgid-Bugs-To: apt-dater@ibh.de\n"
-"POT-Creation-Date: 2010-01-19 21:39+0100\n"
+"POT-Creation-Date: 2010-02-05 14:23+0100\n"
 "PO-Revision-Date: 2009-11-11 22:34+0100\n"
 "Last-Translator: Milo Casagrande <milo@ubuntu.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -475,8 +475,8 @@ msgid "Enter filter expression:"
 msgstr "Inserire espressione di filtro:"
 
 #: src/ui.c:2525
-#, c-format
-msgid "An error at %s:%d has been detected [Lic]: "
+#, fuzzy, c-format
+msgid "An error at %s:%d detected [Less/ignore/connect]: "
 msgstr "È stato rilevato un errore presso %s:%d [Lic]: "
 
 #: src/ui.c:2702
