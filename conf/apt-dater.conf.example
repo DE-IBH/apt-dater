@@ -15,9 +15,6 @@ OptionalCmdFlags=-t
 # SFTP binary
 SFTPCmd=/usr/bin/mc /#sh:%u@%h:C/
 
-DefaultUser=apt-dater
-DefaultPort=22
-
 #[Screen]
 ## Default: $XDG_CONFIG_HOME/apt-dater/screenrc
 #RCFile=path-to/screenrc

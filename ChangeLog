@@ -2,6 +2,8 @@ apt-dater (0.8.3) unstable; urgency=low
 
   * Parameters on 'apt-dater-host install' must not be interpreted by
     the shell, thanks to Henri Salo.
+  * Remove obsolete DefaultUser/DefaultPort lines from conf/apt-dater.conf.example.
+    (Closes SF Bug#2946417 by Mathieu PARENT)
 
  -- 
 
