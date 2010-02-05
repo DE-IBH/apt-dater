@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-dater 0.8.1\n"
 "Report-Msgid-Bugs-To: apt-dater@ibh.de\n"
-"POT-Creation-Date: 2010-01-19 21:39+0100\n"
+"POT-Creation-Date: 2010-02-05 14:23+0100\n"
 "PO-Revision-Date: 2009-11-14 09:26+0100\n"
 "Last-Translator: Thomas Liske <liske@ibh.de>\n"
 "Language-Team: apt-dater@ibh.de\n"
@@ -468,9 +468,9 @@ msgid "Enter filter expression:"
 msgstr "Filterausdruck:"
 
 #: src/ui.c:2525
-#, c-format
-msgid "An error at %s:%d has been detected [Lic]: "
-msgstr "Ein Fehler bei %s:%d wurde gefunden [Lic]: "
+#, fuzzy, c-format
+msgid "An error at %s:%d detected [Less/ignore/connect]: "
+msgstr "Ein Fehler bei %s:%d wurde gefunden [Less/ignore/connect]: "
 
 # c-format
 #: src/ui.c:2702
