@@ -107,29 +107,29 @@ int chkForInitialConfig(const gchar *cfgdir, const gchar *cfgfile)
    if(!pathtofile) g_error(_("Out of memory."));
    fp = fopen(pathtofile, "wx");
    g_message(_("Creating file %s"), pathtofile);
-   g_free(pathtofile);
    if(fp) {
-    fwrite(hosts_conf, sizeof(hosts_conf)-1, 1, fp);
+    if(fwrite(hosts_conf, sizeof(hosts_conf)-1, 1, fp) != 1) g_error(_("Could not write to file %s."), pathtofile);
     fclose(fp);
    }
+   g_free(pathtofile);
 
    /* Create a the example screenrc */
    pathtofile = g_strdup_printf("%s/screenrc", cfgdir);
    if(!pathtofile) g_error(_("Out of memory."));
    fp = fopen(pathtofile, "wx");
    g_message(_("Creating file %s"), pathtofile);
-   g_free(pathtofile);
    if(fp) {
-    fwrite(screenrc, sizeof(screenrc)-1, 1, fp);
+    if(fwrite(screenrc, sizeof(screenrc)-1, 1, fp) != 1) g_error(_("Could not write to file %s."), pathtofile);
     fclose(fp);
    }
+   g_free(pathtofile);
 
    /* Create initial config file */
    fp = fopen(cfgfile, "wx");
    if(!fp) return(1);
 
    g_message(_("Creating file %s"), cfgfile);
-   fwrite(apt_dater_conf, sizeof(apt_dater_conf)-1, 1, fp);
+   if(fwrite(apt_dater_conf, sizeof(apt_dater_conf)-1, 1, fp) != 1) g_error(_("Could not write to file %s."), cfgfile);
    fclose(fp);
   }
  }
