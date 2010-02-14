@@ -1,0 +1,73 @@
+
+# apt-dater - terminal-based remote package update manager
+#
+# $Id$
+#
+# Authors:
+#   Andre Ellguth <ellguth@ibh.de>
+#   Thomas Liske <liske@ibh.de>
+#
+# Copyright Holder:
+#   2010 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+#
+# License:
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this package; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+%define name @PACKAGE@-host-rpm
+%define version @PACKAGE_VERSION@
+%define release 1
+
+Name:		%{name}
+Summary:	Host helper application for apt-dater (rpm)
+Version:	%{version}
+Release:	%{release}
+URL:		http://www.ibh.de/apt-dater/
+Source:		%{name}-%{version}.tar.gz
+License:	GPL
+Group:		System/Monitor
+Requires:	rpm
+Requires:	perl
+Requires:	imvirt
+Provides:	apt-dater-host
+Buildroot:	%{_tmppath}/%{name}-buildroot
+Vendor:		IBH IT-Service GmbH (http://www.ibh.de/)
+
+%description
+
+apt-dater provides an easy to use ncurses frontend for managing package updates on a large number of remote hosts using SSH.
+It supports Debian-based managed hosts as well as OpenSUSE and CentOS based systems.
+
+
+This package provides the helper application for apt-dater using rpm.
+
+%prep
+%setup
+
+%build
+
+%install
+mkdir -p "$RPM_BUILD_ROOT/"%{_bindir}
+cp "apt-dater-host" "$RPM_BUILD_ROOT/"%{_bindir}
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%post
+
+
+%files
+%defattr(-,root,root)
+%{_bindir}/apt-dater-host

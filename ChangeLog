@@ -25,6 +25,12 @@ apt-dater (x.y.z) unstable; urgency=low
     the shell, thanks to Henri Salo.
   * Remove obsolete DefaultUser/DefaultPort lines from conf/apt-dater.conf.example.
     (Closes SF Bug#2946417 by Mathieu PARENT)
+  * Handle fwrite return values in keyfiles.c.
+  * Add apt-dater-host zypper version (using zypper in rug compatibility mode).
+    (Contributed by Chris Liles)
+  * Detect screen's socket path during configure.
+    (Closes SF Bug#2950721 by Chris Liles)
+  * Add .spec files for rpm packaging.
 
  -- 
 

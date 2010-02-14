@@ -37,9 +37,15 @@ build_triplet = @build@
 host_triplet = @host@
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
-	$(top_srcdir)/configure ABOUT-NLS AUTHORS COPYING ChangeLog \
-	INSTALL NEWS TODO config.guess config.sub depcomp install-sh \
-	missing mkinstalldirs
+	$(top_srcdir)/build/apt-dater-host-rpm.spec.in \
+	$(top_srcdir)/build/apt-dater-host-rug.spec.in \
+	$(top_srcdir)/build/apt-dater-host-yum.spec.in \
+	$(top_srcdir)/build/apt-dater-host-zypper.spec.in \
+	$(top_srcdir)/build/apt-dater.spec.in \
+	$(top_srcdir)/build/client_archs.sh.in $(top_srcdir)/configure \
+	ABOUT-NLS AUTHORS COPYING ChangeLog INSTALL NEWS TODO \
+	config.guess config.sub depcomp install-sh missing \
+	mkinstalldirs
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
@@ -53,7 +59,9 @@ am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno configure.status.lineno
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = build/apt-dater.spec build/client_archs.sh \
+	build/apt-dater-host-rpm.spec build/apt-dater-host-rug.spec \
+	build/apt-dater-host-yum.spec build/apt-dater-host-zypper.spec
 SOURCES =
 DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -131,6 +139,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
@@ -251,6 +260,18 @@ $(srcdir)/config.h.in:  $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
+build/apt-dater.spec: $(top_builddir)/config.status $(top_srcdir)/build/apt-dater.spec.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+build/client_archs.sh: $(top_builddir)/config.status $(top_srcdir)/build/client_archs.sh.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+build/apt-dater-host-rpm.spec: $(top_builddir)/config.status $(top_srcdir)/build/apt-dater-host-rpm.spec.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+build/apt-dater-host-rug.spec: $(top_builddir)/config.status $(top_srcdir)/build/apt-dater-host-rug.spec.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+build/apt-dater-host-yum.spec: $(top_builddir)/config.status $(top_srcdir)/build/apt-dater-host-yum.spec.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+build/apt-dater-host-zypper.spec: $(top_builddir)/config.status $(top_srcdir)/build/apt-dater-host-zypper.spec.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 uninstall-info-am:
 
 # This directory's subdirectories are mostly independent; you can cd
@@ -388,7 +409,7 @@ distclean-tags:
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkdir_p) $(distdir)/m4 $(distdir)/po
+	$(mkdir_p) $(distdir)/build $(distdir)/m4 $(distdir)/po
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

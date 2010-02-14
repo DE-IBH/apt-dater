@@ -51,7 +51,7 @@ screen_get_sdir() {
   if (!pw)
     return NULL;
 
-  g_snprintf(sdir, sizeof(sdir), SCREEN_SDFORMT, SCREEN_SOCKDIR, pw->pw_name);
+  g_snprintf(sdir, sizeof(sdir), SCREEN_SDFORMT, SCREEN_SOCKPATH, pw->pw_name);
 
   return sdir;
 }
