@@ -1,0 +1,93 @@
+
+# apt-dater - terminal-based remote package update manager
+#
+# $Id$
+#
+# Authors:
+#   Andre Ellguth <ellguth@ibh.de>
+#   Thomas Liske <liske@ibh.de>
+#
+# Copyright Holder:
+#   2010 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+#
+# License:
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this package; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+%define name @PACKAGE@
+%define version @PACKAGE_VERSION@
+%define release 1
+
+Name:		%{name}
+Summary:	Terminal-based remote package update manager
+Version:	%{version}
+Release:	%{release}
+URL:		http://www.ibh.de/apt-dater/
+Source:		%{name}-%{version}.tar.gz
+License:	GPL
+Group:		System/Management
+Icon:		apt-dater.xpm
+Requires:	screen
+Requires:	tcl
+BuildRequires:	gettext-devel
+BuildRequires:	glib2-devel
+BuildRequires:	libxml2-devel
+BuildRequires:	ncurses-devel
+BuildRequires:	popt-devel
+BuildRequires:	screen
+BuildRequires:	tcl-devel
+BuildRequires:	automake
+BuildRequires:	autoconf
+BuildRequires:	perl
+Buildroot:	%{_tmppath}/%{name}-buildroot
+Vendor:		IBH IT-Service GmbH (http://www.ibh.de/)
+
+%description
+
+apt-dater provides an easy to use ncurses frontend for managing package updates on a large number of remote hosts using SSH.
+It supports Debian-based managed hosts as well as OpenSUSE and CentOS based systems.
+
+%prep
+%setup
+
+%build
+
+%configure --prefix=%{_prefix} --libexec=%{_libexecdir}/apt-dater --disable-rpath --enable-tclfilter --enable-xmlreport --enable-autoref --enable-history --enable-debug
+
+make
+
+%install
+(cd src && make install DESTDIR=$RPM_BUILD_ROOT)
+(cd lib && make install DESTDIR=$RPM_BUILD_ROOT)
+(cd po && make install DESTDIR=$RPM_BUILD_ROOT)
+(cd man && make install DESTDIR=$RPM_BUILD_ROOT)
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+make clean
+
+%files
+%defattr(-,root,root)
+%{_bindir}/apt-dater
+%dir %{_libdir}/apt-dater
+%{_libdir}/apt-dater/*
+%doc AUTHORS COPYING ChangeLog README* TODO
+%{_mandir}/man5/*.5*
+%{_mandir}/man8/*.8*
+%dir %{_mandir}/manh
+%{_mandir}/manh/*
+%lang(de) %{_datadir}/locale/de/LC_MESSAGES/apt-dater.mo
+%lang(it) %{_datadir}/locale/it/LC_MESSAGES/apt-dater.mo
+%{_datadir}/locale/*/LC_MESSAGES/apt-dater.mo
