@@ -10,6 +10,8 @@ apt-dater (0.8.3) unstable; urgency=low
   * Detect screen's socket path during configure.
     (Closes SF Bug#2950721 by Chris Liles)
   * Add .spec files for rpm packaging.
+  * Add '-o Aptitude::Delete-Unused=false' to aptitude safe-upgrade calls.
+    (Contributed by Patrick Matthäi)
 
  -- 
 
