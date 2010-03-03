@@ -329,12 +329,6 @@ Makefile
 lib/Makefile
 man/Makefile
 src/Makefile
-clients/Makefile
 build/apt-dater.spec
-build/client_archs.sh
-build/apt-dater-host-rpm.spec
-build/apt-dater-host-rug.spec
-build/apt-dater-host-yum.spec
-build/apt-dater-host-zypper.spec
 ])
 AC_OUTPUT
