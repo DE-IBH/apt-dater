@@ -107,11 +107,13 @@ int unsetLockForHost(HostNode *n)
 #ifdef HAVE_FLOCK
  r = flock(n->fdlock, LOCK_UN);
  lockList = g_list_remove(lockList, n);
+#else
+ r = EXIT_SUCCESS;
 #endif
 
  close(n->fdlock);
  n->fdlock = -1;
-  
+
  return(r);
 }
 
