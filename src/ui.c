@@ -185,11 +185,11 @@ static struct ShortCut shortCuts[] = {
  {SC_KEY_TAG, 't', "t" , N_("tag current host") , FALSE, 0},
  {SC_KEY_TAGMATCH, 'T', "T" , N_("tag all hosts matching") , FALSE, 0},
  {SC_KEY_UNUSED, KEY_MAX, "" , N_(" ~c tag by codename") , FALSE, 0},
- {SC_KEY_UNUSED, KEY_MAX, "" , N_(" ~d tag by distributor") , FALSE, 0},
+ {SC_KEY_UNUSED, KEY_MAX, "" , N_(" ~d tag by distribution") , FALSE, 0},
  {SC_KEY_UNUSED, KEY_MAX, "" , N_(" ~f tag by host flags") , FALSE, 0},
  {SC_KEY_UNUSED, KEY_MAX, "" , N_(" ~g tag by group") , FALSE, 0},
  {SC_KEY_UNUSED, KEY_MAX, "" , N_(" ~p tag by packages") , FALSE, 0},
- {SC_KEY_UNUSED, KEY_MAX, "" , N_(" ~u tag by update") , FALSE, 0},
+ {SC_KEY_UNUSED, KEY_MAX, "" , N_(" ~u tag by updates") , FALSE, 0},
  {SC_KEY_UNUSED, KEY_MAX, "" , N_(" ~A tag all hosts") , FALSE, 0},
  {SC_KEY_UNTAGMATCH, ctrl('T'), "^T" , N_("untag all hosts matching") , FALSE, 0},
  {SC_KEY_TAGACTION, ';', ";" , N_("apply next function to tagged hosts") , FALSE, 0},
@@ -973,7 +973,7 @@ void drawHostEntry (DrawNode *n)
     attron(A_UNDERLINE);
 
  if(((HostNode *) n->p)->lsb_distributor) {
-  if(((HostNode *) n->p)->ssh_port == 22)
+  if(!HOST_SSHPORT_SET((HostNode *) n->p))
    hostentry = g_strdup_printf("%s (%s %s %s; %s)", 
 			      ((HostNode *) n->p)->hostname,
 			      ((HostNode *) n->p)->lsb_distributor, 
@@ -992,7 +992,7 @@ void drawHostEntry (DrawNode *n)
   addnstr((char *) hostentry, COLS - 11);
   g_free(hostentry);
  } else {
-  if(!((HostNode *) n->p)->ssh_port)
+  if(!HOST_SSHPORT_SET((HostNode *) n->p))
    addnstr((char *) ((HostNode *) n->p)->hostname, COLS - 11);
   else {
    hostentry = g_strdup_printf("%s:%d",
@@ -2529,7 +2529,12 @@ static void handleErrors(HostNode *n) {
  if(!he)
   return;
 
- gchar *query = g_strdup_printf(_("An error at %s:%d detected [Less/ignore/connect]: "), n->hostname, n->ssh_port);
+ gchar *query;
+
+ if(HOST_SSHPORT_SET(n))
+  query = g_strdup_printf(_("An error at %s:%d has been detected [Less/ignore/connect]: "), n->hostname, n->ssh_port);
+ else
+  query = g_strdup_printf(_("An error at %s has been detected [Less/ignore/connect]: "), n->hostname);
 
  notifyUser();
  while(1) {
