@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-dater 0.8.1\n"
+"Project-Id-Version: apt-dater 0.8.2\n"
 "Report-Msgid-Bugs-To: apt-dater@ibh.de\n"
-"POT-Creation-Date: 2010-02-05 14:23+0100\n"
+"POT-Creation-Date: 2010-03-25 17:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/apt-dater.c:79 src/apt-dater.c:82 src/apt-dater.c:121
-#: src/keyfiles.c:107 src/keyfiles.c:118 src/ui.c:3085
+#: src/keyfiles.c:107 src/keyfiles.c:118 src/ui.c:3097
 msgid "Out of memory."
 msgstr ""
 
@@ -56,6 +56,11 @@ msgstr ""
 #: src/keyfiles.c:109 src/keyfiles.c:120 src/keyfiles.c:131
 #, c-format
 msgid "Creating file %s"
+msgstr ""
+
+#: src/keyfiles.c:111 src/keyfiles.c:122 src/keyfiles.c:132
+#, c-format
+msgid "Could not write to file %s."
 msgstr ""
 
 #: src/lock.c:56
@@ -97,12 +102,12 @@ msgstr ""
 msgid "Broken packages"
 msgstr ""
 
-#: src/ui.c:57 src/ui.c:1031
+#: src/ui.c:57 src/ui.c:1038
 #, c-format
 msgid "Refresh required"
 msgstr ""
 
-#: src/ui.c:58 src/ui.c:1034
+#: src/ui.c:58 src/ui.c:1041
 #, c-format
 msgid "In refresh"
 msgstr ""
@@ -276,380 +281,413 @@ msgid "tag all hosts matching"
 msgstr ""
 
 #: src/ui.c:187
-msgid "untag all hosts matching"
+msgid " ~c tag by codename"
 msgstr ""
 
 #: src/ui.c:188
-msgid "apply next function to tagged hosts"
+msgid " ~d tag by distribution"
+msgstr ""
+
+#: src/ui.c:189
+msgid " ~f tag by host flags"
+msgstr ""
+
+#: src/ui.c:190
+msgid " ~g tag by group"
+msgstr ""
+
+#: src/ui.c:191
+msgid " ~p tag by packages"
+msgstr ""
+
+#: src/ui.c:192
+msgid " ~u tag by updates"
 msgstr ""
 
 #: src/ui.c:193
-msgid "some packages are kept back"
+msgid " ~A tag all hosts"
 msgstr ""
 
 #: src/ui.c:194
-msgid "extra packages are installed"
+msgid "untag all hosts matching"
 msgstr ""
 
 #: src/ui.c:195
+msgid "apply next function to tagged hosts"
+msgstr ""
+
+#: src/ui.c:200
+msgid "some packages are kept back"
+msgstr ""
+
+#: src/ui.c:201
+msgid "extra packages are installed"
+msgstr ""
+
+#: src/ui.c:202
 msgid "running kernel is not the latest (reboot required)"
 msgstr ""
 
-#: src/ui.c:196
+#: src/ui.c:203
 msgid "a selfbuild kernel is running"
 msgstr ""
 
-#: src/ui.c:197
+#: src/ui.c:204
 msgid "this is a virtualized machine"
 msgstr ""
 
-#: src/ui.c:569
+#: src/ui.c:576
 msgid " [Oldest: %D %H:%M]"
 msgstr ""
 
-#: src/ui.c:655
+#: src/ui.c:662
 msgid "c"
 msgstr ""
 
-#: src/ui.c:655
+#: src/ui.c:662
 msgid "C"
 msgstr ""
 
-#: src/ui.c:658
+#: src/ui.c:665
 msgid "y"
 msgstr ""
 
-#: src/ui.c:658
+#: src/ui.c:665
 msgid "Y"
 msgstr ""
 
-#: src/ui.c:733
+#: src/ui.c:740
 msgid "No history data available!"
 msgstr ""
 
-#: src/ui.c:739
+#: src/ui.c:746
 #, c-format
 msgid "History of %s (%d entry available)"
 msgstr ""
 
-#: src/ui.c:740
+#: src/ui.c:747
 #, c-format
 msgid "History of %s (%d entries available)"
 msgstr ""
 
-#: src/ui.c:822
+#: src/ui.c:829
 msgid "replay terminated, press any key to continue"
 msgstr ""
 
-#: src/ui.c:879 src/ui.c:910
+#: src/ui.c:886 src/ui.c:917
 #, c-format
 msgid "%d Hosts in status \"%s\""
 msgstr ""
 
-#: src/ui.c:882 src/ui.c:913
+#: src/ui.c:889 src/ui.c:920
 #, c-format
 msgid "%d Host in status \"%s\""
 msgstr ""
 
-#: src/ui.c:1010
+#: src/ui.c:1017
 #, c-format
 msgid "%d Updates required"
 msgstr ""
 
-#: src/ui.c:1013
+#: src/ui.c:1020
 #, c-format
 msgid "%d Update required"
 msgstr ""
 
-#: src/ui.c:1018
+#: src/ui.c:1025
 #, c-format
 msgid "No update required"
 msgstr ""
 
-#: src/ui.c:1023
+#: src/ui.c:1030
 #, c-format
 msgid "%d Broken packages"
 msgstr ""
 
-#: src/ui.c:1026
+#: src/ui.c:1033
 #, c-format
 msgid "%d Broken package"
 msgstr ""
 
-#: src/ui.c:1039
+#: src/ui.c:1046
 #, c-format
 msgid "%d sessions running"
 msgstr ""
 
-#: src/ui.c:1042
+#: src/ui.c:1049
 #, c-format
 msgid "%d session running"
 msgstr ""
 
-#: src/ui.c:1047
+#: src/ui.c:1054
 #, c-format
 msgid "Status is unknown"
 msgstr ""
 
-#: src/ui.c:1052
+#: src/ui.c:1059
 msgid " - host locked by another process"
 msgstr ""
 
-#: src/ui.c:1108
+#: src/ui.c:1115
 #, c-format
 msgid "Running session %s [%5d]:"
 msgstr ""
 
-#: src/ui.c:1134 src/ui.c:1207
+#: src/ui.c:1141 src/ui.c:1214
 msgid "%D %H:%M "
 msgstr ""
 
-#: src/ui.c:1137 src/ui.c:1210
+#: src/ui.c:1144 src/ui.c:1217
 msgid "Attached"
 msgstr ""
 
-#: src/ui.c:1137 src/ui.c:1210
+#: src/ui.c:1144 src/ui.c:1217
 msgid "Detached"
 msgstr ""
 
-#: src/ui.c:1149
+#: src/ui.c:1156
 msgid "Could not read session dump."
 msgstr ""
 
-#: src/ui.c:1152
+#: src/ui.c:1159
 msgid "attached"
 msgstr ""
 
-#: src/ui.c:1152
+#: src/ui.c:1159
 msgid "detached"
 msgstr ""
 
-#: src/ui.c:1481
+#: src/ui.c:1488
 msgid "Maintainer name:"
 msgstr ""
 
-#: src/ui.c:2102
+#: src/ui.c:2109
 msgid "Search: "
 msgstr ""
 
-#: src/ui.c:2275
+#: src/ui.c:2282
 msgid "Matches:"
 msgstr ""
 
-#: src/ui.c:2292
+#: src/ui.c:2299
 msgid "Matches: -"
 msgstr ""
 
-#: src/ui.c:2357
+#: src/ui.c:2364
 msgid "Internal error: unhandled TCL TCLM_STRING mapping!"
 msgstr ""
 
-#: src/ui.c:2372
+#: src/ui.c:2379
 msgid "Internal error: unhandled TCL TCLM_INT mapping!"
 msgstr ""
 
-#: src/ui.c:2382
+#: src/ui.c:2389
 msgid "Internal error: unknown TCL mapping type!"
 msgstr ""
 
-#: src/ui.c:2438
+#: src/ui.c:2445
 msgid "Scalars:"
 msgstr ""
 
-#: src/ui.c:2460
+#: src/ui.c:2467
 msgid "Arrays:"
 msgstr ""
 
-#: src/ui.c:2481
+#: src/ui.c:2488
 msgid "Examples:"
 msgstr ""
 
-#: src/ui.c:2494
+#: src/ui.c:2501
 msgid "Enter filter expression:"
 msgstr ""
 
-#: src/ui.c:2525
+#: src/ui.c:2535
 #, c-format
-msgid "An error at %s:%d detected [Less/ignore/connect]: "
+msgid "An error at %s:%d has been detected [Less/ignore/connect]: "
 msgstr ""
 
-#: src/ui.c:2702
+#: src/ui.c:2537
+#, c-format
+msgid "An error at %s has been detected [Less/ignore/connect]: "
+msgstr ""
+
+#: src/ui.c:2714
 #, c-format
 msgid "Refresh %d tagged hosts? [y/N]: "
 msgstr ""
 
-#: src/ui.c:2737
+#: src/ui.c:2749
 msgid "tag-"
 msgstr ""
 
-#: src/ui.c:2751 src/ui.c:2777 src/ui.c:2905
+#: src/ui.c:2763 src/ui.c:2789 src/ui.c:2917
 msgid "There are running sessions on this host! Continue? [y/N]: "
 msgstr ""
 
-#: src/ui.c:2800
+#: src/ui.c:2812
 msgid "Run update for the whole category? [y/N]: "
 msgstr ""
 
-#: src/ui.c:2801
+#: src/ui.c:2813
 msgid "Run update for the whole group? [y/N]: "
 msgstr ""
 
-#: src/ui.c:2845
+#: src/ui.c:2857
 #, c-format
 msgid "Run update for %d tagged and updatable hosts? [y/N]: "
 msgstr ""
 
-#: src/ui.c:2875
+#: src/ui.c:2887
 #, c-format
 msgid "Install package `%s' [y/N]: "
 msgstr ""
 
-#: src/ui.c:2881 src/ui.c:2910 src/ui.c:2926
+#: src/ui.c:2893 src/ui.c:2922 src/ui.c:2938
 msgid "Install package: "
 msgstr ""
 
-#: src/ui.c:2930
+#: src/ui.c:2942
 msgid "Run install for the whole category? [y/N]: "
 msgstr ""
 
-#: src/ui.c:2931
+#: src/ui.c:2943
 msgid "Run install for the whole group? [y/N]: "
 msgstr ""
 
-#: src/ui.c:2976
+#: src/ui.c:2988
 #, c-format
 msgid "Install package on %d tagged hosts: "
 msgstr ""
 
-#: src/ui.c:3004
+#: src/ui.c:3016
 msgid "Tag hosts matching: "
 msgstr ""
 
-#: src/ui.c:3005
+#: src/ui.c:3017
 msgid "Untag hosts matching: "
 msgstr ""
 
-#: src/ui.c:3080
+#: src/ui.c:3092
 #, c-format
 msgid "Attach host %s session %d (%d %s left) [Y/n/c]: "
 msgstr ""
 
-#: src/ui.c:3082
+#: src/ui.c:3094
 msgid "session"
 msgstr ""
 
-#: src/ui.c:3082
+#: src/ui.c:3094
 msgid "sessions"
 msgstr ""
 
-#: src/ui.c:3154
+#: src/ui.c:3166
 msgid "Already attached - share session? [y/N]: "
 msgstr ""
 
-#: src/ui.c:3182
+#: src/ui.c:3194
 msgid "Session dumps enabled."
 msgstr ""
 
-#: src/ui.c:3184
+#: src/ui.c:3196
 msgid "Session dumps disabled."
 msgstr ""
 
-#: src/ui.c:3200
+#: src/ui.c:3212
 msgid "FLAG"
 msgstr ""
 
-#: src/ui.c:3201 src/ui.c:3214
+#: src/ui.c:3213 src/ui.c:3226
 msgid "DESCRIPTION"
 msgstr ""
 
-#: src/ui.c:3213
+#: src/ui.c:3225
 msgid "KEY"
 msgstr ""
 
-#: src/ui.c:3269
+#: src/ui.c:3281
 msgid "HOST DETAILS"
 msgstr ""
 
-#: src/ui.c:3272
+#: src/ui.c:3284
 msgid "Group:"
 msgstr ""
 
-#: src/ui.c:3274
+#: src/ui.c:3286
 msgid "Hostname:"
 msgstr ""
 
-#: src/ui.c:3277
+#: src/ui.c:3289
 msgid "Machine Type:"
 msgstr ""
 
-#: src/ui.c:3281
+#: src/ui.c:3293
 msgid "Architecture:"
 msgstr ""
 
-#: src/ui.c:3285
+#: src/ui.c:3297
 msgid "UUID:"
 msgstr ""
 
-#: src/ui.c:3289
+#: src/ui.c:3301
 msgid "Forbidden:"
 msgstr ""
 
-#: src/ui.c:3293
+#: src/ui.c:3305
 msgid "refresh"
 msgstr ""
 
-#: src/ui.c:3300
+#: src/ui.c:3312
 msgid "upgrade"
 msgstr ""
 
-#: src/ui.c:3307
+#: src/ui.c:3319
 msgid "install"
 msgstr ""
 
-#: src/ui.c:3315
+#: src/ui.c:3327
 msgid "Distri:"
 msgstr ""
 
-#: src/ui.c:3321
+#: src/ui.c:3333
 msgid "Release:"
 msgstr ""
 
-#: src/ui.c:3325
+#: src/ui.c:3337
 msgid "Kernel name:"
 msgstr ""
 
-#: src/ui.c:3329
+#: src/ui.c:3341
 msgid "Kernel version:"
 msgstr ""
 
-#: src/ui.c:3334
+#: src/ui.c:3346
 msgid "(reboot required)"
 msgstr ""
 
-#: src/ui.c:3337
+#: src/ui.c:3349
 msgid "(selfbuild kernel)"
 msgstr ""
 
-#: src/ui.c:3351
+#: src/ui.c:3363
 msgid "Packages: "
 msgstr ""
 
-#: src/ui.c:3362
+#: src/ui.c:3374
 msgid "BROKEN PACKAGES"
 msgstr ""
 
-#: src/ui.c:3383
+#: src/ui.c:3395
 msgid "UPDATE PACKAGES"
 msgstr ""
 
-#: src/ui.c:3404
+#: src/ui.c:3416
 msgid "HOLD BACK PACKAGES"
 msgstr ""
 
-#: src/ui.c:3424
+#: src/ui.c:3436
 msgid "EXTRA PACKAGES"
 msgstr ""
 
-#: src/ui.c:3444
+#: src/ui.c:3456
 msgid "INSTALLED PACKAGES"
 msgstr ""

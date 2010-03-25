@@ -228,6 +228,9 @@ typedef struct _hostnode {
  gchar     uuid[UUID_STRLEN+1];
 } HostNode;
 
+#define HOST_SSHPORT_SET(n) \
+ ((n)->ssh_port != 0)
+
 struct mapping_t {
  gchar *name;
  gint value;
