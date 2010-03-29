@@ -13,7 +13,7 @@ apt-dater (0.8.3) unstable; urgency=low
   * Add '-o Aptitude::Delete-Unused=false' to aptitude safe-upgrade calls.
     (Contributed by Patrick Matthäi)
 
- -- 
+ -- Andre Ellguth <ellguth@ibh.de>  Mon, 29 Mar 2010 08:35:03 +0200
 
 apt-dater (0.8.2) unstable; urgency=low
 
