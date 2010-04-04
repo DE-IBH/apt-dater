@@ -1,3 +1,9 @@
+apt-dater (0.8.4) unstable; urgency=low
+
+  * Add UUID host field to report output.
+
+ -- 
+
 apt-dater (0.8.3) unstable; urgency=low
 
   * Parameters on 'apt-dater-host install' must not be interpreted by
