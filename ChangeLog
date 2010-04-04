@@ -31,6 +31,7 @@ apt-dater (x.y.z) unstable; urgency=low
   * Detect screen's socket path during configure.
     (Closes SF Bug#2950721 by Chris Liles)
   * Add .spec files for rpm packaging.
+  * Add UUID host field to report output.
 
  -- 
 
