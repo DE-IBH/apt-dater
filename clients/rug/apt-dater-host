@@ -215,8 +215,8 @@ sub do_kernel() {
     my $kinstalled;
     my %distri;
     unless(open(HKERNEL, "rpm -q --whatprovides kernel --qf '%{NAME}|%{VERSION}-%{RELEASE}\n' |")) {
-	print "\nADPERR: Failed to execute \"rpm -q --whatprovides kernel --qf '%{NAME}|%{VERSION}-%{RELEASE}\\n'\" ($!).\n";
-	exit(1);
+	print "$infostr 9 $version\n";
+	return;
     }
     while(<HKERNEL>) {
 	chomp;
@@ -235,8 +235,8 @@ sub do_kernel() {
     }
     close(HKERNEL);
     if($?) {
-	print "\nADPERR: Failed to execute \"rpm -q --whatprovides kernel --qf '%{NAME}|%{VERSION}-%{RELEASE}\\n'\" ($?).\n";
-	exit(1);
+	print "$infostr 9 $version\n";
+	return;
     }
 
     unless($distri{$version}) {

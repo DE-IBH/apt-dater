@@ -1,6 +1,9 @@
 apt-dater (0.8.4) unstable; urgency=low
 
   * Add UUID host field to report output.
+  * Don't fail if apt-dater-host could not get the installed kernel packages;
+    fallback to unknown reboot status.
+    (Closes SF Bug#2991717 by Karoly Molnar)
 
  -- 
 

@@ -236,8 +236,8 @@ sub do_kernel() {
     my $kinstalled;
     my %distri;
     unless(open(HKERNEL, "$GETROOT yum list 'kernel*' |")) {
-	print "\nADPERR: Failed to execute \"$GETROOT yum list 'kernel*'\" ($!).\n";
-	exit(1);
+	print "$infostr 9 $version\n";
+	return;
     };
     while(<HKERNEL>) {
 	chomp;
@@ -266,8 +266,8 @@ sub do_kernel() {
     }
     close(HKERNEL);
     if($?) {
-	print "\nADPERR: Error executing \"$GETROOT yum list 'kernel*'\" ($?).\n";
-	exit(1);
+	print "$infostr 9 $version\n";
+	return;
     };
 
     unless($distri{$version}) {

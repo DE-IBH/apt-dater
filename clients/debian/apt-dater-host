@@ -311,8 +311,8 @@ sub do_kernel() {
 
     my $reboot = 0;
     unless(open(HDPKG, "dpkg-query -W -f='\${Version} \${Status;20} \${Maintainer} \${Provides}\n' 'linux-image*'|grep 'install ok installed Debian Kernel Team'|grep linux-image|")) {
-	print "\nADPERR: Failed to execute \"dpkg-query -W -f='\${Version} \${Status;20} \${Maintainer} \${Provides}\\n' 'linux-image*'|grep 'install ok installed Debian Kernel Team'|grep linux-image\" ($!).\n";
-	exit(1);
+	print "$infostr 9 $version\n";
+	return;
     }
     while(<HDPKG>) {
 	next unless (/^(\S+)\s/);
