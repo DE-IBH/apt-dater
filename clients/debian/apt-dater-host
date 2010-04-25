@@ -175,8 +175,22 @@ sub do_status() {
     my %updates;
     my %holds;
     my $pos = 0;
-    unless(open(HAPT, "$GETROOT apt-get -q -s -f upgrade |")) {
-	print "\nADPERR: Failed to execute '$GETROOT apt-get -q -s upgrade' ($!).\n";
+    my $DPKGARGS;
+
+    if($DPKGTOOL eq "apt-get") {
+	$DPKGARGS = "-q -s -f";
+    }
+    elsif($DPKGTOOL eq "aptitude") {
+	$DPKGARGS = "-v -y -q -s -f";
+    }
+    else {
+	# unkown DPKG frontend - fallback to apt-get
+	$DPKGTOOL = "apt-get";
+	$DPKGARGS = "-q -s -f";
+    }
+
+    unless(open(HAPT, "$GETROOT $DPKGTOOL $DPKGARGS upgrade |")) {
+	print "\nADPERR: Failed to execute '$GETROOT $DPKGTOOL $DPKGARGS upgrade' ($!).\n";
 	exit(1);
     }
     while(<HAPT>) {
@@ -208,7 +222,7 @@ sub do_status() {
     }
     close(HAPT);
     if($?) {
-	print "\nADPERR: Error executing '$GETROOT apt-get -q -s -f upgrade' ($?).\n";
+	print "\nADPERR: Error executing '$GETROOT $DPKGTOOL $DPKGARGS upgrade' ($?).\n";
 	exit(1);
     }
 
