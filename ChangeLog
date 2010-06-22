@@ -6,6 +6,7 @@ apt-dater (0.8.4) unstable; urgency=low
     (Closes SF Bug#2991717 by Karoly Molnar)
   * Use $DPKGTOOL to detect packages with updates.
     (Contributed by Alexandre Anriot)
+  * Update german localization.
 
  -- 
 

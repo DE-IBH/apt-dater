@@ -3567,10 +3567,10 @@ gboolean ctrlUI (GList *hosts)
 
    if(hostcnt > 0) {
     if (hostcnt != 1) {
-     qrystr = g_strdup_printf("There are %d hosts in status refresh state, quit apt-dater? [y/N]: ", hostcnt);
+     qrystr = g_strdup_printf(_("There are %d hosts in status refresh state, quit apt-dater? [y/N]: "), hostcnt);
     }
     else {
-     qrystr = g_strdup_printf("There is %d host in status refresh state, quit apt-dater? [y/N]: ", hostcnt);
+     qrystr = g_strdup_printf(_("There is %d host in status refresh state, quit apt-dater? [y/N]: "), hostcnt);
     }
 
     retqry = queryConfirm(qrystr, FALSE, NULL);

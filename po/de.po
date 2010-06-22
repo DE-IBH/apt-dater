@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-dater 0.8.1\n"
 "Report-Msgid-Bugs-To: apt-dater@ibh.de\n"
-"POT-Creation-Date: 2010-03-25 17:34+0100\n"
+"POT-Creation-Date: 2010-06-22 15:37+0200\n"
 "PO-Revision-Date: 2009-11-14 09:26+0100\n"
 "Last-Translator: Thomas Liske <liske@ibh.de>\n"
 "Language-Team: apt-dater@ibh.de\n"
@@ -691,3 +691,13 @@ msgstr "EXTRA PAKETE"
 #: src/ui.c:3456
 msgid "INSTALLED PACKAGES"
 msgstr "INSTALLIERTE PAKETE"
+
+#: src/ui.c:3570
+#, c-format
+msgid "There are %d hosts in status refresh state, quit apt-dater? [y/N]: "
+msgstr "Es werden %d Hosts aktuallisiert, apt-dater beenden? [j/N]: "
+
+#: src/ui.c:3573
+#, c-format
+msgid "There is %d host in status refresh state, quit apt-dater? [y/N]: "
+msgstr "Es wird %d Host aktuallisiert, apt-dater beenden? [j/N]: "
