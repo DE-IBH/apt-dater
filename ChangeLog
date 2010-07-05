@@ -8,7 +8,7 @@ apt-dater (0.8.4) unstable; urgency=low
     (Contributed by Alexandre Anriot)
   * Update german localization.
 
- -- 
+ -- Andre Ellguth <ellguth@ibh.de>  Mon, 05 Jul 2010 12:51:58 +0200
 
 apt-dater (0.8.3) unstable; urgency=low
 
