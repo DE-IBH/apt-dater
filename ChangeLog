@@ -32,6 +32,8 @@ apt-dater (x.y.z) unstable; urgency=low
     (Closes SF Bug#2950721 by Chris Liles)
   * Add .spec files for rpm packaging.
   * Add UUID host field to report output.
+  * Fixed a key mismatch in the history view.
+  * Fixed a selector positioning bug.
 
  -- 
 
