@@ -626,6 +626,234 @@ static void drawHelp ()
 }
 
 
+static void drawHostDetails(HostNode *h)
+{
+ WINDOW *wp = newpad(32 + h->nupdates + h->nholds + h->nextras +
+		     h->nbrokens + g_list_length(h->packages), COLS);
+ char buf[0x1ff];
+ gint l = 0;
+ int  wic = 0, pminrow = 0, kcquit = 'q', i = 0;
+
+ keypad(wp, TRUE);
+
+ wattron(wp, A_BOLD);
+ mvwaddnstr(wp, l++,  1, _("HOST DETAILS"), COLS - 1);
+ wattroff(wp, A_BOLD);
+
+ mvwaddnstr(wp, l  ,  2, _("Group:"), COLS -  2);
+ mvwaddnstr(wp, l++, 20, h->group, COLS - 20);
+ mvwaddnstr(wp, l  ,  2, _("Hostname:"), COLS -  2);
+ mvwaddnstr(wp, l++, 20, h->hostname, COLS - 20);
+ if (h->virt) {
+  mvwaddnstr(wp, l  ,  2, _("Machine Type:"), COLS -  2);
+  mvwaddnstr(wp, l++, 20, h->virt, COLS - 20);
+ }
+ if (h->uname_machine && h->uname_machine[0]) {
+  mvwaddnstr(wp, l  ,  2, _("Architecture:"), COLS -  2);
+  mvwaddnstr(wp, l++, 20, h->uname_machine, COLS - 20);
+ }
+ if (h->uuid[0]) {
+  mvwaddnstr(wp, l  ,  2, _("UUID:"), COLS -  2);
+  mvwaddnstr(wp, l++, 20, h->uuid, COLS - 20);
+ }
+ if (h->forbid & HOST_FORBID_MASK) {
+  mvwaddnstr(wp, l  , 2, _("Forbidden:"), COLS - 2);
+
+  strcpy(buf, " ");
+  if (h->forbid & HOST_FORBID_REFRESH) {
+   strcat(buf, _("refresh"));
+  }
+
+  if (h->forbid & HOST_FORBID_UPGRADE) {
+   if(strlen(buf) > 1) {
+    strcat(buf, ", ");
+   }
+   strcat(buf, _("upgrade"));
+  }
+
+  if (h->forbid & HOST_FORBID_INSTALL) {
+   if(strlen(buf) > 1) {
+    strcat(buf, ", ");
+   }
+   strcat(buf, _("install"));
+  }
+  mvwaddnstr(wp, l++, 15, buf        , COLS - 15);
+ }
+
+ l++;
+
+ if (h->lsb_distributor) {
+  mvwaddnstr(wp, l  ,  2, _("Distri:"), COLS -  2);
+  mvwaddnstr(wp, l++, 20, h->lsb_distributor, COLS - 20);
+  if (h->lsb_codename)
+   snprintf(buf, sizeof(buf), "%s (%s)", h->lsb_release, h->lsb_codename);
+  else
+   snprintf(buf, sizeof(buf), "%s", h->lsb_release);
+  mvwaddnstr(wp, l  ,  2, _("Release:"), COLS -  2);
+  mvwaddnstr(wp, l++, 20, buf, COLS - 20);
+ }
+ if (h->uname_kernel && h->uname_kernel[0]) {
+  mvwaddnstr(wp, l  ,  2, _("Kernel name:"), COLS -  2);
+  mvwaddnstr(wp, l++, 20, h->uname_kernel, COLS - 20);
+ }
+ if (h->kernelrel) {
+  mvwaddnstr(wp, l  ,  2, _("Kernel version:"), COLS -  2);
+  mvwaddnstr(wp, l++, 20, h->kernelrel, COLS - 20);
+	
+  switch(h->status & (HOST_STATUS_KERNELNOTMATCH | HOST_STATUS_KERNELSELFBUILD)) {
+  case HOST_STATUS_KERNELNOTMATCH:
+   strcpy(buf, _("(reboot required)"));
+   break;
+  case HOST_STATUS_KERNELSELFBUILD:
+   strcpy(buf, _("(selfbuild kernel)"));
+   break;
+  default:
+   buf[0] = 0;
+   break;
+  }
+
+  if(strlen(buf) > 0)
+   mvwaddnstr(wp, l-1, 21 + strlen(h->kernelrel), buf, COLS - 21 - strlen(h->kernelrel));
+ }
+
+ if (g_list_length(h->packages)) {
+  l++;
+
+  mvwaddnstr(wp, l  , 2, _("Packages: "), COLS - 2);
+  snprintf(buf, sizeof(buf), "%d installed (%d update%s, %d hold back, %d broken, %d extra)",
+	   g_list_length(h->packages), h->nupdates, h->nupdates == 1 ? "" : "s",
+	   h->nholds, h->nbrokens, h->nextras);
+  mvwaddnstr(wp, l++, 20, buf, COLS - 20);
+ }
+
+ if (h->nbrokens) {
+  l++;
+
+  wattron(wp, A_BOLD);
+  mvwaddnstr(wp, l++,  1, _("BROKEN PACKAGES"), COLS - 1);
+  wattroff(wp, A_BOLD);
+
+  GList *p = g_list_first(h->packages);
+  while(p) {
+   PkgNode *pn = p->data;
+
+   if (pn->flag & HOST_STATUS_PKGBROKEN) {
+    mvwaddnstr(wp, l  ,  2, pn->package , MIN(33, COLS -  2));
+    snprintf(buf, sizeof(buf), "%s (%s)", pn->version, pn->data);
+    mvwaddnstr(wp, l++, 36, buf, COLS - 36);
+   }
+
+   p = g_list_next(p);
+  }
+ }
+
+ if (h->nupdates) {
+  l++;
+
+  wattron(wp, A_BOLD);
+  mvwaddnstr(wp, l++,  1, _("UPDATE PACKAGES")  , COLS - 1);
+  wattroff(wp, A_BOLD);
+
+  GList *p = g_list_first(h->packages);
+  while(p) {
+   PkgNode *pn = p->data;
+
+   if (pn->flag & HOST_STATUS_PKGUPDATE) {
+    mvwaddnstr(wp, l  ,  2, pn->package, MIN(33, COLS - 2));
+    snprintf(buf, sizeof(buf), "%s -> %s", pn->version, pn->data);
+    mvwaddnstr(wp, l++, 36, buf, COLS - 36);
+   }
+
+   p = g_list_next(p);
+  }
+ }
+
+ if (h->nholds) {
+  l++;
+
+  wattron(wp, A_BOLD);
+  mvwaddnstr(wp, l++,  1, _("HOLD BACK PACKAGES")  , COLS - 1);
+  wattroff(wp, A_BOLD);
+
+  GList *p = g_list_first(h->packages);
+  while(p) {
+   PkgNode *pn = p->data;
+
+   if (pn->flag & HOST_STATUS_PKGKEPTBACK) {
+    mvwaddnstr(wp, l  ,  2, pn->package, MIN(33, COLS -  2));
+    mvwaddnstr(wp, l++, 36, pn->version, COLS - 36);
+   }
+
+   p = g_list_next(p);
+  }
+ }
+
+ if (h->nextras) {
+  l++;
+
+  wattron(wp, A_BOLD);
+  mvwaddnstr(wp, l++,  1, _("EXTRA PACKAGES")  , COLS - 1);
+  wattroff(wp, A_BOLD);
+
+  GList *p = g_list_first(h->packages);
+  while(p) {
+   PkgNode *pn = p->data;
+
+   if (pn->flag & HOST_STATUS_PKGEXTRA) {
+    mvwaddnstr(wp, l  ,  2, pn->package , MIN(33, COLS -  2));
+    mvwaddnstr(wp, l++, 36, pn->version , COLS - 36);
+   }
+
+   p = g_list_next(p);
+  }
+ }
+
+ if (g_list_length(h->packages)) {
+  l++;
+
+  wattron(wp, A_BOLD);
+  mvwaddnstr(wp, l++,  1, _("INSTALLED PACKAGES"), COLS - 1);
+  wattroff(wp, A_BOLD);
+
+  GList *p = g_list_first(h->packages);
+  while(p) {
+   PkgNode *pn = p->data;
+
+   mvwaddnstr(wp, l  ,  2, pn->package , MIN(33, COLS -  2));
+   mvwaddnstr(wp, l++, 36, pn->version , COLS - 36);
+
+   p = g_list_next(p);
+  }
+ }
+
+
+ for(i = 0; shortCuts[i].key; i++)
+  if(shortCuts[i].sc == SC_KEY_QUIT) kcquit = shortCuts[i].keycode;
+
+ pminrow = 0;
+ prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
+ while((wic = tolower(wgetch(wp))) != kcquit) {
+  if(wic == KEY_UP && pminrow)
+   pminrow--;
+  else if(wic == KEY_DOWN && pminrow < l-LINES+4)
+   pminrow++;
+  else if(wic == KEY_HOME)
+   pminrow=0;
+  else if(wic == KEY_END)
+   pminrow=l-LINES+4;
+  else if(wic == KEY_NPAGE)
+   pminrow = pminrow+LINES-3 > (l-LINES+4) ? l-LINES+4 : pminrow+LINES-3;
+  else if(wic == KEY_PPAGE)
+   pminrow = pminrow-(LINES-3) < 0 ? 0 : pminrow-(LINES-3);
+  else if(wic == '?')
+   drawHelp();
+  prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
+ }
+
+ delwin(wp);
+}
+
+
 void drawStatus (char *str, gboolean drawinfo)
 {
  char strinfo[30];
@@ -3273,233 +3501,8 @@ gboolean ctrlUI (GList *hosts)
 
   case SC_KEY_MORE:
    if (inhost) {
-    WINDOW *wp = newpad(32 + inhost->nupdates + inhost->nholds + inhost->nextras +
-			inhost->nbrokens + g_list_length(inhost->packages), COLS);
-    char buf[0x1ff];
-    gint l = 0;
-    int  wic = 0, pminrow = 0, kcquit = 'q';
+    drawHostDetails(inhost);
 
-    keypad(wp, TRUE);
-
-    wattron(wp, A_BOLD);
-    mvwaddnstr(wp, l++,  1, _("HOST DETAILS"), COLS - 1);
-    wattroff(wp, A_BOLD);
-
-    mvwaddnstr(wp, l  ,  2, _("Group:"), COLS -  2);
-    mvwaddnstr(wp, l++, 20, inhost->group, COLS - 20);
-    mvwaddnstr(wp, l  ,  2, _("Hostname:"), COLS -  2);
-    mvwaddnstr(wp, l++, 20, inhost->hostname, COLS - 20);
-    if (inhost->virt) {
-	mvwaddnstr(wp, l  ,  2, _("Machine Type:"), COLS -  2);
-	mvwaddnstr(wp, l++, 20, inhost->virt, COLS - 20);
-    }
-    if (inhost->uname_machine && inhost->uname_machine[0]) {
-	mvwaddnstr(wp, l  ,  2, _("Architecture:"), COLS -  2);
-	mvwaddnstr(wp, l++, 20, inhost->uname_machine, COLS - 20);
-    }
-    if (inhost->uuid[0]) {
-	mvwaddnstr(wp, l  ,  2, _("UUID:"), COLS -  2);
-	mvwaddnstr(wp, l++, 20, inhost->uuid, COLS - 20);
-    }
-    if (inhost->forbid & HOST_FORBID_MASK) {
-	mvwaddnstr(wp, l  , 2, _("Forbidden:"), COLS - 2);
-
-	strcpy(buf, " ");
-	if (inhost->forbid & HOST_FORBID_REFRESH) {
-	    strcat(buf, _("refresh"));
-	}
-
-	if (inhost->forbid & HOST_FORBID_UPGRADE) {
-	    if(strlen(buf) > 1) {
-		strcat(buf, ", ");
-	    }
-	    strcat(buf, _("upgrade"));
-	}
-
-	if (inhost->forbid & HOST_FORBID_INSTALL) {
-	    if(strlen(buf) > 1) {
-		strcat(buf, ", ");
-	    }
-	    strcat(buf, _("install"));
-	}
-	mvwaddnstr(wp, l++, 15, buf        , COLS - 15);
-    }
-
-    l++;
-
-    if (inhost->lsb_distributor) {
-	mvwaddnstr(wp, l  ,  2, _("Distri:"), COLS -  2);
-        mvwaddnstr(wp, l++, 20, inhost->lsb_distributor, COLS - 20);
-        if (inhost->lsb_codename)
-	    snprintf(buf, sizeof(buf), "%s (%s)", inhost->lsb_release, inhost->lsb_codename);
-	else
-	    snprintf(buf, sizeof(buf), "%s", inhost->lsb_release);
-	mvwaddnstr(wp, l  ,  2, _("Release:"), COLS -  2);
-        mvwaddnstr(wp, l++, 20, buf, COLS - 20);
-    }
-    if (inhost->uname_kernel && inhost->uname_kernel[0]) {
-	mvwaddnstr(wp, l  ,  2, _("Kernel name:"), COLS -  2);
-	mvwaddnstr(wp, l++, 20, inhost->uname_kernel, COLS - 20);
-    }
-    if (inhost->kernelrel) {
-	mvwaddnstr(wp, l  ,  2, _("Kernel version:"), COLS -  2);
-	mvwaddnstr(wp, l++, 20, inhost->kernelrel, COLS - 20);
-	
-	switch(inhost->status & (HOST_STATUS_KERNELNOTMATCH | HOST_STATUS_KERNELSELFBUILD)) {
-	    case HOST_STATUS_KERNELNOTMATCH:
-		strcpy(buf, _("(reboot required)"));
-		break;
-	    case HOST_STATUS_KERNELSELFBUILD:
-		strcpy(buf, _("(selfbuild kernel)"));
-		break;
-	    default:
-		buf[0] = 0;
-		break;
-	}
-
-	if(strlen(buf) > 0)
-	    mvwaddnstr(wp, l-1, 21 + strlen(inhost->kernelrel), buf, COLS - 21 - strlen(inhost->kernelrel));
-    }
-
-    if (g_list_length(inhost->packages)) {
-	l++;
-
-	mvwaddnstr(wp, l  , 2, _("Packages: "), COLS - 2);
-	snprintf(buf, sizeof(buf), "%d installed (%d update%s, %d hold back, %d broken, %d extra)",
-		 g_list_length(inhost->packages), inhost->nupdates, inhost->nupdates == 1 ? "" : "s",
-		 inhost->nholds, inhost->nbrokens, inhost->nextras);
-	mvwaddnstr(wp, l++, 20, buf, COLS - 20);
-    }
-
-    if (inhost->nbrokens) {
-	l++;
-
-	wattron(wp, A_BOLD);
-	mvwaddnstr(wp, l++,  1, _("BROKEN PACKAGES"), COLS - 1);
-	wattroff(wp, A_BOLD);
-
-	GList *p = g_list_first(inhost->packages);
-	while(p) {
-	    PkgNode *pn = p->data;
-
-	    if (pn->flag & HOST_STATUS_PKGBROKEN) {
-		mvwaddnstr(wp, l  ,  2, pn->package , MIN(33, COLS -  2));
-		snprintf(buf, sizeof(buf), "%s (%s)", pn->version, pn->data);
-		mvwaddnstr(wp, l++, 36, buf, COLS - 36);
-            }
-
-	    p = g_list_next(p);
-	}
-    }
-
-    if (inhost->nupdates) {
-	l++;
-
-	wattron(wp, A_BOLD);
-	mvwaddnstr(wp, l++,  1, _("UPDATE PACKAGES")  , COLS - 1);
-	wattroff(wp, A_BOLD);
-
-	GList *p = g_list_first(inhost->packages);
-	while(p) {
-	    PkgNode *pn = p->data;
-
-	    if (pn->flag & HOST_STATUS_PKGUPDATE) {
-		mvwaddnstr(wp, l  ,  2, pn->package, MIN(33, COLS - 2));
-		snprintf(buf, sizeof(buf), "%s -> %s", pn->version, pn->data);
-		mvwaddnstr(wp, l++, 36, buf, COLS - 36);
-            }
-
-	    p = g_list_next(p);
-	}
-    }
-
-    if (inhost->nholds) {
-	l++;
-
-	wattron(wp, A_BOLD);
-	mvwaddnstr(wp, l++,  1, _("HOLD BACK PACKAGES")  , COLS - 1);
-	wattroff(wp, A_BOLD);
-
-	GList *p = g_list_first(inhost->packages);
-	while(p) {
-	    PkgNode *pn = p->data;
-
-	    if (pn->flag & HOST_STATUS_PKGKEPTBACK) {
-		mvwaddnstr(wp, l  ,  2, pn->package, MIN(33, COLS -  2));
-		mvwaddnstr(wp, l++, 36, pn->version, COLS - 36);
-            }
-
-	    p = g_list_next(p);
-	}
-    }
-
-    if (inhost->nextras) {
-	l++;
-
-	wattron(wp, A_BOLD);
-	mvwaddnstr(wp, l++,  1, _("EXTRA PACKAGES")  , COLS - 1);
-	wattroff(wp, A_BOLD);
-
-	GList *p = g_list_first(inhost->packages);
-	while(p) {
-	    PkgNode *pn = p->data;
-
-	    if (pn->flag & HOST_STATUS_PKGEXTRA) {
-		mvwaddnstr(wp, l  ,  2, pn->package , MIN(33, COLS -  2));
-		mvwaddnstr(wp, l++, 36, pn->version , COLS - 36);
-            }
-
-	    p = g_list_next(p);
-	}
-    }
-
-    if (g_list_length(inhost->packages)) {
-	l++;
-
-	wattron(wp, A_BOLD);
-	mvwaddnstr(wp, l++,  1, _("INSTALLED PACKAGES"), COLS - 1);
-	wattroff(wp, A_BOLD);
-
-	GList *p = g_list_first(inhost->packages);
-	while(p) {
-	    PkgNode *pn = p->data;
-
-	    mvwaddnstr(wp, l  ,  2, pn->package , MIN(33, COLS -  2));
-	    mvwaddnstr(wp, l++, 36, pn->version , COLS - 36);
-
-	    p = g_list_next(p);
-	}
-    }
-
-
-    for(i = 0; shortCuts[i].key; i++)
-     if(shortCuts[i].sc == SC_KEY_QUIT) kcquit = shortCuts[i].keycode;
-
-    pminrow = 0;
-    prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
-    while((wic = tolower(wgetch(wp))) != kcquit) {
-     if(wic == KEY_UP && pminrow)
-      pminrow--;
-     else if(wic == KEY_DOWN && pminrow < l-LINES+4)
-      pminrow++;
-     else if(wic == KEY_HOME)
-      pminrow=0;
-     else if(wic == KEY_END)
-      pminrow=l-LINES+4;
-     else if(wic == KEY_NPAGE)
-      pminrow = pminrow+LINES-3 > (l-LINES+4) ? l-LINES+4 : pminrow+LINES-3;
-     else if(wic == KEY_PPAGE)
-      pminrow = pminrow-(LINES-3) < 0 ? 0 : pminrow-(LINES-3);
-#ifdef KEY_RESIZE
-     else if(wic == KEY_RESIZE) {
-      refscr = TRUE;
-      break;
-     }
-#endif
-     prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
-    }
-
-    delwin(wp);
     refscr = TRUE;
    }
    break; /* case SC_KEY_MORE */
