@@ -1,3 +1,10 @@
+apt-dater (0.8.x) unstable; urgency=low
+
+  * Fixed a key mismatch in the history view.
+  * Fixed a selector positioning bug.
+
+ -- 
+
 apt-dater (0.8.4) unstable; urgency=low
 
   * Add UUID host field to report output.
