@@ -2,6 +2,8 @@ apt-dater (0.8.x) unstable; urgency=low
 
   * Fixed a key mismatch in the history view.
   * Fixed a selector positioning bug.
+  * Don't use sudo on apt-dater-host status w/ aptitude.
+    (Fixes Debian Bug#596723 by "chrysn")
 
  -- 
 

@@ -176,12 +176,14 @@ sub do_status() {
     my %holds;
     my $pos = 0;
     my $DPKGARGS;
+    my $_GETROOT = $GETROOT;
 
     if($DPKGTOOL eq "apt-get") {
 	$DPKGARGS = "-q -s -f";
     }
     elsif($DPKGTOOL eq "aptitude") {
 	$DPKGARGS = "-v -y -q -s -f";
+	$_GETROOT = '';
     }
     else {
 	# unkown DPKG frontend - fallback to apt-get
@@ -189,8 +191,8 @@ sub do_status() {
 	$DPKGARGS = "-q -s -f";
     }
 
-    unless(open(HAPT, "$GETROOT $DPKGTOOL $DPKGARGS upgrade |")) {
-	print "\nADPERR: Failed to execute '$GETROOT $DPKGTOOL $DPKGARGS upgrade' ($!).\n";
+    unless(open(HAPT, "$_GETROOT $DPKGTOOL $DPKGARGS upgrade |")) {
+	print "\nADPERR: Failed to execute '$_GETROOT $DPKGTOOL $DPKGARGS upgrade' ($!).\n";
 	exit(1);
     }
     while(<HAPT>) {
