@@ -4,6 +4,8 @@ apt-dater (0.8.x) unstable; urgency=low
   * Fixed a selector positioning bug.
   * Don't use sudo on apt-dater-host status w/ aptitude.
     (Fixes Debian Bug#596723 by "chrysn")
+  * Configure should check if popt.h is available.
+    (Closes SF Bug#3045502 by Henri Salo)
 
  -- 
 
