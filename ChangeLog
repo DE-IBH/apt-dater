@@ -34,6 +34,8 @@ apt-dater (x.y.z) unstable; urgency=low
   * Add UUID host field to report output.
   * Fixed a key mismatch in the history view.
   * Fixed a selector positioning bug.
+  * Configure should check if popt.h is available.
+    (Closes SF Bug#3045502 by Henri Salo)
 
  -- 
 

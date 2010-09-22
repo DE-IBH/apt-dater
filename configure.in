@@ -111,6 +111,7 @@ LIBS="$LIBS $CURSES_LIB"
 
 AC_SUBST(CURSES_LIB)
 
+AC_CHECK_HEADERS(popt.h)
 AC_CHECK_LIB([popt], [poptParseArgvString])
 AC_CHECK_LIB([glib-2.0], [g_main_loop_run])
 AC_CHECK_LIB([glib-2.0], [g_timeout_add_seconds],
