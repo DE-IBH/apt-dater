@@ -108,10 +108,6 @@ screen_get_sessions(HostNode *n) {
 
 gchar *
 screen_new(HostNode *n, const gboolean detached) {
-
-  if (!cfg->use_screen)
-     return g_strdup("");
-
   gchar *title = parse_string(cfg->screentitle, n);
 
   gchar *cmd = g_strdup_printf(SCREEN_BINARY"+-%sS+"SCREEN_SOCKPRE"%s_%s_%d"	\

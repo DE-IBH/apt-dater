@@ -7,7 +7,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008-2009 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008-2010 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -230,12 +230,6 @@ CfgFile *loadConfig (char *filename)
       g_key_file_get_string(keyfile, "Commands", "CmdInstall", &error))) {
   g_error ("%s: %s", filename, error->message);
   return (NULL);
- }
-
- lcfg->use_screen = g_key_file_get_integer(keyfile, "Screen", "Enabled", &error);
- if (error) {
-   lcfg->use_screen = g_file_test(SCREEN_BINARY, G_FILE_TEST_IS_EXECUTABLE);
-   g_clear_error(&error);
  }
 
  lcfg->dump_screen = !g_key_file_get_boolean(keyfile, "Screen", "NoDumps", &error);
