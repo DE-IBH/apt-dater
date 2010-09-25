@@ -148,12 +148,6 @@ and docbook-xsl in your Build-Depends control field.
 
     <variablelist>
       <varlistentry>
-        <term><symbol>Enabled</symbol>=<replaceable>true</replaceable></term>
-        <listitem>
-          <para>Enables/disables using of screen(1). (optional)</para>
-        </listitem>
-      </varlistentry>
-      <varlistentry>
         <term><symbol>RCFile</symbol>=<replaceable>$XDG_CONFIG_HOME/apt-dater/screenrc</replaceable></term>
         <listitem>
           <para>Location of screen(1) config file. (optional)</para>

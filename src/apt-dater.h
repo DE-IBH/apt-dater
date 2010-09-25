@@ -7,7 +7,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008-2009 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008-2010 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -105,7 +105,6 @@ typedef struct _cfgfile {
  gchar *cmd_refresh;
  gchar *cmd_upgrade;
  gchar *cmd_install;
- gboolean use_screen;
  gboolean dump_screen;
  gboolean query_maintainer;
  gboolean beep;
