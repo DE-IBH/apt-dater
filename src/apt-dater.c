@@ -62,8 +62,8 @@ time_t oldest_st_mtime;
 int main(int argc, char **argv, char **envp)
 {
  int opts;
- char *cfgfilename = NULL;
- char *cfgdirname = NULL;
+ gchar *cfgfilename = NULL;
+ gchar *cfgdirname = NULL;
  GList *hosts = NULL;
 #ifdef FEAT_XMLREPORT
  gboolean report = FALSE;
@@ -219,8 +219,8 @@ int main(int argc, char **argv, char **envp)
  cleanupLocks();
 
  freeConfig(cfg);
- free(cfgfilename);
- free(cfgdirname);
+ g_free(cfgfilename);
+ g_free(cfgdirname);
 
  exit(EXIT_SUCCESS);
 }
