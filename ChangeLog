@@ -8,6 +8,9 @@ apt-dater (0.8.x) unstable; urgency=low
     (Closes SF Bug#3045502 by Henri Salo)
   * Drop "[screen] enabled" config option, it doesn't work any more.
     (Reported by Daniel Baumann due Debian Bug#597941)
+  * Fix unknown yum based hosts (reported on Fedora) due bad package status
+    interpretation.
+    (Reported by Patrick Matthäi)
 
  -- 
 

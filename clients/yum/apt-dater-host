@@ -191,7 +191,7 @@ sub do_status() {
 	    $status{$1} = 'x';
 	}
 	else {
-	    $status{$1} = substr($3, 0, 1);
+	    $status{$1} = 'i';
 	}
     }
     close(HDPKG);
