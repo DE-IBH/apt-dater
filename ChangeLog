@@ -11,6 +11,16 @@ apt-dater (0.8.x) unstable; urgency=low
   * Fix unknown yum based hosts (reported on Fedora) due bad package status
     interpretation.
     (Reported by Patrick Matthäi)
+  * Some pedantic stuff (use long options for aptitude and apt-get to
+    ease code reading). Don't fail on untrusted/unauthenticated packages
+    when checking for upgrades (still check for the upgrade itself).
+    (Contributed by Mathieu PARENT due SF Bug#3158198)
+  * Check for updates (refresh) using dist-upgrade. This show
+    ABI-incompatible upgrades (like the recent bind9 one:
+    http://www.debian.org/security/2010/dsa-2130.en.html).
+    (Contributed by Mathieu PARENT due SF Bug#3158198)
+  * Make upgrade method customizable and change default to dist-upgrade.
+    (Inspired by Mathieu PARENT due SF Bug#3158198)
 
  -- 
 

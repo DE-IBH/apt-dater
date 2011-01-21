@@ -34,6 +34,7 @@ use strict;
 
 my $CFGFILE = '/etc/apt-dater-host.conf';
 my $DPKGTOOL = 'aptitude';
+my $APTUPGRADE = 'dist-upgrade';
 my $ASSUMEYES = 0;
 my $GETROOT = 'sudo';
 my $CLEANUP = 0;
@@ -179,20 +180,20 @@ sub do_status() {
     my $_GETROOT = $GETROOT;
 
     if($DPKGTOOL eq "apt-get") {
-	$DPKGARGS = "-q -s -f";
+	$DPKGARGS = "--quiet --simulate --fix-broken --allow-unauthenticated";
     }
     elsif($DPKGTOOL eq "aptitude") {
-	$DPKGARGS = "-v -y -q -s -f";
+	$DPKGARGS = "--verbose --assume-yes --quiet --simulate -f --allow-untrusted";
 	$_GETROOT = '';
     }
     else {
 	# unkown DPKG frontend - fallback to apt-get
 	$DPKGTOOL = "apt-get";
-	$DPKGARGS = "-q -s -f";
+	$DPKGARGS = "--quiet --simulate --fix-broken --allow-unauthenticated";
     }
 
-    unless(open(HAPT, "$_GETROOT $DPKGTOOL $DPKGARGS upgrade |")) {
-	print "\nADPERR: Failed to execute '$_GETROOT $DPKGTOOL $DPKGARGS upgrade' ($!).\n";
+    unless(open(HAPT, "$_GETROOT $DPKGTOOL $DPKGARGS dist-upgrade |")) {
+	print "\nADPERR: Failed to execute '$_GETROOT $DPKGTOOL $DPKGARGS dist-upgrade' ($!).\n";
 	exit(1);
     }
     while(<HAPT>) {
@@ -224,7 +225,7 @@ sub do_status() {
     }
     close(HAPT);
     if($?) {
-	print "\nADPERR: Error executing '$GETROOT $DPKGTOOL $DPKGARGS upgrade' ($?).\n";
+	print "\nADPERR: Error executing '$GETROOT $DPKGTOOL $DPKGARGS dist-upgrade' ($?).\n";
 	exit(1);
     }
 
@@ -292,9 +293,9 @@ sub do_upgrade() {
     $UpgradeCmd .= '--assume-yes ' if($ASSUMEYES);
 
     if($DPKGTOOL eq 'aptitude'){
-	$UpgradeCmd .= '-o Aptitude::Delete-Unused=false safe-';
+	$UpgradeCmd .= '-o Aptitude::Delete-Unused=false ';
     }
-    $UpgradeCmd .= 'upgrade';
+    $UpgradeCmd .= $APTUPGRADE;
 
     system($UpgradeCmd);
 }
