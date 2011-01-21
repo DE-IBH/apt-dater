@@ -565,6 +565,67 @@ void drawMenu (gint mask)
  attroff(uicolors[UI_COLOR_MENU]);
 }
 
+
+static void drawHelp ()
+{
+ WINDOW   *wp = newpad(32+SC_MAX, COLS);
+ gint     l = 0;
+ int      wic = 0, pminrow = 0, kcquit = 'q';
+    
+ keypad(wp, TRUE);
+
+ wattron(wp, A_BOLD);
+ mvwaddnstr(wp, l  ,  2, _("FLAG")       , COLS - 2);
+ mvwaddnstr(wp, l++, 16, _("DESCRIPTION"), COLS - 16);
+ wattroff(wp, A_BOLD);
+
+ gint i = -1;
+ while(hostFlags[++i].flag) {
+  mvwaddch  (wp, l,  2, hostFlags[i].code[0]);
+  mvwaddnstr(wp, l, 16, _(hostFlags[i].descr), COLS - 16);
+  l++;
+ }
+ l++;
+     
+ wattron(wp, A_BOLD);
+ mvwaddnstr(wp, l  ,  2, _("KEY")        , COLS - 2);
+ mvwaddnstr(wp, l++, 16, _("DESCRIPTION"), COLS - 16);
+ wattroff(wp, A_BOLD);
+
+ i = -1;
+ while(shortCuts[++i].key) {
+  mvwaddnstr(wp, l,  2, _(shortCuts[i].key)  , COLS - 2);
+  mvwaddnstr(wp, l, 16, _(shortCuts[i].descr), COLS - 16);
+       
+  l++;
+ }
+
+
+ for(i = 0; shortCuts[i].key; i++)
+  if(shortCuts[i].sc == SC_KEY_QUIT) kcquit = shortCuts[i].keycode;
+
+ pminrow = 0;
+ prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
+ while((wic = tolower(wgetch(wp))) != kcquit) {
+  if(wic == KEY_UP && pminrow)
+   pminrow--;
+  else if(wic == KEY_DOWN && pminrow < l-LINES+4)
+   pminrow++;
+  else if(wic == KEY_HOME)
+   pminrow=0;
+  else if(wic == KEY_END)
+   pminrow=l-LINES+4;
+  else if(wic == KEY_NPAGE)
+   pminrow = pminrow+LINES-3 > (l-LINES+4) ? l-LINES+4 : pminrow+LINES-3;
+  else if(wic == KEY_PPAGE)
+   pminrow = pminrow-(LINES-3) < 0 ? 0 : pminrow-(LINES-3);
+  prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
+ }
+
+ delwin(wp);
+}
+
+
 static void drawHostDetails(HostNode *h)
 {
  WINDOW *wp = newpad(32 + h->nupdates + h->nholds + h->nextras +
@@ -786,67 +847,6 @@ static void drawHostDetails(HostNode *h)
    pminrow = pminrow-(LINES-3) < 0 ? 0 : pminrow-(LINES-3);
   else if(wic == '?')
    drawHelp();
-  prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
- }
-
- delwin(wp);
-}
-
-
-
-static void drawHelp ()
-{
- WINDOW   *wp = newpad(32+SC_MAX, COLS);
- gint     l = 0;
- int      wic = 0, pminrow = 0, kcquit = 'q';
-    
- keypad(wp, TRUE);
-
- wattron(wp, A_BOLD);
- mvwaddnstr(wp, l  ,  2, _("FLAG")       , COLS - 2);
- mvwaddnstr(wp, l++, 16, _("DESCRIPTION"), COLS - 16);
- wattroff(wp, A_BOLD);
-
- gint i = -1;
- while(hostFlags[++i].flag) {
-  mvwaddch  (wp, l,  2, hostFlags[i].code[0]);
-  mvwaddnstr(wp, l, 16, _(hostFlags[i].descr), COLS - 16);
-  l++;
- }
- l++;
-     
- wattron(wp, A_BOLD);
- mvwaddnstr(wp, l  ,  2, _("KEY")        , COLS - 2);
- mvwaddnstr(wp, l++, 16, _("DESCRIPTION"), COLS - 16);
- wattroff(wp, A_BOLD);
-
- i = -1;
- while(shortCuts[++i].key) {
-  mvwaddnstr(wp, l,  2, _(shortCuts[i].key)  , COLS - 2);
-  mvwaddnstr(wp, l, 16, _(shortCuts[i].descr), COLS - 16);
-       
-  l++;
- }
-
-
- for(i = 0; shortCuts[i].key; i++)
-  if(shortCuts[i].sc == SC_KEY_QUIT) kcquit = shortCuts[i].keycode;
-
- pminrow = 0;
- prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
- while((wic = tolower(wgetch(wp))) != kcquit) {
-  if(wic == KEY_UP && pminrow)
-   pminrow--;
-  else if(wic == KEY_DOWN && pminrow < l-LINES+4)
-   pminrow++;
-  else if(wic == KEY_HOME)
-   pminrow=0;
-  else if(wic == KEY_END)
-   pminrow=l-LINES+4;
-  else if(wic == KEY_NPAGE)
-   pminrow = pminrow+LINES-3 > (l-LINES+4) ? l-LINES+4 : pminrow+LINES-3;
-  else if(wic == KEY_PPAGE)
-   pminrow = pminrow-(LINES-3) < 0 ? 0 : pminrow-(LINES-3);
   prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
  }
 
