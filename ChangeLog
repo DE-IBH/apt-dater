@@ -21,6 +21,8 @@ apt-dater (0.8.x) unstable; urgency=low
     (Contributed by Mathieu PARENT due SF Bug#3158198)
   * Make upgrade method customizable and change default to dist-upgrade.
     (Inspired by Mathieu PARENT due SF Bug#3158198)
+  * Fixed a key mismatch in the history view.
+  * Fixed a selector positioning bug.
 
  -- 
 
