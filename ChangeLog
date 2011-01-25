@@ -1,4 +1,4 @@
-apt-dater (0.8.x) unstable; urgency=low
+apt-dater (0.8.5) unstable; urgency=low
 
   * Fixed a key mismatch in the history view.
   * Fixed a selector positioning bug.
