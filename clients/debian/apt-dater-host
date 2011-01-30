@@ -53,6 +53,15 @@ $ENV{'LC_ALL'} = 'C';
 $GETROOT = '' if($> == 0);
 
 die "Don't call this script directly!\n" unless (defined($CMD));
+if($CMD eq 'sshkey') {
+    die "SSH_ORIGINAL_COMMAND not defined!\n"
+      unless(defined($ENV{'SSH_ORIGINAL_COMMAND'}));
+
+    @ARGV = split(' ', $ENV{'SSH_ORIGINAL_COMMAND'});
+
+    shift;
+    $CMD = shift;
+}
 die "Invalid command '$CMD'!\n" unless ($CMD=~/^(refresh|status|upgrade|install|kernel)$/);
 
 if ($CMD eq 'refresh') {

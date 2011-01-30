@@ -23,6 +23,8 @@ apt-dater (0.8.5) unstable; urgency=low
     (Inspired by Mathieu PARENT due SF Bug#3158198)
   * Fixed a key mismatch in the history view.
   * Fixed a selector positioning bug.
+  * Allow apt-dater-host to be used with ssh keys.
+    (Inspired by 'Chromosom' due SF Bug#2862139)
 
  -- 
 
