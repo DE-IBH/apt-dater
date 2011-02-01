@@ -19,14 +19,14 @@ apt-dater (0.8.5) unstable; urgency=low
     ABI-incompatible upgrades (like the recent bind9 one:
     http://www.debian.org/security/2010/dsa-2130.en.html).
     (Contributed by Mathieu PARENT due SF Bug#3158198)
-  * Make upgrade method customizable and change default to dist-upgrade.
+  * Make upgrade method customizable.
     (Inspired by Mathieu PARENT due SF Bug#3158198)
   * Fixed a key mismatch in the history view.
   * Fixed a selector positioning bug.
   * Allow apt-dater-host to be used with ssh keys.
     (Inspired by 'Chromosom' due SF Bug#2862139)
 
- -- 
+ -- Andre Ellguth <ellguth@ibh.de>  Tue, 01 Feb 2011 09:04:25 +0100
 
 apt-dater (0.8.4) unstable; urgency=low
 
