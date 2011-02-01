@@ -9,7 +9,7 @@
 #   Thomas Liske <liske@ibh.de>
 #
 # Copyright Holder:
-#   2008-2009 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+#   2008-2011 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
 #
 # License:
 #   This program is free software; you can redistribute it and/or modify
@@ -54,7 +54,7 @@ $GETROOT = '' if($> == 0);
 
 die "Don't call this script directly!\n" unless (defined($CMD));
 if($CMD eq 'sshkey') {
-    die "SSH_ORIGINAL_COMMAND not defined!\n"
+    die "Sorry, no shell access allowed!\n"
       unless(defined($ENV{'SSH_ORIGINAL_COMMAND'}));
 
     @ARGV = split(' ', $ENV{'SSH_ORIGINAL_COMMAND'});

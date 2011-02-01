@@ -47,7 +47,7 @@ $GETROOT = '' if($> == 0);
 
 die "Don't call this script directly!\n" unless (defined($CMD));
 if($CMD eq 'sshkey') {
-    die "SSH_ORIGINAL_COMMAND not defined!\n"
+    die "Sorry, no shell access allowed!\n"
       unless(defined($ENV{'SSH_ORIGINAL_COMMAND'}));
 
     @ARGV = split(' ', $ENV{'SSH_ORIGINAL_COMMAND'});

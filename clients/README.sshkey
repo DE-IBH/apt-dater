@@ -1,0 +1,10 @@
+Bind to ssh keys
+================
+
+apt-dater-host can be bind on a ssh key:
+
+$ cat ~/.ssh/authorized_key
+command="/usr/bin/apt-dater-host sshkey",no-port-forwarding ssh-dss <ID.PUB> apt-dater@ibh.net
+
+This will prevent you from using 'connect' within apt-dater to open
+a shell on the client.
