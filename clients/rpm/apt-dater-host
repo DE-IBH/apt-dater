@@ -30,7 +30,7 @@
 use strict;
 
 my $CMD = shift;
-my $ADPROTO = '0.4';
+my $ADPROTO = '0.5';
 my $UUIDFILE = '/etc/apt-dater-host.uuid';
 
 $ENV{'LC_ALL'} = 'C';
@@ -91,7 +91,10 @@ sub get_uname() {
 
 sub do_status() {
     # retrieve lsb informations
-    open(HLSB, "lsb_release -a 2> /dev/null |") or die "Can't fork: $!\n";
+    unless (open(HLSB, "lsb_release -a 2> /dev/null |")) {
+	print "\nADPERR: Failed to execute 'lsb_release -a' ($!).\n";
+	exit(1);
+    }
     my %lsb;
     while(<HLSB>) {
 	chomp;
@@ -118,7 +121,10 @@ sub do_status() {
     # get version of installed packages
     my %installed;
     my %status;
-    open(HDPKG, "rpm -qa --qf '%{NAME}\t%{VERSION}\ti\n' |") or die "Can't fork: $!\n";
+    unless(open(HDPKG, "rpm -qa --qf '%{NAME}\t%{VERSION}-%{RELEASE}\ti\n' |")) {
+	print "\nADPERR: Failed to execute 'rpm -qa --qf '%{NAME}\\t%{VERSION}-%{RELEASE}\\ti\\n' ($!).\n";
+	exit(1);
+    }
     while(<HDPKG>) {
 	chomp;
 
@@ -158,7 +164,10 @@ sub do_kernel() {
 
     my $kinstalled;
     my $distri = 0;
-    open(HKERNEL, "rpm -q --whatprovides kernel$add --qf '%{NAME}\t%{VERSION}\t%{RELEASE}\n' |") or die "Can't fork: $!\n";
+    unless(open(HKERNEL, "rpm -q --whatprovides kernel$add --qf '%{NAME}\t%{VERSION}\t%{RELEASE}\n' |")) {
+	print "\nADPERR: Failed to execute 'rpm -q --whatprovides kernel$add --qf '%{NAME}\\t%{VERSION}\\t%{RELEASE}\\n' ($!).\n";
+	exit(1);
+    }
     while(<HKERNEL>) {
 	if(/^\S+\s+(\S+)\s+(\S+)/) {
 	    if($ver eq $1) {

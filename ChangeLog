@@ -1,3 +1,11 @@
+apt-dater (0.8.x) unstable; urgency=low
+  * zypper:
+    - Fixed: zypper did not report any updates (reported by Ivan De Masi).
+    - Use 'zypper refresh' for refreshing package repositories.
+  * Add RELEASE header to version string on RPM queries.
+
+ -- 
+
 apt-dater (0.8.5) unstable; urgency=low
 
   * Fixed a key mismatch in the history view.

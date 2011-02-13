@@ -31,6 +31,7 @@ use strict;
 
 my $CFGFILE = '/etc/apt-dater-host.conf';
 my $GETROOT = 'sudo';
+my $FORBID_REFRESH = 0;
 my $FORBID_UPGRADE = 0;
 my $FORBID_INSTALL = 0;
 my $UUIDFILE = '/etc/apt-dater-host.uuid';
@@ -58,6 +59,12 @@ die "Invalid command '$CMD'!\n" unless ($CMD=~/^(refresh|status|upgrade|install|
 
 if ($CMD eq 'refresh') {
     print "ADPROTO: $ADPROTO\n";
+    if ($FORBID_REFRESH) {
+	print STDERR "\n\n** Sorry, apt-dater based refreshs on this host are disabled! **\n\n"
+    }
+    else {
+	&do_refresh;
+    }
     &do_status;
     &do_kernel;
 }
@@ -88,6 +95,13 @@ elsif ($CMD eq 'kernel') {
 }
 else {
     die "Internal error!\n";
+}
+
+sub do_refresh() {
+    if(system("$GETROOT zypper refresh")) {
+	print "\nADPERR: Failed to execute '$GETROOT zypper refresh' ($?).\n";
+	exit(1);
+    }
 }
 
 sub get_virt() {
@@ -136,8 +150,8 @@ sub do_status() {
     print "UNAME: ".&get_uname."\n";
 
     # calculate forbid mask
-    my $mask = 1;
-#    $mask |= 1 if ($FORBID_REFRESH); NOT SUPPORTED
+    my $mask = 0;
+    $mask |= 1 if ($FORBID_REFRESH);
     $mask |= 2 if ($FORBID_UPGRADE);
     $mask |= 4 if ($FORBID_INSTALL);
     print "FORBID: $mask\n";
@@ -150,26 +164,26 @@ sub do_status() {
 
     # get packages which might be upgraded
     my %updates;
-    unless(open(HAPT, "$GETROOT zypper -r --terse list-updates |")) {
-	print "\nADPERR: Failed to execute '$GETROOT zypper -r --terse list-updates' ($!).\n";
+    unless(open(HAPT, "$GETROOT zypper --terse list-updates -a |")) {
+	print "\nADPERR: Failed to execute '$GETROOT zypper --terse list-updates -a' ($!).\n";
 	exit(1);
     };
     while(<HAPT>) {
 	chomp;
-
-	$updates{$1} = $2 if (/^.*\|.*\|.*\|([^|]+)\|([^|]+)\|/);
+	my @line = split(/\s*\|\s*/);
+	$updates{$line[2]} = $line[4] if($#line >= 4);
     }
     close(HAPT);
     if($?) {
-	print "\nADPERR: Error executing '$GETROOT zypper -r --terse list-updates' ($?).\n";
+	print "\nADPERR: Error executing '$GETROOT zypper --terse list-updates -a' ($?).\n";
 	exit(1);
     }
 
     # get version of installed packages
     my %installed;
     my %status;
-    unless(open(HDPKG, "rpm -qa --qf '%{NAME}|%{VERSION}|\n' |")) {
-	print "\nADPERR: Failed to execute \"rpm -qa --qf '%{NAME}|%{VERSION}|\\n'\" ($!).\n";
+    unless(open(HDPKG, "rpm -qa --qf '%{NAME}|%{VERSION}-%{RELEASE}|\n' |")) {
+	print "\nADPERR: Failed to execute \"rpm -qa --qf '%{NAME}|%{VERSION}-%{RELEASE}|\\n'\" ($!).\n";
 	exit(1);
     };
 
@@ -192,7 +206,7 @@ sub do_status() {
     }
     close(HDPKG);
     if($?) {
-	print "\nADPERR: Error executing \"rpm -qa --qf '%{NAME}|%{VERSION}|\\n'\" ($?).\n";
+	print "\nADPERR: Error executing \"rpm -qa --qf '%{NAME}|%{VERSION}-%{RELEASE}|\\n'\" ($?).\n";
 	exit(1);
     };
 

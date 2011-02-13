@@ -168,8 +168,8 @@ sub do_status() {
     # get version of installed packages
     my %installed;
     my %status;
-    unless(open(HDPKG, "rpm -qa --qf '%{NAME}|%{VERSION}|\n' |")) {
-	print "\nADPERR: Failed to execute \"rpm -qa --qf '%{NAME}|%{VERSION}|\\n'\" ($!).\n";
+    unless(open(HDPKG, "rpm -qa --qf '%{NAME}|%{VERSION}-%{RELEASE}|\n' |")) {
+	print "\nADPERR: Failed to execute \"rpm -qa --qf '%{NAME}|%{VERSION}-%{RELEASE}|\\n'\" ($!).\n";
 	exit(1);
     };
 
@@ -192,7 +192,7 @@ sub do_status() {
     }
     close(HDPKG);
     if($?) {
-	print "\nADPERR: Error executing \"rpm -qa --qf '%{NAME}|%{VERSION}|\\n'\" ($?).\n";
+	print "\nADPERR: Error executing \"rpm -qa --qf '%{NAME}|%{VERSION}-%{RELEASE}|\\n'\" ($?).\n";
 	exit(1);
     };
 
