@@ -116,17 +116,17 @@ List of private keys which should be loaded when apt\-dater calls ssh\-add(1)\&.
 .RE
 .SS "Section [Commands]"
 .PP
-CmdRefresh=\fIsudo aptitude update && sudo aptitude \-s \-y \-v upgrade\fR
+CmdRefresh=\fIapt\-dater\-host refresh\fR
 .RS 4
 The command which will be used to refresh the status of the managed host\&.
 .RE
 .PP
-CmdUpgrade=\fIsudo aptitude upgrade\fR
+CmdUpgrade=\fIapt\-dater\-host upgrade\fR
 .RS 4
 The command which will be used to intitate a upgrade of a managed host\&.
 .RE
 .PP
-CmdInstall=\fIsudo aptitude install %s\fR
+CmdInstall=\fIapt\-dater\-host install %s\fR
 .RS 4
 The command which will be used to update a single package\&.
 \fI%s\fR

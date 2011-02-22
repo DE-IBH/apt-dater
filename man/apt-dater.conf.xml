@@ -216,19 +216,19 @@ and docbook-xsl in your Build-Depends control field.
     
     <variablelist>
       <varlistentry>
-        <term><symbol>CmdRefresh</symbol>=<replaceable>sudo aptitude update &amp;&amp; sudo aptitude -s -y -v upgrade</replaceable></term>
+        <term><symbol>CmdRefresh</symbol>=<replaceable>apt-dater-host refresh</replaceable></term>
         <listitem>
 	  <para>The command which will be used to refresh the status of the managed host.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><symbol>CmdUpgrade</symbol>=<replaceable>sudo aptitude upgrade</replaceable></term>
+        <term><symbol>CmdUpgrade</symbol>=<replaceable>apt-dater-host upgrade</replaceable></term>
         <listitem>
 	  <para>The command which will be used to intitate a upgrade of a managed host.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><symbol>CmdInstall</symbol>=<replaceable>sudo aptitude install %s</replaceable></term>
+        <term><symbol>CmdInstall</symbol>=<replaceable>apt-dater-host install %s</replaceable></term>
         <listitem>
 	  <para>The command which will be used to update a single package. <replaceable>%s</replaceable> will be replaced by the name of the package.</para>
         </listitem>
