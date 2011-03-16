@@ -1,11 +1,11 @@
-apt-dater (0.8.5b) stable; urgency=low
+apt-dater (0.8.5.1) stable; urgency=low
   * zypper:
     - Fixed: zypper did not report any updates (reported by Ivan De Masi).
     - Use 'zypper refresh' for refreshing package repositories.
   * Add RELEASE header to version string on RPM queries.
   * Update apt-dater.conf man page.
 
- -- 
+ -- Thomas Liske <liske@ibh.de>  Wed, 16 Mar 2011 11:41:17 +0100
 
 apt-dater (0.8.5) unstable; urgency=low
 

@@ -6,7 +6,7 @@ PACKAGE=apt-dater
 AC_REVISION($Revision$)
 
 AC_PREREQ(2.61)
-AC_INIT(apt-dater, 0.8.5b, apt-dater@ibh.de)
+AC_INIT(apt-dater, 0.8.5.1, apt-dater@ibh.de)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/apt-dater.c])
 AC_CONFIG_HEADER([config.h])
