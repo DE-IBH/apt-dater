@@ -76,7 +76,7 @@ void history_write_meta(const gchar *fn, const HistoryEntry *he) {
     GError *error = NULL;
     g_file_set_contents(fn, data, -1, &error);
     if (error) {
-      g_error(error->message);
+      g_error("%s", error->message);
       g_clear_error(&error);
     }
 
