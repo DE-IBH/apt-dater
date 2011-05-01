@@ -96,7 +96,8 @@ gboolean setStatsFileFromIOC(GIOChannel *ioc, GIOCondition condition,
     if(iostatus == G_IO_STATUS_ERROR || iostatus == G_IO_STATUS_AGAIN)
      break;
 
-    fwrite(buf, sizeof(gchar), bytes, ((HostNode *) n)->fpstat);
+    if(fwrite(buf, sizeof(gchar), bytes, ((HostNode *) n)->fpstat) != bytes)
+	break;
 
     r = TRUE;
    }
