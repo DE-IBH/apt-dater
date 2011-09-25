@@ -38,6 +38,8 @@ apt-dater (x.y.z) unstable; urgency=low
     (Closes SF Bug#3045502 by Henri Salo)
   * Drop "[screen] enabled" config option, it doesn't work any more.
     (Reported by Daniel Baumann due Debian Bug#597941)
+  * Include locale.h if available.
+    (Closes Debian Bug#642696 by Mònica Ramírez Arceda)
 
  -- 
 
