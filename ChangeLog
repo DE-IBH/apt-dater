@@ -1,10 +1,12 @@
-apt-dater (0.8.5.1) stable; urgency=low
+apt-dater (0.8.6) stable; urgency=low
   * zypper:
     - Fixed: zypper did not report any updates (reported by Ivan De Masi).
     - Use 'zypper refresh' for refreshing package repositories.
   * Add RELEASE header to version string on RPM queries.
   * Update apt-dater.conf man page.
   * Fix two hardening compile warnings (provided by Patrick Matthäi).
+  * Include locale.h if available.
+    (Closes Debian Bug#642696 by Mònica Ramírez Arceda)
 
  -- Thomas Liske <liske@ibh.de>  
 

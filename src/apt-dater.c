@@ -28,6 +28,9 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 #include <errno.h>
+#ifdef HAVE_LOCALE_H
+#include <locale.h>
+#endif
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

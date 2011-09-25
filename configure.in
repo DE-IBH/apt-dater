@@ -12,6 +12,7 @@ AC_CONFIG_SRCDIR([src/apt-dater.c])
 AC_CONFIG_HEADER([config.h])
 
 AM_GNU_GETTEXT([external])
+AC_CHECK_HEADERS(locale.h)
 
 glib_module="glib-2.0 >= 2.3.6"
 PKG_CHECK_MODULES(GLIB, "$glib_module", enable_glib_=yes, enable_glib_=no)
