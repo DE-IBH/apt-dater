@@ -7,6 +7,9 @@ apt-dater (0.8.6) stable; urgency=low
   * Fix two hardening compile warnings (provided by Patrick Matthäi).
   * Include locale.h if available.
     (Closes Debian Bug#642696 by Mònica Ramírez Arceda)
+  * Use apt-get as default package manager.
+    (Closes Debian Bug#635048 by Felix Bartels)
+  * Add dummy man page apt-dater-host.1 (contributed by Pattrik Matthäi).
 
  -- Thomas Liske <liske@ibh.de>  
 
