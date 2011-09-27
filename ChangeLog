@@ -9,9 +9,9 @@ apt-dater (0.8.6) stable; urgency=low
     (Closes Debian Bug#642696 by Mònica Ramírez Arceda)
   * Use apt-get as default package manager.
     (Closes Debian Bug#635048 by Felix Bartels)
-  * Add dummy man page apt-dater-host.1 (contributed by Pattrik Matthäi).
+  * Add dummy man page apt-dater-host.1 (contributed by Patrick Matthäi).
 
- -- Thomas Liske <liske@ibh.de>  
+ -- Thomas Liske <liske@ibh.de>  Tue, 27 Sep 2011 15:37:03 +0200
 
 apt-dater (0.8.5) unstable; urgency=low
 
