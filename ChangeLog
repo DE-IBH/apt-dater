@@ -94,6 +94,7 @@ apt-dater (0.8.2) unstable; urgency=low
     (Closes SF Bug#2941509 by Micha vor dem Berge)
   * Fix Debian hosts become 'Unknown' if they hadn't a stock Debian kernel installed.
     (Closes SF Bug#2933741 by alma@arwin.hu)
+  * Remove depreciated Tcl_Interp access (required for Tcl8.6+).
 
  -- Andre Ellguth <ellguth@ibh.de>  Wed, 03 Feb 2010 15:27:39 +0100
 
