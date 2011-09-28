@@ -1,3 +1,9 @@
+apt-dater (0.8.6.1) stable; urgency=low
+
+  * Remove depreciated Tcl_Interp access (required for Tcl8.6+).
+
+ -- Thomas Liske <liske@ibh.de>  
+
 apt-dater (0.8.6) stable; urgency=low
   * zypper:
     - Fixed: zypper did not report any updates (reported by Ivan De Masi).
@@ -83,7 +89,7 @@ apt-dater (0.8.2) unstable; urgency=low
     The SFTPCmd config parameter should be set to /usr/bin/sftp -
     the old default value does not work any more.
   * Fix translated confirmation questions.
-    (Closes Debian Bug#565931 by Pattrick Matthäi).
+    (Closes Debian Bug#565931 by Patrick Matthäi).
   * Fix Debian hosts got 'Unknown' if the had upgrades which depends
     on broken packages.
   * apt-dater-host: add --assume-yes on safe-upgrade as suggested by
@@ -94,7 +100,6 @@ apt-dater (0.8.2) unstable; urgency=low
     (Closes SF Bug#2941509 by Micha vor dem Berge)
   * Fix Debian hosts become 'Unknown' if they hadn't a stock Debian kernel installed.
     (Closes SF Bug#2933741 by alma@arwin.hu)
-  * Remove depreciated Tcl_Interp access (required for Tcl8.6+).
 
  -- Andre Ellguth <ellguth@ibh.de>  Wed, 03 Feb 2010 15:27:39 +0100
 
