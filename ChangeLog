@@ -1,6 +1,7 @@
 apt-dater (0.8.6.1) stable; urgency=low
 
   * Remove depreciated Tcl_Interp access (required for Tcl8.6+).
+  * Include config.h before using HAVE_LOCALE_H (provided by Patrick Matthäi).
 
  -- Thomas Liske <liske@ibh.de>  
 
