@@ -9,7 +9,7 @@ apt-dater (x.y.z) unstable; urgency=low
     The SFTPCmd config parameter should be set to /usr/bin/sftp -
     the old default value does not work any more.
   * Fix translated confirmation questions.
-    (Closes Debian Bug#565931 by Pattrick Matthäi).
+    (Closes Debian Bug#565931 by Patrick Matthäi).
   * Fix Debian hosts got 'Unknown' if the had upgrades which depends
     on broken packages.
   * apt-dater-host: add --assume-yes on safe-upgrade as suggested by
