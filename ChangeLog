@@ -40,6 +40,7 @@ apt-dater (x.y.z) unstable; urgency=low
     (Reported by Daniel Baumann due Debian Bug#597941)
   * Include locale.h if available.
     (Closes Debian Bug#642696 by Mònica Ramírez Arceda)
+  * Remove depreciated Tcl_Interp access (required for Tcl8.6+).
 
  -- 
 

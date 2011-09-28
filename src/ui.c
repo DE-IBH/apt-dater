@@ -2708,12 +2708,15 @@ void applyFilter(GList *hosts) {
     }
 
     Tcl_ResetResult(tcl_interp);
-    tcl_interp->errorLine = 0;
-    Tcl_Eval(tcl_interp, filterexp);
-    if(tcl_interp->errorLine)
-     filtered = FALSE;
-    else
-     filtered = atoi(tcl_interp->result) > 0;
+    switch(Tcl_Eval(tcl_interp, filterexp)) {
+	case TCL_OK:
+	case TCL_RETURN:
+	    filtered = atoi(Tcl_GetStringResult(tcl_interp)) > 0;
+	    ;;
+	default:
+	    filtered = FALSE;
+	    ;;
+    }
 
     if(filtered != n->filtered) {
       n->filtered = filtered;
