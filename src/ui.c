@@ -7,7 +7,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008-2009 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008-2011 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,7 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <termios.h>
+#include <string.h>
 #include "apt-dater.h"
 #include "ui.h"
 #include "colors.h"
@@ -172,6 +173,7 @@ static struct ShortCut shortCuts[] = {
  {SC_KEY_FILETRANS, 'C', "C" , N_("file transfer") , FALSE, 0},
  {SC_KEY_TOGGLEDUMPS, 'd', "d" , N_("toggle dumps") , FALSE, VK_DUMP},
  {SC_KEY_REFRESH, 'g', "g" , N_("refresh host") , FALSE, VK_REFRESH},
+ {SC_KEY_ERRDIAG, 'e', "e" , N_("failure diagnostic") , FALSE, VK_ERRDIAG},
  {SC_KEY_INSTALL, 'i', "i" , N_("install pkg") , FALSE, VK_INSTALL},
  {SC_KEY_UPGRADE, 'u', "u" , N_("upgrade host(s)") , FALSE, VK_UPGRADE},
  {SC_KEY_MORE, 'm', "m" , N_("host details") , FALSE, 0},
@@ -854,6 +856,57 @@ static void drawHostDetails(HostNode *h)
 }
 
 
+static void drawHostErrDiag(HostNode *h)
+{
+ gchar *buf = getStatsContent(h);
+ int l = 2;
+
+ if(buf != NULL) {
+  gchar *b = buf;
+  while((b = strchr(b, '\n'))) {
+    l++;
+    b++;
+  }
+ }
+
+ WINDOW *wp = newpad(MAX(LINES, l+2), COLS);
+ int  wic = 0, pminrow = 0, kcquit = 'q', i;
+
+ keypad(wp, TRUE);
+
+ wattron(wp, A_BOLD);
+ mvwaddnstr(wp, 0,  1, _("FAILURE DIAGNOSTIC"), COLS - 1);
+ wattroff(wp, A_BOLD);
+
+ mvwaddstr(wp, 2,  0, buf);
+ g_free(buf);
+
+ for(i = 0; shortCuts[i].key; i++)
+  if(shortCuts[i].sc == SC_KEY_QUIT) kcquit = shortCuts[i].keycode;
+
+ prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
+ while((wic = tolower(wgetch(wp))) != kcquit) {
+  if(wic == KEY_UP && pminrow)
+   pminrow--;
+  else if(wic == KEY_DOWN && pminrow < l-LINES+4)
+   pminrow++;
+  else if(wic == KEY_HOME)
+   pminrow=0;
+  else if(wic == KEY_END)
+   pminrow=l-LINES+4;
+  else if(wic == KEY_NPAGE)
+   pminrow = pminrow+LINES-3 > (l-LINES+4) ? l-LINES+4 : pminrow+LINES-3;
+  else if(wic == KEY_PPAGE)
+   pminrow = pminrow-(LINES-3) < 0 ? 0 : pminrow-(LINES-3);
+  else if(wic == '?')
+   drawHelp();
+  prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
+ }
+
+ delwin(wp);
+}
+
+
 void drawStatus (char *str, gboolean drawinfo)
 {
  char strinfo[30];
@@ -1341,8 +1394,13 @@ void drawHostEntry (DrawNode *n)
    }
    break;
   default:
-   mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
-   sprintf(statusln, _("Status is unknown"));
+   mask = VK_CONNECT | VK_REFRESH | VK_INSTALL | VK_ERRDIAG;
+   if(((HostNode *) n->p)->adperr == NULL) {
+    sprintf(statusln, _("Status is unknown"));
+   }
+   else {
+    sprintf(statusln, _("Error: %s"), ((HostNode *) n->p)->adperr);
+   }
    break;
   }
 
@@ -3509,6 +3567,14 @@ gboolean ctrlUI (GList *hosts)
     refscr = TRUE;
    }
    break; /* case SC_KEY_MORE */
+
+  case SC_KEY_ERRDIAG:
+   if (inhost) {
+    drawHostErrDiag(inhost);
+
+    refscr = TRUE;
+   }
+   break; /* case SC_KEY_ERRDIAG */
 
 #ifdef FEAT_HISTORY
   case SC_KEY_HISTORY:

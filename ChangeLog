@@ -41,7 +41,8 @@ apt-dater (x.y.z) unstable; urgency=low
   * Include locale.h if available.
     (Closes Debian Bug#642696 by Mònica Ramírez Arceda)
   * Remove depreciated Tcl_Interp access (required for Tcl8.6+).
-
+  * Add 'failure diagnostic' screen.
+    (Closes Debian Bug#646902 by Markus Raab)
  -- 
 
 apt-dater (0.8.1) unstable; urgency=low

@@ -7,7 +7,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008 - 2011 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -40,8 +40,9 @@ freeUpdates(GList *updates);
 gboolean refreshStats(GList *);
 gboolean setStatsFileFromIOC(GIOChannel *, GIOCondition, gpointer);
 gchar *getStatsFileName(const HostNode *);
-gboolean prepareStatsFile(HostNode *n);
+gboolean prepareStatsFile(HostNode *);
 gboolean getUpdatesFromStat(HostNode *);
 void refreshStatsOfNode(gpointer);
+gchar *getStatsContent(const HostNode *);
 
 #endif /* _STATS_H */

@@ -7,7 +7,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008-2010 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008-2011 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -221,6 +221,7 @@ typedef struct _hostnode {
  gchar     *uname_machine;
  gchar     *kernelrel;
  gchar     *virt;
+ gchar     *adperr;
  gchar     *identity_file;
  gint      forbid;
  gboolean  tagged;

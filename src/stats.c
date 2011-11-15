@@ -219,6 +219,10 @@ gboolean getUpdatesFromStat(HostNode *n)
   g_free(n->virt);
   n->virt = NULL;
  }
+ if(n->adperr) {
+  g_free(n->adperr);
+  n->adperr = NULL;
+ }
  if(n->kernelrel) {
   g_free(n->kernelrel);
   n->kernelrel = NULL;
@@ -245,12 +249,6 @@ gboolean getUpdatesFromStat(HostNode *n)
 
   if(sscanf(line, ADP_PATTERN_ADPROTO, &adpver)) {
     adproto = TRUE;
-    continue;
-  }
-
-// ADP_PATTERN_ADPERR
-  if(!strncmp("ADPERR: ", line, 8)) {
-    adperr = TRUE;
     continue;
   }
 
@@ -352,6 +350,12 @@ gboolean getUpdatesFromStat(HostNode *n)
    continue;
   }
 
+  if (sscanf((gchar *) line, ADP_PATTERN_ADPERR, buf)) {
+   n->adperr = g_strdup(buf);
+   adperr = TRUE;
+   continue;
+  }
+
   if (sscanf((gchar *) line, ADP_PATTERN_UNAME, buf)) {
    gchar *s = strchr(buf, '|');
    if (s) {
@@ -397,6 +401,14 @@ gboolean getUpdatesFromStat(HostNode *n)
  return(TRUE);
 }
 
+gchar *getStatsContent(const HostNode *n) {
+ gchar *c = NULL;
+
+ if(!g_file_get_contents(n->statsfile, &c, NULL, NULL))
+    return NULL;
+
+ return c;
+}
 
 gboolean refreshStats(GList *hosts)
 {

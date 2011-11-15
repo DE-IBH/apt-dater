@@ -7,7 +7,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008-2009 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008-2011 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -81,5 +81,8 @@
 
 #define ADP_STRLEN_VIRT		255
 #define ADP_PATTERN_VIRT	"VIRT: %"ADP_QUOTE(ADP_STRLEN_VIRT)"s"
+
+#define ADP_STRLEN_ADPERR	255
+#define ADP_PATTERN_ADPERR	"ADPERR: %"ADP_QUOTE(ADP_STRLEN_ADPERR)"s"
 
 #endif /* _ADPROTO_H */
