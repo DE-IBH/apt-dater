@@ -28,7 +28,7 @@
 #ifndef _REPORT_H
 #define _REPORT_H
 
-#include <glib-2.0/glib.h>
+#include <glib.h>
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

@@ -25,7 +25,7 @@
  *   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#include <glib-2.0/glib/gstdio.h>
+#include <glib/gstdio.h>
 
 #include "apt-dater.h"
 #include "exec.h"
@@ -95,6 +95,9 @@ gboolean setStatsFileFromIOC(GIOChannel *ioc, GIOCondition condition,
 
     if(iostatus == G_IO_STATUS_ERROR || iostatus == G_IO_STATUS_AGAIN)
      break;
+
+    if(*buf == 0)
+    	condition = G_IO_HUP;
 
     if(fwrite(buf, sizeof(gchar), bytes, ((HostNode *) n)->fpstat) != bytes)
 	break;

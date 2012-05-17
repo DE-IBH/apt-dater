@@ -35,7 +35,7 @@
 #include <curses.h>
 #endif
 
-#include <glib-2.0/glib.h>
+#include <glib.h>
 
 typedef enum {
  CATEGORY,

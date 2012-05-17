@@ -7,7 +7,27 @@ AC_REVISION($Revision$)
 
 AC_PREREQ(2.61)
 AC_INIT(apt-dater, 0.9.0, apt-dater@ibh.de)
+
+# Environment
+AC_CANONICAL_HOST
+AC_CANONICAL_TARGET
+
 AM_INIT_AUTOMAKE
+
+case "${target_os}" in
+darwin*)
+        AC_DEFINE([DARWIN], [1], [Define if Darwin or Mac OS X])
+        ;;
+linux*)
+        linux="yes"
+        ;;
+freebsd*)
+        freebsd="yes"
+        ;;
+esac
+AM_CONDITIONAL(LINUX, test x"$linux" = x"yes")
+AM_CONDITIONAL(FREEBSD, test x"$freebsd" = x"yes")
+
 AC_CONFIG_SRCDIR([src/apt-dater.c])
 AC_CONFIG_HEADER([config.h])
 

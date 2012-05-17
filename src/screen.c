@@ -29,8 +29,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <pwd.h>
-#include <glib-2.0/glib.h>
-#include <glib-2.0/glib/gstdio.h>
+#include <glib.h>
+#include <glib/gstdio.h>
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

@@ -28,7 +28,7 @@
 #ifndef _STATS_H
 #define _STATS_H
 
-#include <glib-2.0/glib.h>
+#include <glib.h>
 #include "apt-dater.h"
 
 void

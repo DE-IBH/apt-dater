@@ -179,11 +179,13 @@ int main(int argc, char **argv, char **envp)
 #ifdef FEAT_XMLREPORT
  if(!report) {
 #endif
+#ifdef __linux__
    /* Test if we are the owner of the TTY or die. */
    if(g_access("/proc/self/fd/0", R_OK|W_OK)) {
      g_error(_("Cannot open your terminal /proc/self/fd/0 - please check."));
      exit(EXIT_FAILURE);
    }
+#endif
 
    getOldestMtime(hosts);
 
