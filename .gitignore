@@ -1,0 +1,11 @@
+autom4te.cache
+build/*.spec
+Makefile
+po/Makefile.in
+po/POTFILES
+po/*.gmo
+src/.deps
+src/apt-dater
+config.*
+*.o
+stamp-*
