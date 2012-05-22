@@ -440,7 +440,7 @@ void setHostsCategory(GList *hosts, Category matchCategory, gchar *matchGroup, C
 
  while(ho) {
   if(matchGroup) {
-   if((((HostNode *) ho->data)->category == matchCategory) && (!g_strcasecmp(((HostNode *) ho->data)->group, matchGroup))) ((HostNode *) ho->data)->category = setCategory;
+   if((((HostNode *) ho->data)->category == matchCategory) && (!g_ascii_strcasecmp(((HostNode *) ho->data)->group, matchGroup))) ((HostNode *) ho->data)->category = setCategory;
   }
   else if((((HostNode *) ho->data)->category == matchCategory)) ((HostNode *) ho->data)->category = setCategory;
   ho = g_list_next(ho);
@@ -457,11 +457,11 @@ guint getHostGrpCatCnt(GList *hosts, gchar *group, Category category)
  while(ho) {
 #ifdef FEAT_TCLFILTER
   if(category == C_FILTERED) {
-    if((((HostNode *) ho->data)->filtered) && (!g_strcasecmp(((HostNode *) ho->data)->group, group))) cnt++;
+    if((((HostNode *) ho->data)->filtered) && (!g_ascii_strcasecmp(((HostNode *) ho->data)->group, group))) cnt++;
   }
   else
 #endif
-   if((((HostNode *) ho->data)->category == category) && (!g_strcasecmp(((HostNode *) ho->data)->group, group))) cnt++;
+   if((((HostNode *) ho->data)->category == category) && (!g_ascii_strcasecmp(((HostNode *) ho->data)->group, group))) cnt++;
 
   ho = g_list_next(ho);
  }
@@ -477,7 +477,7 @@ guint getHostGrpCatTaggedCnt(GList *hosts, const gchar *group, Category category
  ho = g_list_first(hosts);
 
  while(ho) {
-  if((((HostNode *) ho->data)->category == category) && (!g_strcasecmp(((HostNode *) ho->data)->group, group)) && ((HostNode *) ho->data)->tagged == TRUE) cnt++;
+  if((((HostNode *) ho->data)->category == category) && (!g_ascii_strcasecmp(((HostNode *) ho->data)->group, group)) && ((HostNode *) ho->data)->tagged == TRUE) cnt++;
 
   ho = g_list_next(ho);
  }
@@ -1926,16 +1926,16 @@ gboolean compDrawNodes(DrawNode* n1, DrawNode* n2)
  switch(n1->type) {
  case CATEGORY:
  case GROUP:
-  if(!g_strcasecmp(n1->p, n2->p))
+  if(!g_ascii_strcasecmp(n1->p, n2->p))
    return(TRUE);
   break;
  case HOST:
-  if (!g_strcasecmp(((HostNode *) (n1->p))->hostname, 
+  if (!g_ascii_strcasecmp(((HostNode *) (n1->p))->hostname, 
 		    ((HostNode *)(n2->p))->hostname))
    return(TRUE);
   break;
  case PKG:
-  if (!g_strcasecmp(((PkgNode *) n1->p)->package,
+  if (!g_ascii_strcasecmp(((PkgNode *) n1->p)->package,
 		    ((PkgNode *) n2->p)->package)) return(TRUE);
   break;
  case SESSION:
@@ -2081,7 +2081,7 @@ void extDrawListCategory(gint atpos, gchar *category, GList *hosts)
 #endif
      (((HostNode *) ho->data)->category == i)
     ) {
-   if((drawnode) && (!g_strcasecmp(drawnode->p, 
+   if((drawnode) && (!g_ascii_strcasecmp(drawnode->p, 
 				   ((HostNode *) ho->data)->group))) {
     if(((HostNode *) ho->data)->tagged == TRUE) drawnode->etagged++;
     ho = g_list_next(ho);
@@ -2121,7 +2121,7 @@ void extDrawListGroup(gint atpos, gchar *group, GList *hosts)
  parent = g_list_nth_data(drawlist, (guint) atpos);
 
  while(ho) {
-  if(!g_strcasecmp(((HostNode *) ho->data)->group, group) && 
+  if(!g_ascii_strcasecmp(((HostNode *) ho->data)->group, group) && 
      (
 #ifdef FEAT_TCLFILTER
       (incategory == drawCategories[C_FILTERED] && ((HostNode *) ho->data)->filtered) ||
