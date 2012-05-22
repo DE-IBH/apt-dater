@@ -32,7 +32,9 @@ apt_dater_SOURCES =			\
 	history.c			\
 	history.h			\
 	env.c				\
-	env.h
+	env.h				\
+	clusters.c			\
+	clusters.h
 
 apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS)
 

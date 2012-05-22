@@ -59,7 +59,7 @@ am_apt_dater_OBJECTS = apt-dater.$(OBJEXT) colors.$(OBJEXT) \
 	parsecmd.$(OBJEXT) report.$(OBJEXT) screen.$(OBJEXT) \
 	sighandler.$(OBJEXT) stats.$(OBJEXT) ui.$(OBJEXT) \
 	autoref.$(OBJEXT) tag.$(OBJEXT) history.$(OBJEXT) \
-	env.$(OBJEXT)
+	env.$(OBJEXT) clusters.$(OBJEXT)
 apt_dater_OBJECTS = $(am_apt_dater_OBJECTS)
 am__DEPENDENCIES_1 =
 apt_dater_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -233,7 +233,9 @@ apt_dater_SOURCES = \
 	history.c			\
 	history.h			\
 	env.c				\
-	env.h
+	env.h				\
+	clusters.c			\
+	clusters.h
 
 apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS)
 AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"'
@@ -308,6 +310,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/apt-dater.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autoref.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/clusters.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/colors.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/env.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exec.Po@am__quote@
