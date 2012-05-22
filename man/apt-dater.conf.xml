@@ -310,6 +310,15 @@ and docbook-xsl in your Build-Depends control field.
 
     <variablelist>
       <varlistentry>
+        <term><symbol>ErrPattern</symbol>=<replaceable>(error|warning|fail)</replaceable></term>
+        <listitem>
+	  <para>
+	  A regular expression pattern to match the screen output. A match indicates
+	  the user should be asked to review the output (using less). (Optional)</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
         <term><symbol>record</symbol>=<replaceable>true</replaceable></term>
         <listitem>
 	  <para>Enables session recording using script(1). (Optional)</para>

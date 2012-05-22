@@ -43,6 +43,8 @@ apt-dater (x.y.z) unstable; urgency=low
   * Remove depreciated Tcl_Interp access (required for Tcl8.6+).
   * Add 'failure diagnostic' screen.
     (Closes Debian Bug#646902 by Markus Raab)
+  * Document ErrPattern statement in apt-dater.conf.
+    (Closes SF Bug by Herman van Rink)
  -- 
 
 apt-dater (0.8.1) unstable; urgency=low
