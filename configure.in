@@ -3,8 +3,6 @@
 
 PACKAGE=apt-dater
 
-AC_REVISION($Revision$)
-
 AC_PREREQ(2.61)
 AC_INIT(apt-dater, 0.9.0, apt-dater@ibh.de)
 
