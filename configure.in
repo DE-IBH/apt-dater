@@ -358,6 +358,7 @@ Makefile
 lib/Makefile
 man/Makefile
 src/Makefile
+clients/Makefile
 build/apt-dater.spec
 ])
 AC_OUTPUT
