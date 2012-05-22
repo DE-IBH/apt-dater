@@ -762,6 +762,7 @@ enable_debug
 enable_xmlreport
 enable_autoref
 enable_history
+enable_clusters
 enable_tclfilter
 with_tclsh
 '
@@ -1408,6 +1409,7 @@ Optional Features:
   --enable-xmlreport      Include XML reports.
   --enable-autoref      Include 'auto refresh' support.
   --enable-history      Include 'history' support.
+  --enable-clusters      Include 'clusters' support.
   --enable-tclfilter      Include Tcl interpreter.
 
 Optional Packages:
@@ -6446,6 +6448,23 @@ $as_echo "$enable_history" >&6; }
 if test "$enable_history" = "yes"; then
 
 $as_echo "#define FEAT_HISTORY 1" >>confdefs.h
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking --enable-clusters argument" >&5
+$as_echo_n "checking --enable-clusters argument... " >&6; }
+# Check whether --enable-clusters was given.
+if test "${enable_clusters+set}" = set; then :
+  enableval=$enable_clusters; enable_clusters="yes"
+else
+  enable_clusters="no"
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $enable_clusters" >&5
+$as_echo "$enable_clusters" >&6; }
+if test "$enable_clusters" = "yes"; then
+
+$as_echo "#define FEAT_CLUSTERS 1" >>confdefs.h
 
 fi
 
