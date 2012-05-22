@@ -35,6 +35,7 @@
 #define ADP_VERSION_0_3		0.3
 #define ADP_VERSION_0_4		0.4
 #define ADP_VERSION_0_5		0.5
+#define ADP_VERSION_0_6		0.6
 
 /* Most current protocol version. */
 #define ADP_CURRENT_VERSION	ADP_VERSION_0_5
@@ -59,6 +60,9 @@
 /* Features since protocol version 0.5 */
 #define ADP_FEATVER_ADPERR	ADP_VERSION_0_5
 
+/* Features since protocol version 0.6 */
+#define ADP_FEATVER_CLUSTER	ADP_VERSION_0_6
+
 
 /* Patterns */
 #define ADP_STRLEN_ADPERR	255
@@ -79,6 +83,9 @@
 
 #define ADP_STRLEN_VIRT		255
 #define ADP_PATTERN_VIRT	"VIRT: %"ADP_QUOTE(ADP_STRLEN_VIRT)"s"
+
+#define ADP_STRLEN_CLUSTER	255
+#define ADP_PATTERN_CLUSTER	"CLUSTER: %"ADP_QUOTE(ADP_STRLEN_CLUSTER)"s"
 
 #define ADP_STRLEN_ADPERR	255
 #define ADP_PATTERN_ADPERR	"ADPERR: %"ADP_QUOTE(ADP_STRLEN_ADPERR)"s"
