@@ -53,10 +53,14 @@ static gint findCluster(gconstpointer a, gconstpointer b) {
 void cluster_host_add(HostNode *n, gchar *c) {
     GList *s = g_list_find_custom(clusters, c, findCluster);
     if(s == NULL)
-	clusters = g_list_append(clusters, g_strdup(c));
+	s = clusters = g_list_prepend(clusters, g_strdup(c));
+    n->clusters = g_list_append(n->clusters, s->data);
 }
 
 gboolean cluster_host_acquire(HostNode *n) {
+    if(n->clusters == NULL)
+	return TRUE;
+
     return TRUE;
 }
 

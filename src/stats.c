@@ -390,6 +390,8 @@ gboolean getUpdatesFromStat(HostNode *n)
   if (sscanf((gchar *) line, ADP_PATTERN_CLUSTER, cluster)) {
    cluster[ADP_STRLEN_CLUSTER-1] = 0;
 
+   cluster_host_add(n, cluster);
+
    linesok++;
    continue;
   }
