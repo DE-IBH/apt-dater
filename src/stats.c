@@ -379,6 +379,17 @@ gboolean getUpdatesFromStat(HostNode *n)
    linesok++;
    continue;
   }
+
+#ifdef FEAT_CLUSTERS
+  char cluster[ADP_STRLEN_CLUSTER];
+  if (sscanf((gchar *) line, ADP_PATTERN_CLUSTER, cluster)) {
+   cluster[ADP_STRLEN_CLUSTER-1] = 0;
+
+   linesok++;
+   continue;
+  }
+#endif
+
  }
 
  if((!adproto && linesok > 10) ||
