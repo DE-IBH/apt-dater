@@ -24,11 +24,43 @@
  */
 
 #include "apt-dater.h"
-#include "clustesr.h"
+#include "clusters.h"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
 
+#include <glib.h>
+
 #ifdef FEAT_CLUSTERS
+
+typedef struct _clusterEntry {
+    gchar *name;
+    HostNode *holdby;
+} ClusterEntry;
+
+static GList *clusters = NULL;
+
+void cluster_host_reset(HostNode *n) {
+    g_list_free(n->clusters);
+    n->clusters = NULL;
+}
+
+static gint findCluster(gconstpointer a, gconstpointer b) {
+  return g_ascii_strcasecmp(a, b);
+}
+
+void cluster_host_add(HostNode *n, gchar *c) {
+    GList *s = g_list_find_custom(clusters, c, findCluster);
+    if(s == NULL)
+	clusters = g_list_append(clusters, g_strdup(c));
+}
+
+gboolean cluster_host_acquire(HostNode *n) {
+    return TRUE;
+}
+
+void cluster_host_release(HostNode *n) {
+}
+
 #endif /* FEAT_CLUSTERS */

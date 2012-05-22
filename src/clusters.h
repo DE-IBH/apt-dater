@@ -26,7 +26,16 @@
 #ifndef _CLUSTERS_H
 #define _CLUSTERS_H
 
+#include "apt-dater.h"
+
 #ifdef FEAT_CLUSTERS
+
+void cluster_host_reset(HostNode *);
+void cluster_host_add(HostNode *, gchar *);
+
+gboolean cluster_host_acquire(HostNode *);
+void cluster_host_release(HostNode *);
+
 #endif /* FEAT_CLUSTERS */
 
 #endif /* _CLUSTERS_H */

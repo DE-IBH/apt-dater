@@ -224,6 +224,9 @@ typedef struct _hostnode {
  gint      forbid;
  gboolean  tagged;
  gchar     uuid[UUID_STRLEN+1];
+#ifdef FEAT_CLUSTERS
+ GList     *clusters;
+#endif
 } HostNode;
 
 #define HOST_SSHPORT_SET(n) \

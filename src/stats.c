@@ -31,6 +31,7 @@
 #include "stats.h"
 #include "lock.h"
 #include "autoref.h"
+#include "clusters.h"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -228,6 +229,10 @@ gboolean getUpdatesFromStat(HostNode *n)
   g_free(n->kernelrel);
   n->kernelrel = NULL;
  }
+
+#ifdef FEAT_CLUSTERS
+  cluster_host_reset(n);
+#endif
 
  int linesok = 0;
  while(fgets(line, STATS_MAX_LINE_LEN, fp)) {
