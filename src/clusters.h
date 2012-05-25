@@ -30,11 +30,7 @@
 
 #ifdef FEAT_CLUSTERS
 
-void cluster_host_reset(HostNode *);
 void cluster_host_add(HostNode *, const gchar *);
-
-gboolean cluster_host_acquire(HostNode *);
-void cluster_host_release(HostNode *);
 
 #endif /* FEAT_CLUSTERS */
 
