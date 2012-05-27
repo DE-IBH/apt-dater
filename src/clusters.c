@@ -36,15 +36,26 @@
 
 #ifdef FEAT_CLUSTERS
 
-static GList *clusters = NULL;
-
 static gint findCluster(gconstpointer a, gconstpointer b) {
   return g_ascii_strcasecmp(a, b);
 }
 
 void cluster_host_add(HostNode *n, const gchar *c) {
-    if(g_list_find_custom(n->clusters, c, findCluster) == NULL) {
-    n->clusters = g_list_append(n->clusters, g_strdup(c));
+    if(g_list_find_custom(n->clusters, c, findCluster) == NULL)
+	n->clusters = g_list_append(n->clusters, g_strdup(c));
+}
+
+static void freeCluster(gchar *c) {
+    if(c)
+	g_free(c);
+}
+
+void cluster_host_reset(HostNode *n) {
+    if(n && n->clusters) {
+	g_list_foreach(n->clusters, (GFunc) freeCluster, NULL);
+	g_list_free(n->clusters);
+	n->clusters = NULL;
+    }
 }
 
 #endif /* FEAT_CLUSTERS */
