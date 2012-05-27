@@ -53,6 +53,27 @@ run_hook () {
     fi
 }
 
+LOCK_ACQ='lockfile-create'
+LOCK_REL='lockfile-remove'
+
+lock_cluster () {
+    if [ "$AD_CLUSTERS" != "0" ]; then
+	echo
+	echo Aquiring cluster locks:
+	REL=""
+	for i in `seq 1 $AD_CLUSTERS`; do
+	    CLUSTER=`eval echo "\\\$AD_CLUSTER$i"`
+	    echo " $CLUSTER"
+	    LOCK_FILE="$AD_STATSDIR/_cluster_$CLUSTER"
+	    $LOCK_ACQ $LOCK_FILE
+	    REL="$LOCK_REL $LOCK_FILE; $REL"
+	done
+	trap "$REL" INT TERM EXIT
+	echo "Done."
+	echo
+    fi
+}
+
 if [ "$AD_HIST_RECORD" = "true" -a "$AD_ACTION" != 'refresh' ]; then
     WRAP="run_hist_cmd"
 else
@@ -96,11 +117,13 @@ handle_generic_ssh () {
 	    run_hook "$AD_HOOK_POST_CONNECT"
 	    ;;
 	install)
+	    lock_cluster
 	    run_hook "$AD_HOOK_PRE_INSTALL"
 	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS $my_ssh_user $my_ssh_port "$AD_HOSTNAME" `printf "$AD_CMD_INSTALL" "$AD_PARAM"`
 	    run_hook "$AD_HOOK_POST_INSTALL"
 	    ;;
 	upgrade)
+	    lock_cluster
 	    run_hook "$AD_HOOK_PRE_UPGRADE"
 	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS $my_ssh_user $my_ssh_port "$AD_HOSTNAME" $AD_CMD_UPGRADE
 	    run_hook "$AD_HOOK_POST_UPGRADE"
