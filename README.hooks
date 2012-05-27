@@ -62,3 +62,5 @@ apt-dater configuration:
  AD_SSH_CMD
  AD_SSH_OPTFLAGS
  AD_STATSDIR
+ AD_CLUSTERS
+ AD_CLUSTER%d

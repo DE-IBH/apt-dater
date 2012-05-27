@@ -1,0 +1,17 @@
+Clusters
+========
+
+Since version 0.9.0, apt-dater has special support of cluster hosts - 
+apt-dater can be configured to do not install updates on hosts part of
+a cluster simultaneously.
+
+You need to specify a symbolic name of the cluster on each cluster in
+/etc/apt-dater-host.conf:
+
+ # If this host is part of (multiple) cluster(s), you might set a
+ # symbolic name. Hosts with the same cluster name won't be upgraded
+ # simultaneously by apt-dater (requires apt-dater 0.9 or above).
+ @CLUSTERS = qw(my-db-cluster);
+
+The cluster name should be unique. Hosts may be part of multiple
+clusters (or cluster resources).
