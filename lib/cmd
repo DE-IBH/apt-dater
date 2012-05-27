@@ -94,8 +94,8 @@ lock_cluster () {
 	    LOCK_FILE="$AD_STATSDIR/_cluster_$CLUSTER"
 	    lock_acq $LOCK_FILE
 	    REL="echo ' $CLUSTER';lock_rel $LOCK_FILE;$REL"
+	    trap "echo;echo Releasing cluster locks:;$REL echo .Done.;echo" INT TERM EXIT
 	done
-	trap "echo;echo Releasing cluster locks:;$REL echo .Done.;echo" INT TERM EXIT
 	echo "Done."
 	echo
     fi
