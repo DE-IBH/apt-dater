@@ -53,8 +53,35 @@ run_hook () {
     fi
 }
 
-LOCK_ACQ='lockfile-create'
-LOCK_REL='lockfile-remove'
+if [ -x /usr/bin/lockfile-create -a -x /usr/bin/lockfile-remove ]; then
+    LOCK_ACQ=/usr/bin/lockfile-create
+    LOCK_REL=/usr/bin/lockfile-remove
+else
+    if [ -x /usr/bin/lockfile ]; then
+	LOCK_ACQ=/usr/bin/lockfile
+	LOCK_REL="rm -f"
+    fi
+fi
+
+lock_acq () {
+    if [ -z "$LOCK_ACQ" ]; then
+	echo
+	echo "FATAL ERROR"
+	echo "==========="
+	echo
+	echo "Your environment does not have lockfile(-create|-remove) available!"
+	echo "You need to install lockfile-progs or procmail before using"
+	echo "apt-dater-host clusters (see README.clusters)!"
+	echo
+	exit 1
+    fi
+
+    $LOCK_ACQ $1
+}
+
+lock_rel () {
+    $LOCK_REL $1
+}
 
 lock_cluster () {
     if [ "$AD_CLUSTERS" != "0" ]; then
@@ -65,8 +92,8 @@ lock_cluster () {
 	    CLUSTER=`eval echo "\\\$AD_CLUSTER$i"`
 	    echo " $CLUSTER"
 	    LOCK_FILE="$AD_STATSDIR/_cluster_$CLUSTER"
-	    $LOCK_ACQ $LOCK_FILE
-	    REL="echo ' $CLUSTER';$LOCK_REL $LOCK_FILE;$REL"
+	    lock_acq $LOCK_FILE
+	    REL="echo ' $CLUSTER';lock_rel $LOCK_FILE;$REL"
 	done
 	trap "echo;echo Releasing cluster locks:;$REL echo .Done.;echo" INT TERM EXIT
 	echo "Done."
