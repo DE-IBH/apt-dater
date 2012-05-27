@@ -59,16 +59,16 @@ LOCK_REL='lockfile-remove'
 lock_cluster () {
     if [ "$AD_CLUSTERS" != "0" ]; then
 	echo
-	echo Aquiring cluster locks:
+	echo Acquiring cluster locks:
 	REL=""
 	for i in `seq 1 $AD_CLUSTERS`; do
 	    CLUSTER=`eval echo "\\\$AD_CLUSTER$i"`
 	    echo " $CLUSTER"
 	    LOCK_FILE="$AD_STATSDIR/_cluster_$CLUSTER"
 	    $LOCK_ACQ $LOCK_FILE
-	    REL="$LOCK_REL $LOCK_FILE; $REL"
+	    REL="echo ' $CLUSTER';$LOCK_REL $LOCK_FILE;$REL"
 	done
-	trap "$REL" INT TERM EXIT
+	trap "echo;echo Releasing cluster locks:;$REL echo .Done.;echo" INT TERM EXIT
 	echo "Done."
 	echo
     fi
