@@ -15,3 +15,6 @@ You need to specify a symbolic name of the cluster on each cluster in
 
 The cluster name should be unique. Hosts may be part of multiple
 clusters (or cluster resources).
+
+This feature requires the lockfile-progs or procmail package. apt-dater
+uses their lockfile(-create|-remove) commands to realize mutexing.
