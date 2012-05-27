@@ -122,7 +122,7 @@ env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEnt
 
 #ifdef FEAT_CLUSTERS
     if(n->clusters != NULL) {
-	new_env[i++] = g_strdup_printf("AD_CLUSTERS=%d", n->ssh_port);
+	new_env[i++] = g_strdup_printf("AD_CLUSTERS=%d", g_list_length(n->clusters));
 	int j = 1;
 	GList *c = n->clusters;
 	while(c != NULL) {
