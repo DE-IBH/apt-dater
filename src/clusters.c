@@ -42,7 +42,7 @@ static gint findCluster(gconstpointer a, gconstpointer b) {
 
 void cluster_host_add(HostNode *n, const gchar *c) {
     if(g_list_find_custom(n->clusters, c, findCluster) == NULL)
-	n->clusters = g_list_append(n->clusters, g_strdup(c));
+	n->clusters = g_list_insert_sorted(n->clusters, g_strdup(c), findCluster);
 }
 
 static void freeCluster(gchar *data, gpointer *user_data) {
