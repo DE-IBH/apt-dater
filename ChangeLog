@@ -1,4 +1,90 @@
-apt-dater (x.y.z) unstable; urgency=low
+apt-dater (0.9.0) unstable; urgency=low
+
+  * Add 'failure diagnostic' screen.
+    (Closes Debian Bug#646902 by Markus Raab)
+  * Document ErrPattern statement in apt-dater.conf.
+    (Closes SF Bug by Herman van Rink)
+  * Remove depreciated Tcl_Interp access (required for Tcl8.6+).
+  * Include config.h before using HAVE_LOCALE_H (provided by Patrick Matthäi).
+  * New feature: apt-dater-host clusters support (README.clusters)
+
+ -- Thomas Liske <liske@ibh.de>  
+
+apt-dater (0.8.6) stable; urgency=low
+  * zypper:
+    - Fixed: zypper did not report any updates (reported by Ivan De Masi).
+    - Use 'zypper refresh' for refreshing package repositories.
+  * Add RELEASE header to version string on RPM queries.
+  * Update apt-dater.conf man page.
+  * Fix two hardening compile warnings (provided by Patrick Matthäi).
+  * Include locale.h if available.
+    (Closes Debian Bug#642696 by Mònica Ramírez Arceda)
+  * Use apt-get as default package manager.
+    (Closes Debian Bug#635048 by Felix Bartels)
+  * Add dummy man page apt-dater-host.1 (contributed by Patrick Matthäi).
+
+ -- Thomas Liske <liske@ibh.de>  Tue, 27 Sep 2011 15:37:03 +0200
+
+apt-dater (0.8.5) unstable; urgency=low
+
+  * Fixed a key mismatch in the history view.
+  * Fixed a selector positioning bug.
+  * Don't use sudo on apt-dater-host status w/ aptitude.
+    (Fixes Debian Bug#596723 by "chrysn")
+  * Configure should check if popt.h is available.
+    (Closes SF Bug#3045502 by Henri Salo)
+  * Drop "[screen] enabled" config option, it doesn't work any more.
+    (Reported by Daniel Baumann due Debian Bug#597941)
+  * Fix unknown yum based hosts (reported on Fedora) due bad package status
+    interpretation.
+    (Reported by Patrick Matthäi)
+  * Some pedantic stuff (use long options for aptitude and apt-get to
+    ease code reading). Don't fail on untrusted/unauthenticated packages
+    when checking for upgrades (still check for the upgrade itself).
+    (Contributed by Mathieu PARENT due SF Bug#3158198)
+  * Check for updates (refresh) using dist-upgrade. This show
+    ABI-incompatible upgrades (like the recent bind9 one:
+    http://www.debian.org/security/2010/dsa-2130.en.html).
+    (Contributed by Mathieu PARENT due SF Bug#3158198)
+  * Make upgrade method customizable.
+    (Inspired by Mathieu PARENT due SF Bug#3158198)
+  * Fixed a key mismatch in the history view.
+  * Fixed a selector positioning bug.
+  * Allow apt-dater-host to be used with ssh keys.
+    (Inspired by 'Chromosom' due SF Bug#2862139)
+
+ -- Andre Ellguth <ellguth@ibh.de>  Tue, 01 Feb 2011 09:04:25 +0100
+
+apt-dater (0.8.4) unstable; urgency=low
+
+  * Add UUID host field to report output.
+  * Don't fail if apt-dater-host could not get the installed kernel packages;
+    fallback to unknown reboot status.
+    (Closes SF Bug#2991717 by Karoly Molnar)
+  * Use $DPKGTOOL to detect packages with updates.
+    (Contributed by Alexandre Anriot)
+  * Update german localization.
+
+ -- Andre Ellguth <ellguth@ibh.de>  Mon, 05 Jul 2010 12:51:58 +0200
+
+apt-dater (0.8.3) unstable; urgency=low
+
+  * Parameters on 'apt-dater-host install' must not be interpreted by
+    the shell, thanks to Henri Salo.
+  * Remove obsolete DefaultUser/DefaultPort lines from conf/apt-dater.conf.example.
+    (Closes SF Bug#2946417 by Mathieu PARENT)
+  * Handle fwrite return values in keyfiles.c.
+  * Add apt-dater-host zypper version (using zypper in rug compatibility mode).
+    (Contributed by Chris Liles)
+  * Detect screen's socket path during configure.
+    (Closes SF Bug#2950721 by Chris Liles)
+  * Add .spec files for rpm packaging.
+  * Add '-o Aptitude::Delete-Unused=false' to aptitude safe-upgrade calls.
+    (Contributed by Patrick Matthäi)
+
+ -- Andre Ellguth <ellguth@ibh.de>  Mon, 29 Mar 2010 08:35:03 +0200
+
+apt-dater (0.8.2) unstable; urgency=low
 
   * Fix apt-dater not working on PPC
     (Closes Debian Bug#563159 by Gefried Fuchs; thanks to Simon Richter).
@@ -20,32 +106,8 @@ apt-dater (x.y.z) unstable; urgency=low
     (Closes SF Bug#2941509 by Micha vor dem Berge)
   * Fix Debian hosts become 'Unknown' if they hadn't a stock Debian kernel installed.
     (Closes SF Bug#2933741 by alma@arwin.hu)
-  * Add apt-dater-host manpage, thanks to Patrick Matthäi.
-  * Parameters on 'apt-dater-host install' must not be interpreted by
-    the shell, thanks to Henri Salo.
-  * Remove obsolete DefaultUser/DefaultPort lines from conf/apt-dater.conf.example.
-    (Closes SF Bug#2946417 by Mathieu PARENT)
-  * Handle fwrite return values in keyfiles.c.
-  * Add apt-dater-host zypper version (using zypper in rug compatibility mode).
-    (Contributed by Chris Liles)
-  * Detect screen's socket path during configure.
-    (Closes SF Bug#2950721 by Chris Liles)
-  * Add .spec files for rpm packaging.
-  * Add UUID host field to report output.
-  * Fixed a key mismatch in the history view.
-  * Fixed a selector positioning bug.
-  * Configure should check if popt.h is available.
-    (Closes SF Bug#3045502 by Henri Salo)
-  * Drop "[screen] enabled" config option, it doesn't work any more.
-    (Reported by Daniel Baumann due Debian Bug#597941)
-  * Include locale.h if available.
-    (Closes Debian Bug#642696 by Mònica Ramírez Arceda)
-  * Remove depreciated Tcl_Interp access (required for Tcl8.6+).
-  * Add 'failure diagnostic' screen.
-    (Closes Debian Bug#646902 by Markus Raab)
-  * Document ErrPattern statement in apt-dater.conf.
-    (Closes SF Bug by Herman van Rink)
- -- 
+
+ -- Andre Ellguth <ellguth@ibh.de>  Wed, 03 Feb 2010 15:27:39 +0100
 
 apt-dater (0.8.1) unstable; urgency=low
 
