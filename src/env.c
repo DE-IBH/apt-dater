@@ -120,6 +120,20 @@ env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEnt
 #endif
      ADD_HENV("HIST_PATH"       , "");
 
+#ifdef FEAT_CLUSTERS
+    if(n->clusters != NULL) {
+	new_env[i++] = g_strdup_printf("AD_CLUSTERS=%d", n->ssh_port);
+	int j = 1;
+	GList *c = n->clusters;
+	while(c != NULL) {
+	    new_env[i++] = g_strdup_printf("AD_CLUSTER%d=%s", j, (gchar *)c->data);
+	    c = c->next;
+	    j++;
+	}
+    }
+    else
+#endif
+     ADD_HENV("CLUSTERS"        , "0");
 
     ADD_HENV("ACTION"           , action);
     if(param)
