@@ -91,6 +91,12 @@ static void reportHistory(gpointer data, gpointer user_data) {
 }
 #endif
 
+#ifdef FEAT_CLUSTERS
+static void reportCluster(gpointer data, gpointer user_data) {
+  xmlTextWriterWriteFormatElement(writer, BAD_CAST("member-of"), "%s", (gchar *)data);
+}
+#endif
+
 static void reportPackage(gpointer data, gpointer user_data) {
   PkgNode *n = (PkgNode *)data;
   
@@ -199,6 +205,15 @@ static void reportHost(gpointer data, gpointer lgroup) {
     xmlTextWriterEndElement(writer);
 
     history_free_hel(hel);
+  }
+#endif
+
+#ifdef FEAT_CLUSTERS
+  /* clusters data */
+  if(n->clusters) {
+    xmlTextWriterStartElement(writer, BAD_CAST("clusters"));
+    g_list_foreach(n->clusters, reportCluster, NULL);
+    xmlTextWriterEndElement(writer);
   }
 #endif
 
