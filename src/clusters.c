@@ -45,9 +45,9 @@ void cluster_host_add(HostNode *n, const gchar *c) {
 	n->clusters = g_list_append(n->clusters, g_strdup(c));
 }
 
-static void freeCluster(gchar *c) {
-    if(c)
-	g_free(c);
+static void freeCluster(gchar *data, gpointer *user_data) {
+    if(data)
+	g_free(data);
 }
 
 void cluster_host_reset(HostNode *n) {
