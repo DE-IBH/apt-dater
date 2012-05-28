@@ -887,6 +887,11 @@ static void drawHostErrDiag(HostNode *h)
     l++;
     b++;
   }
+
+  b = buf;
+  while((b = strchr(b, '\r'))) {
+    *b = ' ';
+  }
  }
 
  WINDOW *wp = newpad(MAX(LINES, l+2), COLS);
