@@ -43,6 +43,7 @@ variables in the TCL environment:
   $holds      | array of packages hold back
   $installed  | array of installed packages
   $updates    | array of packages w/ update available
+  $clusters   | array of cluster names
  -------------+-------------------------------------------------------
 
 The filter has the full power of TCL.

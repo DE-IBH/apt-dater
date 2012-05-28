@@ -98,6 +98,9 @@ typedef enum {
     TCLMK_VIRT,
     TCLMK_FORBID,
 
+#ifdef FEAT_CLUSTERS
+    TCLMK_CLUSTERS,
+#endif
     TCLMK_EXTRAS,
     TCLMK_FLAGS,
     TCLMK_HOLDS,
@@ -123,6 +126,9 @@ const static struct TCLMapping tclmap[] = {
     {TCLMK_VIRT     , "virt"      , TCLM_STRING},
     {TCLMK_FORBID   , "forbid"    , TCLM_INT},
 
+#ifdef FEAT_CLUSTERS
+    {TCLMK_CLUSTERS , "clusters"  , TCLM_IGNORE},
+#endif
     {TCLMK_EXTRAS   , "extras"    , TCLM_IGNORE},
     {TCLMK_FLAGS    , "flags"     , TCLM_IGNORE},
     {TCLMK_HOLDS    , "holds"     , TCLM_IGNORE},
@@ -2769,6 +2775,15 @@ void applyFilter(GList *hosts) {
       if(n->status & hostFlags[i].flag)
         Tcl_SetVar2(tcl_interp, "flags", hostFlags[i].code, hostFlags[i].code, 0);
     }
+
+#ifdef FEAT_CLUSTERS
+    Tcl_UnsetVar(tcl_interp, "clusters", 0);
+    GList *c = n->clusters;
+    while(c) {
+	Tcl_SetVar2(tcl_interp, "clusters", c->data, c->data, 0);
+	c = g_list_next(c);
+    }
+#endif
 
     Tcl_ResetResult(tcl_interp);
     switch(Tcl_Eval(tcl_interp, filterexp)) {
