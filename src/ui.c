@@ -202,6 +202,9 @@ const struct HostFlag hostFlags[] = {
   {HOST_STATUS_KERNELNOTMATCH ,  "R", N_("running kernel is not the latest (reboot required)")},
   {HOST_STATUS_KERNELSELFBUILD,  "k", N_("a selfbuild kernel is running")},
   {HOST_STATUS_VIRTUALIZED    ,  "v", N_("this is a virtualized machine")},
+#ifdef FEAT_CLUSTERS
+  {HOST_STATUS_CLUSTERED      ,  "C", N_("this machine is part of a cluster")},
+#endif
   {0                          , NULL, NULL},
 };
 
@@ -1297,7 +1300,11 @@ void drawHostEntry (DrawNode *n)
 
   attroff(uicolors[UI_COLOR_HOSTSTATUS]);
  }
+#ifdef FEAT_CLUSTERS
+ mvaddstr(n->scrpos, 7, " [");
+#else
  mvaddstr(n->scrpos, 6, " [");
+#endif
 
  if(n->elements > 0)
   addch(n->elements > 0 && n->extended == FALSE ? '+' : '-');

@@ -170,6 +170,9 @@ typedef enum {
 #define HOST_STATUS_KERNELSELFBUILD  32
 #define HOST_STATUS_VIRTUALIZED      64
 #define HOST_STATUS_LOCKED          128
+#ifdef FEAT_CLUSTERS
+#define HOST_STATUS_CLUSTERED       256
+#endif
 
 #define HOST_FORBID_REFRESH           1
 #define HOST_FORBID_UPGRADE           2
