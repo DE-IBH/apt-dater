@@ -42,6 +42,9 @@ typedef enum {
  COMPCMD_UPDATE,
  COMPCMD_HOSTNAME,
  COMPCMD_FLAG,
+#ifdef FEAT_CLUSTERS
+ COMPCMD_CLUSTERS,
+#endif
 } COMPCMD;
 
 struct ValidCompCmds {
@@ -59,6 +62,9 @@ static struct ValidCompCmds compCmds[] = {
  {'p', "package",     COMPCMD_PACKAGE},
  {'u', "update" ,     COMPCMD_UPDATE},
  {'f', "flag" ,       COMPCMD_FLAG},
+#ifdef FEAT_CLUSTERS
+ {'C', "cluster" ,    COMPCMD_CLUSTERS},
+#endif
  {  0,      NULL,     0},
 };
 
@@ -157,6 +163,18 @@ gboolean compHostWithPattern(HostNode *n, gchar *in, gsize s)
    }
   }
   if(n->status - (n->status ^ compflags) == compflags) r = TRUE;
+  break;
+ case COMPCMD_CLUSTERS:
+  {
+   GList *c = n->clusters;
+   while(c != NULL) {
+    if(compStrWithPattern(c->data, pattern, s) == TRUE) {
+	r = TRUE;
+	break;
+    }
+    c = c->next;
+   }
+  }
   break;
  case COMPCMD_HOSTNAME:
  default:
