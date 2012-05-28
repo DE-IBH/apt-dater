@@ -164,6 +164,7 @@ gboolean compHostWithPattern(HostNode *n, gchar *in, gsize s)
   }
   if(n->status - (n->status ^ compflags) == compflags) r = TRUE;
   break;
+#ifdef FEAT_CLUSTERS
  case COMPCMD_CLUSTERS:
   {
    GList *c = n->clusters;
@@ -176,6 +177,7 @@ gboolean compHostWithPattern(HostNode *n, gchar *in, gsize s)
    }
   }
   break;
+#endif
  case COMPCMD_HOSTNAME:
  default:
   r = compStrWithPattern(n->hostname, pattern, s);
