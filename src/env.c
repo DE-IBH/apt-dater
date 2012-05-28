@@ -68,7 +68,11 @@ env_init(gchar **envp) {
 
 gchar **
 env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEntry *he) {
-    gchar **new_env = (gchar **) g_new0(gchar**, g_slist_length(base_env) + 21 + g_list_length(n->clusters));
+    gchar **new_env = (gchar **) g_new0(gchar**, g_slist_length(base_env) + 20
+#ifdef FEAT_CLUSTERS
+    + 1 + g_list_length(n->clusters)
+#endif
+    );
     gint i = 0;
 
     GSList *p;
