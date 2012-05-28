@@ -725,6 +725,19 @@ static void drawHostDetails(HostNode *h)
    mvwaddnstr(wp, l-1, 21 + strlen(h->kernelrel), buf, COLS - 21 - strlen(h->kernelrel));
  }
 
+#ifdef FEAT_CLUSTERS
+ if(g_list_length(h->clusters)) {
+  l++;
+
+  mvwaddnstr(wp, l  , 2, _("Clusters: "), COLS - 2);
+  GList *c = h->clusters;
+  while(c) {
+   mvwaddnstr(wp, l++, 20, c->data, COLS - 20);
+   c = g_list_next(c);
+  }
+ }
+#endif
+
  if (g_list_length(h->packages)) {
   l++;
 
