@@ -8381,7 +8381,7 @@ fi
 done
 
 
-ac_config_files="$ac_config_files po/Makefile.in Makefile lib/Makefile man/Makefile src/Makefile clients/Makefile build/apt-dater.spec"
+ac_config_files="$ac_config_files po/Makefile.in Makefile lib/Makefile man/Makefile src/Makefile build/apt-dater.spec"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -9118,7 +9118,6 @@ do
     "lib/Makefile") CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
     "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
-    "clients/Makefile") CONFIG_FILES="$CONFIG_FILES clients/Makefile" ;;
     "build/apt-dater.spec") CONFIG_FILES="$CONFIG_FILES build/apt-dater.spec" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

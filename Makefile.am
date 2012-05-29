@@ -1,4 +1,4 @@
-SUBDIRS = po clients man src lib
+SUBDIRS = po man src lib
 
 AUTOMAKE_OPTIONS = 							\
 	1.9								\
