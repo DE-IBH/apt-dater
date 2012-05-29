@@ -6,9 +6,12 @@ apt-dater (0.9.0) unstable; urgency=low
     (Closes SF Bug by Herman van Rink)
   * Remove depreciated Tcl_Interp access (required for Tcl8.6+).
   * Include config.h before using HAVE_LOCALE_H (provided by Patrick Matthäi).
-  * New feature: apt-dater-host clusters support (README.clusters)
+  * New feature: cluster support (README.clusters)
+  * Sync to apt-dater-host 0.9.0-adp0.6:
+    - cluster support
+    - depend on ImVirt.pm on Debian
 
- -- Thomas Liske <liske@ibh.de>  
+ -- Thomas Liske <liske@ibh.de>  Tue, 29 May 2012 14:22:41 +0200
 
 apt-dater (0.8.6) stable; urgency=low
   * zypper:
