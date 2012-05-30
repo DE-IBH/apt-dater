@@ -16,11 +16,11 @@ case "${target_os}" in
 darwin*)
         AC_DEFINE([DARWIN], [1], [Define if Darwin or Mac OS X])
         ;;
-linux*)
-        linux="yes"
-        ;;
 freebsd*)
         freebsd="yes"
+        ;;
+*)
+        linux="yes"
         ;;
 esac
 AM_CONDITIONAL(LINUX, test x"$linux" = x"yes")
