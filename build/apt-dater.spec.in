@@ -62,7 +62,7 @@ It supports Debian-based managed hosts as well as OpenSUSE and CentOS based syst
 
 %build
 
-%configure --prefix=%{_prefix} --libexec=%{_libexecdir}/apt-dater --disable-rpath --enable-tclfilter --enable-xmlreport --enable-autoref --enable-history --enable-debug
+%configure --prefix=%{_prefix} --libexec=%{_libexecdir}/apt-dater --disable-rpath --enable-tclfilter --enable-xmlreport --enable-autoref --enable-history --enable-clusters --enable-debug
 
 make
 
@@ -71,6 +71,7 @@ make
 (cd lib && make install DESTDIR=$RPM_BUILD_ROOT)
 (cd po && make install DESTDIR=$RPM_BUILD_ROOT)
 (cd man && make install DESTDIR=$RPM_BUILD_ROOT)
+rm -f $RPM_BUILD_ROOT/usr/share/man/man1/apt-dater-host.1
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -88,4 +89,3 @@ make clean
 %{_mandir}/manh/*
 %lang(de) %{_datadir}/locale/de/LC_MESSAGES/apt-dater.mo
 %lang(it) %{_datadir}/locale/it/LC_MESSAGES/apt-dater.mo
-%{_datadir}/locale/*/LC_MESSAGES/apt-dater.mo
