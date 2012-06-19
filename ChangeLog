@@ -3,6 +3,8 @@ apt-dater (0.9.1) unstable; urgency=low
   * Update German localization.
   * Assume target_os is linux compatible as default
     (fixes building on kfreebsd and hurd flavours).
+  * Use SSH / OptionalCmdFlags on host refresh.
+    (Closes Debian Bug#678111 by "jonas")
 
  -- Thomas Liske <liske@ibh.de>  
 
