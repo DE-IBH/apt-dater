@@ -309,21 +309,33 @@ CfgFile *loadConfig (char *filename)
  return (lcfg);
 }
 
+#define CFG_GET_STRING(setting,var,def) \
+    var = (def); \
+    if(config_setting_lookup_string( cfghost, (setting), (const char **) &var) == CONFIG_FALSE) \
+    if(config_setting_lookup_string(cfggroup, (setting), (const char **) &var) == CONFIG_FALSE) \
+    config_setting_lookup_string(cfghosts, (setting), (const char **) &var); \
+    if(var != NULL) var = g_strdup(var)
+
+#define CFG_GET_INT(setting,var,def) \
+    var = (def); \
+    if(config_setting_lookup_int( cfghost, (setting), &var) == CONFIG_FALSE) \
+    if(config_setting_lookup_int(cfggroup, (setting), &var) == CONFIG_FALSE) \
+    config_setting_lookup_int(cfghosts, (setting), &var)
 
 GList *loadHostsNew (const char *filename) {
-    config_t cfg;
+    config_t hcfg;
 
-    config_init(&cfg);
-    if(config_read_file(&cfg, filename) == CONFIG_FALSE) {
-	g_error ("%s:%d %s", config_error_file(&cfg), config_error_line(&cfg), config_error_text(&cfg));
-	config_destroy(&cfg);
+    config_init(&hcfg);
+    if(config_read_file(&hcfg, filename) == CONFIG_FALSE) {
+	g_error ("%s:%d %s", config_error_file(&hcfg), config_error_line(&hcfg), config_error_text(&hcfg));
+	config_destroy(&hcfg);
 	return (FALSE);
     }
 
-    config_setting_t *cfghosts = config_lookup(&cfg, "hosts");
+    config_setting_t *cfghosts = config_lookup(&hcfg, "hosts");
     if(cfghosts == NULL) {
 	g_error ("%s: No hosts entries found.", filename);
-	config_destroy(&cfg);
+	config_destroy(&hcfg);
 	return (FALSE);
     }
 
@@ -334,11 +346,31 @@ GList *loadHostsNew (const char *filename) {
 	int j;
 	config_setting_t *cfghost;
 	for(j=0; (cfghost = config_setting_get_elem(cfggroup, j)); j++) {
-	    
+	    HostNode *hostnode = g_new0(HostNode, 1);
+
+#ifndef NDEBUG
+	    hostnode->_type = T_HOSTNODE;
+#endif
+	    CFG_GET_STRING("hostname", hostnode->hostname, NULL);
+	    CFG_GET_STRING("Type", hostnode->type, "generic-ssh");
+	    CFG_GET_STRING("ssh_user", hostnode->ssh_user, NULL);
+	    CFG_GET_INT("ssh_port", hostnode->ssh_port, 0);
+	    CFG_GET_STRING("ssh_identity", hostnode->identity_file, NULL);
+
+	    hostnode->group = g_strdup(config_setting_name(cfggroup));
+
+	    hostnode->statsfile = g_strdup_printf("%s/%s:%d.stat", cfg->statsdir, hostnode->hostname, hostnode->ssh_port);
+	    hostnode->fdlock = -1;
+	    hostnode->uuid[0] = 0;
+	    hostnode->tagged = FALSE;
+
+	    getUpdatesFromStat(hostnode);
+
+	    hosts = g_list_append(hosts, hostnode);
 	}
     }
 
-    config_destroy(&cfg);
+    config_destroy(&hcfg);
     return hosts;
 }
 
