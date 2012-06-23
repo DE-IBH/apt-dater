@@ -320,7 +320,26 @@ GList *loadHostsNew (const char *filename) {
 	return (FALSE);
     }
 
+    config_setting_t *cfghosts = config_lookup(&cfg, "hosts");
+    if(cfghosts == NULL) {
+	g_error ("%s: No hosts entries found.", filename);
+	config_destroy(&cfg);
+	return (FALSE);
+    }
+
+    GList *hosts = NULL;
+    int i;
+    config_setting_t *cfggroup;
+    for(i=0; (cfggroup = config_setting_get_elem(cfghosts, i)); i++) {
+	int j;
+	config_setting_t *cfghost;
+	for(j=0; (cfghost = config_setting_get_elem(cfggroup, j)); j++) {
+	    
+	}
+    }
+
     config_destroy(&cfg);
+    return hosts;
 }
 
 
