@@ -33,6 +33,7 @@
 # include "config.h"
 #endif
 
+#include <libconfig.h>
 
 static char apt_dater_conf[] = "# Config file of apt-dater in the form of the"
  " glib GKeyFile required\n\n[Paths]\n# Default: $XDG_CONFIG_HOME/apt-dater/h"
@@ -306,6 +307,20 @@ CfgFile *loadConfig (char *filename)
  g_key_file_free(keyfile);
 
  return (lcfg);
+}
+
+
+GList *loadHostsNew (const char *filename) {
+    config_t cfg;
+
+    config_init(&cfg);
+    if(config_read_file(&cfg, filename) == CONFIG_FALSE) {
+	g_error ("%s:%d %s", config_error_file(&cfg), config_error_line(&cfg), config_error_text(&cfg));
+	config_destroy(&cfg);
+	return (FALSE);
+    }
+
+    config_destroy(&cfg);
 }
 
 
