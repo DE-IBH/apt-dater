@@ -158,6 +158,114 @@ void freeConfig (CfgFile *cfg)
  g_free(cfg);
 }
 
+#define CFG_GET_BOOL_DEFAULT(setting,key,var,def) \
+    var = (def); \
+    config_setting_lookup_bool((setting), (key), &(var));
+#define CFG_GET_STRING_DEFAULT(setting,key,var,def) \
+    var = (def); \
+    config_setting_lookup_string((setting), (key), (const char **) &(var)); \
+    if(var != NULL) var = g_strdup(var)
+
+CfgFile *loadConfigNew(char *filename) {
+
+    config_t hcfg;
+
+    config_init(&hcfg);
+    if(config_read_file(&hcfg, filename) == CONFIG_FALSE) {
+	g_error ("%s:%d %s", config_error_file(&hcfg), config_error_line(&hcfg), config_error_text(&hcfg));
+	config_destroy(&hcfg);
+	return (FALSE);
+    }
+    CfgFile *lcfg = NULL;
+
+    lcfg = g_new0(CfgFile, 1);
+#ifndef NDEBUG
+    lcfg->_type = T_CFGFILE;
+#endif
+
+    config_setting_t *s_ssh = config_lookup(&hcfg, "SSH");
+    config_setting_t *s_paths = config_lookup(&hcfg, "Paths");
+    config_setting_t *s_screen = config_lookup(&hcfg, "Screen");
+    config_setting_t *s_notify = config_lookup(&hcfg, "Notify");
+    config_setting_t *s_hooks = config_lookup(&hcfg, "Hooks");
+#ifdef FEAT_AUTOREF
+    config_setting_t *s_autoref = config_lookup(&hcfg, "AutoRef");
+#endif
+#ifdef FEAT_HISTORY
+    config_setting_t *s_history = config_lookup(&hcfg, "History");
+#endif
+#ifdef FEAT_TCLFILTER
+    config_setting_t *s_tclfilter = config_lookup(&hcfg, "TCLFilter");
+#endif
+
+    config_setting_lookup_string(s_ssh, "OptionalCmdFlags", (const char **) &(lcfg->ssh_optflags));
+
+    CFG_GET_STRING_DEFAULT(s_paths, "HostsFile", lcfg->hostsfile, g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.conf"));
+    CFG_GET_STRING_DEFAULT(s_paths, "StatsDir", lcfg->statsdir, g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats"));
+    g_mkdir_with_parents(lcfg->statsdir, S_IRWXU | S_IRWXG | S_IRWXO);
+
+    CFG_GET_STRING_DEFAULT(s_screen, "RCFile", lcfg->screenrcfile, g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc"));
+    CFG_GET_STRING_DEFAULT(s_screen, "Title", lcfg->screentitle, "%m # %U%H");
+
+    if(config_setting_lookup_string(s_ssh, "Cmd", (const char **) &(lcfg->ssh_cmd)) == CONFIG_FALSE) {
+	g_error ("%s: Cmd undefined", filename);
+	return (NULL);
+    }
+
+    if(config_setting_lookup_string(s_ssh, "SFTPCmd", (const char **) &(lcfg->sftp_cmd)) == CONFIG_FALSE) {
+	g_error ("%s: SFTPCmd undefined", filename);
+	return (NULL);
+    }
+
+    config_setting_lookup_bool(s_ssh, "SpawnAgent", &(lcfg->ssh_agent));
+// TODO lcfg->ssh_add = g_key_file_get_string_list(keyfile, "SSH", "AddKeys", &lcfg->ssh_numadd, NULL);
+
+    CFG_GET_BOOL_DEFAULT(s_screen, "NoDumps", lcfg->dump_screen, FALSE);
+    lcfg->dump_screen = !lcfg->dump_screen;
+
+    CFG_GET_BOOL_DEFAULT(s_screen, "QueryMaintainer", lcfg->query_maintainer, FALSE);
+
+//TODO if(!(lcfg->colors = 
+//     g_key_file_get_string_list(keyfile, "Appearance", "Colors", 
+//				NULL, &error))) {
+//
+//  g_message ("%s: %s", filename, error->message);
+// }
+
+#ifdef FEAT_TCLFILTER
+    config_setting_lookup_string(&s_tclfilter, "FilterExp", &(lcfg->lcfg->filterexp));
+    config_setting_lookup_string(&s_tclfilter, "FilterFile", &(lcfg->lcfg->filterfile));
+#endif
+
+#ifdef FEAT_AUTOREF
+    CFG_GET_BOOL_DEFAULT(s_autoref, "enabled", lcfg->auto_refresh, TRUE);
+#endif
+
+    CFG_GET_BOOL_DEFAULT(s_notify, "beep", lcfg->beep, TRUE);
+    CFG_GET_BOOL_DEFAULT(s_notify, "flash", lcfg->flash, TRUE);
+
+#ifdef FEAT_HISTORY
+    CFG_GET_BOOL_DEFAULT(s_history, "record", lcfg->record_history, TRUE);
+    CFG_GET_STRING_DEFAULT(s_history, "ErrPattern", lcfg->history_errpattern, "(error|warning|fail)");
+#endif
+
+    CFG_GET_STRING_DEFAULT(s_hooks, "PreUpgrade", lcfg->hook_pre_upgrade, "/etc/apt-dater/pre-upg.d");
+    CFG_GET_STRING_DEFAULT(s_hooks, "PreRefresh", lcfg->hook_pre_refresh, "/etc/apt-dater/pre-ref.d");
+    CFG_GET_STRING_DEFAULT(s_hooks, "PreInstall", lcfg->hook_pre_install, "/etc/apt-dater/pre-ins.d");
+    CFG_GET_STRING_DEFAULT(s_hooks, "PreConnect", lcfg->hook_pre_connect, "/etc/apt-dater/pre-con.d");
+
+    CFG_GET_STRING_DEFAULT(s_hooks, "PostUpgrade", lcfg->hook_post_upgrade, "/etc/apt-dater/post-upg.d");
+    CFG_GET_STRING_DEFAULT(s_hooks, "PostRefresh", lcfg->hook_post_refresh, "/etc/apt-dater/post-ref.d");
+    CFG_GET_STRING_DEFAULT(s_hooks, "PostInstall", lcfg->hook_post_install, "/etc/apt-dater/post-ins.d");
+    CFG_GET_STRING_DEFAULT(s_hooks, "PostConnect", lcfg->hook_post_connect, "/etc/apt-dater/post-con.d");
+
+    CFG_GET_STRING_DEFAULT(s_hooks, "PluginDir", lcfg->plugindir, "/etc/apt-dater/plugins");
+
+
+    config_destroy(&hcfg);
+    return (lcfg);
+}
+
 CfgFile *loadConfig (char *filename)
 {
  GKeyFile *keyfile;
@@ -309,14 +417,14 @@ CfgFile *loadConfig (char *filename)
  return (lcfg);
 }
 
-#define CFG_GET_STRING(setting,var,def) \
+#define HCFG_GET_STRING(setting,var,def) \
     var = (def); \
     if(config_setting_lookup_string( cfghost, (setting), (const char **) &var) == CONFIG_FALSE) \
     if(config_setting_lookup_string(cfggroup, (setting), (const char **) &var) == CONFIG_FALSE) \
     config_setting_lookup_string(cfghosts, (setting), (const char **) &var); \
     if(var != NULL) var = g_strdup(var)
 
-#define CFG_GET_INT(setting,var,def) \
+#define HCFG_GET_INT(setting,var,def) \
     var = (def); \
     if(config_setting_lookup_int( cfghost, (setting), &var) == CONFIG_FALSE) \
     if(config_setting_lookup_int(cfggroup, (setting), &var) == CONFIG_FALSE) \
@@ -351,11 +459,11 @@ GList *loadHostsNew (const char *filename) {
 #ifndef NDEBUG
 	    hostnode->_type = T_HOSTNODE;
 #endif
-	    CFG_GET_STRING("hostname", hostnode->hostname, NULL);
-	    CFG_GET_STRING("Type", hostnode->type, "generic-ssh");
-	    CFG_GET_STRING("ssh_user", hostnode->ssh_user, NULL);
-	    CFG_GET_INT("ssh_port", hostnode->ssh_port, 0);
-	    CFG_GET_STRING("ssh_identity", hostnode->identity_file, NULL);
+	    HCFG_GET_STRING("hostname", hostnode->hostname, NULL);
+	    HCFG_GET_STRING("Type", hostnode->type, "generic-ssh");
+	    HCFG_GET_STRING("ssh_user", hostnode->ssh_user, NULL);
+	    HCFG_GET_INT("ssh_port", hostnode->ssh_port, 0);
+	    HCFG_GET_STRING("ssh_identity", hostnode->identity_file, NULL);
 
 	    hostnode->group = g_strdup(config_setting_name(cfggroup));
 
