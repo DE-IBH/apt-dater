@@ -274,7 +274,7 @@ CfgFile *loadConfig (char *filename)
  }
 
 #ifdef FEAT_HISTORY
- lcfg->flash = g_key_file_get_boolean(keyfile, "History", "record", &error);
+ lcfg->record_history = g_key_file_get_boolean(keyfile, "History", "record", &error);
  if (error) {
    lcfg->record_history = TRUE;
    g_clear_error(&error);
