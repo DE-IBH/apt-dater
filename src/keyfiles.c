@@ -218,7 +218,27 @@ CfgFile *loadConfigNew(char *filename) {
     }
 
     config_setting_lookup_bool(s_ssh, "SpawnAgent", &(lcfg->ssh_agent));
-// TODO lcfg->ssh_add = g_key_file_get_string_list(keyfile, "SSH", "AddKeys", &lcfg->ssh_numadd, NULL);
+
+    config_setting_t *s_addkeys = config_setting_get_member(s_ssh, "AddKeys");
+    if(s_addkeys != NULL) {
+	if(config_setting_type(s_addkeys) == CONFIG_TYPE_STRING) {
+	    lcfg->ssh_add = g_new0(char*, 2);
+	    lcfg->ssh_add[0] = g_strdup(config_setting_get_string(s_addkeys));
+	}
+	else if(config_setting_type(s_addkeys) == CONFIG_TYPE_ARRAY) {
+	    int len = config_setting_length(s_addkeys);
+	    int i;
+
+	    lcfg->ssh_add = g_new0(char*, len + 1);
+	    for(i = 0; i<len; i++) {
+		config_setting_t *e = config_setting_get_elem(s_addkeys, i++);
+		lcfg->ssh_add[i] = g_strdup(config_setting_get_string(e));
+	    }
+	}
+	else {
+	    g_error ("%s: setting %s must be a single string or an array of strings", filename, config_setting_name(s_addkeys));
+	}
+    }
 
     CFG_GET_BOOL_DEFAULT(s_screen, "NoDumps", lcfg->dump_screen, FALSE);
     lcfg->dump_screen = !lcfg->dump_screen;
