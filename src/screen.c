@@ -104,37 +104,45 @@ screen_get_sessions(HostNode *n) {
   return g_list_length(n->screens) > 0;
 }
 
-gchar *
+gchar **
 screen_new(HostNode *n, const gboolean detached) {
+  gchar **_argv = (gchar **) g_malloc0(sizeof(gchar *) * 8);
   gchar *title = parse_string(cfg->screentitle, n);
 
-  gchar *cmd = g_strdup_printf(SCREEN_BINARY"+-%sS+"SCREEN_SOCKPRE"%s_%s_%d"	\
-			       "+-t+%s+-c+%s+",
-			       detached ? "dm" : "",
-			       n->ssh_user, n->hostname, n->ssh_port,
-			       title,
-			       cfg->screenrcfile);
+  _argv[0] = g_strdup(SCREEN_BINARY);
+  _argv[1] = g_strdup_printf("-%sS", detached ? "dm" : "");
+  _argv[2] = g_strdup_printf(SCREEN_SOCKPRE"%s_%s_%d", n->ssh_user,
+			     n->hostname, 
+			     n->ssh_port);
+  _argv[3] = g_strdup("-t");
+  _argv[4] = title;
+  _argv[5] = g_strdup("-c");
+  _argv[6] = g_strdup(cfg->screenrcfile);
+  _argv[7] = NULL;
 
-  g_free(title);
-
-  return cmd;
+  return _argv;
 }
 
-static gchar *
+static gchar **
 screen_attach_cmd(const SessNode *s, const gboolean shared) {
-  return g_strdup_printf(SCREEN_BINARY"+-r%s+%d+", shared ? "x" : "", s->pid);
+  gchar **_argv = (gchar **) g_malloc0(sizeof(gchar *) * 5);
+
+  _argv[0] = g_strdup(SCREEN_BINARY);
+  _argv[1] = g_strdup_printf("-r%s", shared ? "x" : "");
+  _argv[2] = g_strdup_printf("%d", s->pid);
+  _argv[3] = g_strdup("");
+  _argv[4] = NULL;
+
+  return _argv;
 }
 
 gboolean
 screen_attach(HostNode *n, const SessNode *s, const gboolean shared) {
  gboolean r;
  GError *error = NULL;
- gchar *cmd = screen_attach_cmd(s, shared);
- gchar **argv = NULL;
+ gchar **argv = screen_attach_cmd(s, shared);
 
  g_assert(n);
-
- argv = g_strsplit(cmd, "+", 0);
 
  r = g_spawn_sync(g_getenv ("HOME"), argv, NULL, 
 		  G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
@@ -145,7 +153,6 @@ screen_attach(HostNode *n, const SessNode *s, const gboolean shared) {
   g_clear_error (&error);
  }
 
- g_free(cmd);
  g_strfreev(argv);
 
 #ifdef FEAT_HISTORY
@@ -158,31 +165,33 @@ screen_attach(HostNode *n, const SessNode *s, const gboolean shared) {
  return FALSE;
 }
 
-static gchar *
+static gchar **
 screen_dump_cmd(const SessNode *s, const gchar *fn) {
-  return g_strdup_printf(SCREEN_BINARY"+-S+%d+-X+hardcopy+%s", s->pid, fn);
+  gchar **_argv = (gchar **) g_malloc0(sizeof(gchar *) * 7);
+
+  _argv[0] = g_strdup(SCREEN_BINARY);
+  _argv[1] = g_strdup("-S");
+  _argv[2] = g_strdup_printf("%d", s->pid);
+  _argv[3] = g_strdup("-X");
+  _argv[4] = g_strdup("hardcopy");
+  _argv[5] = g_strdup(fn);
+  _argv[6] = NULL;
+
+  return _argv;
 }
 
 gchar *
 screen_get_dump(const SessNode *s) {
  gboolean r;
  GError *error = NULL;
- gchar **argv = NULL;
 
  gchar *dump_fn = g_strdup_printf("%s/dump-XXXXXX", g_get_tmp_dir());
  gint fd = g_mkstemp(dump_fn);
 
+ gchar **argv = screen_dump_cmd(s, dump_fn);
+
  if(fd == -1)
    return NULL;
-
- gchar *cmd = screen_dump_cmd(s, dump_fn);
- if(!cmd) {
-  g_unlink(dump_fn);
-  close(fd);
-  return NULL;
- }
-
- argv = g_strsplit(cmd, "+", 0);
 
  r = g_spawn_sync(g_getenv ("HOME"), argv, NULL, 
 		  G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
@@ -193,7 +202,6 @@ screen_get_dump(const SessNode *s) {
   g_clear_error (&error);
  }
 
- g_free(cmd);
  g_strfreev(argv);
 
  gchar *c = NULL;
