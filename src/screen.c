@@ -118,20 +118,17 @@ screen_new(HostNode *n, const gboolean detached) {
   _argv[4] = title;
   _argv[5] = g_strdup("-c");
   _argv[6] = g_strdup(cfg->screenrcfile);
-  _argv[7] = NULL;
 
   return _argv;
 }
 
 static gchar **
 screen_attach_cmd(const SessNode *s, const gboolean shared) {
-  gchar **_argv = (gchar **) g_malloc0(sizeof(gchar *) * 5);
+  gchar **_argv = (gchar **) g_malloc0(sizeof(gchar *) * 4);
 
   _argv[0] = g_strdup(SCREEN_BINARY);
   _argv[1] = g_strdup_printf("-r%s", shared ? "x" : "");
   _argv[2] = g_strdup_printf("%d", s->pid);
-  _argv[3] = g_strdup("");
-  _argv[4] = NULL;
 
   return _argv;
 }
