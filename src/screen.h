@@ -35,7 +35,7 @@
 gboolean
 screen_get_sessions(HostNode *n);
 
-gchar *screen_new(HostNode *n, const gboolean detached);
+gchar **screen_new(HostNode *n, const gboolean detached);
 gboolean screen_attach(HostNode *n, const SessNode *s, const gboolean shared);
 gchar *screen_get_dump(const SessNode *s);
 
