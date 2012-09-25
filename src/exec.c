@@ -101,8 +101,8 @@ gboolean
 ssh_cmd_upgrade(HostNode *n, const gboolean detached)
 {
  gboolean r;
+ guint i;
  GError *error = NULL;
- gchar *cmd = NULL;
  gchar **argv = NULL;
 
  g_assert(n);
@@ -116,19 +116,18 @@ ssh_cmd_upgrade(HostNode *n, const gboolean detached)
  he.action = "upgrade";
  he.data = NULL;
 
- gchar *screen = screen_new(n, detached);
+ gchar **screen_argv = screen_new(n, detached);
 
- cmd = g_strdup_printf ("%s%s",
-			screen, PKGLIBDIR"/cmd");
- g_free(screen);
+ argv = (gchar **) g_malloc0(sizeof(gchar *) * (g_strv_length(screen_argv) + 2));
+ for(i = 0; i < g_strv_length(screen_argv); i++)
+   argv[i] = g_strdup(screen_argv[i]);
+ argv[i] = g_strdup(PKGLIBDIR"/cmd");
+
+ g_strfreev(screen_argv);
 
 #ifdef FEAT_HISTORY
  n->parse_result = cfg->history_errpattern && strlen(cfg->history_errpattern);;
 #endif
-
- argv = g_strsplit(cmd, "+", 0);
-
- g_free(cmd);
 
  gchar **env = env_build(n, "upgrade", NULL, &he);
 
@@ -158,8 +157,8 @@ gboolean
 ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
 {
  gboolean r;
+ guint i;
  GError *error = NULL;
- gchar *cmd = NULL;
  gchar **argv = NULL;
 
  g_assert(n);
@@ -173,20 +172,18 @@ ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
  he.action = "install";
  he.data = package;
 
- gchar *screen = screen_new(n, detached);
+ gchar **screen_argv = screen_new(n, detached);
 
- cmd = g_strdup_printf ("%s%s",
-			screen, PKGLIBDIR"/cmd");
+ argv = (gchar **) g_malloc0(sizeof(gchar *) * (g_strv_length(screen_argv) + 2));
+ for(i = 0; i < g_strv_length(screen_argv); i++)
+   argv[i] = g_strdup(screen_argv[i]);
+ argv[i] = g_strdup(PKGLIBDIR"/cmd");
 
- g_free(screen);
+ g_strfreev(screen_argv);
 
 #ifdef FEAT_HISTORY
  n->parse_result = cfg->history_errpattern && strlen(cfg->history_errpattern);
 #endif
-
- argv = g_strsplit(cmd, "+", 0);
-
- g_free(cmd);
 
  gchar **env = env_build(n, "install", package, &he);
 
@@ -215,8 +212,8 @@ ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
 void ssh_connect(HostNode *n, const gboolean detached)
 {
  gboolean r;
+ guint i;
  GError *error = NULL;
- gchar *cmd = NULL;
  gchar **argv;
 
  HistoryEntry he;
@@ -225,16 +222,14 @@ void ssh_connect(HostNode *n, const gboolean detached)
  he.action = "connect";
  he.data = NULL;
 
- gchar *screen = screen_new(n, detached);
+ gchar **screen_argv = screen_new(n, detached);
 
- cmd = g_strdup_printf ("%s%s",
-			screen, PKGLIBDIR"/cmd");
+ argv = (gchar **) g_malloc0(sizeof(gchar *) * (g_strv_length(screen_argv) + 2));
+ for(i = 0; i < g_strv_length(screen_argv); i++)
+   argv[i] = g_strdup(screen_argv[i]);
+ argv[i] = g_strdup(PKGLIBDIR"/cmd");
 
- g_free(screen);
-
- argv = g_strsplit(cmd, "+", 0);
-
- g_free(cmd);
+ g_strfreev(screen_argv);
 
  gchar **env = env_build(n, "connect", NULL, &he);
 
@@ -254,8 +249,8 @@ void ssh_connect(HostNode *n, const gboolean detached)
 void sftp_connect(HostNode *n)
 {
  gboolean r;
+ guint i;
  GError *error = NULL;
- gchar *cmd = NULL;
  gchar **argv;
 
  g_assert(n);
@@ -266,16 +261,14 @@ void sftp_connect(HostNode *n)
  he.action = "transfer";
  he.data = NULL;
 
- gchar *screen = screen_new(n, FALSE);
+ gchar **screen_argv = screen_new(n, FALSE);
 
- cmd = g_strdup_printf ("%s%s",
-			screen, PKGLIBDIR"/cmd");
+ argv = (gchar **) g_malloc0(sizeof(gchar *) * (g_strv_length(screen_argv) + 2));
+ for(i = 0; i < g_strv_length(screen_argv); i++)
+   argv[i] = g_strdup(screen_argv[i]);
+ argv[i] = g_strdup(PKGLIBDIR"/cmd");
 
- g_free(screen);
-
- argv = g_strsplit(cmd, "+", 0);
-
- g_free(cmd);
+ g_strfreev(screen_argv);
 
  gchar **env = env_build(n, "transfer", NULL, &he);
 
