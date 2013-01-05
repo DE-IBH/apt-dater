@@ -36,7 +36,7 @@ apt_dater_SOURCES =			\
 	clusters.c			\
 	clusters.h
 
-apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS)
+apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS) $(LIBCONFIG_LIBS)
 
 AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"'
 if LINUX
@@ -45,4 +45,4 @@ else
 AM_LDFLAGS = -Wl
 endif
 
-INCLUDES = $(GLIB_CFLAGS) $(TCL_CFLAGS) $(LIBXML2_CFLAGS)
+INCLUDES = $(GLIB_CFLAGS) $(TCL_CFLAGS) $(LIBXML2_CFLAGS) $(LIBCONFIG_CFLAGS)
