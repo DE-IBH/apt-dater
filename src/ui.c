@@ -603,7 +603,7 @@ static void drawHelp ()
 
  i = -1;
  while(shortCuts[++i].key) {
-  mvwaddnstr(wp, l,  2, _(shortCuts[i].key)  , COLS - 2);
+  mvwaddnstr(wp, l,  2, shortCuts[i].key  , COLS - 2);
   mvwaddnstr(wp, l, 16, _(shortCuts[i].descr), COLS - 16);
        
   l++;
