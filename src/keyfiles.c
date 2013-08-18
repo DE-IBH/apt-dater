@@ -257,8 +257,8 @@ CfgFile *loadConfigNew(char *filename) {
 // }
 
 #ifdef FEAT_TCLFILTER
-    config_setting_lookup_string(&s_tclfilter, "FilterExp", &(lcfg->lcfg->filterexp));
-    config_setting_lookup_string(&s_tclfilter, "FilterFile", &(lcfg->lcfg->filterfile));
+    config_setting_lookup_string(&s_tclfilter, "FilterExp", &(lcfg->filterexp));
+    config_setting_lookup_string(&s_tclfilter, "FilterFile", &(lcfg->filterfile));
 #endif
 
 #ifdef FEAT_AUTOREF
