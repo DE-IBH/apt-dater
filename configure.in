@@ -90,7 +90,14 @@ PKG_CHECK_MODULES(LIBCONFIG, "libconfig")
 AC_MSG_CHECKING(libconfig-dev provides config_error_*() macros)
 AC_PREPROC_IFELSE(
     [AC_LANG_PROGRAM([[include <libconfig.h>]],
-                     [[config_error_file(null); config_error_line(null);]])],
+                     [
+[#ifndef config_error_file],
+[	exit(1);],
+[#endif],
+[#ifndef config_error_line],
+[	exit(1);],
+[#endif],
+])],
     [libconfig_error_macros=1],
     []
 )
