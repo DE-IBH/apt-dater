@@ -459,7 +459,11 @@ GList *loadHostsNew (const char *filename) {
 
     config_init(&hcfg);
     if(config_read_file(&hcfg, filename) == CONFIG_FALSE) {
+#ifdef HAVE_LIBCONFIG_ERROR_MACROS
 	g_error ("%s:%d %s", config_error_file(&hcfg), config_error_line(&hcfg), config_error_text(&hcfg));
+#else
+	g_error ("Failed to read config file!");
+#endif
 	config_destroy(&hcfg);
 	return (FALSE);
     }
