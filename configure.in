@@ -92,9 +92,11 @@ AC_PREPROC_IFELSE(
     [AC_LANG_PROGRAM([[include <libconfig.h>]],
                      [
 [#ifndef config_error_file],
+[#error "config_error_file() is undefined"],
 [	exit(1);],
 [#endif],
 [#ifndef config_error_line],
+[#error "config_error_line() is undefined"],
 [	exit(1);],
 [#endif],
 ])],
