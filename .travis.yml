@@ -1,3 +1,5 @@
+language: c
+
 env:
  - features=""
  - features="--enable-debug"
@@ -15,3 +17,6 @@ before_install:
 
 install:
  - make
+
+script:
+ - ./src/apt-dater -v
