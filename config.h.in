@@ -25,6 +25,14 @@
 /* Define if you want XML report support included. */
 #undef FEAT_XMLREPORT
 
+/* Define to 1 if you have the MacOS X function CFLocaleCopyCurrent in the
+   CoreFoundation framework. */
+#undef HAVE_CFLOCALECOPYCURRENT
+
+/* Define to 1 if you have the MacOS X function CFPreferencesCopyAppValue in
+   the CoreFoundation framework. */
+#undef HAVE_CFPREFERENCESCOPYAPPVALUE
+
 /* Define if your curses library supports color. */
 #undef HAVE_COLOR
 
@@ -52,6 +60,9 @@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
+
+/* Define if your LIBCONFIG provides the config_error_*() macros. */
+#undef HAVE_LIBCONFIG_ERROR_MACROS
 
 /* Define to 1 if you have the `glib-2.0' library (-lglib-2.0). */
 #undef HAVE_LIBGLIB_2_0
