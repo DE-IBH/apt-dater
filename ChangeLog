@@ -5,6 +5,12 @@ apt-dater (0.9.1) unstable; urgency=low
     (fixes building on kfreebsd and hurd flavours).
   * Use SSH / OptionalCmdFlags on host refresh.
     (Closes Debian Bug#678111 by "jonas")
+  * Fix sftp's port parameter.
+    (Contributed by Michael Abmayer)
+  * Don't translated shortcuts on help screen.
+    (Contributed by Michael Abmayer)
+  * Localize 'Oldest:' date/time display.
+    (Closes Debian Bug#718500 by Timo Weingärtner <timo@tiwe.de>)
 
  -- Thomas Liske <liske@ibh.de>  
 
