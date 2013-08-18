@@ -87,6 +87,19 @@ if test "$enable_clusters" = "yes"; then
 fi
 
 PKG_CHECK_MODULES(LIBCONFIG, "libconfig")
+AC_MSG_CHECKING(libconfig-dev provides config_error_*() macros)
+AC_PREPROC_IFELSE(
+    [AC_LANG_PROGRAM([[include <libconfig.h>]],
+                     [[config_error_file(null); config_error_line(null);]])],
+    [libconfig_error_macros=1],
+    []
+)
+if test "$libconfig_error_macros" = 1; then
+    AC_DEFINE(HAVE_LIBCONFIG_ERROR_MACROS, 1, [ Define if your LIBCONFIG provides the config_error_*() macros. ])
+    AC_MSG_RESULT([yes])
+else
+    AC_MSG_RESULT([no])
+fi
 
 AC_SUBST(VERSION)
 AC_SUBST(PACKAGE)
