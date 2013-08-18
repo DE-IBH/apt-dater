@@ -10,7 +10,7 @@ env:
 
 before_install:
  - sudo apt-get update -qq
- - sudo apt-get install -qq libpopt-dev libglib2.0-dev libncursesw5-dev tcl8.5-dev libxml2-dev libconfig-dev
+ - sudo apt-get install -qq libpopt-dev libglib2.0-dev libncursesw5-dev tcl8.5-dev libxml2-dev libconfig-dev screen
  - ./configure $features
 
 install:
