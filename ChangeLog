@@ -9,6 +9,8 @@ apt-dater (0.9.1) unstable; urgency=low
     (Contributed by Michael Abmayer)
   * Don't translated shortcuts on help screen.
     (Contributed by Michael Abmayer)
+  * Localize 'Oldest:' date/time display.
+    (Closes Debian Bug#718500 by Timo Weingärtner <timo@tiwe.de>)
 
  -- Thomas Liske <liske@ibh.de>  
 
