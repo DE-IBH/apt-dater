@@ -11,6 +11,9 @@ apt-dater (0.9.1) unstable; urgency=low
     (Contributed by Michael Abmayer)
   * Localize 'Oldest:' date/time display.
     (Closes Debian Bug#718500 by Timo Weingärtner <timo@tiwe.de>)
+  * Add negative lookbehind to error detection. This stops
+    matching lines like "No error reported.".
+    (Closes github issue #25 by Stefan Eriksson.)
 
  -- Thomas Liske <liske@ibh.de>  
 
