@@ -158,6 +158,48 @@ void freeConfig (CfgFile *cfg)
  g_free(cfg);
 }
 
+CfgFile *initialConfig() {
+    CfgFile *lcfg = g_new0(CfgFile, 1);
+#ifndef NDEBUG
+    lcfg->_type = T_CFGFILE;
+#endif
+
+    lcfg->hostsfile = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.conf");
+    lcfg->statsdir = g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats");
+
+    lcfg->screenrcfile = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc");
+    lcfg->screentitle = "%m # %U%H";
+
+    lcfg->dump_screen = TRUE;
+    lcfg->query_maintainer = FALSE;
+
+#ifdef FEAT_AUTOREF
+    lcfg->auto_refresh = TRUE;
+#endif
+
+    lcfg->beep = TRUE;
+    lcfg->flash = TRUE;
+
+#ifdef FEAT_HISTORY
+    lcfg->record_history = TRUE;
+    lcfg->history_errpattern = "(error|warning|fail)";
+#endif
+
+    lcfg->hook_pre_upgrade = "/etc/apt-dater/pre-upg.d";
+    lcfg->hook_pre_refresh = "/etc/apt-dater/pre-ref.d";
+    lcfg->hook_pre_install = "/etc/apt-dater/pre-ins.d";
+    lcfg->hook_pre_connect = "/etc/apt-dater/pre-con.d";
+
+    lcfg->hook_post_upgrade = "/etc/apt-dater/post-upg.d";
+    lcfg->hook_post_refresh = "/etc/apt-dater/post-ref.d";
+    lcfg->hook_post_install = "/etc/apt-dater/post-ins.d";
+    lcfg->hook_post_connect = "/etc/apt-dater/post-con.d";
+
+    lcfg->plugindir = "/etc/apt-dater/plugins";
+
+    return lcfg;
+}
+
 #define CFG_GET_BOOL_DEFAULT(setting,key,var,def) \
     var = (def); \
     config_setting_lookup_bool((setting), (key), &(var));
@@ -166,7 +208,7 @@ void freeConfig (CfgFile *cfg)
     config_setting_lookup_string((setting), (key), (const char **) &(var)); \
     if(var != NULL) var = g_strdup(var)
 
-CfgFile *loadConfigNew(char *filename) {
+gboolean loadConfig(char *filename, CfgFile *lcfg) {
 
     config_t hcfg;
 
@@ -176,12 +218,6 @@ CfgFile *loadConfigNew(char *filename) {
 	config_destroy(&hcfg);
 	return (FALSE);
     }
-    CfgFile *lcfg = NULL;
-
-    lcfg = g_new0(CfgFile, 1);
-#ifndef NDEBUG
-    lcfg->_type = T_CFGFILE;
-#endif
 
     config_setting_t *s_ssh = config_lookup(&hcfg, "SSH");
     config_setting_t *s_paths = config_lookup(&hcfg, "Paths");
@@ -209,12 +245,12 @@ CfgFile *loadConfigNew(char *filename) {
 
     if(config_setting_lookup_string(s_ssh, "Cmd", (const char **) &(lcfg->ssh_cmd)) == CONFIG_FALSE) {
 	g_error ("%s: Cmd undefined", filename);
-	return (NULL);
+	return (FALSE);
     }
 
     if(config_setting_lookup_string(s_ssh, "SFTPCmd", (const char **) &(lcfg->sftp_cmd)) == CONFIG_FALSE) {
 	g_error ("%s: SFTPCmd undefined", filename);
-	return (NULL);
+	return (FALSE);
     }
 
     config_setting_lookup_bool(s_ssh, "SpawnAgent", &(lcfg->ssh_agent));
@@ -283,15 +319,14 @@ CfgFile *loadConfigNew(char *filename) {
 
 
     config_destroy(&hcfg);
-    return (lcfg);
+    return (TRUE);
 }
 
-CfgFile *loadConfig (char *filename)
+gboolean loadConfigLegacy (char *filename, CfgFile *lcfg)
 {
  GKeyFile *keyfile;
  GKeyFileFlags flags;
  GError *error = NULL;
- CfgFile *lcfg = NULL;
 
  keyfile = g_key_file_new ();
  flags = G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS;
@@ -301,11 +336,6 @@ CfgFile *loadConfig (char *filename)
   g_key_file_free(keyfile);
   return (FALSE);
  }
-
- lcfg = g_new0(CfgFile, 1);
-#ifndef NDEBUG
- lcfg->_type = T_CFGFILE;
-#endif
 
  lcfg->ssh_optflags = g_key_file_get_string(keyfile, "SSH", 
 					    "OptionalCmdFlags", &error);
@@ -329,13 +359,13 @@ CfgFile *loadConfig (char *filename)
  if(!(lcfg->ssh_cmd = 
       g_key_file_get_string(keyfile, "SSH", "Cmd", &error))) {
   g_error ("%s: %s", filename, error->message);
-  return (NULL);
+  return (FALSE);
  }
 
  if(!(lcfg->sftp_cmd = 
       g_key_file_get_string(keyfile, "SSH", "SFTPCmd", &error))) {
   g_error ("%s: %s", filename, error->message);
-  return (NULL);
+  return (FALSE);
  }
 
  lcfg->ssh_agent = g_key_file_get_boolean(keyfile, "SSH", "SpawnAgent", NULL);
@@ -344,19 +374,19 @@ CfgFile *loadConfig (char *filename)
  if(!(lcfg->cmd_refresh = 
       g_key_file_get_string(keyfile, "Commands", "CmdRefresh", &error))) {
   g_error ("%s: %s", filename, error->message);
-  return (NULL);
+  return (FALSE);
  }
 
  if(!(lcfg->cmd_upgrade = 
       g_key_file_get_string(keyfile, "Commands", "CmdUpgrade", &error))) {
   g_error ("%s: %s", filename, error->message);
-  return (NULL);
+  return (FALSE);
  }
 
  if(!(lcfg->cmd_install = 
       g_key_file_get_string(keyfile, "Commands", "CmdInstall", &error))) {
   g_error ("%s: %s", filename, error->message);
-  return (NULL);
+  return (FALSE);
  }
 
  lcfg->dump_screen = !g_key_file_get_boolean(keyfile, "Screen", "NoDumps", &error);
@@ -434,7 +464,7 @@ CfgFile *loadConfig (char *filename)
  g_clear_error(&error);
  g_key_file_free(keyfile);
 
- return (lcfg);
+ return (FALSE);
 }
 
 #define HCFG_GET_STRING(setting,var,def) \
