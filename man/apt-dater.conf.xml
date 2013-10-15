@@ -310,7 +310,7 @@ and docbook-xsl in your Build-Depends control field.
 
     <variablelist>
       <varlistentry>
-        <term><symbol>ErrPattern</symbol>=<replaceable>(error|warning|fail)</replaceable></term>
+        <term><symbol>ErrPattern</symbol>=<replaceable>((?&lt;!no )error|warning|fail)</replaceable></term>
         <listitem>
 	  <para>
 	  A regular expression pattern to match the screen output. A match indicates
