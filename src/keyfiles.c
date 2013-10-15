@@ -5,7 +5,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008-2012 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008-2013 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -182,7 +182,7 @@ CfgFile *initialConfig() {
 
 #ifdef FEAT_HISTORY
     lcfg->record_history = TRUE;
-    lcfg->history_errpattern = "(error|warning|fail)";
+    lcfg->history_errpattern = "((?<!no )error|warning|fail)";
 #endif
 
     lcfg->hook_pre_upgrade = "/etc/apt-dater/pre-upg.d";
@@ -306,7 +306,7 @@ gboolean loadConfig(char *filename, CfgFile *lcfg) {
 
 #ifdef FEAT_HISTORY
     CFG_GET_BOOL_DEFAULT(s_history, "record", lcfg->record_history, TRUE);
-    CFG_GET_STRING_DEFAULT(s_history, "ErrPattern", lcfg->history_errpattern, "(error|warning|fail)");
+    CFG_GET_STRING_DEFAULT(s_history, "ErrPattern", lcfg->history_errpattern, "((?<!no )error|warning|fail)");
 #endif
 
     CFG_GET_STRING_DEFAULT(s_hooks, "PreUpgrade", lcfg->hook_pre_upgrade, "/etc/apt-dater/pre-upg.d");
@@ -445,7 +445,7 @@ gboolean loadConfigLegacy (char *filename, CfgFile *lcfg)
 
  lcfg->history_errpattern = g_key_file_get_string(keyfile, "History", "ErrPattern", NULL);
  if(!lcfg->history_errpattern)
-  lcfg->history_errpattern = "(error|warning|fail)";
+  lcfg->history_errpattern = "((?<!no )error|warning|fail)";
 #endif
 
 #define KEY_FILE_GET_STRING_DEFAULT(var, sec, val, default) \
