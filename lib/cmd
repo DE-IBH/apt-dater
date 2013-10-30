@@ -37,7 +37,7 @@ run_hist_cmd () {
     echo -n "Duration=" >> "$AD_HIST_PATH/meta"
     cat "$AD_HIST_PATH/timingfile" | cut '-d ' -f1 | awk '{ s += $1 } END { print s }' >> "$AD_HIST_PATH/meta"
 
-    if (egrep -aiqse "$AD_HIST_ERRPATTERN" "$AD_HIST_PATH/typescript"); then
+    if (grep -aiqsPe "$AD_HIST_ERRPATTERN" "$AD_HIST_PATH/typescript"); then
 	echo "ERRPATTERN=$AD_HIST_ERRPATTERN" >> "$AD_HIST_PATH/meta"
 	touch "$AD_HIST_PATH/failed"
     fi
