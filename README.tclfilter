@@ -36,8 +36,8 @@ variables in the TCL environment:
   $hostname   | hostname
   $kernel     | kernel release (uname -r)
   $lsb_cname  | "Codename"-field of lsb_release -a
-  $lsb_distri | "Release"-field of lsb_release -a
-  $lsb_rel    | "Distributer ID"-field of lsb_release -a
+  $lsb_rel    | "Release"-field of lsb_release -a
+  $lsb_distri | "Distributer ID"-field of lsb_release -a
   $extras     | array of extra packages
   $flags      | array of host flags (h x R K)
   $holds      | array of packages hold back
