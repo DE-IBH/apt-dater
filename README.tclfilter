@@ -63,3 +63,14 @@ Filter all Debian hosts running a release older than Etch:
 Filter add hosts which have bind installed:
 
  return [llength [array names installed "bind*"]]
+
+Advanced examples
+=================
+
+Filter all Ubuntu 12.04 hosts wihout linux-generic-lts-trusty installed:
+
+ return [[expr [string compare $lsb_rel "12.04"] == 0] && [expr [llength [array names installed "linux-generic-lts-trusty"]] == 0]]
+
+Filer all Ubuntu 12.04 hosts with kernel versions different from 3.2 or 3.13 and wihout linux-generic-lts-trusty installed at the same time:
+
+ return [expr [expr [string compare $lsb_rel "12.04"] == 0] && [expr [string first "3.2." $kernel] != 0] && [expr [string first "3.13." $kernel] != 0] && [expr [llength [array names installed "linux-generic-lts-trusty"]] == 0]]
