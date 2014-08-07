@@ -4,7 +4,7 @@
 PACKAGE=apt-dater
 
 AC_PREREQ(2.61)
-AC_INIT(apt-dater, 0.9.1, apt-dater@ibh.de)
+AC_INIT(apt-dater, 1.0.0, apt-dater@ibh.de)
 
 # Environment
 AC_CANONICAL_HOST
