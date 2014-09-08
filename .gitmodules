@@ -1,3 +1,0 @@
-[submodule "clients"]
-	path = clients
-	url = git://github.com/DE-IBH/apt-dater-host.git
