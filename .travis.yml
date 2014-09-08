@@ -11,6 +11,7 @@ env:
  - features="--enable-debug --enable-xmlreport --enable-autoref --enable-history --enable-clusters --enable-tclfilter"
 
 before_install:
+ - sudo add-apt-repository ppa:dns/gnu --yes  # this PPA has a newer automake (1.14) than one in default repo (1.11)
  - sudo apt-get update -qq
  - sudo apt-get install -qq automake libpopt-dev libglib2.0-dev libncursesw5-dev tcl8.5-dev libxml2-dev libconfig-dev screen
  - ./configure $features
