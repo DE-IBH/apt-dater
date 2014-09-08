@@ -603,7 +603,7 @@ static void drawHelp ()
 
  i = -1;
  while(shortCuts[++i].key) {
-  mvwaddnstr(wp, l,  2, _(shortCuts[i].key)  , COLS - 2);
+  mvwaddnstr(wp, l,  2, shortCuts[i].key  , COLS - 2);
   mvwaddnstr(wp, l, 16, _(shortCuts[i].descr), COLS - 16);
        
   l++;
@@ -934,13 +934,13 @@ static void drawHostErrDiag(HostNode *h)
 
 void drawStatus (char *str, gboolean drawinfo)
 {
- char strinfo[30];
+ char strinfo[42];
  struct tm *tm_mtime;
  int mtime_pos;
 
  if(drawinfo == TRUE) {
     tm_mtime = localtime(&oldest_st_mtime);
-    strftime(strinfo, sizeof(strinfo), _(" [Oldest: %D %H:%M]"), tm_mtime);
+    strftime(strinfo, sizeof(strinfo), _(" [Oldest: %x %X]"), tm_mtime);
  }
 
  attron(uicolors[UI_COLOR_STATUS]);

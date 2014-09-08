@@ -26,8 +26,10 @@
 #ifndef _KEYFILES_H
 #define _KEYFILES_H
 
+CfgFile *initialConfig();
 GList *loadHosts (char *filename);
-CfgFile *loadConfig (char *filename);
+gboolean loadConfig (char *filename, CfgFile *);
+gboolean loadConfigLegacy (char *filename, CfgFile *);
 void freeConfig (CfgFile *cfg);
 int chkForInitialConfig(const gchar *, const gchar *);
 

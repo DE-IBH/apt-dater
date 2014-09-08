@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
 
@@ -310,7 +310,7 @@ and docbook-xsl in your Build-Depends control field.
 
     <variablelist>
       <varlistentry>
-        <term><symbol>ErrPattern</symbol>=<replaceable>(error|warning|fail)</replaceable></term>
+        <term><symbol>ErrPattern</symbol>=<replaceable>((?&lt;!no )error|warning|fail)</replaceable></term>
         <listitem>
 	  <para>
 	  A regular expression pattern to match the screen output. A match indicates

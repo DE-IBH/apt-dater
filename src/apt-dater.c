@@ -121,7 +121,11 @@ int main(int argc, char **argv, char **envp)
  }
  if(!cfgfilename) g_error(_("Out of memory."));
 
- if(!(cfg = (CfgFile *) loadConfig(cfgfilename))) {
+ cfg = initialConfig();
+
+ loadConfigLegacy(cfgfilename, cfg);
+
+ if(!(loadConfig(cfgfilename, cfg))) {
   g_error(_("Error on loading config file %s\n"), cfgfilename);
   exit(EXIT_FAILURE);
  }

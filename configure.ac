@@ -4,13 +4,15 @@
 PACKAGE=apt-dater
 
 AC_PREREQ(2.61)
-AC_INIT(apt-dater, 0.9.0, apt-dater@ibh.de)
+AC_INIT(apt-dater, 1.0.0, apt-dater@ibh.de)
 
 # Environment
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE
+
+AM_GNU_GETTEXT_VERSION(0.17)
 
 case "${target_os}" in
 darwin*)
@@ -84,12 +86,38 @@ if test "$enable_clusters" = "yes"; then
     AC_DEFINE(FEAT_CLUSTERS, 1, [ Define if you want 'clusters' support included. ])
 fi
 
+PKG_CHECK_MODULES(LIBCONFIG, "libconfig")
+AC_MSG_CHECKING(libconfig-dev provides config_error_*() macros)
+AC_PREPROC_IFELSE(
+    [AC_LANG_PROGRAM([[include <libconfig.h>]],
+                     [
+[#ifndef config_error_file],
+[#error "config_error_file() is undefined"],
+[	exit(1);],
+[#endif],
+[#ifndef config_error_line],
+[#error "config_error_line() is undefined"],
+[	exit(1);],
+[#endif],
+])],
+    [libconfig_error_macros=1],
+    []
+)
+if test "$libconfig_error_macros" = 1; then
+    AC_DEFINE(HAVE_LIBCONFIG_ERROR_MACROS, 1, [ Define if your LIBCONFIG provides the config_error_*() macros. ])
+    AC_MSG_RESULT([yes])
+else
+    AC_MSG_RESULT([no])
+fi
+
 AC_SUBST(VERSION)
 AC_SUBST(PACKAGE)
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 AC_SUBST(LIBXML2_CFLAGS)
 AC_SUBST(LIBXML2_LIBS)
+AC_SUBST(LIBCONFIG_CFLAGS)
+AC_SUBST(LIBCONFIG_LIBS)
 AC_PROG_INSTALL
 
 # Some additional definitions

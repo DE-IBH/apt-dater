@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: apt-dater 0.8.1\n"
 "Report-Msgid-Bugs-To: apt-dater@ibh.de\n"
-"POT-Creation-Date: 2012-05-29 17:07+0200\n"
+"POT-Creation-Date: 2014-08-07 20:31+0200\n"
 "PO-Revision-Date: 2012-05-29 17:08+0200\n"
 "Last-Translator: Thomas Liske <liske@ibh.de>\n"
 "Language-Team: apt-dater@ibh.de\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/apt-dater.c:80 src/apt-dater.c:83 src/apt-dater.c:122
-#: src/keyfiles.c:105 src/keyfiles.c:116 src/ui.c:3487
+#: src/keyfiles.c:106 src/keyfiles.c:117 src/ui.c:3487
 msgid "Out of memory."
 msgstr "Nicht genügend Speicher."
 
@@ -40,12 +40,12 @@ msgstr "Aufruf: %s [-(c config|v|[n]r)]\n"
 msgid "Usage: %s [-(c config|v)]\n"
 msgstr "Aufruf: %s [-(c config|v)]\n"
 
-#: src/apt-dater.c:125 src/apt-dater.c:130
+#: src/apt-dater.c:129 src/apt-dater.c:134
 #, c-format
 msgid "Error on loading config file %s\n"
 msgstr "Fehler beim Laden der Konfigurationsdatei %s\n"
 
-#: src/apt-dater.c:183
+#: src/apt-dater.c:187
 msgid "Cannot open your terminal /proc/self/fd/0 - please check."
 msgstr "Kann Terminal /proc/self/fd/0 nicht öffnen - bitte überprüfen."
 
@@ -53,12 +53,12 @@ msgstr "Kann Terminal /proc/self/fd/0 nicht öffnen - bitte überprüfen."
 msgid "Wrong color definition!"
 msgstr "Fehlerhafte Farbdefinition!"
 
-#: src/keyfiles.c:107 src/keyfiles.c:118 src/keyfiles.c:129
+#: src/keyfiles.c:108 src/keyfiles.c:119 src/keyfiles.c:130
 #, c-format
 msgid "Creating file %s"
 msgstr "Erstelle Datei %s"
 
-#: src/keyfiles.c:109 src/keyfiles.c:120 src/keyfiles.c:130
+#: src/keyfiles.c:110 src/keyfiles.c:121 src/keyfiles.c:131
 #, c-format
 msgid "Could not write to file %s."
 msgstr "Kann nicht in Datei %s schreiben."
@@ -453,7 +453,8 @@ msgid "FAILURE DIAGNOSTIC"
 msgstr "FEHLER DIAGNOSE"
 
 #: src/ui.c:943
-msgid " [Oldest: %D %H:%M]"
+#, fuzzy, c-format
+msgid " [Oldest: %x %X]"
 msgstr " [Ältester: %D %H:%M]"
 
 #: src/ui.c:1029

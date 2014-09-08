@@ -1,10 +1,22 @@
-apt-dater (0.9.1) unstable; urgency=low
+apt-dater (1.0.0) unstable; urgency=low
 
   * Update German localization.
   * Assume target_os is linux compatible as default
     (fixes building on kfreebsd and hurd flavours).
   * Use SSH / OptionalCmdFlags on host refresh.
     (Closes Debian Bug#678111 by "jonas")
+  * Fix sftp's port parameter.
+    (Contributed by Michael Abmayer)
+  * Don't translated shortcuts on help screen.
+    (Contributed by Michael Abmayer)
+  * Localize 'Oldest:' date/time display.
+    (Closes Debian Bug#718500 by Timo Weingärtner <timo@tiwe.de>)
+  * Add negative lookbehind to error detection. This stops
+    matching lines like "No error reported.".
+    (Closes github issue #25 by Stefan Eriksson.)
+  * Add Portuguese translation.
+    (Closes Debian Bug#757290 by Américo Monteiro <a_monteiro@gmx.com>)
+  * Update to automake 1.14.
 
  -- Thomas Liske <liske@ibh.de>  
 

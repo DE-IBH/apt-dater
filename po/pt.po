@@ -1,0 +1,728 @@
+# Translations of apt-dater to European Portuguese
+# Copyright (C) 2014 the apt-dater's copyright holder
+# This file is distributed under the same license as the apt-dater package.
+#
+# Américo Monteiro <a_monteiro@gmx.com>, 2014.
+msgid ""
+msgstr ""
+"Project-Id-Version: apt-dater 0.9.0-7\n"
+"Report-Msgid-Bugs-To: apt-dater@ibh.de\n"
+"POT-Creation-Date: 2011-11-15 21:53+0100\n"
+"PO-Revision-Date: 2014-08-07 00:00+0100\n"
+"Last-Translator: Américo Monteiro <a_monteiro@gmx.com>\n"
+"Language-Team: Portuguese <traduz@debianpt.org>\n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 1.4\n"
+
+#: src/apt-dater.c:82 src/apt-dater.c:85 src/apt-dater.c:124
+#: src/keyfiles.c:107 src/keyfiles.c:118 src/ui.c:3449
+msgid "Out of memory."
+msgstr "Memória insuficiente."
+
+#: src/apt-dater.c:91
+#, c-format
+msgid "Failed to create initial configuration file %s."
+msgstr "Falha ao criar ficheiro de configuração inicial %s."
+
+#: src/apt-dater.c:107
+msgid "Sorry, apt-dater was compiled w/o report feature!"
+msgstr "Desculpe, o apt-dater foi compilado sem a funcionalidade de reportar!"
+
+#: src/apt-dater.c:117
+#, c-format
+msgid "Usage: %s [-(c config|v|[n]r)]\n"
+msgstr "Utilização: %s [-(c config|v|[n]r)]\n"
+
+#: src/apt-dater.c:119
+#, c-format
+msgid "Usage: %s [-(c config|v)]\n"
+msgstr "Utilização: %s [-(c config|v)]\n"
+
+#: src/apt-dater.c:127 src/apt-dater.c:132
+#, c-format
+msgid "Error on loading config file %s\n"
+msgstr "Erro ao carregar ficheiro de configuração %s\n"
+
+#: src/apt-dater.c:184
+msgid "Cannot open your terminal /proc/self/fd/0 - please check."
+msgstr "Incapaz de abrir o seu terminal /proc/self/fd/0 - por favor verifique."
+
+#: src/colors.c:153
+msgid "Wrong color definition!"
+msgstr "Definição de cor errada!"
+
+#: src/keyfiles.c:109 src/keyfiles.c:120 src/keyfiles.c:131
+#, c-format
+msgid "Creating file %s"
+msgstr "A criar ficheiro %s"
+
+#: src/keyfiles.c:111 src/keyfiles.c:122 src/keyfiles.c:132
+#, c-format
+msgid "Could not write to file %s."
+msgstr "Incapaz de escrever no ficheiro %s."
+
+#: src/lock.c:56
+msgid "Can't get the name of the lock file!"
+msgstr "Incapaz de obter o nome do ficheiro lock!"
+
+#: src/lock.c:77
+#, c-format
+msgid "Failed to get lockfile %s: %s"
+msgstr "Falha ao obter ficheiro lock %s: %s"
+
+#: src/lock.c:81
+#, c-format
+msgid "Can't lock to file %s because function flock() is missing!"
+msgstr ""
+"Incapaz de trancar o ficheiro %s porque a função flock() está em falta!"
+
+#: src/report.c:58
+msgid "Error creating the xml output."
+msgstr "Erro ao criar os resultados em xml."
+
+#: src/report.c:63
+#, c-format
+msgid "apt-dater is refreshing %d hosts, please standby...\n"
+msgstr "O apt-dater está a refrescar %d máquinas, por favor aguarde...\n"
+
+#: src/stats.c:495
+msgid "Auto refresh triggered..."
+msgstr "Refrescamento automático activado..."
+
+#: src/ui.c:55
+msgid "Updates pending"
+msgstr "Actualizações pendentes"
+
+#: src/ui.c:56
+msgid "Up to date"
+msgstr "Actualizado"
+
+#: src/ui.c:57
+msgid "Broken packages"
+msgstr "Pacotes quebrados"
+
+#: src/ui.c:58 src/ui.c:1382
+#, c-format
+msgid "Refresh required"
+msgstr "Pedido de refrescamento"
+
+#: src/ui.c:59 src/ui.c:1385
+#, c-format
+msgid "In refresh"
+msgstr "A refrescar"
+
+#: src/ui.c:60
+msgid "Sessions"
+msgstr "Sessões"
+
+#: src/ui.c:62
+msgid "Filtered"
+msgstr "Filtrado"
+
+#: src/ui.c:64
+msgid "Unknown"
+msgstr "Desconhecido"
+
+#: src/ui.c:149
+msgid "<Left>"
+msgstr "<Esquerda>"
+
+#: src/ui.c:149 src/ui.c:150
+msgid "shrink node"
+msgstr "encolher nó"
+
+#: src/ui.c:151
+msgid "<Right>"
+msgstr "<Direita>"
+
+#: src/ui.c:151 src/ui.c:152
+msgid "expand node"
+msgstr "expandir nó"
+
+#: src/ui.c:153
+msgid "<Space>"
+msgstr "<Espaço>"
+
+#: src/ui.c:153 src/ui.c:154 src/ui.c:155 src/ui.c:164
+msgid "shrink/expand node"
+msgstr "encolher/expandir nó"
+
+#: src/ui.c:154
+msgid "<Return>"
+msgstr "<Retorno>"
+
+#: src/ui.c:155
+msgid "<Enter>"
+msgstr "<Enter>"
+
+#: src/ui.c:156
+msgid "<Up>"
+msgstr "<Cima>"
+
+#: src/ui.c:156 src/ui.c:157
+msgid "move up"
+msgstr "mover para cima"
+
+#: src/ui.c:158
+msgid "<Down>"
+msgstr "<Baixo>"
+
+#: src/ui.c:158 src/ui.c:159
+msgid "move down"
+msgstr "mover para baixo"
+
+#: src/ui.c:160
+msgid "<Home>"
+msgstr "<Home>"
+
+#: src/ui.c:160
+msgid "move to the top"
+msgstr "mover para o topo"
+
+#: src/ui.c:161
+msgid "<End>"
+msgstr "<End>"
+
+#: src/ui.c:161
+msgid "move to the end"
+msgstr "mover para o fim"
+
+#: src/ui.c:162
+msgid "<PageUp>"
+msgstr "<PageUp>"
+
+#: src/ui.c:162
+msgid "previous page"
+msgstr "página anterior"
+
+#: src/ui.c:163
+msgid "<PageDown>"
+msgstr "<PageDown>"
+
+#: src/ui.c:163
+msgid "next page"
+msgstr "próxima pagina"
+
+#: src/ui.c:165
+msgid "quit"
+msgstr "terminar programa"
+
+#: src/ui.c:166
+msgid "help"
+msgstr "ajuda"
+
+#: src/ui.c:167
+msgid "search host"
+msgstr "procurar máquina"
+
+#: src/ui.c:169
+msgid "filter hosts"
+msgstr "filtrar máquinas"
+
+#: src/ui.c:171
+msgid "attach session"
+msgstr "anexar sessão"
+
+#: src/ui.c:172
+msgid "connect host"
+msgstr "ligar a máquina"
+
+#: src/ui.c:173
+msgid "file transfer"
+msgstr "transferência de ficheiro"
+
+#: src/ui.c:174
+msgid "toggle dumps"
+msgstr "trocar despejos"
+
+#: src/ui.c:175
+msgid "refresh host"
+msgstr "refrescar máquina"
+
+#: src/ui.c:176
+msgid "failure diagnostic"
+msgstr "diagnóstico de falha"
+
+#: src/ui.c:177
+msgid "install pkg"
+msgstr "instala pacote"
+
+#: src/ui.c:178
+msgid "upgrade host(s)"
+msgstr "actualizar máquina(s)"
+
+#: src/ui.c:179
+msgid "host details"
+msgstr "detalhes da máquina"
+
+#: src/ui.c:181
+msgid "host history"
+msgstr "histórico da máquina"
+
+#: src/ui.c:182
+msgid "play"
+msgstr "reproduzir"
+
+#: src/ui.c:183
+msgid "display with less"
+msgstr "mostrar com o less"
+
+#: src/ui.c:185
+msgid "next detached session"
+msgstr "próxima sessão desanexada"
+
+#: src/ui.c:186
+msgid "cycle detached sessions"
+msgstr "ciclo a sessões desanexadas"
+
+#: src/ui.c:187
+msgid "tag current host"
+msgstr "marcar máquina actual"
+
+#: src/ui.c:188
+msgid "tag all hosts matching"
+msgstr "marcar todas as máquinas correspondentes"
+
+#: src/ui.c:189
+msgid " ~c tag by codename"
+msgstr " ~c marcar por nome de código"
+
+#: src/ui.c:190
+msgid " ~d tag by distribution"
+msgstr " ~d marcar por distribuição"
+
+#: src/ui.c:191
+msgid " ~f tag by host flags"
+msgstr " ~f marcar por bandeiras da máquina"
+
+#: src/ui.c:192
+msgid " ~g tag by group"
+msgstr " ~g marcar por grupo"
+
+#: src/ui.c:193
+msgid " ~p tag by packages"
+msgstr " ~p marcar por pacotes"
+
+#: src/ui.c:194
+msgid " ~u tag by updates"
+msgstr " ~u marcar por actualizações"
+
+#: src/ui.c:195
+msgid " ~A tag all hosts"
+msgstr " ~A marcar todas as máquinas"
+
+#: src/ui.c:196
+msgid "untag all hosts matching"
+msgstr "desmarcar todas as máquinas correspondentes"
+
+#: src/ui.c:197
+msgid "apply next function to tagged hosts"
+msgstr "aplicar a próxima função às máquinas marcadas"
+
+#: src/ui.c:202
+msgid "some packages are kept back"
+msgstr "alguns pacotes forma mantidos na versão anterior"
+
+#: src/ui.c:203
+msgid "extra packages are installed"
+msgstr "são instalados pacotes extra"
+
+#: src/ui.c:204
+msgid "running kernel is not the latest (reboot required)"
+msgstr ""
+"o kernel a correr não é o mais recente (reiniciar do sistema requerido)"
+
+#: src/ui.c:205
+msgid "a selfbuild kernel is running"
+msgstr "está a correr um kernel de compilação própria"
+
+#: src/ui.c:206
+msgid "this is a virtualized machine"
+msgstr "esta é uma máquina virtualizada"
+
+#: src/ui.c:580
+msgid "FLAG"
+msgstr "BANDEIRA"
+
+#: src/ui.c:581 src/ui.c:594
+msgid "DESCRIPTION"
+msgstr "DESCRIÇÃO"
+
+#: src/ui.c:593
+msgid "KEY"
+msgstr "CHAVE"
+
+#: src/ui.c:642
+msgid "HOST DETAILS"
+msgstr "DETALHES DA MÁQUINA ANFITRIÃ"
+
+#: src/ui.c:645
+msgid "Group:"
+msgstr "Grupo:"
+
+#: src/ui.c:647
+msgid "Hostname:"
+msgstr "Nome da Máquina:"
+
+#: src/ui.c:650
+msgid "Machine Type:"
+msgstr "Tipo de Máquina:"
+
+#: src/ui.c:654
+msgid "Architecture:"
+msgstr "Arquitectura:"
+
+#: src/ui.c:658
+msgid "UUID:"
+msgstr "UUID:"
+
+#: src/ui.c:662
+msgid "Forbidden:"
+msgstr "Proibido:"
+
+#: src/ui.c:666
+msgid "refresh"
+msgstr "refrescar"
+
+#: src/ui.c:673
+msgid "upgrade"
+msgstr "actualizar"
+
+#: src/ui.c:680
+msgid "install"
+msgstr "instalar"
+
+#: src/ui.c:688
+msgid "Distri:"
+msgstr "Distribuição:"
+
+#: src/ui.c:694
+msgid "Release:"
+msgstr "Lançamento:"
+
+#: src/ui.c:698
+msgid "Kernel name:"
+msgstr "Nome do kernel:"
+
+#: src/ui.c:702
+msgid "Kernel version:"
+msgstr "Versão do kernel:"
+
+#: src/ui.c:707
+msgid "(reboot required)"
+msgstr "(re-iniciação do sistema necessária)"
+
+#: src/ui.c:710
+msgid "(selfbuild kernel)"
+msgstr "(kernel de compilação própria)"
+
+#: src/ui.c:724
+msgid "Packages: "
+msgstr "Pacotes: "
+
+#: src/ui.c:735
+msgid "BROKEN PACKAGES"
+msgstr "PACOTES QUEBRADOS"
+
+#: src/ui.c:756
+msgid "UPDATE PACKAGES"
+msgstr "ACTUALIZAR PACOTES"
+
+#: src/ui.c:777
+msgid "HOLD BACK PACKAGES"
+msgstr "MANTER PACOTES NA VERSÃO ACTUAL"
+
+#: src/ui.c:797
+msgid "EXTRA PACKAGES"
+msgstr "PACOTES EXTRA"
+
+#: src/ui.c:817
+msgid "INSTALLED PACKAGES"
+msgstr "PACOTES INSTALADOS"
+
+#: src/ui.c:878
+msgid "FAILURE DIAGNOSTIC"
+msgstr "DIAGNÓSTICO DE FALHA"
+
+#: src/ui.c:918
+msgid " [Oldest: %D %H:%M]"
+msgstr " [Mais antigo: %D %H:%M]"
+
+#: src/ui.c:1004
+msgid "c"
+msgstr "c"
+
+#: src/ui.c:1004
+msgid "C"
+msgstr "C"
+
+#: src/ui.c:1007
+msgid "y"
+msgstr "y"
+
+#: src/ui.c:1007
+msgid "Y"
+msgstr "Y"
+
+#: src/ui.c:1082
+msgid "No history data available!"
+msgstr "Nenhuns dados de histórico disponíveis!"
+
+#: src/ui.c:1088
+#, c-format
+msgid "History of %s (%d entry available)"
+msgstr "Histórico de %s (%d entrada disponível)"
+
+#: src/ui.c:1089
+#, c-format
+msgid "History of %s (%d entries available)"
+msgstr "Histórico de %s (%d entradas disponíveis)"
+
+#: src/ui.c:1171
+msgid "replay terminated, press any key to continue"
+msgstr "repetição terminada, carregue em qualquer tecla para continuar"
+
+#: src/ui.c:1230 src/ui.c:1261
+#, c-format
+msgid "%d Hosts in status \"%s\""
+msgstr "%d Máquinas no status \"%s\""
+
+#: src/ui.c:1233 src/ui.c:1264
+#, c-format
+msgid "%d Host in status \"%s\""
+msgstr "%d Máquina no status \"%s\""
+
+#: src/ui.c:1361
+#, c-format
+msgid "%d Updates required"
+msgstr "%d Actualizações requeridas"
+
+#: src/ui.c:1364
+#, c-format
+msgid "%d Update required"
+msgstr "%d Actualização requerida"
+
+#: src/ui.c:1369
+#, c-format
+msgid "No update required"
+msgstr "Nenhuma actualização requerida"
+
+#: src/ui.c:1374
+#, c-format
+msgid "%d Broken packages"
+msgstr "%d Pacotes quebrados"
+
+#: src/ui.c:1377
+#, c-format
+msgid "%d Broken package"
+msgstr "%d Pacote quebrado"
+
+#: src/ui.c:1390
+#, c-format
+msgid "%d sessions running"
+msgstr "%d sessões a correr"
+
+#: src/ui.c:1393
+#, c-format
+msgid "%d session running"
+msgstr "%d sessão a correr"
+
+#: src/ui.c:1399
+#, c-format
+msgid "Status is unknown"
+msgstr "O status é desconhecido"
+
+#: src/ui.c:1402
+#, c-format
+msgid "Error: %s"
+msgstr "Erro: %s"
+
+#: src/ui.c:1408
+msgid " - host locked by another process"
+msgstr " - máquina trancada por outro processo"
+
+#: src/ui.c:1464
+#, c-format
+msgid "Running session %s [%5d]:"
+msgstr "Sessão a correr %s [%5d]:"
+
+#: src/ui.c:1490 src/ui.c:1563
+msgid "%D %H:%M "
+msgstr "%D %H:%M "
+
+#: src/ui.c:1493 src/ui.c:1566
+msgid "Attached"
+msgstr "Anexado"
+
+#: src/ui.c:1493 src/ui.c:1566
+msgid "Detached"
+msgstr "Desanexado"
+
+#: src/ui.c:1505
+msgid "Could not read session dump."
+msgstr "Incapaz de ler o despejo da sessão."
+
+#: src/ui.c:1508
+msgid "attached"
+msgstr "anexado"
+
+#: src/ui.c:1508
+msgid "detached"
+msgstr "desanexado"
+
+#: src/ui.c:1837
+msgid "Maintainer name:"
+msgstr "Nome do mantenedor:"
+
+#: src/ui.c:2458
+msgid "Search: "
+msgstr "Procurar: "
+
+#: src/ui.c:2631
+msgid "Matches:"
+msgstr "Correspondências:"
+
+#: src/ui.c:2648
+msgid "Matches: -"
+msgstr "Correspondências: -"
+
+#: src/ui.c:2713
+msgid "Internal error: unhandled TCL TCLM_STRING mapping!"
+msgstr "Erro interno: mapeamento TCL TCLM_STRING não lidado!"
+
+#: src/ui.c:2728
+msgid "Internal error: unhandled TCL TCLM_INT mapping!"
+msgstr "Erro interno: mapeamento TCL TCLM_INT não lidado!"
+
+#: src/ui.c:2738
+msgid "Internal error: unknown TCL mapping type!"
+msgstr "Erro interno: tipo de mapeamento TCL desconhecido!"
+
+#: src/ui.c:2797
+msgid "Scalars:"
+msgstr "Escalares:"
+
+#: src/ui.c:2819
+msgid "Arrays:"
+msgstr "Matrizes:"
+
+#: src/ui.c:2840
+msgid "Examples:"
+msgstr "Exemplos:"
+
+#: src/ui.c:2853
+msgid "Enter filter expression:"
+msgstr "Inserir expressão de filtro:"
+
+#: src/ui.c:2887
+#, c-format
+msgid "An error at %s:%d has been detected [Less/ignore/connect]: "
+msgstr "Foi detectado um erro em %s:%d [Menos/ignorar/ligar]: "
+
+#: src/ui.c:2889
+#, c-format
+msgid "An error at %s has been detected [Less/ignore/connect]: "
+msgstr "Foi detectado um erro em %s [Menos/ignorar/ligar]: "
+
+# c-format
+#: src/ui.c:3066
+#, c-format
+msgid "Refresh %d tagged hosts? [y/N]: "
+msgstr "Refrescar %d máquinas marcadas? [s/N]: "
+
+#: src/ui.c:3101
+msgid "tag-"
+msgstr "marca-"
+
+#: src/ui.c:3115 src/ui.c:3141 src/ui.c:3269
+msgid "There are running sessions on this host! Continue? [y/N]: "
+msgstr "Existem sessões a correr nesta máquina! Continuar? [s/N]: "
+
+#: src/ui.c:3164
+msgid "Run update for the whole category? [y/N]: "
+msgstr "Correr a actualização para a categoria inteira? [s/N]: "
+
+#: src/ui.c:3165
+msgid "Run update for the whole group? [y/N]: "
+msgstr "Correr a actualização para o grupo inteiro? [s/N]: "
+
+#: src/ui.c:3209
+#, c-format
+msgid "Run update for %d tagged and updatable hosts? [y/N]: "
+msgstr ""
+"Correr a actualização para %d maquinas marcadas e actualizáveis? [s/N]: "
+
+#: src/ui.c:3239
+#, c-format
+msgid "Install package `%s' [y/N]: "
+msgstr "Instalar pacote `%s' [s/N]: "
+
+#: src/ui.c:3245 src/ui.c:3274 src/ui.c:3290
+msgid "Install package: "
+msgstr "Instalar pacote:"
+
+#: src/ui.c:3294
+msgid "Run install for the whole category? [y/N]: "
+msgstr "Correr a instalação para a categoria inteira? [s/N]: "
+
+#: src/ui.c:3295
+msgid "Run install for the whole group? [y/N]: "
+msgstr "Correr a instalação para o grupo inteiro? [s/N]: "
+
+#: src/ui.c:3340
+#, c-format
+msgid "Install package on %d tagged hosts: "
+msgstr "Instalar pacote em %d máquinas marcadas: "
+
+#: src/ui.c:3368
+msgid "Tag hosts matching: "
+msgstr "Marcar máquinas que correspondem a:"
+
+#: src/ui.c:3369
+msgid "Untag hosts matching: "
+msgstr "Desmarcar máquinas que correspondem a:"
+
+#: src/ui.c:3444
+#, c-format
+msgid "Attach host %s session %d (%d %s left) [Y/n/c]: "
+msgstr "Anexar máquina %s sessão %d (%d %s falta) [S/n/c]: "
+
+#: src/ui.c:3446
+msgid "session"
+msgstr "sessão"
+
+#: src/ui.c:3446
+msgid "sessions"
+msgstr "sessões"
+
+#: src/ui.c:3518
+msgid "Already attached - share session? [y/N]: "
+msgstr "Já anexado - partilhar sessão [s/N]: "
+
+#: src/ui.c:3546
+msgid "Session dumps enabled."
+msgstr "Despejos de sessão activos."
+
+#: src/ui.c:3548
+msgid "Session dumps disabled."
+msgstr "Despejos de sessão inactivos."
+
+#: src/ui.c:3646
+#, c-format
+msgid "There are %d hosts in status refresh state, quit apt-dater? [y/N]: "
+msgstr ""
+"Estão %d máquinas no estado de refrescar o status, terminar o apt-dater? "
+"[s/N]: "
+
+#: src/ui.c:3649
+#, c-format
+msgid "There is %d host in status refresh state, quit apt-dater? [y/N]: "
+msgstr ""
+"Está %d máquina no estado de refrescar o status, terminar o apt-dater? "
+"[s/N]: "
+
+
