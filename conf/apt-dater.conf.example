@@ -50,7 +50,7 @@ Colors=menu brightgreen blue;status brightgreen blue;selector black red;
 #Predefined filter expression on startup.
 #FilterExp=return [expr [string compare $lsb_distri \"Debian\"] == 0 && $lsb_rel < 4.0]
 #Load this TCL file on startup in the same context as the FilterExp.
-#FilterFile=/patch/to/file.tcl
+#FilterFile=/path/to/file.tcl
 
 # Notify user by...
 [Notify]

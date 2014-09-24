@@ -36,8 +36,8 @@ variables in the TCL environment:
   $hostname   | hostname
   $kernel     | kernel release (uname -r)
   $lsb_cname  | "Codename"-field of lsb_release -a
-  $lsb_distri | "Release"-field of lsb_release -a
-  $lsb_rel    | "Distributer ID"-field of lsb_release -a
+  $lsb_rel    | "Release"-field of lsb_release -a
+  $lsb_distri | "Distributer ID"-field of lsb_release -a
   $extras     | array of extra packages
   $flags      | array of host flags (h x R K)
   $holds      | array of packages hold back
@@ -63,3 +63,18 @@ Filter all Debian hosts running a release older than Etch:
 Filter add hosts which have bind installed:
 
  return [llength [array names installed "bind*"]]
+
+Advanced examples
+=================
+
+Filter all Ubuntu 12.04 hosts wihout linux-generic-lts-trusty installed:
+
+ return [[expr [string compare $lsb_rel "12.04"] == 0] && \
+         [expr [llength [array names installed "linux-generic-lts-trusty"]] == 0]]
+
+Filter all Ubuntu 12.04 hosts with kernel versions different from 3.2 or 3.13 and wihout linux-generic-lts-trusty installed at the same time:
+
+ return [expr [expr [string compare $lsb_rel "12.04"] == 0] && \
+              [expr [string first "3.2." $kernel] != 0] && \
+              [expr [string first "3.13." $kernel] != 0] && \
+              [expr [llength [array names installed "linux-generic-lts-trusty"]] == 0]]
