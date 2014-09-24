@@ -57,7 +57,7 @@
 #define INPUT_MAX 4096
 #define BUF_MAX_LEN 256
 #define PROG_NAME PACKAGE
-#define CFGFILENAME "apt-dater.conf"
+#define CFGFILENAME "apt-dater.config"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

@@ -217,7 +217,7 @@ gboolean loadConfig(char *filename, CfgFile *lcfg) {
 #ifdef HAVE_LIBCONFIG_ERROR_MACROS
 	g_error ("%s:%d %s", config_error_file(&hcfg), config_error_line(&hcfg), config_error_text(&hcfg));
 #else
-	g_error ("Failed to read config file!");
+	g_error ("Failed to read config file %s!", filename);
 #endif
 	config_destroy(&hcfg);
 	return (FALSE);
@@ -240,7 +240,7 @@ gboolean loadConfig(char *filename, CfgFile *lcfg) {
 
     config_setting_lookup_string(s_ssh, "OptionalCmdFlags", (const char **) &(lcfg->ssh_optflags));
 
-    CFG_GET_STRING_DEFAULT(s_paths, "HostsFile", lcfg->hostsfile, g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.conf"));
+    CFG_GET_STRING_DEFAULT(s_paths, "HostsFile", lcfg->hostsfile, g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.config"));
     CFG_GET_STRING_DEFAULT(s_paths, "StatsDir", lcfg->statsdir, g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats"));
     g_mkdir_with_parents(lcfg->statsdir, S_IRWXU | S_IRWXG | S_IRWXO);
 
@@ -326,151 +326,6 @@ gboolean loadConfig(char *filename, CfgFile *lcfg) {
     return (TRUE);
 }
 
-gboolean loadConfigLegacy (char *filename, CfgFile *lcfg)
-{
- GKeyFile *keyfile;
- GKeyFileFlags flags;
- GError *error = NULL;
-
- keyfile = g_key_file_new ();
- flags = G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS;
-
- if (!g_key_file_load_from_file (keyfile, filename, flags, &error)) {
-  g_error ("%s: %s", filename, error->message);
-  g_key_file_free(keyfile);
-  return (FALSE);
- }
-
- lcfg->ssh_optflags = g_key_file_get_string(keyfile, "SSH", 
-					    "OptionalCmdFlags", &error);
- g_clear_error(&error);
-
- if(!(lcfg->hostsfile = 
-      g_key_file_get_string(keyfile, "Paths", "HostsFile", NULL)))
-    lcfg->hostsfile = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.conf");
- if(!(lcfg->statsdir =
-      g_key_file_get_string(keyfile, "Paths", "StatsDir", NULL)))
-    lcfg->statsdir = g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats");
- g_mkdir_with_parents(lcfg->statsdir, S_IRWXU | S_IRWXG | S_IRWXO);
-
- if(!(lcfg->screenrcfile = 
-      g_key_file_get_string(keyfile, "Screen", "RCFile", NULL)))
-    lcfg->screenrcfile = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc");
- if(!(lcfg->screentitle = 
-      g_key_file_get_string(keyfile, "Screen", "Title", NULL)))
-    lcfg->screentitle = g_strdup("%m # %U%H");
-
- if(!(lcfg->ssh_cmd = 
-      g_key_file_get_string(keyfile, "SSH", "Cmd", &error))) {
-  g_error ("%s: %s", filename, error->message);
-  return (FALSE);
- }
-
- if(!(lcfg->sftp_cmd = 
-      g_key_file_get_string(keyfile, "SSH", "SFTPCmd", &error))) {
-  g_error ("%s: %s", filename, error->message);
-  return (FALSE);
- }
-
- lcfg->ssh_agent = g_key_file_get_boolean(keyfile, "SSH", "SpawnAgent", NULL);
- lcfg->ssh_add = g_key_file_get_string_list(keyfile, "SSH", "AddKeys", &lcfg->ssh_numadd, NULL);
-
- if(!(lcfg->cmd_refresh = 
-      g_key_file_get_string(keyfile, "Commands", "CmdRefresh", &error))) {
-  g_error ("%s: %s", filename, error->message);
-  return (FALSE);
- }
-
- if(!(lcfg->cmd_upgrade = 
-      g_key_file_get_string(keyfile, "Commands", "CmdUpgrade", &error))) {
-  g_error ("%s: %s", filename, error->message);
-  return (FALSE);
- }
-
- if(!(lcfg->cmd_install = 
-      g_key_file_get_string(keyfile, "Commands", "CmdInstall", &error))) {
-  g_error ("%s: %s", filename, error->message);
-  return (FALSE);
- }
-
- lcfg->dump_screen = !g_key_file_get_boolean(keyfile, "Screen", "NoDumps", &error);
- if (error) {
-   lcfg->dump_screen = TRUE;
-   g_clear_error(&error);
- }
-
- lcfg->query_maintainer = g_key_file_get_integer(keyfile, "Screen", "QueryMaintainer", &error);
- if (error) {
-   lcfg->query_maintainer = 0;
-   g_clear_error(&error);
- }
-
- if(!(lcfg->colors = 
-     g_key_file_get_string_list(keyfile, "Appearance", "Colors", 
-				NULL, &error))) {
-
-  g_message ("%s: %s", filename, error->message);
- }
-
-#ifdef FEAT_TCLFILTER
- lcfg->filterexp = g_key_file_get_string(keyfile, "TCLFilter", "FilterExp", NULL);
- lcfg->filterfile = g_key_file_get_string(keyfile, "TCLFilter", "FilterFile", NULL);
-#endif
-
-#ifdef FEAT_AUTOREF
- lcfg->auto_refresh = g_key_file_get_boolean(keyfile, "AutoRef", "enabled", &error);
- if (error) {
-   lcfg->auto_refresh = TRUE;
-   g_clear_error(&error);
- }
-#endif
-
- lcfg->beep = g_key_file_get_boolean(keyfile, "Notify", "beep", &error);
- if (error) {
-   lcfg->beep = TRUE;
-   g_clear_error(&error);
- }
- lcfg->flash = g_key_file_get_boolean(keyfile, "Notify", "flash", &error);
- if (error) {
-   lcfg->flash = TRUE;
-   g_clear_error(&error);
- }
-
-#ifdef FEAT_HISTORY
- lcfg->record_history = g_key_file_get_boolean(keyfile, "History", "record", &error);
- if (error) {
-   lcfg->record_history = TRUE;
-   g_clear_error(&error);
- }
-
- lcfg->history_errpattern = g_key_file_get_string(keyfile, "History", "ErrPattern", NULL);
- if(!lcfg->history_errpattern)
-  lcfg->history_errpattern = "((?<!no )error|warning|fail)";
-#endif
-
-#define KEY_FILE_GET_STRING_DEFAULT(var, sec, val, default) \
- (var) = g_key_file_get_string(keyfile, sec, val, NULL); \
- if(!(var)) \
-  (var) = (default);
-
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_upgrade, "Hooks", "PreUpgrade" , "/etc/apt-dater/pre-upg.d");
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_refresh, "Hooks", "PreRefresh", "/etc/apt-dater/pre-ref.d");
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_install, "Hooks", "PreInstall", "/etc/apt-dater/pre-ins.d");
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_pre_connect, "Hooks", "PreConnect", "/etc/apt-dater/pre-con.d");
-
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_upgrade, "Hooks", "PostUpgrade" , "/etc/apt-dater/post-upg.d");
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_refresh, "Hooks", "PostRefresh", "/etc/apt-dater/post-ref.d");
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_install, "Hooks", "PostInstall", "/etc/apt-dater/post-ins.d");
- KEY_FILE_GET_STRING_DEFAULT(lcfg->hook_post_connect, "Hooks", "PostConnect", "/etc/apt-dater/post-con.d");
-
- KEY_FILE_GET_STRING_DEFAULT(lcfg->plugindir, "Hooks", "PluginDir", "/etc/apt-dater/plugins");
-
- g_clear_error(&error);
- g_key_file_free(keyfile);
-
- return (FALSE);
-}
-
 #define HCFG_GET_STRING(setting,var,def) \
     var = (def); \
     if(config_setting_lookup_string( cfghost, (setting), (const char **) &var) == CONFIG_FALSE) \
@@ -492,7 +347,7 @@ GList *loadHostsNew (const char *filename) {
 #ifdef HAVE_LIBCONFIG_ERROR_MACROS
 	g_error ("%s:%d %s", config_error_file(&hcfg), config_error_line(&hcfg), config_error_text(&hcfg));
 #else
-	g_error ("Failed to read config file!");
+	g_error ("Failed to read config file %s!", filename);
 #endif
 	config_destroy(&hcfg);
 	return (FALSE);
