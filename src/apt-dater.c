@@ -123,8 +123,6 @@ int main(int argc, char **argv, char **envp)
 
  cfg = initialConfig();
 
- loadConfigLegacy(cfgfilename, cfg);
-
  if(!(loadConfig(cfgfilename, cfg))) {
   g_error(_("Error on loading config file %s\n"), cfgfilename);
   exit(EXIT_FAILURE);
