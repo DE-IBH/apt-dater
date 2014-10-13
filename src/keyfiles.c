@@ -237,6 +237,7 @@ gboolean loadConfig(char *filename, CfgFile *lcfg) {
     GETREQ_SETTING_T(s_ssh, "SSH");
     config_setting_t *s_paths = config_lookup(&hcfg, "Paths");
     config_setting_t *s_screen = config_lookup(&hcfg, "Screen");
+    config_setting_t *s_appearance = config_lookup(&hcfg, "Appearance");
     config_setting_t *s_notify = config_lookup(&hcfg, "Notify");
     config_setting_t *s_hooks = config_lookup(&hcfg, "Hooks");
 #ifdef FEAT_AUTOREF
@@ -302,12 +303,9 @@ gboolean loadConfig(char *filename, CfgFile *lcfg) {
 
     CFG_GET_BOOL_DEFAULT(s_screen, "QueryMaintainer", lcfg->query_maintainer, FALSE);
 
-//TODO if(!(lcfg->colors = 
-//     g_key_file_get_string_list(keyfile, "Appearance", "Colors", 
-//				NULL, &error))) {
-//
-//  g_message ("%s: %s", filename, error->message);
-// }
+    h = NULL;
+    if(config_setting_lookup_string(s_appearance, "Colors", (const char **) &h) != CONFIG_FALSE)
+      lcfg->colors = g_strsplit(h, ";", -1);
 
 #ifdef FEAT_TCLFILTER
     config_setting_lookup_string(&s_tclfilter, "FilterExp", &(lcfg->filterexp));
@@ -315,14 +313,14 @@ gboolean loadConfig(char *filename, CfgFile *lcfg) {
 #endif
 
 #ifdef FEAT_AUTOREF
-    CFG_GET_BOOL_DEFAULT(s_autoref, "enabled", lcfg->auto_refresh, TRUE);
+    CFG_GET_BOOL_DEFAULT(s_autoref, "Enabled", lcfg->auto_refresh, TRUE);
 #endif
 
-    CFG_GET_BOOL_DEFAULT(s_notify, "beep", lcfg->beep, TRUE);
-    CFG_GET_BOOL_DEFAULT(s_notify, "flash", lcfg->flash, TRUE);
+    CFG_GET_BOOL_DEFAULT(s_notify, "Beep", lcfg->beep, TRUE);
+    CFG_GET_BOOL_DEFAULT(s_notify, "Flash", lcfg->flash, TRUE);
 
 #ifdef FEAT_HISTORY
-    CFG_GET_BOOL_DEFAULT(s_history, "record", lcfg->record_history, TRUE);
+    CFG_GET_BOOL_DEFAULT(s_history, "Record", lcfg->record_history, TRUE);
     CFG_GET_STRING_DEFAULT(s_history, "ErrPattern", lcfg->history_errpattern, "((?<!no )error|warning|fail)");
 #endif
 
