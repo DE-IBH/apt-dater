@@ -168,7 +168,6 @@ CfgFile *initialConfig() {
     lcfg->statsdir = g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats");
 
     lcfg->screenrcfile = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc");
-    lcfg->screentitle = "%m # %U%H";
 
     lcfg->dump_screen = TRUE;
     lcfg->query_maintainer = FALSE;
@@ -206,10 +205,9 @@ CfgFile *initialConfig() {
         config_setting_lookup_bool((setting), (key), &(var));
 #define CFG_GET_STRING_DEFAULT(setting,key,var,def) \
     var = (def); \
-    if((setting)) { \
+    if((setting)) \
         config_setting_lookup_string((setting), (key), (const char **) &(var)); \
-        if(var != NULL) var = g_strdup(var); \
-    }
+    if(var != NULL) var = g_strdup(var);
 
 gboolean loadConfig(char *filename, CfgFile *lcfg) {
 
@@ -251,24 +249,30 @@ gboolean loadConfig(char *filename, CfgFile *lcfg) {
     config_setting_t *s_tclfilter = config_lookup(&hcfg, "TCLFilter");
 #endif
 
-    config_setting_lookup_string(s_ssh, "OptionalCmdFlags", (const char **) &(lcfg->ssh_optflags));
+    gchar *h;
+    config_setting_lookup_string(s_ssh, "OptionalCmdFlags", (const char **) &h);
+    lcfg->ssh_optflags = (h ? g_strdup(h) : NULL);
 
     CFG_GET_STRING_DEFAULT(s_paths, "HostsFile", lcfg->hostsfile, g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.config"));
     CFG_GET_STRING_DEFAULT(s_paths, "StatsDir", lcfg->statsdir, g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats"));
     g_mkdir_with_parents(lcfg->statsdir, S_IRWXU | S_IRWXG | S_IRWXO);
 
     CFG_GET_STRING_DEFAULT(s_screen, "RCFile", lcfg->screenrcfile, g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc"));
-    CFG_GET_STRING_DEFAULT(s_screen, "Title", lcfg->screentitle, "%m # %U%H");
+    CFG_GET_STRING_DEFAULT(s_screen, "Title", lcfg->screentitle, g_strdup("%m # %U%H"));
 
-    if(config_setting_lookup_string(s_ssh, "Cmd", (const char **) &(lcfg->ssh_cmd)) == CONFIG_FALSE) {
+    h = NULL;
+    if(config_setting_lookup_string(s_ssh, "Cmd", (const char **) &h) == CONFIG_FALSE) {
 	g_error ("%s: Config option SSH.Cmd not set!", filename);
 	return (FALSE);
     }
+    lcfg->ssh_cmd = g_strdup(h);
 
-    if(config_setting_lookup_string(s_ssh, "SFTPCmd", (const char **) &(lcfg->sftp_cmd)) == CONFIG_FALSE) {
+    h = NULL;
+    if(config_setting_lookup_string(s_ssh, "SFTPCmd", (const char **) &h) == CONFIG_FALSE) {
 	g_error ("%s: Config option SSH.SFTPCmd not set!", filename);
 	return (FALSE);
     }
+    lcfg->sftp_cmd = g_strdup(h);
 
     config_setting_lookup_bool(s_ssh, "SpawnAgent", &(lcfg->ssh_agent));
 
