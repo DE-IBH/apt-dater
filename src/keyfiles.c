@@ -202,11 +202,14 @@ CfgFile *initialConfig() {
 
 #define CFG_GET_BOOL_DEFAULT(setting,key,var,def) \
     var = (def); \
-    config_setting_lookup_bool((setting), (key), &(var));
+    if((setting)) \
+        config_setting_lookup_bool((setting), (key), &(var));
 #define CFG_GET_STRING_DEFAULT(setting,key,var,def) \
     var = (def); \
-    config_setting_lookup_string((setting), (key), (const char **) &(var)); \
-    if(var != NULL) var = g_strdup(var)
+    if((setting)) { \
+        config_setting_lookup_string((setting), (key), (const char **) &(var)); \
+        if(var != NULL) var = g_strdup(var); \
+    }
 
 gboolean loadConfig(char *filename, CfgFile *lcfg) {
 
@@ -215,15 +218,25 @@ gboolean loadConfig(char *filename, CfgFile *lcfg) {
     config_init(&hcfg);
     if(config_read_file(&hcfg, filename) == CONFIG_FALSE) {
 #ifdef HAVE_LIBCONFIG_ERROR_MACROS
-	g_error ("%s:%d %s", config_error_file(&hcfg), config_error_line(&hcfg), config_error_text(&hcfg));
+      const char *efn = config_error_file(&hcfg);
+      g_error ("Error reading config file [%s:%d]: %s", (efn ? efn : filename), config_error_line(&hcfg), config_error_text(&hcfg));
 #else
-	g_error ("Failed to read config file %s!", filename);
+      g_error ("Error reading config file %s!", filename);
 #endif
 	config_destroy(&hcfg);
 	return (FALSE);
     }
 
-    config_setting_t *s_ssh = config_lookup(&hcfg, "SSH");
+#define GETREQ_SETTING_T(varn, sectn) \
+    config_setting_t *(varn) = config_lookup(&hcfg, (sectn)); \
+    if(!(varn)) {					      \
+        g_error ("Missing section %s in config file %s!", (sectn), filename); \
+	config_destroy(&hcfg); \
+	return (FALSE); \
+    }
+
+    //    config_setting_t *s_ssh = config_lookup(&hcfg, "SSH");
+    GETREQ_SETTING_T(s_ssh, "SSH");
     config_setting_t *s_paths = config_lookup(&hcfg, "Paths");
     config_setting_t *s_screen = config_lookup(&hcfg, "Screen");
     config_setting_t *s_notify = config_lookup(&hcfg, "Notify");
@@ -248,12 +261,12 @@ gboolean loadConfig(char *filename, CfgFile *lcfg) {
     CFG_GET_STRING_DEFAULT(s_screen, "Title", lcfg->screentitle, "%m # %U%H");
 
     if(config_setting_lookup_string(s_ssh, "Cmd", (const char **) &(lcfg->ssh_cmd)) == CONFIG_FALSE) {
-	g_error ("%s: Cmd undefined", filename);
+	g_error ("%s: Config option SSH.Cmd not set!", filename);
 	return (FALSE);
     }
 
     if(config_setting_lookup_string(s_ssh, "SFTPCmd", (const char **) &(lcfg->sftp_cmd)) == CONFIG_FALSE) {
-	g_error ("%s: SFTPCmd undefined", filename);
+	g_error ("%s: Config option SSH.SFTPCmd not set!", filename);
 	return (FALSE);
     }
 
@@ -339,15 +352,16 @@ gboolean loadConfig(char *filename, CfgFile *lcfg) {
     if(config_setting_lookup_int(cfggroup, (setting), &var) == CONFIG_FALSE) \
     config_setting_lookup_int(cfghosts, (setting), &var)
 
-GList *loadHostsNew (const char *filename) {
+GList *loadHosts (const char *filename) {
     config_t hcfg;
 
     config_init(&hcfg);
     if(config_read_file(&hcfg, filename) == CONFIG_FALSE) {
 #ifdef HAVE_LIBCONFIG_ERROR_MACROS
-	g_error ("%s:%d %s", config_error_file(&hcfg), config_error_line(&hcfg), config_error_text(&hcfg));
+      const char *efn = config_error_file(&hcfg);
+      g_error ("Error reading host file [%s:%d]: %s", (efn ? efn : filename), config_error_line(&hcfg), config_error_text(&hcfg));
 #else
-	g_error ("Failed to read config file %s!", filename);
+      g_error ("Error reading host file %s!", filename);
 #endif
 	config_destroy(&hcfg);
 	return (FALSE);
@@ -393,100 +407,4 @@ GList *loadHostsNew (const char *filename) {
 
     config_destroy(&hcfg);
     return hosts;
-}
-
-
-GList *loadHosts (char *filename)
-{
- GKeyFile *keyfile;
- GKeyFileFlags flags;
- GError *error = NULL;
- GList *hosts = NULL;
- gchar **groups = NULL;
- gchar **khosts = NULL;
- char  ssh_user[BUF_MAX_LEN];
- char  hostname[BUF_MAX_LEN];
- int   ssh_port = 0;
- gsize lengrp, lenkey;
- HostNode *hostnode;
- gint  i, j;
-
- keyfile = g_key_file_new ();
- flags = G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS;
-
- if (!g_key_file_load_from_file (keyfile, filename, flags, &error)) {
-  g_error ("%s: %s", filename, error->message);
-  g_key_file_free(keyfile);
-  return (FALSE);
- }
-
- groups = g_key_file_get_groups (keyfile, &lengrp);
- qsort(groups, lengrp, sizeof(gchar *), cmpStringP);
-
- for(i = 0; i < lengrp; i++) {
-  if(!(khosts = 
-       g_key_file_get_string_list(keyfile, groups[i], "Hosts", 
-				  &lenkey, &error))) {
-   g_error ("%s: %s", filename, error->message);
-   return(NULL);
-  }
-
-  qsort(khosts, lenkey, sizeof(gchar *), cmpStringP);
-
-  gchar *host_type = g_key_file_get_string(keyfile, groups[i], "Type", NULL);
-  if(!host_type)
-   host_type = "generic-ssh";
-
-  for(j = 0; j < lenkey; j++) {
-   hostnode = g_new0(HostNode, 1);
-#ifndef NDEBUG
-   hostnode->_type = T_HOSTNODE;
-#endif
-
-   *hostname = *ssh_user = 0; ssh_port = 0;
-
-   if(sscanf(khosts[j], "%255[a-zA-Z0-9_-.]@%255[a-zA-Z0-9-.]:%d", ssh_user, hostname, &ssh_port) != 3) {
-    *hostname = *ssh_user = 0; ssh_port = 0;
-    if(sscanf(khosts[j], "%255[a-zA-Z0-9-.]:%d", hostname, &ssh_port) != 2) {
-     *hostname = *ssh_user = 0; ssh_port = 0;
-     if(sscanf(khosts[j], "%255[a-zA-Z0-9_-.]@%255[a-zA-Z0-9-.]", ssh_user, hostname) != 2) {
-      *hostname = *ssh_user = 0; ssh_port = 0;
-      sscanf(khosts[j], "%255s", hostname);
-     }
-    }
-   }
-
-   hostnode->hostname = g_strdup(hostname);
-   hostnode->ssh_user = *ssh_user ? g_strdup(ssh_user) : NULL;
-   hostnode->ssh_port = ssh_port ? ssh_port : 0;
-
-   hostnode->statsfile = g_strdup_printf("%s/%s:%d.stat", cfg->statsdir, hostnode->hostname, hostnode->ssh_port);
-
-   hostnode->fdlock = -1;
-   hostnode->identity_file = g_key_file_get_string(keyfile, groups[i],
-						  "IdentityFile", &error);
-   hostnode->tagged = FALSE;
-   g_clear_error(&error);
-
-   hostnode->group = groups[i];
-   hostnode->type = host_type;
-
-   hostnode->uuid[0] = 0;
-
-   getUpdatesFromStat(hostnode);
-
-   hosts = g_list_append(hosts, hostnode);
-
-   g_free(khosts[j]);
-  }
-
-  g_free(khosts);
- }
-
- g_free(groups);
-
- g_clear_error(&error);
- g_key_file_free(keyfile);
-
- return (hosts);
 }
