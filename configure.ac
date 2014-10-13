@@ -88,28 +88,21 @@ fi
 
 PKG_CHECK_MODULES(LIBCONFIG, "libconfig")
 AC_MSG_CHECKING(libconfig-dev provides config_error_*() macros)
-AC_PREPROC_IFELSE(
-    [AC_LANG_PROGRAM([[include <libconfig.h>]],
-                     [
-[#ifndef config_error_file],
-[#error "config_error_file() is undefined"],
-[	exit(1);],
-[#endif],
-[#ifndef config_error_line],
-[#error "config_error_line() is undefined"],
-[	exit(1);],
-[#endif],
-])],
-    [libconfig_error_macros=1],
-    []
-)
-if test "$libconfig_error_macros" = 1; then
-    AC_DEFINE(HAVE_LIBCONFIG_ERROR_MACROS, 1, [ Define if your LIBCONFIG provides the config_error_*() macros. ])
-    AC_MSG_RESULT([yes])
-else
-    AC_MSG_RESULT([no])
-fi
-
+AC_TRY_LINK([
+	#include <libconfig.h>
+],
+[
+	config_t c;
+	config_error_file(&c);
+	config_error_line(&c);
+],
+[
+	AC_DEFINE(HAVE_LIBCONFIG_ERROR_MACROS, 1, [ Define if your LIBCONFIG provides the config_error_*() macros. ])
+	AC_MSG_RESULT([yes])
+],
+[
+	AC_MSG_RESULT([no])
+])
 AC_SUBST(VERSION)
 AC_SUBST(PACKAGE)
 AC_SUBST(GLIB_CFLAGS)
