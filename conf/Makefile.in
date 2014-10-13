@@ -426,7 +426,8 @@ uninstall-am:
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
 	pdf-am ps ps-am tags-am uninstall uninstall-am
 
-all: apt-dater.blob hosts.blob screenrc.blob
+@LINUX_TRUE@all: apt-dater.blob hosts.blob screenrc.blob
+@LINUX_FALSE@all:
 
 apt-dater.blob: apt-dater.config
 	$(LD) -r -b binary -o $@ $<
