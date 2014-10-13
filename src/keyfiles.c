@@ -367,9 +367,9 @@ GList *loadHosts (const char *filename) {
 	return (FALSE);
     }
 
-    config_setting_t *cfghosts = config_lookup(&hcfg, "hosts");
+    config_setting_t *cfghosts = config_lookup(&hcfg, "Hosts");
     if(cfghosts == NULL) {
-	g_error ("%s: No hosts entries found.", filename);
+	g_error ("%s: No Hosts entries found.", filename);
 	config_destroy(&hcfg);
 	return (FALSE);
     }
@@ -379,6 +379,9 @@ GList *loadHosts (const char *filename) {
     config_setting_t *cfggroup;
     for(i=0; (cfggroup = config_setting_get_elem(cfghosts, i)); i++) {
 	int j;
+	gchar *group;
+	CFG_GET_STRING_DEFAULT(cfggroup, "Title", group, config_setting_name(cfggroup));
+
 	config_setting_t *cfghost;
 	for(j=0; (cfghost = config_setting_get_elem(cfggroup, j)); j++) {
 	    HostNode *hostnode = g_new0(HostNode, 1);
@@ -386,13 +389,13 @@ GList *loadHosts (const char *filename) {
 #ifndef NDEBUG
 	    hostnode->_type = T_HOSTNODE;
 #endif
-	    HCFG_GET_STRING("hostname", hostnode->hostname, NULL);
+	    HCFG_GET_STRING("Hostname", hostnode->hostname, NULL);
 	    HCFG_GET_STRING("Type", hostnode->type, "generic-ssh");
-	    HCFG_GET_STRING("ssh_user", hostnode->ssh_user, NULL);
-	    HCFG_GET_INT("ssh_port", hostnode->ssh_port, 0);
-	    HCFG_GET_STRING("ssh_identity", hostnode->identity_file, NULL);
+	    HCFG_GET_STRING("SSHUser", hostnode->ssh_user, NULL);
+	    HCFG_GET_INT("SSHPort", hostnode->ssh_port, 0);
+	    HCFG_GET_STRING("SSHIdentity", hostnode->identity_file, NULL);
 
-	    hostnode->group = g_strdup(config_setting_name(cfggroup));
+	    hostnode->group = g_strdup(group);
 
 	    hostnode->statsfile = g_strdup_printf("%s/%s:%d.stat", cfg->statsdir, hostnode->hostname, hostnode->ssh_port);
 	    hostnode->fdlock = -1;
