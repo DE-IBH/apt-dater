@@ -154,6 +154,8 @@ static void reportHost(gpointer data, gpointer lgroup) {
   xmlTextWriterStartElement(writer, BAD_CAST("ssh"));
   if(n->ssh_user)
     xmlTextWriterWriteElement(writer, BAD_CAST("user"), BAD_CAST(n->ssh_user));
+  if(n->ssh_host)
+    xmlTextWriterWriteFormatElement(writer, BAD_CAST("host"), "%s", n->ssh_host);
   if(n->ssh_port)
     xmlTextWriterWriteFormatElement(writer, BAD_CAST("port"), "%d", n->ssh_port);
   xmlTextWriterEndElement(writer);

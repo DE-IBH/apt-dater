@@ -68,7 +68,7 @@ env_init(gchar **envp) {
 
 gchar **
 env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEntry *he) {
-    gchar **new_env = (gchar **) g_new0(gchar**, g_slist_length(base_env) + 20
+    gchar **new_env = (gchar **) g_new0(gchar**, g_slist_length(base_env) + 21
 #ifdef FEAT_CLUSTERS
     + 1 + g_list_length(n->clusters)
 #endif
@@ -88,6 +88,7 @@ env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEnt
      ADD_HENV("SSH_USER"        , n->ssh_user);
     else
      ADD_HENV("SSH_USER"        , "");
+    ADD_HENV("SSH_HOST"         , (n->ssh_host ? n->ssh_host : n->hostname));
     if(n->ssh_port)
      new_env[i++] = g_strdup_printf("AD_SSH_PORT=%d", n->ssh_port);
     else

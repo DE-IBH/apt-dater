@@ -55,7 +55,7 @@ gchar *parse_string(const gchar *src, const HostNode *n) {
       g_string_append(h, n->hostname);
       break;
     case 'H':
-      g_string_append(h, n->hostname);
+      g_string_append(h, (n->ssh_host ? n->ssh_host : n->hostname));
       if(n->ssh_port) {
         g_string_append(h, ":");
         g_string_append_printf(h, "%d", n->ssh_port);

@@ -57,7 +57,6 @@
 #define INPUT_MAX 4096
 #define BUF_MAX_LEN 256
 #define PROG_NAME PACKAGE
-#define CFGFILENAME "apt-dater.config"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -192,6 +191,7 @@ typedef struct _hostnode {
  gchar     *group;
  gchar     *type;
  gchar     *ssh_user;
+ gchar     *ssh_host;
  gint      ssh_port;
 #ifdef FEAT_AUTOREF
  time_t    last_upd;

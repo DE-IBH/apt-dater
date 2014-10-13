@@ -1,4 +1,4 @@
-SUBDIRS = po man src lib
+SUBDIRS = conf po man src lib
 
 AUTOMAKE_OPTIONS = 							\
 	1.9								\

@@ -5,7 +5,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008-2012 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008-2014 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -79,7 +79,7 @@ int main(int argc, char **argv, char **envp)
  cfgdirname = g_strdup_printf("%s/%s", g_get_user_config_dir(), PACKAGE);
  if(!cfgdirname) g_error(_("Out of memory."));
 
- cfgfilename = g_strdup_printf("%s/%s", cfgdirname, CFGFILENAME);
+ cfgfilename = g_strdup_printf("%s/apt-dater.config", cfgdirname);
  if(!cfgfilename) g_error(_("Out of memory."));
 
  g_set_prgname(PACKAGE);
