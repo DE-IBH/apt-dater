@@ -65,11 +65,6 @@ int chkForInitialConfig(const gchar *cfgdir, const gchar *cfgfile) {
  return(0);
 }
 
-static int cmpStringP(const void *p1, const void *p2)
-{
- return(g_ascii_strcasecmp (*(gchar * const *) p1, *(gchar * const *) p2));
-}
-
 void freeConfig (CfgFile *cfg)
 {
  g_free(cfg->hostsfile);
