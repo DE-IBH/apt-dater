@@ -191,6 +191,7 @@ typedef struct _hostnode {
  gchar     *group;
  gchar     *type;
  gchar     *ssh_user;
+ gchar     *ssh_host;
  gint      ssh_port;
 #ifdef FEAT_AUTOREF
  time_t    last_upd;

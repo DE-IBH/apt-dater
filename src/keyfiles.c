@@ -392,6 +392,7 @@ GList *loadHosts (const char *filename) {
 	    HCFG_GET_STRING("Hostname", hostnode->hostname, NULL);
 	    HCFG_GET_STRING("Type", hostnode->type, "generic-ssh");
 	    HCFG_GET_STRING("SSHUser", hostnode->ssh_user, NULL);
+	    HCFG_GET_STRING("SSHHost", hostnode->ssh_host, NULL);
 	    HCFG_GET_INT("SSHPort", hostnode->ssh_port, 0);
 	    HCFG_GET_STRING("SSHIdentity", hostnode->identity_file, NULL);
 
