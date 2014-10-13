@@ -36,7 +36,8 @@ apt_dater_SOURCES =			\
 	clusters.c			\
 	clusters.h
 
-apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS) $(LIBCONFIG_LIBS)
+apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS) $(LIBCONFIG_LIBS) ../conf/apt-dater.blob ../conf/hosts.blob ../conf/screenrc.blob
+
 
 AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"'
 if LINUX
