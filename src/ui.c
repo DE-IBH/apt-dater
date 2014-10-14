@@ -653,6 +653,10 @@ static void drawHostDetails(HostNode *h)
  mvwaddnstr(wp, l++, 20, h->group, COLS - 20);
  mvwaddnstr(wp, l  ,  2, _("Hostname:"), COLS -  2);
  mvwaddnstr(wp, l++, 20, h->hostname, COLS - 20);
+ if (h->comment) {
+   mvwaddnstr(wp, l  ,  2, _("Comment:"), COLS -  2);
+   mvwaddnstr(wp, l++, 20, h->comment, COLS - 20);
+ }
  if (h->virt) {
   mvwaddnstr(wp, l  ,  2, _("Machine Type:"), COLS -  2);
   mvwaddnstr(wp, l++, 20, h->virt, COLS - 20);

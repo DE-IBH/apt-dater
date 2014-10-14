@@ -188,6 +188,7 @@ typedef struct _hostnode {
  etype _type;
 #endif
  gchar     *hostname;
+ gchar     *comment;
  gchar     *group;
  gchar     *type;
  gchar     *ssh_user;

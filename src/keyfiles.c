@@ -321,12 +321,15 @@ GList *loadHosts (const char *filename) {
 
 	config_setting_t *cfghost;
 	for(j=0; (cfghost = config_setting_get_elem(cfggroup, j)); j++) {
-	    HostNode *hostnode = g_new0(HostNode, 1);
+	    if(cfghost->type != CONFIG_TYPE_GROUP)
+	      continue;
 
+	    HostNode *hostnode = g_new0(HostNode, 1);
 #ifndef NDEBUG
 	    hostnode->_type = T_HOSTNODE;
 #endif
-	    HCFG_GET_STRING("Hostname", hostnode->hostname, NULL);
+	    hostnode->hostname = g_strdup(cfghost->name);
+	    HCFG_GET_STRING("Comment", hostnode->comment, NULL);
 	    HCFG_GET_STRING("Type", hostnode->type, "generic-ssh");
 	    HCFG_GET_STRING("SSHUser", hostnode->ssh_user, NULL);
 	    HCFG_GET_STRING("SSHHost", hostnode->ssh_host, NULL);
