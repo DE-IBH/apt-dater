@@ -139,6 +139,8 @@ static void reportHost(gpointer data, gpointer lgroup) {
   /* Begin host element. */  
   xmlTextWriterStartElement(writer, BAD_CAST("host"));
   xmlTextWriterWriteAttribute(writer, BAD_CAST("hostname"), BAD_CAST(n->hostname));
+  if(n->comment)
+    xmlTextWriterWriteAttribute(writer, BAD_CAST("comment"), BAD_CAST(n->comment));
 #ifdef FEAT_TCLFILTER
   if(n->filtered)
     xmlTextWriterWriteAttribute(writer, BAD_CAST("filtered"), BAD_CAST("1"));
