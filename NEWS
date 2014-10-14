@@ -1,0 +1,11 @@
+Changes in 1.0.0
+================
+
+The config file backend has been switch from glib's keyfile to libconfig.
+The filenames have been changed:
+
+    apt-dater.conf => apt-dater.config
+    hosts.conf     => hosts.config
+
+Manual convertion to the new format is required! apt-dater creates some
+default config files if they do not exist.
