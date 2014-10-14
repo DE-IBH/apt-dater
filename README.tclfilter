@@ -34,6 +34,7 @@ variables in the TCL environment:
   $cat        | category index (0=Updates pending, 1=Up to date, ...)
   $group      | name of the group the hosts belongs to
   $hostname   | hostname
+  $comment    | host comment
   $kernel     | kernel release (uname -r)
   $lsb_cname  | "Codename"-field of lsb_release -a
   $lsb_rel    | "Release"-field of lsb_release -a

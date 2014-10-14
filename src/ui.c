@@ -89,6 +89,7 @@ typedef enum {
     TCLMK_CATEGORY,
     TCLMK_GROUP,
     TCLMK_HOSTNAME,
+    TCLMK_COMMENT,
     TCLMK_KERNEL,
     TCLMK_LSBCNAME,
     TCLMK_LSBDISTRI,
@@ -119,6 +120,7 @@ const static struct TCLMapping tclmap[] = {
     {TCLMK_CATEGORY , "cat"       , TCLM_INT},
     {TCLMK_GROUP    , "group"     , TCLM_STRING},
     {TCLMK_HOSTNAME , "hostname"  , TCLM_STRING},
+    {TCLMK_COMMENT  , "comment"   , TCLM_STRING},
     {TCLMK_KERNEL   , "kernel"    , TCLM_STRING},
     {TCLMK_LSBCNAME , "lsb_cname" , TCLM_STRING},
     {TCLMK_LSBDISTRI, "lsb_distri", TCLM_STRING},
@@ -2720,6 +2722,9 @@ void applyFilter(GList *hosts) {
 		break;
 	    case TCLMK_HOSTNAME:
         	Tcl_SetVar(tcl_interp, tclmap[i].name, n->hostname, 0);
+		break;
+	    case TCLMK_COMMENT:
+	        Tcl_SetVar(tcl_interp, tclmap[i].name, n->comment, 0);
 		break;
 	    case TCLMK_KERNEL:
         	Tcl_SetVar(tcl_interp, tclmap[i].name, n->kernelrel, 0);
