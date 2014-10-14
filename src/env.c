@@ -83,6 +83,10 @@ env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEnt
     new_env[i++] = g_strdup_printf("AD_"name"=%s", value)
 
     ADD_HENV("HOSTNAME"         , n->hostname);
+    if(n->comment)
+      ADD_HENV("COMMENT"        , n->comment);
+    else
+      ADD_HENV("COMMENT"        , "");
     ADD_HENV("GROUP"            , n->group);
     if(n->ssh_user)
      ADD_HENV("SSH_USER"        , n->ssh_user);
