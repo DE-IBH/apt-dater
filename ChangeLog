@@ -17,6 +17,9 @@ apt-dater (1.0.0) unstable; urgency=low
   * Add Portuguese translation.
     (Closes Debian Bug#757290 by Américo Monteiro <a_monteiro@gmx.com>)
   * Update to automake 1.14.
+  * Add new configuration backend using libconfig.
+    (Closes github issue #5 and #9 by Stefan Eriksson and
+     Debian Bug#678271 by jonas <jonas@freesources.org>)
 
  -- Thomas Liske <liske@ibh.de>  
 
