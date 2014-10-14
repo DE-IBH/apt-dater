@@ -1,11 +1,10 @@
 /* apt-dater - terminal-based remote package update manager
  *
  * Authors:
- *   Andre Ellguth <ellguth@ibh.de>
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008-2012 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008-2014 (C) IBH IT-Service GmbH [https://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -139,6 +138,8 @@ static void reportHost(gpointer data, gpointer lgroup) {
   /* Begin host element. */  
   xmlTextWriterStartElement(writer, BAD_CAST("host"));
   xmlTextWriterWriteAttribute(writer, BAD_CAST("hostname"), BAD_CAST(n->hostname));
+  if(n->comment)
+    xmlTextWriterWriteAttribute(writer, BAD_CAST("comment"), BAD_CAST(n->comment));
 #ifdef FEAT_TCLFILTER
   if(n->filtered)
     xmlTextWriterWriteAttribute(writer, BAD_CAST("filtered"), BAD_CAST("1"));

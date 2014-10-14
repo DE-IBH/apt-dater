@@ -1,11 +1,10 @@
 /* apt-dater - terminal-based remote package update manager
  *
  * Authors:
- *   Andre Ellguth <ellguth@ibh.de>
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2009-2012 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2009-2014 (C) IBH IT-Service GmbH [https://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -83,6 +82,10 @@ env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEnt
     new_env[i++] = g_strdup_printf("AD_"name"=%s", value)
 
     ADD_HENV("HOSTNAME"         , n->hostname);
+    if(n->comment)
+      ADD_HENV("COMMENT"        , n->comment);
+    else
+      ADD_HENV("COMMENT"        , "");
     ADD_HENV("GROUP"            , n->group);
     if(n->ssh_user)
      ADD_HENV("SSH_USER"        , n->ssh_user);

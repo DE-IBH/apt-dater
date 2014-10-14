@@ -1,11 +1,10 @@
 /* apt-dater - terminal-based remote package update manager
  *
  * Authors:
- *   Andre Ellguth <ellguth@ibh.de>
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008-2012 (C) IBH IT-Service GmbH [http://www.ibh.de/apt-dater/]
+ *   2008-2014 (C) IBH IT-Service GmbH [https://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -89,6 +88,7 @@ typedef enum {
     TCLMK_CATEGORY,
     TCLMK_GROUP,
     TCLMK_HOSTNAME,
+    TCLMK_COMMENT,
     TCLMK_KERNEL,
     TCLMK_LSBCNAME,
     TCLMK_LSBDISTRI,
@@ -119,6 +119,7 @@ const static struct TCLMapping tclmap[] = {
     {TCLMK_CATEGORY , "cat"       , TCLM_INT},
     {TCLMK_GROUP    , "group"     , TCLM_STRING},
     {TCLMK_HOSTNAME , "hostname"  , TCLM_STRING},
+    {TCLMK_COMMENT  , "comment"   , TCLM_STRING},
     {TCLMK_KERNEL   , "kernel"    , TCLM_STRING},
     {TCLMK_LSBCNAME , "lsb_cname" , TCLM_STRING},
     {TCLMK_LSBDISTRI, "lsb_distri", TCLM_STRING},
@@ -653,6 +654,10 @@ static void drawHostDetails(HostNode *h)
  mvwaddnstr(wp, l++, 20, h->group, COLS - 20);
  mvwaddnstr(wp, l  ,  2, _("Hostname:"), COLS -  2);
  mvwaddnstr(wp, l++, 20, h->hostname, COLS - 20);
+ if (h->comment) {
+   mvwaddnstr(wp, l  ,  2, _("Comment:"), COLS -  2);
+   mvwaddnstr(wp, l++, 20, h->comment, COLS - 20);
+ }
  if (h->virt) {
   mvwaddnstr(wp, l  ,  2, _("Machine Type:"), COLS -  2);
   mvwaddnstr(wp, l++, 20, h->virt, COLS - 20);
@@ -2716,6 +2721,9 @@ void applyFilter(GList *hosts) {
 		break;
 	    case TCLMK_HOSTNAME:
         	Tcl_SetVar(tcl_interp, tclmap[i].name, n->hostname, 0);
+		break;
+	    case TCLMK_COMMENT:
+	        Tcl_SetVar(tcl_interp, tclmap[i].name, n->comment, 0);
 		break;
 	    case TCLMK_KERNEL:
         	Tcl_SetVar(tcl_interp, tclmap[i].name, n->kernelrel, 0);

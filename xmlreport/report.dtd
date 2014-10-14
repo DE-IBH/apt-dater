@@ -7,15 +7,16 @@
 <!ATTLIST group name CDATA #REQUIRED>
 
 <!-- Host node -->
-<!ELEMENT host (status,ssh,kernel,lsb,history?,clusters?,packages)>
+<!ELEMENT host (#PCDATA|status,ssh,kernel,lsb,history?,clusters?,packages)>
 <!ATTLIST host hostname CDATA #REQUIRED>
+<!ATTLIST host comment CDATA #IMPLIED>
 
 <!-- Host apt-dater status -->
 <!ELEMENT status (#PCDATA)>
 <!ATTLIST status status CDATA #REQUIRED>
 
 <!-- SSH parameter -->
-<!ELEMENT ssh (user,port)>
+<!ELEMENT ssh (user,host,port)>
 <!ELEMENT user (#PCDATA)>
 <!ELEMENT port (#PCDATA)>
 

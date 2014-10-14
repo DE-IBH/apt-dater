@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-dater 0.8.1\n"
+"Project-Id-Version: apt-dater 1.0.0\n"
 "Report-Msgid-Bugs-To: apt-dater@ibh.de\n"
-"POT-Creation-Date: 2014-08-07 20:31+0200\n"
-"PO-Revision-Date: 2012-05-29 17:08+0200\n"
+"POT-Creation-Date: 2014-10-14 09:34+0200\n"
+"PO-Revision-Date: 2014-10-14 09:40+0200\n"
 "Last-Translator: Thomas Liske <liske@ibh.de>\n"
 "Language-Team: apt-dater@ibh.de\n"
 "Language: de\n"
@@ -16,8 +16,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/apt-dater.c:80 src/apt-dater.c:83 src/apt-dater.c:122
-#: src/keyfiles.c:106 src/keyfiles.c:117 src/ui.c:3487
+#: src/apt-dater.c:80 src/apt-dater.c:83 src/apt-dater.c:122 src/keyfiles.c:47
+#: src/keyfiles.c:61 src/ui.c:3496
 msgid "Out of memory."
 msgstr "Nicht genügend Speicher."
 
@@ -40,12 +40,12 @@ msgstr "Aufruf: %s [-(c config|v|[n]r)]\n"
 msgid "Usage: %s [-(c config|v)]\n"
 msgstr "Aufruf: %s [-(c config|v)]\n"
 
-#: src/apt-dater.c:129 src/apt-dater.c:134
+#: src/apt-dater.c:127 src/apt-dater.c:132
 #, c-format
 msgid "Error on loading config file %s\n"
 msgstr "Fehler beim Laden der Konfigurationsdatei %s\n"
 
-#: src/apt-dater.c:187
+#: src/apt-dater.c:185
 msgid "Cannot open your terminal /proc/self/fd/0 - please check."
 msgstr "Kann Terminal /proc/self/fd/0 nicht öffnen - bitte überprüfen."
 
@@ -53,15 +53,20 @@ msgstr "Kann Terminal /proc/self/fd/0 nicht öffnen - bitte überprüfen."
 msgid "Wrong color definition!"
 msgstr "Fehlerhafte Farbdefinition!"
 
-#: src/keyfiles.c:108 src/keyfiles.c:119 src/keyfiles.c:130
-#, c-format
-msgid "Creating file %s"
+#: src/keyfiles.c:51
+#, fuzzy, c-format
+msgid "Creating default config file %s"
 msgstr "Erstelle Datei %s"
 
-#: src/keyfiles.c:110 src/keyfiles.c:121 src/keyfiles.c:131
+#: src/keyfiles.c:53
 #, c-format
 msgid "Could not write to file %s."
 msgstr "Kann nicht in Datei %s schreiben."
+
+#: src/keyfiles.c:63
+#, c-format
+msgid "Mandatory config file %s does not exist!"
+msgstr "Die benötigte Konfigurationsdatei %s existiert nicht!"
 
 #: src/lock.c:54
 msgid "Can't get the name of the lock file!"
@@ -102,12 +107,12 @@ msgstr "Aktuell"
 msgid "Broken packages"
 msgstr "Defekte Pakete"
 
-#: src/ui.c:56 src/ui.c:1411
+#: src/ui.c:56 src/ui.c:1417
 #, c-format
 msgid "Refresh required"
 msgstr "Aktualisierung benötigt"
 
-#: src/ui.c:57 src/ui.c:1414
+#: src/ui.c:57 src/ui.c:1420
 #, c-format
 msgid "In refresh"
 msgstr "Wird aktualisiert"
@@ -124,603 +129,607 @@ msgstr "Gefiltert"
 msgid "Unknown"
 msgstr "Unbekannt"
 
-#: src/ui.c:153
+#: src/ui.c:155
 msgid "<Left>"
 msgstr "<Links>"
 
-#: src/ui.c:153 src/ui.c:154
+#: src/ui.c:155 src/ui.c:156
 msgid "shrink node"
 msgstr "Baum zusammenklappen"
 
-#: src/ui.c:155
+#: src/ui.c:157
 msgid "<Right>"
 msgstr "<Rechts>"
 
-#: src/ui.c:155 src/ui.c:156
+#: src/ui.c:157 src/ui.c:158
 msgid "expand node"
 msgstr "Baum aufklappen"
 
-#: src/ui.c:157
+#: src/ui.c:159
 msgid "<Space>"
 msgstr "<Leertaste>"
 
-#: src/ui.c:157 src/ui.c:158 src/ui.c:159 src/ui.c:168
+#: src/ui.c:159 src/ui.c:160 src/ui.c:161 src/ui.c:170
 msgid "shrink/expand node"
 msgstr "Baum auf-/zusammenklappen"
 
-#: src/ui.c:158
+#: src/ui.c:160
 msgid "<Return>"
 msgstr "<Return>"
 
-#: src/ui.c:159
+#: src/ui.c:161
 msgid "<Enter>"
 msgstr "<Eingabe>"
 
-#: src/ui.c:160
+#: src/ui.c:162
 msgid "<Up>"
 msgstr "<Hoch>"
 
-#: src/ui.c:160 src/ui.c:161
+#: src/ui.c:162 src/ui.c:163
 msgid "move up"
 msgstr "nach oben"
 
-#: src/ui.c:162
+#: src/ui.c:164
 msgid "<Down>"
 msgstr "<Runter>"
 
-#: src/ui.c:162 src/ui.c:163
+#: src/ui.c:164 src/ui.c:165
 msgid "move down"
 msgstr "nach unten"
 
-#: src/ui.c:164
+#: src/ui.c:166
 msgid "<Home>"
 msgstr "<Pos 1>"
 
-#: src/ui.c:164
+#: src/ui.c:166
 msgid "move to the top"
 msgstr "an den Anfang"
 
-#: src/ui.c:165
+#: src/ui.c:167
 msgid "<End>"
 msgstr "<Ende>"
 
-#: src/ui.c:165
+#: src/ui.c:167
 msgid "move to the end"
 msgstr "an das Ende"
 
-#: src/ui.c:166
+#: src/ui.c:168
 msgid "<PageUp>"
 msgstr "Bild hoch"
 
-#: src/ui.c:166
+#: src/ui.c:168
 msgid "previous page"
 msgstr "vorherige Seite"
 
-#: src/ui.c:167
+#: src/ui.c:169
 msgid "<PageDown>"
 msgstr "Bild runter"
 
-#: src/ui.c:167
+#: src/ui.c:169
 msgid "next page"
 msgstr "nächste Seite"
 
-#: src/ui.c:169
+#: src/ui.c:171
 msgid "quit"
 msgstr "Beenden"
 
-#: src/ui.c:170
+#: src/ui.c:172
 msgid "help"
 msgstr "Hilfe"
 
-#: src/ui.c:171
+#: src/ui.c:173
 msgid "search host"
 msgstr "Host suchen"
 
-#: src/ui.c:173
+#: src/ui.c:175
 msgid "filter hosts"
 msgstr "Hosts filtern"
 
-#: src/ui.c:175
+#: src/ui.c:177
 msgid "attach session"
 msgstr "mit Sitzung verbinden"
 
-#: src/ui.c:176
+#: src/ui.c:178
 msgid "connect host"
 msgstr "Host verbinden"
 
-#: src/ui.c:177
+#: src/ui.c:179
 msgid "file transfer"
 msgstr "Dateiübertragung"
 
-#: src/ui.c:178
+#: src/ui.c:180
 msgid "toggle dumps"
 msgstr "Ausgabe an/aus"
 
-#: src/ui.c:179
+#: src/ui.c:181
 msgid "refresh host"
 msgstr "Host aktualisieren"
 
-#: src/ui.c:180
+#: src/ui.c:182
 msgid "failure diagnostic"
 msgstr "Fehler Diagnose"
 
-#: src/ui.c:181
+#: src/ui.c:183
 msgid "install pkg"
 msgstr "Paket installieren"
 
-#: src/ui.c:182
+#: src/ui.c:184
 msgid "upgrade host(s)"
 msgstr "Host(s) upgraden"
 
-#: src/ui.c:183
+#: src/ui.c:185
 msgid "host details"
 msgstr "Host Details"
 
-#: src/ui.c:185
+#: src/ui.c:187
 msgid "host history"
 msgstr "Host Historie"
 
-#: src/ui.c:186
+#: src/ui.c:188
 msgid "play"
 msgstr "wiedergeben"
 
-#: src/ui.c:187
+#: src/ui.c:189
 msgid "display with less"
 msgstr "mit less anzeigen"
 
-#: src/ui.c:189
+#: src/ui.c:191
 msgid "next detached session"
 msgstr "nächste ungenutzt Sitzung"
 
-#: src/ui.c:190
+#: src/ui.c:192
 msgid "cycle detached sessions"
 msgstr "ungenutzt Sitzungen durchgehen"
 
-#: src/ui.c:191
+#: src/ui.c:193
 msgid "tag current host"
 msgstr "Host markieren"
 
-#: src/ui.c:192
+#: src/ui.c:194
 msgid "tag all hosts matching"
 msgstr "Hosts suchen und markieren"
 
-#: src/ui.c:193
+#: src/ui.c:195
 msgid " ~c tag by codename"
 msgstr " ~c markieren nach Codename"
 
-#: src/ui.c:194
+#: src/ui.c:196
 msgid " ~d tag by distribution"
 msgstr " ~d markieren nach Distribution"
 
-#: src/ui.c:195
+#: src/ui.c:197
 msgid " ~f tag by host flags"
 msgstr " ~f markieren nach Host Flags"
 
-#: src/ui.c:196
+#: src/ui.c:198
 msgid " ~g tag by group"
 msgstr " ~g markieren nach Gruppe"
 
-#: src/ui.c:197
+#: src/ui.c:199
 msgid " ~p tag by packages"
 msgstr " ~p markieren nach Paketen"
 
-#: src/ui.c:198
+#: src/ui.c:200
 msgid " ~u tag by updates"
 msgstr " ~u markieren nach Updates"
 
-#: src/ui.c:199
+#: src/ui.c:201
 msgid " ~A tag all hosts"
 msgstr " ~A alle Hosts markieren"
 
-#: src/ui.c:200
+#: src/ui.c:202
 msgid "untag all hosts matching"
 msgstr "Hosts suchen und demarkieren"
 
-#: src/ui.c:201
+#: src/ui.c:203
 msgid "apply next function to tagged hosts"
 msgstr "folgende Funktion auf markierte Hosts anwenden"
 
-#: src/ui.c:206
+#: src/ui.c:208
 msgid "some packages are kept back"
 msgstr "Pakete wurden zurückgehalten"
 
-#: src/ui.c:207
+#: src/ui.c:209
 msgid "extra packages are installed"
 msgstr "extra Pakete installiert"
 
-#: src/ui.c:208
+#: src/ui.c:210
 msgid "running kernel is not the latest (reboot required)"
 msgstr "aktueller Kernel läuft nicht (neustart nötig)"
 
-#: src/ui.c:209
+#: src/ui.c:211
 msgid "a selfbuild kernel is running"
 msgstr "läuft selbstgebauter Kernel"
 
-#: src/ui.c:210
+#: src/ui.c:212
 msgid "this is a virtualized machine"
 msgstr "Host ist virtualisiert"
 
-#: src/ui.c:212
+#: src/ui.c:214
 msgid "this machine is part of a cluster"
 msgstr "Host ist Teil eines Clusters"
 
-#: src/ui.c:587
+#: src/ui.c:589
 msgid "FLAG"
 msgstr "FLAG"
 
-#: src/ui.c:588 src/ui.c:601
+#: src/ui.c:590 src/ui.c:603
 msgid "DESCRIPTION"
 msgstr "BESCHREIBUNG"
 
-#: src/ui.c:600
+#: src/ui.c:602
 msgid "KEY"
 msgstr "TASTE"
 
-#: src/ui.c:649
+#: src/ui.c:651
 msgid "HOST DETAILS"
 msgstr "HOST DETAILS"
 
-#: src/ui.c:652
+#: src/ui.c:654
 msgid "Group:"
 msgstr "Gruppe:"
 
-#: src/ui.c:654
+#: src/ui.c:656
 msgid "Hostname:"
 msgstr "Hostname:"
 
-#: src/ui.c:657
+#: src/ui.c:659
+msgid "Comment:"
+msgstr "Kommentar:"
+
+#: src/ui.c:663
 msgid "Machine Type:"
 msgstr "Rechner Typ:"
 
-#: src/ui.c:661
+#: src/ui.c:667
 msgid "Architecture:"
 msgstr "Architektur:"
 
-#: src/ui.c:665
+#: src/ui.c:671
 msgid "UUID:"
 msgstr "UUID:"
 
-#: src/ui.c:669
+#: src/ui.c:675
 msgid "Forbidden:"
 msgstr "Untersagt:"
 
-#: src/ui.c:673
+#: src/ui.c:679
 msgid "refresh"
 msgstr "Host(s) aktuallisieren"
 
-#: src/ui.c:680
+#: src/ui.c:686
 msgid "upgrade"
 msgstr "Host(s) upgraden"
 
-#: src/ui.c:687
+#: src/ui.c:693
 msgid "install"
 msgstr "Paket installieren"
 
-#: src/ui.c:695
+#: src/ui.c:701
 msgid "Distri:"
 msgstr "Distri:"
 
-#: src/ui.c:701
+#: src/ui.c:707
 msgid "Release:"
 msgstr "Release:"
 
-#: src/ui.c:705
+#: src/ui.c:711
 msgid "Kernel name:"
 msgstr "Kernel-Name:"
 
-#: src/ui.c:709
+#: src/ui.c:715
 msgid "Kernel version:"
 msgstr "Kernel-Version:"
 
-#: src/ui.c:714
+#: src/ui.c:720
 msgid "(reboot required)"
 msgstr "(neustart nötig)"
 
-#: src/ui.c:717
+#: src/ui.c:723
 msgid "(selfbuild kernel)"
 msgstr "(eigener Kernel)"
 
-#: src/ui.c:732
+#: src/ui.c:738
 msgid "Clusters: "
 msgstr "Cluster: "
 
-#: src/ui.c:744
+#: src/ui.c:750
 msgid "Packages: "
 msgstr "Pakete: "
 
-#: src/ui.c:755
+#: src/ui.c:761
 msgid "BROKEN PACKAGES"
 msgstr "DEFEKTE PAKETE"
 
-#: src/ui.c:776
+#: src/ui.c:782
 msgid "UPDATE PACKAGES"
 msgstr "UPDATE PAKETE"
 
-#: src/ui.c:797
+#: src/ui.c:803
 msgid "HOLD BACK PACKAGES"
 msgstr "ZURÜCKGEHALTENE PAKETE"
 
-#: src/ui.c:817
+#: src/ui.c:823
 msgid "EXTRA PACKAGES"
 msgstr "EXTRA PAKETE"
 
-#: src/ui.c:837
+#: src/ui.c:843
 msgid "INSTALLED PACKAGES"
 msgstr "INSTALLIERTE PAKETE"
 
-#: src/ui.c:903
+#: src/ui.c:909
 msgid "FAILURE DIAGNOSTIC"
 msgstr "FEHLER DIAGNOSE"
 
-#: src/ui.c:943
+#: src/ui.c:949
 #, fuzzy, c-format
 msgid " [Oldest: %x %X]"
 msgstr " [Ältester: %D %H:%M]"
 
-#: src/ui.c:1029
+#: src/ui.c:1035
 msgid "c"
 msgstr "a"
 
-#: src/ui.c:1029
+#: src/ui.c:1035
 msgid "C"
 msgstr "A"
 
-#: src/ui.c:1032
+#: src/ui.c:1038
 msgid "y"
 msgstr "j"
 
-#: src/ui.c:1032
+#: src/ui.c:1038
 msgid "Y"
 msgstr "J"
 
-#: src/ui.c:1107
+#: src/ui.c:1113
 msgid "No history data available!"
 msgstr "Keine Historiendaten verfügbar!"
 
-#: src/ui.c:1113
+#: src/ui.c:1119
 #, c-format
 msgid "History of %s (%d entry available)"
 msgstr "Historie von %s (%d Eintrag verfügbar)"
 
-#: src/ui.c:1114
+#: src/ui.c:1120
 #, c-format
 msgid "History of %s (%d entries available)"
 msgstr "Historie von %s (%d Einträge verfügbar)"
 
-#: src/ui.c:1196
+#: src/ui.c:1202
 msgid "replay terminated, press any key to continue"
 msgstr "Wiedergabe beendet, bel. Taste drücken um fortzufahren"
 
-#: src/ui.c:1255 src/ui.c:1286
+#: src/ui.c:1261 src/ui.c:1292
 #, c-format
 msgid "%d Hosts in status \"%s\""
 msgstr "%d Hosts mit Status \"%s\""
 
-#: src/ui.c:1258 src/ui.c:1289
+#: src/ui.c:1264 src/ui.c:1295
 #, c-format
 msgid "%d Host in status \"%s\""
 msgstr "%d Host in Status \"%s\""
 
-#: src/ui.c:1390
+#: src/ui.c:1396
 #, c-format
 msgid "%d Updates required"
 msgstr "%d Updates benötigt"
 
-#: src/ui.c:1393
+#: src/ui.c:1399
 #, c-format
 msgid "%d Update required"
 msgstr "%d Update benötigt"
 
-#: src/ui.c:1398
+#: src/ui.c:1404
 #, c-format
 msgid "No update required"
 msgstr "Kein Update nötig"
 
-#: src/ui.c:1403
+#: src/ui.c:1409
 #, c-format
 msgid "%d Broken packages"
 msgstr "%d defekte Pakete"
 
-#: src/ui.c:1406
+#: src/ui.c:1412
 #, c-format
 msgid "%d Broken package"
 msgstr "%d defektes Paket"
 
-#: src/ui.c:1419
+#: src/ui.c:1425
 #, c-format
 msgid "%d sessions running"
 msgstr "%d Sitzungen aktiv"
 
-#: src/ui.c:1422
+#: src/ui.c:1428
 #, c-format
 msgid "%d session running"
 msgstr "%d Sitzung aktiv"
 
-#: src/ui.c:1428
+#: src/ui.c:1434
 #, c-format
 msgid "Status is unknown"
 msgstr "Status ist unbekannt"
 
-#: src/ui.c:1431
+#: src/ui.c:1437
 #, c-format
 msgid "Error: %s"
 msgstr "Fehler: %s"
 
-#: src/ui.c:1437
+#: src/ui.c:1443
 msgid " - host locked by another process"
 msgstr " - Host durch anderen Prozess gesperrt"
 
-#: src/ui.c:1493
+#: src/ui.c:1499
 #, c-format
 msgid "Running session %s [%5d]:"
 msgstr "Laufende Sitzung %s [%d]:"
 
-#: src/ui.c:1519 src/ui.c:1592
+#: src/ui.c:1525 src/ui.c:1598
 msgid "%D %H:%M "
 msgstr "%D %H:%M "
 
-#: src/ui.c:1522 src/ui.c:1595
+#: src/ui.c:1528 src/ui.c:1601
 msgid "Attached"
 msgstr "verbunden"
 
-#: src/ui.c:1522 src/ui.c:1595
+#: src/ui.c:1528 src/ui.c:1601
 msgid "Detached"
 msgstr "nicht verbunden"
 
-#: src/ui.c:1534
+#: src/ui.c:1540
 msgid "Could not read session dump."
 msgstr "Kann Sitzungsausgabe nicht lesen."
 
-#: src/ui.c:1537
+#: src/ui.c:1543
 msgid "attached"
 msgstr "verbunden"
 
-#: src/ui.c:1537
+#: src/ui.c:1543
 msgid "detached"
 msgstr "nicht verbunden"
 
-#: src/ui.c:1866
+#: src/ui.c:1872
 msgid "Maintainer name:"
 msgstr "Betreuer-Name:"
 
-#: src/ui.c:2487
+#: src/ui.c:2493
 msgid "Search: "
 msgstr "Suche: "
 
-#: src/ui.c:2660
+#: src/ui.c:2666
 msgid "Matches:"
 msgstr "Treffer:"
 
-#: src/ui.c:2677
+#: src/ui.c:2683
 msgid "Matches: -"
 msgstr "Treffer: -"
 
-#: src/ui.c:2742
+#: src/ui.c:2751
 msgid "Internal error: unhandled TCL TCLM_STRING mapping!"
 msgstr "Interner Fehler: unbekannte TCL TCLM_STRING Zuordnung!"
 
-#: src/ui.c:2757
+#: src/ui.c:2766
 msgid "Internal error: unhandled TCL TCLM_INT mapping!"
 msgstr "Interner Fehler: unbekannte TCL TCLM_INT Zuordnung!"
 
-#: src/ui.c:2767
+#: src/ui.c:2776
 msgid "Internal error: unknown TCL mapping type!"
 msgstr "Interner Fehler: unbekannter TCL Zuordnungstyp!"
 
-#: src/ui.c:2835
+#: src/ui.c:2844
 msgid "Scalars:"
 msgstr "Skalare:"
 
-#: src/ui.c:2857
+#: src/ui.c:2866
 msgid "Arrays:"
 msgstr "Felder:"
 
-#: src/ui.c:2878
+#: src/ui.c:2887
 msgid "Examples:"
 msgstr "Beispiele:"
 
-#: src/ui.c:2891
+#: src/ui.c:2900
 msgid "Enter filter expression:"
 msgstr "Filterausdruck:"
 
-#: src/ui.c:2925
+#: src/ui.c:2934
 #, c-format
 msgid "An error at %s:%d has been detected [Less/ignore/connect]: "
 msgstr "Ein Fehler bei %s:%d wurde gefunden [Less/ignore/connect]: "
 
-#: src/ui.c:2927
+#: src/ui.c:2936
 #, c-format
 msgid "An error at %s has been detected [Less/ignore/connect]: "
 msgstr "Ein Fehler bei %s wurde gefunden [Less/ignore/connect]: "
 
 # c-format
-#: src/ui.c:3104
+#: src/ui.c:3113
 #, c-format
 msgid "Refresh %d tagged hosts? [y/N]: "
 msgstr "Update von %d markierten Hosts? [j/N]: "
 
-#: src/ui.c:3139
+#: src/ui.c:3148
 msgid "tag-"
 msgstr "tag-"
 
-#: src/ui.c:3153 src/ui.c:3179 src/ui.c:3307
+#: src/ui.c:3162 src/ui.c:3188 src/ui.c:3316
 msgid "There are running sessions on this host! Continue? [y/N]: "
 msgstr "Host hat aktive Sitzungen! Weiter? [j/N]: "
 
-#: src/ui.c:3202
+#: src/ui.c:3211
 msgid "Run update for the whole category? [y/N]: "
 msgstr "Die ganze Kategorie updaten? [j/N]: "
 
-#: src/ui.c:3203
+#: src/ui.c:3212
 msgid "Run update for the whole group? [y/N]: "
 msgstr "Die ganze Gruppe updaten? [j/N]: "
 
-#: src/ui.c:3247
+#: src/ui.c:3256
 #, c-format
 msgid "Run update for %d tagged and updatable hosts? [y/N]: "
 msgstr "Update von %d markierten Hosts? [j/N]: "
 
-#: src/ui.c:3277
+#: src/ui.c:3286
 #, c-format
 msgid "Install package `%s' [y/N]: "
 msgstr "Paket '%s' installieren [j/N]: "
 
-#: src/ui.c:3283 src/ui.c:3312 src/ui.c:3328
+#: src/ui.c:3292 src/ui.c:3321 src/ui.c:3337
 msgid "Install package: "
 msgstr "Paket installieren: "
 
-#: src/ui.c:3332
+#: src/ui.c:3341
 msgid "Run install for the whole category? [y/N]: "
 msgstr "Installation für die ganze Kategorie durchführen? [j/N]: "
 
-#: src/ui.c:3333
+#: src/ui.c:3342
 msgid "Run install for the whole group? [y/N]: "
 msgstr "Installation für die ganze Gruppe durchführen? [j/N]: "
 
-#: src/ui.c:3378
+#: src/ui.c:3387
 #, c-format
 msgid "Install package on %d tagged hosts: "
 msgstr "Paket auf %d markierte Hosts installieren: "
 
-#: src/ui.c:3406
+#: src/ui.c:3415
 msgid "Tag hosts matching: "
 msgstr "Markiere Hosts mit: "
 
-#: src/ui.c:3407
+#: src/ui.c:3416
 msgid "Untag hosts matching: "
 msgstr "Demarkiere Hosts mit: "
 
-#: src/ui.c:3482
+#: src/ui.c:3491
 #, c-format
 msgid "Attach host %s session %d (%d %s left) [Y/n/c]: "
 msgstr "Verbinde mit Host %s Sitzung %d (%d %s übrig) [J/n/a]: "
 
-#: src/ui.c:3484
+#: src/ui.c:3493
 msgid "session"
 msgstr "Sitzungen"
 
-#: src/ui.c:3484
+#: src/ui.c:3493
 msgid "sessions"
 msgstr "Sitzungen"
 
-#: src/ui.c:3556
+#: src/ui.c:3565
 msgid "Already attached - share session? [y/N]: "
 msgstr "Bereits verbunden - geteilte Sitzung? [j/N]: "
 
-#: src/ui.c:3584
+#: src/ui.c:3593
 msgid "Session dumps enabled."
 msgstr "Sitzungsausgabe aktiviert."
 
-#: src/ui.c:3586
+#: src/ui.c:3595
 msgid "Session dumps disabled."
 msgstr "Sitzungsausgabe deaktiviert."
 
-#: src/ui.c:3684
+#: src/ui.c:3693
 #, c-format
 msgid "There are %d hosts in status refresh state, quit apt-dater? [y/N]: "
 msgstr "Es werden %d Hosts aktuallisiert, apt-dater beenden? [j/N]: "
 
-#: src/ui.c:3687
+#: src/ui.c:3696
 #, c-format
 msgid "There is %d host in status refresh state, quit apt-dater? [y/N]: "
 msgstr "Es wird %d Host aktuallisiert, apt-dater beenden? [j/N]: "
