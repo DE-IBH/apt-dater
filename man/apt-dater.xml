@@ -51,17 +51,17 @@ and docbook-xsl in your Build-Depends control field.
     </address>
     <authorgroup>
       <author>
-        <firstname>Andre</firstname>
-        <surname>Ellguth</surname>
-	<email>ellguth@ibh.de</email>
-        <contrib>Maintainer.</contrib>
-      </author>
-      <author>
         &dhfirstname;
         &dhsurname;
         &dhemail;
 	<contrib>Maintainer.</contrib>
       </author>
+      <othercredit>
+        <firstname>Andre</firstname>
+        <surname>Ellguth</surname>
+	<email>ellguth@ibh.de</email>
+        <contrib>Maintainer.</contrib>
+      </othercredit>
       <othercredit>
 	<firstname>Jens</firstname>
 	<surname>Haser</surname>
@@ -70,8 +70,8 @@ and docbook-xsl in your Build-Depends control field.
       </othercredit>
     </authorgroup>
     <copyright>
-      <year>2008-2012</year>
-      <holder>IBH IT-Service GmbH [<ulink url="http://www.ibh.de/">http://www.ibh.de/</ulink>]</holder>
+      <year>2008-2014</year>
+      <holder>IBH IT-Service GmbH [<ulink url="https://www.ibh.de/">https://www.ibh.de/</ulink>]</holder>
     </copyright>
     &dhdate;
   </refentryinfo>

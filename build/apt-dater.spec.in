@@ -50,7 +50,7 @@ BuildRequires:	automake
 BuildRequires:	autoconf
 BuildRequires:	perl
 Buildroot:	%{_tmppath}/%{name}-buildroot
-Vendor:		IBH IT-Service GmbH (http://www.ibh.de/)
+Vendor:		IBH IT-Service GmbH (https://www.ibh.de/)
 
 %description
 
