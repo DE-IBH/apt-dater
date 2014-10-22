@@ -1,13 +1,13 @@
 '\" t
 .\"     Title: APT-DATER
-.\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
+.\"    Author: 
 .\" Generator: DocBook XSL Stylesheets v1.78.1 <http://docbook.sf.net/>
-.\"      Date: May 29, 2012
-.\"    Manual: [FIXME: manual]
-.\"    Source: [FIXME: source]
+.\"      Date: October 22, 2014
+.\"    Manual: Config File Manual
+.\"    Source: apt-dater
 .\"  Language: English
 .\"
-.TH "APT\-DATER" "5" "May 29, 2012" "[FIXME: source]" "[FIXME: manual]"
+.TH "APT\-DATER" "5" "October 22, 2014" "apt\-dater" "Config File Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -28,68 +28,68 @@
 .\" * MAIN CONTENT STARTS HERE *
 .\" -----------------------------------------------------------------
 .SH "NAME"
-apt-dater.conf \- configuration file of apt\-dater(8)
+apt-dater.config \- configuration file of apt\-dater(8)
 .SH "SYNOPSIS"
 .PP
 .RS 4
-[Section]
+Group: {
 .RE
 .PP
 .RS 4
-parameter=\fIvalue\fR
+parameter=\fIvalue\fR;
 .RE
 .PP
 .RS 4
-parameter=\fIvalue;value;\&.\&.\&.;\fR
+}
 .RE
 .SH "DESCRIPTION"
 .PP
 The file
-\fIapt\-dater\&.conf\fR
+\fIapt\-dater\&.config\fR
 is the configuration file for
 \fBapt\-dater\fR(8)\&.
 \fBapt\-dater\fR(8) is a program to manage package updats on a large number of remote hosts using SSH\&. This man page descripes briefly the parameters of the file
-\fIapt\-dater\&.conf\fR\&. The default location of this file is
-\fI$XDG_CONFIG_HOME/apt\-dater/hosts\&.conf\fR\&.
+\fIapt\-dater\&.config\fR\&. The default location of this file is
+\fI$XDG_CONFIG_HOME/apt\-dater/apt\-dater\&.config\fR\&.
 .PP
-The syntax of the configuration file is the syntax of glib keyfiles\&.
+The configuration file is parsed using libconfig\&. Please be aware that config statements are case sensitive\&. Look at libconfig\*(Aqs documentation for more details about the required file syntax\&.
 .SH "OPTIONS"
-.SS "Section [Paths]"
+.SS "Group \*(AqPaths\*(Aq"
 .PP
-HostsFile=\fI$XDG_CONFIG_HOME/apt\-dater/hosts\&.conf\fR
+HostsFile="\fI$XDG_CONFIG_HOME/apt\-dater/hosts\&.config\fR";
 .RS 4
 The location of the file contains all host which will be managed with
 \fBapt\-dater\fR\&. (optional)
 .RE
 .PP
-StatsDir=\fI$XDG_DATA_HOME/apt\-dater\fR
+StatsDir="\fI$XDG_DATA_HOME/apt\-dater\fR";
 .RS 4
 The location of the directory which contains the status files of any host\&. (optional)
 .RE
-.SS "Section [Screen]"
+.SS "Group \*(AqScreen\*(Aq"
 .PP
-RCFile=\fI$XDG_CONFIG_HOME/apt\-dater/screenrc\fR
+RCFile="\fI$XDG_CONFIG_HOME/apt\-dater/screenrc\fR";
 .RS 4
 Location of screen(1) config file\&. (optional)
 .RE
 .PP
-Title=\fI%m # %u@%h:%p\fR
+Title="\fI%m # %u@%h:%p\fR";
 .RS 4
 Template for screen titles using string escapes\&. (optional)
 .RE
 .PP
-NoDumps=\fIfalse\fR
+NoDumps=\fIfalse\fR;
 .RS 4
 Enables/disables support of screen dumps\&. (optional)
 .RE
 .PP
-QueryMaintainer=\fI0\fR
+QueryMaintainer=\fI0\fR;
 .RS 4
 If set to 1, apt\-dater will ask for the maintainers name on startup\&. If set to 2, apt\-dater will only ask if no MAINTAINER environment variable is set\&.
 .RE
-.SS "Section [SSH]"
+.SS "Group \*(AqSSH\*(Aq"
 .PP
-Cmd=\fI/usr/bin/ssh\fR
+Cmd="\fI/usr/bin/ssh\fR";
 .RS 4
 The location of ssh\-client binary\&.
 .RE
@@ -105,7 +105,7 @@ OptionalCmdFlags
 Additional ssh\-client command flags, which will be appended\&.
 .RE
 .PP
-SpawnAgent=\fIfalse\fR
+SpawnAgent=\fIfalse\fR;
 .RS 4
 If enabled, apt\-dater tries to spawn ssh\-agent(1) if none is already running\&. ssh\-add(1) will be called to load your private keys\&.
 .RE
@@ -114,25 +114,25 @@ AddKeys
 .RS 4
 List of private keys which should be loaded when apt\-dater calls ssh\-add(1)\&.
 .RE
-.SS "Section [Commands]"
+.SS "Group \*(AqCommands\*(Aq"
 .PP
-CmdRefresh=\fIapt\-dater\-host refresh\fR
+CmdRefresh="\fIapt\-dater\-host refresh\fR";
 .RS 4
 The command which will be used to refresh the status of the managed host\&.
 .RE
 .PP
-CmdUpgrade=\fIapt\-dater\-host upgrade\fR
+CmdUpgrade="\fIapt\-dater\-host upgrade\fR";
 .RS 4
 The command which will be used to intitate a upgrade of a managed host\&.
 .RE
 .PP
-CmdInstall=\fIapt\-dater\-host install %s\fR
+CmdInstall="\fIapt\-dater\-host install %s\fR";
 .RS 4
 The command which will be used to update a single package\&.
 \fI%s\fR
 will be replaced by the name of the package\&.
 .RE
-.SS "Section [Appearance]"
+.SS "Group \*(AqAppearance\*(Aq"
 .PP
 Colors
 .RS 4
@@ -204,37 +204,37 @@ Colors are:
 \fByellow\fR
 .RE
 .RE
-.SS "Section [AutoRef]"
+.SS "Group \*(AqAutoRef\*(Aq"
 .PP
-enabled=\fItrue\fR
+enabled=\fItrue\fR;
 .RS 4
 Enabled the auto refresh feature if compiled in (see README\&.autoref)\&.
 .RE
-.SS "Section [Notify]"
+.SS "Group \*(AqNotify\*(Aq"
 .PP
-bell=\fItrue\fR
+bell=\fItrue\fR;
 .RS 4
 Enables user notification by terminal bell\&.
 .RE
 .PP
-flash=\fItrue\fR
+flash=\fItrue\fR;
 .RS 4
 Enables user notification by terminal flashing\&.
 .RE
-.SS "Section [History]"
+.SS "Group \*(AqHistory\*(Aq"
 .PP
-ErrPattern=\fI((?<!no )error|warning|fail)\fR
+ErrPattern="\fI((?<!no )error|warning|fail)\fR";
 .RS 4
 A regular expression pattern to match the screen output\&. A match indicates the user should be asked to review the output (using less)\&. (Optional)
 .RE
 .PP
-record=\fItrue\fR
+record=\fItrue\fR;
 .RS 4
 Enables session recording using script(1)\&. (Optional)
 .RE
-.SS "Section [Hooks]"
+.SS "Group \*(AqHooks\*(Aq"
 .PP
-PreUpdate=\fI/etc/apt\-dater/pre\-upg\&.d\fR, PreRefresh=\fI/etc/apt\-dater/pre\-ref\&.d\fR, PreInstall=\fI/etc/apt\-dater/pre\-ins\&.d\fR, PreConnect=\fI/etc/apt\-dater/pre\-con\&.d\fR, PostUpdate=\fI/etc/apt\-dater/post\-upg\&.d\fR, PostRefresh=\fI/etc/apt\-dater/post\-ref\&.d\fR, PostInstall=\fI/etc/apt\-dater/post\-ins\&.d\fR, PostConnect=\fI/etc/apt\-dater/post\-con\&.d\fR
+PreUpdate="\fI/etc/apt\-dater/pre\-upg\&.d\fR";, PreRefresh="\fI/etc/apt\-dater/pre\-ref\&.d\fR";, PreInstall="\fI/etc/apt\-dater/pre\-ins\&.d\fR";, PreConnect="\fI/etc/apt\-dater/pre\-con\&.d\fR";, PostUpdate="\fI/etc/apt\-dater/post\-upg\&.d\fR";, PostRefresh="\fI/etc/apt\-dater/post\-ref\&.d\fR";, PostInstall="\fI/etc/apt\-dater/post\-ins\&.d\fR";, PostConnect="\fI/etc/apt\-dater/post\-con\&.d\fR";
 .RS 4
 Hooks to be run before and after an action on a host is done\&. The values should be path names, any executable script within these directories will be run by
 \fBrun\-parts\fR(8)\&.
@@ -261,6 +261,8 @@ l l
 l l
 l l
 l l
+l l
+l l
 l l.
 T{
 %
@@ -271,6 +273,11 @@ T{
 h
 T}:T{
 hostname
+T}
+T{
+H
+T}:T{
+SSH hostname used for connecting
 T}
 T{
 m
@@ -287,30 +294,47 @@ u
 T}:T{
 SSH username
 T}
+T{
+U
+T}:T{
+SSH username appended by '@', empty string if no SSH username is configured.
+T}
 .TE
 .sp 1
 .SH "FILES"
 .PP
-\fIapt\-dater\&.conf\fR
+\fIapt\-dater\&.config\fR
 .RS 4
 The configuration file of apt\-dater\&.
 .RE
 .PP
-\fIhosts\&.conf\fR
+\fIhosts\&.config\fR
 .RS 4
 Contains all hosts you would like to manage\&.
 .RE
 .SH "SEE ALSO"
 .PP
-apt\-dater(8), aptitude(1), apt\-get(1), debtrack, screen(1), script(1), ssh(1),
-\m[blue]\fBXDG Base Directory Specification\fR\m[]\&\s-2\u[1]\d\s+2\&.
+apt\-dater(8), apt\-get(1), debtrack, screen(1), script(1), ssh(1),
+\m[blue]\fBXDG Base Directory Specification\fR\m[]\&\s-2\u[1]\d\s+2,
+\m[blue]\fBlibconfig documentation\fR\m[]\&\s-2\u[2]\d\s+2\&.
+.SH "AUTHOR"
+.PP
+\fBThomas Liske\fR <\&liske@ibh\&.de\&>
+.RS 4
+maintainer
+.RE
 .SH "COPYRIGHT"
 .br
-Copyright \(co 2008-2012 IBH IT-Service GmbH [\m[blue]\fBhttps://www\&.ibh\&.de/\fR\m[]]
+Copyright \(co 2008-2014 IBH IT-Service GmbH [\m[blue]\fBhttps://www\&.ibh\&.de/\fR\m[]]
 .br
 .SH "NOTES"
 .IP " 1." 4
 XDG Base Directory Specification
 .RS 4
 \%http://www.freedesktop.org/Standards/basedir-spec
+.RE
+.IP " 2." 4
+libconfig documentation
+.RS 4
+\%http://www.hyperrealm.com/libconfig/libconfig_manual.html
 .RE
