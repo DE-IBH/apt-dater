@@ -280,7 +280,7 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-man_MANS = apt-dater.8 apt-dater.html apt-dater.conf.5 apt-dater.conf.html apt-dater-host.1
+man_MANS = apt-dater.8 apt-dater.html apt-dater.config.5 apt-dater.config.html apt-dater-host.1
 EXTRA_DIST = $(man_MANS)
 all: all-am
 

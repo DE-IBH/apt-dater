@@ -1,5 +1,8 @@
 if LINUX
 all: apt-dater.blob hosts.blob screenrc.blob
+
+clean-local:
+	rm -f *.blob
 else
 all:
 endif
