@@ -27,15 +27,15 @@ and docbook-xsl in your Build-Depends control field.
 -->
 
   <!-- Fill in your name for FIRSTNAME and SURNAME. -->
-  <!ENTITY dhfirstname "<firstname>Andre</firstname>">
-  <!ENTITY dhsurname   "<surname>Ellguth</surname>">
+  <!ENTITY dhfirstname "<firstname>Thomas</firstname>">
+  <!ENTITY dhsurname   "<surname>Liske</surname>">
   <!-- Please adjust the date whenever revising the manpage. -->
-  <!ENTITY dhdate      "<date>May 29, 2012</date>">
+  <!ENTITY dhdate      "<date>October 22, 2014</date>">
   <!-- SECTION should be 1-8, maybe w/ subsection other parameters are
        allowed: see man(7), man(1). -->
   <!ENTITY dhsection   "<manvolnum>5</manvolnum>">
-  <!ENTITY dhemail     "<email>ellguth@ibh.de</email>">
-  <!ENTITY dhusername  "Andre Ellguth">
+  <!ENTITY dhemail     "<email>lliske@ibh.de</email>">
+  <!ENTITY dhusername  "Thomas Liske">
   <!ENTITY dhucpackage "<refentrytitle>APT-DATER</refentrytitle>">
   <!ENTITY dhpackage   "apt-dater">
 
@@ -44,46 +44,31 @@ and docbook-xsl in your Build-Depends control field.
   <!ENTITY gpl         "&gnu; <acronym>GPL</acronym>">
 ]>
 
-<refentry>
+<refentry class="manual">
+  <info>
+    <productname>apt-dater</productname>
+    <author>
+      <personname>Thomas Liske</personname>
+      <email>liske@ibh.de</email>
+      <contrib>maintainer</contrib>
+    </author>
+  </info>
   <refentryinfo>
-    <address>
-      &dhemail;
-    </address>
-<!--
-    <authorgroup>
-      <author>
-        <firstname>Andre</firstname>
-        <surname>Ellguth</surname>
-	<email>ellguth@ibh.de</email>
-        <contrib>Maintainer.</contrib>
-      </author>
-      <author>
-        &dhfirstname;
-        &dhsurname;
-        &dhemail;
-	<contrib>Maintainer.</contrib>
-      </author>
-      <othercredit>
-	<firstname>Jens</firstname>
-	<surname>Haser</surname>
-	<email>jens_dd@hotmail.de</email>
-	<contrib>Fixed some UI glitches.</contrib>
-      </othercredit>
-    </authorgroup>
--->
     <copyright>
-      <year>2008-2012</year>
+      <year>2008-2014</year>
       <holder>IBH IT-Service GmbH [<ulink url="https://www.ibh.de/">https://www.ibh.de/</ulink>]</holder>
     </copyright>
     &dhdate;
   </refentryinfo>
   <refmeta>
+    <refmiscinfo class="source">apt-dater</refmiscinfo>
+    <refmiscinfo class="manual">Config File Manual</refmiscinfo>
     &dhucpackage;
 
     &dhsection;
   </refmeta>
   <refnamediv>
-    <refname>&dhpackage;.conf</refname>
+    <refname>&dhpackage;.config</refname>
 
     <refpurpose>configuration file of &dhpackage;(8)</refpurpose>
   </refnamediv>
@@ -91,17 +76,19 @@ and docbook-xsl in your Build-Depends control field.
     <variablelist>
       <varlistentry>
         <listitem>
-	  <para><symbol>[Section]</symbol></para>
+	  <para><symbol>Group</symbol>:
+{
+	  </para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <listitem>
-	  <para><symbol>parameter</symbol>=<replaceable>value</replaceable></para>
+	  <para><symbol>parameter</symbol>=<replaceable>value</replaceable>;</para>
         </listitem>
       </varlistentry>
       <varlistentry>
         <listitem>
-	  <para><symbol>parameter</symbol>=<replaceable>value;value;...;</replaceable></para>
+	  <para>}</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -109,33 +96,34 @@ and docbook-xsl in your Build-Depends control field.
   <refsect1>
     <title>DESCRIPTION</title>
 
-    <para>The file <replaceable>&dhpackage;.conf</replaceable> is the
+    <para>The file <replaceable>&dhpackage;.config</replaceable> is the
       configuration file for <command>&dhpackage;</command>(8).
       <command>&dhpackage;</command>(8) is a program to manage package updats 
       on a large number of remote hosts using SSH.
       This man page descripes briefly the parameters of the file
-      <replaceable>&dhpackage;.conf</replaceable>. 
-      The default location of this file is <replaceable>$XDG_CONFIG_HOME/apt-dater/hosts.conf</replaceable>.
+      <replaceable>&dhpackage;.config</replaceable>. 
+      The default location of this file is <replaceable>$XDG_CONFIG_HOME/apt-dater/apt-dater.config</replaceable>.
     </para>
     <para>
-      The syntax of the configuration file is the syntax of glib keyfiles.
+      The configuration file is parsed using libconfig. Please be aware that config statements are case sensitive.
+      Look at libconfig's documentation for more details about the required file syntax.
     </para>
   </refsect1>
   <refsect1>
     <title>OPTIONS</title>
 
     <refsect2>
-	<title>Section <symbol>[Paths]</symbol></title>
+	<title>Group '<symbol>Paths</symbol>'</title>
 
     <variablelist>
       <varlistentry>
-        <term><symbol>HostsFile</symbol>=<replaceable>$XDG_CONFIG_HOME/apt-dater/hosts.conf</replaceable></term>
+        <term><symbol>HostsFile</symbol>="<replaceable>$XDG_CONFIG_HOME/apt-dater/hosts.config</replaceable>";</term>
         <listitem>
           <para>The location of the file contains all host which will be managed with <command>&dhpackage;</command>. (optional)</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><symbol>StatsDir</symbol>=<replaceable>$XDG_DATA_HOME/apt-dater</replaceable></term>
+        <term><symbol>StatsDir</symbol>="<replaceable>$XDG_DATA_HOME/apt-dater</replaceable>";</term>
         <listitem>
           <para>The location of the directory which contains the status files of any host. (optional)</para>
         </listitem>
@@ -144,29 +132,29 @@ and docbook-xsl in your Build-Depends control field.
     </refsect2>
 
     <refsect2>
-	<title>Section <symbol>[Screen]</symbol></title>
+	<title>Group '<symbol>Screen</symbol>'</title>
 
     <variablelist>
       <varlistentry>
-        <term><symbol>RCFile</symbol>=<replaceable>$XDG_CONFIG_HOME/apt-dater/screenrc</replaceable></term>
+        <term><symbol>RCFile</symbol>="<replaceable>$XDG_CONFIG_HOME/apt-dater/screenrc</replaceable>";</term>
         <listitem>
           <para>Location of screen(1) config file. (optional)</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><symbol>Title</symbol>=<replaceable>%m # %u@%h:%p</replaceable></term>
+        <term><symbol>Title</symbol>="<replaceable>%m # %u@%h:%p</replaceable>";</term>
         <listitem>
           <para>Template for screen titles using string escapes. (optional)</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><symbol>NoDumps</symbol>=<replaceable>false</replaceable></term>
+        <term><symbol>NoDumps</symbol>=<replaceable>false</replaceable>;</term>
         <listitem>
           <para>Enables/disables support of screen dumps. (optional)</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><symbol>QueryMaintainer</symbol>=<replaceable>0</replaceable></term>
+        <term><symbol>QueryMaintainer</symbol>=<replaceable>0</replaceable>;</term>
         <listitem>
           <para>If set to 1, apt-dater will ask for the maintainers name on startup. If set to 2, apt-dater will only ask if no MAINTAINER environment variable is set.</para>
         </listitem>
@@ -175,11 +163,11 @@ and docbook-xsl in your Build-Depends control field.
     </refsect2>
 
     <refsect2>
-	<title>Section <symbol>[SSH]</symbol></title>
+	<title>Group '<symbol>SSH</symbol>'</title>
 
     <variablelist>
       <varlistentry>
-        <term><symbol>Cmd</symbol>=<replaceable>/usr/bin/ssh</replaceable></term>
+        <term><symbol>Cmd</symbol>="<replaceable>/usr/bin/ssh</replaceable>";</term>
         <listitem>
           <para>The location of ssh-client binary.</para>
         </listitem>
@@ -197,7 +185,7 @@ and docbook-xsl in your Build-Depends control field.
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><symbol>SpawnAgent</symbol>=<replaceable>false</replaceable></term>
+        <term><symbol>SpawnAgent</symbol>=<replaceable>false</replaceable>;</term>
         <listitem>
           <para>If enabled, apt-dater tries to spawn ssh-agent(1) if none is already running. ssh-add(1) will be called to load your private keys.</para>
         </listitem>
@@ -212,23 +200,23 @@ and docbook-xsl in your Build-Depends control field.
     </refsect2>
 
     <refsect2>
-	<title>Section <symbol>[Commands]</symbol></title>
+	<title>Group '<symbol>Commands</symbol>'</title>
     
     <variablelist>
       <varlistentry>
-        <term><symbol>CmdRefresh</symbol>=<replaceable>apt-dater-host refresh</replaceable></term>
+        <term><symbol>CmdRefresh</symbol>="<replaceable>apt-dater-host refresh</replaceable>";</term>
         <listitem>
 	  <para>The command which will be used to refresh the status of the managed host.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><symbol>CmdUpgrade</symbol>=<replaceable>apt-dater-host upgrade</replaceable></term>
+        <term><symbol>CmdUpgrade</symbol>="<replaceable>apt-dater-host upgrade</replaceable>";</term>
         <listitem>
 	  <para>The command which will be used to intitate a upgrade of a managed host.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
-        <term><symbol>CmdInstall</symbol>=<replaceable>apt-dater-host install %s</replaceable></term>
+        <term><symbol>CmdInstall</symbol>="<replaceable>apt-dater-host install %s</replaceable>";</term>
         <listitem>
 	  <para>The command which will be used to update a single package. <replaceable>%s</replaceable> will be replaced by the name of the package.</para>
         </listitem>
@@ -237,7 +225,7 @@ and docbook-xsl in your Build-Depends control field.
     </refsect2>
 
     <refsect2>
-	<title>Section <symbol>[Appearance]</symbol></title>
+	<title>Group '<symbol>Appearance</symbol>'</title>
 
     <variablelist>
       <varlistentry>
@@ -273,11 +261,11 @@ and docbook-xsl in your Build-Depends control field.
     </refsect2>
 
     <refsect2>
-	<title>Section <symbol>[AutoRef]</symbol></title>
+	<title>Group '<symbol>AutoRef</symbol>'</title>
 
     <variablelist>
       <varlistentry>
-        <term><symbol>enabled</symbol>=<replaceable>true</replaceable></term>
+        <term><symbol>enabled</symbol>=<replaceable>true</replaceable>;</term>
         <listitem>
 	  <para>Enabled the auto refresh feature if compiled in (see README.autoref).</para>
         </listitem>
@@ -286,18 +274,18 @@ and docbook-xsl in your Build-Depends control field.
     </refsect2>
 
     <refsect2>
-	<title>Section <symbol>[Notify]</symbol></title>
+	<title>Group '<symbol>Notify</symbol>'</title>
 
     <variablelist>
       <varlistentry>
-        <term><symbol>bell</symbol>=<replaceable>true</replaceable></term>
+        <term><symbol>bell</symbol>=<replaceable>true</replaceable>;</term>
         <listitem>
 	  <para>Enables user notification by terminal bell.</para>
         </listitem>
       </varlistentry>
 
       <varlistentry>
-        <term><symbol>flash</symbol>=<replaceable>true</replaceable></term>
+        <term><symbol>flash</symbol>=<replaceable>true</replaceable>;</term>
         <listitem>
 	  <para>Enables user notification by terminal flashing.</para>
         </listitem>
@@ -306,11 +294,11 @@ and docbook-xsl in your Build-Depends control field.
     </refsect2>
 
     <refsect2>
-	<title>Section <symbol>[History]</symbol></title>
+	<title>Group '<symbol>History</symbol>'</title>
 
     <variablelist>
       <varlistentry>
-        <term><symbol>ErrPattern</symbol>=<replaceable>((?&lt;!no )error|warning|fail)</replaceable></term>
+        <term><symbol>ErrPattern</symbol>="<replaceable>((?&lt;!no )error|warning|fail)</replaceable>";</term>
         <listitem>
 	  <para>
 	  A regular expression pattern to match the screen output. A match indicates
@@ -319,7 +307,7 @@ and docbook-xsl in your Build-Depends control field.
       </varlistentry>
 
       <varlistentry>
-        <term><symbol>record</symbol>=<replaceable>true</replaceable></term>
+        <term><symbol>record</symbol>=<replaceable>true</replaceable>;</term>
         <listitem>
 	  <para>Enables session recording using script(1). (Optional)</para>
         </listitem>
@@ -328,18 +316,18 @@ and docbook-xsl in your Build-Depends control field.
     </refsect2>
 
     <refsect2>
-	<title>Section <symbol>[Hooks]</symbol></title>
+	<title>Group '<symbol>Hooks</symbol>'</title>
 
     <variablelist>
       <varlistentry>
-        <term><symbol>PreUpdate</symbol>=<replaceable>/etc/apt-dater/pre-upg.d</replaceable></term>
-        <term><symbol>PreRefresh</symbol>=<replaceable>/etc/apt-dater/pre-ref.d</replaceable></term>
-        <term><symbol>PreInstall</symbol>=<replaceable>/etc/apt-dater/pre-ins.d</replaceable></term>
-        <term><symbol>PreConnect</symbol>=<replaceable>/etc/apt-dater/pre-con.d</replaceable></term>
-        <term><symbol>PostUpdate</symbol>=<replaceable>/etc/apt-dater/post-upg.d</replaceable></term>
-        <term><symbol>PostRefresh</symbol>=<replaceable>/etc/apt-dater/post-ref.d</replaceable></term>
-        <term><symbol>PostInstall</symbol>=<replaceable>/etc/apt-dater/post-ins.d</replaceable></term>
-        <term><symbol>PostConnect</symbol>=<replaceable>/etc/apt-dater/post-con.d</replaceable></term>
+        <term><symbol>PreUpdate</symbol>="<replaceable>/etc/apt-dater/pre-upg.d</replaceable>";</term>
+        <term><symbol>PreRefresh</symbol>="<replaceable>/etc/apt-dater/pre-ref.d</replaceable>";</term>
+        <term><symbol>PreInstall</symbol>="<replaceable>/etc/apt-dater/pre-ins.d</replaceable>";</term>
+        <term><symbol>PreConnect</symbol>="<replaceable>/etc/apt-dater/pre-con.d</replaceable>";</term>
+        <term><symbol>PostUpdate</symbol>="<replaceable>/etc/apt-dater/post-upg.d</replaceable>";</term>
+        <term><symbol>PostRefresh</symbol>="<replaceable>/etc/apt-dater/post-ref.d</replaceable>";</term>
+        <term><symbol>PostInstall</symbol>="<replaceable>/etc/apt-dater/post-ins.d</replaceable>";</term>
+        <term><symbol>PostConnect</symbol>="<replaceable>/etc/apt-dater/post-con.d</replaceable>";</term>
         <listitem>
 	  <para>
 	    Hooks to be run before and after an action on a host is done.
@@ -375,6 +363,10 @@ and docbook-xsl in your Build-Depends control field.
 	<td>hostname</td>
       </tr>
       <tr>
+        <td>H</td>
+	<td>SSH hostname used for connecting</td>
+      </tr>
+      <tr>
         <td>m</td>
 	<td>maintainer name</td>
       </tr>
@@ -386,6 +378,10 @@ and docbook-xsl in your Build-Depends control field.
         <td>u</td>
 	<td>SSH username</td>
       </tr>
+      <tr>
+        <td>U</td>
+	<td>SSH username appended by '@', empty string if no SSH username is configured.</td>
+      </tr>
       </tbody>
     </table>
   </refsect1>
@@ -395,13 +391,13 @@ and docbook-xsl in your Build-Depends control field.
 
     <variablelist>
       <varlistentry>
-	<term><replaceable>apt-dater.conf</replaceable></term>
+	<term><replaceable>apt-dater.config</replaceable></term>
 	<listitem>
 	  <para>The configuration file of apt-dater.</para>
 	</listitem>
       </varlistentry>
       <varlistentry>
-	<term><replaceable>hosts.conf</replaceable></term>
+	<term><replaceable>hosts.config</replaceable></term>
 	<listitem>
 	  <para>Contains all hosts you would like to manage.</para>
 	</listitem>
@@ -411,6 +407,6 @@ and docbook-xsl in your Build-Depends control field.
   <refsect1>
     <title>SEE ALSO</title>
 	
-    <para>apt-dater(8), aptitude(1), apt-get(1), debtrack, screen(1), script(1), ssh(1), <ulink url="http://www.freedesktop.org/Standards/basedir-spec">XDG Base Directory Specification</ulink>.</para>
+    <para>apt-dater(8), apt-get(1), debtrack, screen(1), script(1), ssh(1), <ulink url="http://www.freedesktop.org/Standards/basedir-spec">XDG Base Directory Specification</ulink>, <ulink url="http://www.hyperrealm.com/libconfig/libconfig_manual.html">libconfig documentation</ulink>.</para>
   </refsect1>
 </refentry>
