@@ -167,6 +167,7 @@ gboolean getUpdatesFromStat(HostNode *n)
  gboolean adproto = FALSE;
  gfloat adpver = 0;
  gboolean adperr = FALSE;
+ gboolean hasnrk = FALSE;
 
  if(!n) return (FALSE);
 
@@ -240,13 +241,15 @@ gboolean getUpdatesFromStat(HostNode *n)
 
   if (sscanf((gchar *) line, ADP_PATTERN_KERNELINFO, &status, buf) && !n->kernelrel) {
    n->kernelrel = g_strdup(buf);
-   switch(status){
-   case 1:
-    n->status = n->status | HOST_STATUS_KERNELNOTMATCH;
-    break;
-   case 2:
-    n->status = n->status | HOST_STATUS_KERNELSELFBUILD;
-    break;
+   if(!hasnrk) {
+     switch(status){
+     case 1:
+       n->status = n->status | HOST_STATUS_KERNELNOTMATCH;
+       break;
+     case 2:
+       n->status = n->status | HOST_STATUS_KERNELSELFBUILD;
+       break;
+     }
    }
    linesok++;
    continue;
@@ -395,6 +398,29 @@ gboolean getUpdatesFromStat(HostNode *n)
    continue;
   }
 #endif
+
+  gint nrksta;
+  if (sscanf((gchar *) line, ADP_PATTERN_NRKSTATUS, nrksta)) {
+    switch(nrksta) {
+    case ADP_STATUS_NRK_NOUPGR:
+      hasnrk = TRUE;
+      n->status = (n->status | HOST_STATUS_KERNELNOTMATCH) ^ HOST_STATUS_KERNELNOTMATCH;
+      n->status = (n->status | HOST_STATUS_KERNELSELFBUILD) ^ HOST_STATUS_KERNELSELFBUILD;
+      break;
+    case ADP_STATUS_NRK_ABIUPGR:
+    case ADP_STATUS_NRK_VERUPGR:
+      hasnrk = TRUE;
+      n->status = n->status | HOST_STATUS_KERNELNOTMATCH;
+      n->status = (n->status | HOST_STATUS_KERNELSELFBUILD) ^ HOST_STATUS_KERNELSELFBUILD;
+      break;
+    case ADP_STATUS_NRK_UNKNOWN:
+    default:
+      break;
+    }
+
+    linesok++;
+    continue;
+  }
 
  }
 
