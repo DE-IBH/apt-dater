@@ -59,6 +59,13 @@ and docbook-xsl in your Build-Depends control field.
       <holder>IBH IT-Service GmbH [<ulink url="https://www.ibh.de/">https://www.ibh.de/</ulink>]</holder>
     </copyright>
     &dhdate;
+    <authorgroup>
+      <othercredit>
+        <firstname>Andre</firstname>
+        <surname>Ellguth</surname>
+        <contrib>ex-maintainer</contrib>
+      </othercredit>
+    </authorgroup>
   </refentryinfo>
   <refmeta>
     <refmiscinfo class="source">apt-dater</refmiscinfo>

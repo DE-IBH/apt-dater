@@ -30,7 +30,7 @@ and docbook-xsl in your Build-Depends control field.
   <!ENTITY dhfirstname "<firstname>Thomas</firstname>">
   <!ENTITY dhsurname   "<surname>Liske</surname>">
   <!-- Please adjust the date whenever revising the manpage. -->
-  <!ENTITY dhdate      "<date>May 29, 2012</date>">
+  <!ENTITY dhdate      "<date>October 23, 2014</date>">
   <!-- SECTION should be 1-8, maybe w/ subsection other parameters are
        allowed: see man(7), man(1). -->
   <!ENTITY dhsection   "<manvolnum>8</manvolnum>">
@@ -45,37 +45,31 @@ and docbook-xsl in your Build-Depends control field.
 ]>
 
 <refentry>
+  <info>
+    <productname>apt-dater</productname>
+    <author>
+      <personname>Thomas Liske</personname>
+      <email>liske@ibh.de</email>
+      <contrib>maintainer</contrib>
+    </author>
+  </info>
   <refentryinfo>
-    <address>
-      &dhemail;
-    </address>
-    <authorgroup>
-      <author>
-        &dhfirstname;
-        &dhsurname;
-        &dhemail;
-	<contrib>Maintainer.</contrib>
-      </author>
-      <othercredit>
-        <firstname>Andre</firstname>
-        <surname>Ellguth</surname>
-	<email>ellguth@ibh.de</email>
-        <contrib>Maintainer.</contrib>
-      </othercredit>
-      <othercredit>
-	<firstname>Jens</firstname>
-	<surname>Haser</surname>
-	<email>jens_dd@hotmail.de</email>
-	<contrib>Fixed some UI glitches.</contrib>
-      </othercredit>
-    </authorgroup>
     <copyright>
       <year>2008-2014</year>
       <holder>IBH IT-Service GmbH [<ulink url="https://www.ibh.de/">https://www.ibh.de/</ulink>]</holder>
     </copyright>
     &dhdate;
+    <authorgroup>
+      <othercredit>
+        <firstname>Andre</firstname>
+        <surname>Ellguth</surname>
+        <contrib>ex-maintainer</contrib>
+      </othercredit>
+    </authorgroup>
   </refentryinfo>
   <refmeta>
+    <refmiscinfo class="source">apt-dater</refmiscinfo>
+    <refmiscinfo class="manual">apt-dater</refmiscinfo>
     &dhucpackage;
 
     &dhsection;
@@ -111,7 +105,7 @@ and docbook-xsl in your Build-Depends control field.
       <varlistentry>
         <term><option>-c <replaceable>config</replaceable></option></term>
         <listitem>
-          <para>Use alternative config file. Default is <replaceable>$XDG_CONFIG_HOME/apt-dater/apt-dater.conf</replaceable>.</para>
+          <para>Use alternative config file. Default is <replaceable>$XDG_CONFIG_HOME/apt-dater/apt-dater.config</replaceable>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -152,13 +146,13 @@ and docbook-xsl in your Build-Depends control field.
 
     <variablelist>
       <varlistentry>
-	<term><replaceable>~/.config/apt-dater/apt-dater.conf</replaceable></term>
+	<term><replaceable>~/.config/apt-dater/apt-dater.config</replaceable></term>
 	<listitem>
 	  <para>The configuration file of apt-dater</para>
 	</listitem>
       </varlistentry>
       <varlistentry>
-	<term><replaceable>~/.config/apt-dater/hosts.conf</replaceable></term>
+	<term><replaceable>~/.config/apt-dater/hosts.config</replaceable></term>
 	<listitem>
 	  <para>Contains all hosts you would like to manage</para>
 	</listitem>
@@ -168,6 +162,6 @@ and docbook-xsl in your Build-Depends control field.
   <refsect1>
     <title>SEE ALSO</title>
 	
-    <para>apt-dater.conf(5), aptitude(1), apt-get(1), debtrack, screen(1), ssh(1).</para>
+    <para>apt-dater.config(5), apt-get(1), debtrack, screen(1), ssh(1), <ulink url="http://www.freedesktop.org/Standards/basedir-spec">XDG Base Directory Specification</ulink>.</para>
   </refsect1>
 </refentry>
