@@ -20,6 +20,8 @@ apt-dater (1.0.0) unstable; urgency=low
   * Add new configuration backend using libconfig.
     (Closes github issue #5 and #9 by Stefan Eriksson and
      Debian Bug#678271 by jonas <jonas@freesources.org>)
+  * ADP 7.0: Eval needrestart's kernel status to detect kernel updates.
+    (Closes github issue #37 by GiNeR)
 
  -- Thomas Liske <liske@ibh.de>  
 
