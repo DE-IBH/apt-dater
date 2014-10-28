@@ -812,6 +812,7 @@ uninstall-am:
 
 distclean-local:
 	rm -rf *.cache *~ .project .settings .cdtproject
+	rm -f po/*.gmo
 
 check-gettext:
 	@if test x$(USE_NLS) != "xyes" ; then echo "Missing gettext. Rerun configure and check for" \
