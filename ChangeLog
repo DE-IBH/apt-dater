@@ -23,7 +23,7 @@ apt-dater (1.0.0) unstable; urgency=low
   * ADP 7.0: Eval needrestart's kernel status to detect kernel updates.
     (Closes github issue #37 by GiNeR)
 
- -- Thomas Liske <liske@ibh.de>  
+ -- Thomas Liske <liske@ibh.de>  Tue, 28 Oct 2014 18:30:10 +0100
 
 apt-dater (0.9.0) unstable; urgency=low
 
