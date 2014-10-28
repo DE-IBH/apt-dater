@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: apt-dater 1.0.0\n"
 "Report-Msgid-Bugs-To: apt-dater@ibh.de\n"
 "POT-Creation-Date: 2014-10-28 18:26+0100\n"
-"PO-Revision-Date: 2014-10-14 09:40+0200\n"
+"PO-Revision-Date: 2014-10-28 18:30+0100\n"
 "Last-Translator: Thomas Liske <liske@ibh.de>\n"
 "Language-Team: apt-dater@ibh.de\n"
 "Language: de\n"
@@ -335,15 +335,15 @@ msgstr "extra Pakete installiert"
 
 #: src/ui.c:209
 msgid "pending kernel upgrade (ABI compatible)"
-msgstr ""
+msgstr "Kernel Upgrade vorhanden (ABI kompatibel)"
 
 #: src/ui.c:210
 msgid "pending kernel upgrade"
-msgstr ""
+msgstr "Kernel Upgrade vorhanden"
 
 #: src/ui.c:211
 msgid "unknown kernel upgrade state"
-msgstr ""
+msgstr "Kernel Upgrade-Status unbekannt"
 
 #: src/ui.c:212
 msgid "this is a virtualized machine"
@@ -427,11 +427,11 @@ msgstr "Kernel-Version:"
 
 #: src/ui.c:720
 msgid "(pending ABI compatible upgrade)"
-msgstr ""
+msgstr "(ABI-kompatibles Upgrade vorhanden)"
 
 #: src/ui.c:723
 msgid "(pending upgrade)"
-msgstr ""
+msgstr "(Upgrade vorhanden)"
 
 #: src/ui.c:738
 msgid "Clusters: "
@@ -737,15 +737,3 @@ msgstr "Es werden %d Hosts aktuallisiert, apt-dater beenden? [j/N]: "
 #, c-format
 msgid "There is %d host in status refresh state, quit apt-dater? [y/N]: "
 msgstr "Es wird %d Host aktuallisiert, apt-dater beenden? [j/N]: "
-
-#~ msgid "running kernel is not the latest (reboot required)"
-#~ msgstr "aktueller Kernel läuft nicht (neustart nötig)"
-
-#~ msgid "a selfbuild kernel is running"
-#~ msgstr "läuft selbstgebauter Kernel"
-
-#~ msgid "(reboot required)"
-#~ msgstr "(neustart nötig)"
-
-#~ msgid "(selfbuild kernel)"
-#~ msgstr "(eigener Kernel)"
