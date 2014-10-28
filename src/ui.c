@@ -206,8 +206,9 @@ static struct ShortCut shortCuts[] = {
 const struct HostFlag hostFlags[] = {
   {HOST_STATUS_PKGKEPTBACK    ,  "h", N_("some packages are kept back")},
   {HOST_STATUS_PKGEXTRA       ,  "x", N_("extra packages are installed")},
-  {HOST_STATUS_KERNELNOTMATCH ,  "R", N_("running kernel is not the latest (reboot required)")},
-  {HOST_STATUS_KERNELSELFBUILD,  "k", N_("a selfbuild kernel is running")},
+  {HOST_STATUS_KERNELABIUPGR  ,  "k", N_("pending kernel upgrade (ABI compatible)")},
+  {HOST_STATUS_KERNELVERUPGR  ,  "K", N_("pending kernel upgrade")},
+  {HOST_STATUS_KERNELUNKNOWN  ,  "?", N_("unknown kernel upgrade state")},
   {HOST_STATUS_VIRTUALIZED    ,  "v", N_("this is a virtualized machine")},
 #ifdef FEAT_CLUSTERS
   {HOST_STATUS_CLUSTERED      ,  "C", N_("this machine is part of a cluster")},
@@ -714,12 +715,12 @@ static void drawHostDetails(HostNode *h)
   mvwaddnstr(wp, l  ,  2, _("Kernel version:"), COLS -  2);
   mvwaddnstr(wp, l++, 20, h->kernelrel, COLS - 20);
 	
-  switch(h->status & (HOST_STATUS_KERNELNOTMATCH | HOST_STATUS_KERNELSELFBUILD)) {
-  case HOST_STATUS_KERNELNOTMATCH:
-   strcpy(buf, _("(reboot required)"));
+  switch(h->status & (HOST_STATUS_KERNELABIUPGR | HOST_STATUS_KERNELVERUPGR)) {
+  case HOST_STATUS_KERNELABIUPGR:
+   strcpy(buf, _("(pending ABI compatible upgrade)"));
    break;
-  case HOST_STATUS_KERNELSELFBUILD:
-   strcpy(buf, _("(selfbuild kernel)"));
+  case HOST_STATUS_KERNELVERUPGR:
+   strcpy(buf, _("(pending upgrade)"));
    break;
   default:
    buf[0] = 0;

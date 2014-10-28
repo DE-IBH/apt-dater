@@ -164,12 +164,13 @@ typedef enum {
 #define HOST_STATUS_PKGKEPTBACK       2
 #define HOST_STATUS_PKGEXTRA          4
 #define HOST_STATUS_PKGBROKEN         8
-#define HOST_STATUS_KERNELNOTMATCH   16
-#define HOST_STATUS_KERNELSELFBUILD  32
-#define HOST_STATUS_VIRTUALIZED      64
-#define HOST_STATUS_LOCKED          128
+#define HOST_STATUS_KERNELUNKNOWN    16
+#define HOST_STATUS_KERNELABIUPGR    32
+#define HOST_STATUS_KERNELVERUPGR    64
+#define HOST_STATUS_VIRTUALIZED     128
+#define HOST_STATUS_LOCKED          256
 #ifdef FEAT_CLUSTERS
-#define HOST_STATUS_CLUSTERED       256
+#define HOST_STATUS_CLUSTERED       512
 #endif
 
 #define HOST_FORBID_REFRESH           1
@@ -227,6 +228,7 @@ typedef struct _hostnode {
  gint      forbid;
  gboolean  tagged;
  gchar     uuid[UUID_STRLEN+1];
+ gint      nrkstate;
 #ifdef FEAT_CLUSTERS
  GList     *clusters;
 #endif
