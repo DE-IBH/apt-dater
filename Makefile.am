@@ -7,6 +7,7 @@ AUTOMAKE_OPTIONS = 							\
 distclean-local:
 	rm -rf *.cache *~ .project .settings .cdtproject
 	rm -f po/*.gmo
+	rm -f po/stamp-po
 
 ACLOCAL_AMFLAGS = -I m4
 
