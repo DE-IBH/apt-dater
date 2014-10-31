@@ -44,9 +44,6 @@ env_init(gchar **envp) {
     ADD_GENV("SSH_CMD"          , cfg->ssh_cmd);
     ADD_GENV("SFTP_CMD"         , cfg->sftp_cmd);
     ADD_GENV("SSH_OPTFLAGS"     , cfg->ssh_optflags);
-    ADD_GENV("CMD_REFRESH"      , cfg->cmd_refresh);
-    ADD_GENV("CMD_UPGRADE"      , cfg->cmd_upgrade);
-    ADD_GENV("CMD_INSTALL"      , cfg->cmd_install);
 #ifdef FEAT_HISTORY
     ADD_GENV("HIST_RECORD"      , cfg->record_history ? "true" : "false");
     ADD_GENV("HIST_ERRPATTERN"  , cfg->history_errpattern);

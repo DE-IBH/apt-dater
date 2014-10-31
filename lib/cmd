@@ -107,6 +107,10 @@ else
 fi
 
 handle_generic_ssh () {
+    AD_CMD_REFRESH="apt-dater-host refresh"
+    AD_CMD_UPGRADE="apt-dater-host upgrade"
+    AD_CMD_INSTALL="apt-dater-host install %s"
+
     if [ -n "$AD_SSH_USER" ]; then
 	my_ssh_user="-l $AD_SSH_USER";
     else
