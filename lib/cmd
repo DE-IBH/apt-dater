@@ -122,7 +122,7 @@ handle_generic_ssh () {
     case "$AD_ACTION" in
 	connect)
 	    run_hook "$AD_HOOK_PRE_CONNECT"
-	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS $my_ssh_user $my_ssh_port "$AD_HOSTNAME"
+	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS $my_ssh_user $my_ssh_port "$AD_SSH_HOST"
 	    run_hook "$AD_HOOK_POST_CONNECT"
 	    ;;
 	transfer)
@@ -139,24 +139,24 @@ handle_generic_ssh () {
 	    fi
 
 	    run_hook "$AD_HOOK_PRE_CONNECT"
-	    $WRAP $AD_SFTP_CMD $AD_SSH_ID $my_sftp_port $my_sftp_user"$AD_HOSTNAME"
+	    $WRAP $AD_SFTP_CMD $AD_SSH_ID $my_sftp_port $my_sftp_user"$AD_SSH_HOST"
 	    run_hook "$AD_HOOK_POST_CONNECT"
 	    ;;
 	install)
 	    lock_cluster
 	    run_hook "$AD_HOOK_PRE_INSTALL"
-	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS $my_ssh_user $my_ssh_port "$AD_HOSTNAME" `printf "$AD_CMD_INSTALL" "$AD_PARAM"`
+	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS $my_ssh_user $my_ssh_port "$AD_SSH_HOST" `printf "$AD_CMD_INSTALL" "$AD_PARAM"`
 	    run_hook "$AD_HOOK_POST_INSTALL"
 	    ;;
 	upgrade)
 	    lock_cluster
 	    run_hook "$AD_HOOK_PRE_UPGRADE"
-	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS $my_ssh_user $my_ssh_port "$AD_HOSTNAME" $AD_CMD_UPGRADE
+	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS $my_ssh_user $my_ssh_port "$AD_SSH_HOST" $AD_CMD_UPGRADE
 	    run_hook "$AD_HOOK_POST_UPGRADE"
 	    ;;
 	refresh)
 	    run_hook "$AD_HOOK_PRE_REFRESH"
-	    $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS -n -o BatchMode=yes -o ConnectTimeout=5 $my_ssh_user $my_ssh_port "$AD_HOSTNAME" $AD_CMD_REFRESH 2>&1
+	    $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS -n -o BatchMode=yes -o ConnectTimeout=5 $my_ssh_user $my_ssh_port "$AD_SSH_HOST" $AD_CMD_REFRESH 2>&1
 	    run_hook "$AD_HOOK_POST_REFRESH"
 	    ;;
 	*)
