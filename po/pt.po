@@ -5,10 +5,10 @@
 # Américo Monteiro <a_monteiro@gmx.com>, 2014.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-dater 0.9.0-7\n"
+"Project-Id-Version: apt-dater 1.0.0-1\n"
 "Report-Msgid-Bugs-To: apt-dater@ibh.de\n"
 "POT-Creation-Date: 2014-10-28 18:26+0100\n"
-"PO-Revision-Date: 2014-08-07 00:00+0100\n"
+"PO-Revision-Date: 2014-10-31 17:48+0000\n"
 "Last-Translator: Américo Monteiro <a_monteiro@gmx.com>\n"
 "Language-Team: Portuguese <traduz@debianpt.org>\n"
 "Language: pt\n"
@@ -56,9 +56,9 @@ msgid "Wrong color definition!"
 msgstr "Definição de cor errada!"
 
 #: src/keyfiles.c:50
-#, fuzzy, c-format
+#, c-format
 msgid "Creating default config file %s"
-msgstr "A criar ficheiro %s"
+msgstr "A criar ficheiro de configuração predefinido %s"
 
 #: src/keyfiles.c:52
 #, c-format
@@ -68,7 +68,7 @@ msgstr "Incapaz de escrever no ficheiro %s."
 #: src/keyfiles.c:62
 #, c-format
 msgid "Mandatory config file %s does not exist!"
-msgstr ""
+msgstr "O ficheiro de configuração obrigatório %s não existe!"
 
 #: src/lock.c:53
 msgid "Can't get the name of the lock file!"
@@ -338,15 +338,15 @@ msgstr "são instalados pacotes extra"
 
 #: src/ui.c:209
 msgid "pending kernel upgrade (ABI compatible)"
-msgstr ""
+msgstr "pendente de actualização de kernel (compatível com ABI)"
 
 #: src/ui.c:210
 msgid "pending kernel upgrade"
-msgstr ""
+msgstr "pendente de actualização de kernel"
 
 #: src/ui.c:211
 msgid "unknown kernel upgrade state"
-msgstr ""
+msgstr "estado desconhecido de actualização de kernel"
 
 #: src/ui.c:212
 msgid "this is a virtualized machine"
@@ -354,7 +354,7 @@ msgstr "esta é uma máquina virtualizada"
 
 #: src/ui.c:214
 msgid "this machine is part of a cluster"
-msgstr ""
+msgstr "esta máquina é parte de um cluster"
 
 #: src/ui.c:589
 msgid "FLAG"
@@ -382,7 +382,7 @@ msgstr "Nome da Máquina:"
 
 #: src/ui.c:659
 msgid "Comment:"
-msgstr ""
+msgstr "Comentário:"
 
 #: src/ui.c:663
 msgid "Machine Type:"
@@ -430,15 +430,15 @@ msgstr "Versão do kernel:"
 
 #: src/ui.c:720
 msgid "(pending ABI compatible upgrade)"
-msgstr ""
+msgstr "(pendente de actualização compatível com ABI)"
 
 #: src/ui.c:723
 msgid "(pending upgrade)"
-msgstr ""
+msgstr "(pendente de actualização)"
 
 #: src/ui.c:738
 msgid "Clusters: "
-msgstr ""
+msgstr "Clusters: "
 
 #: src/ui.c:750
 msgid "Packages: "
@@ -469,9 +469,9 @@ msgid "FAILURE DIAGNOSTIC"
 msgstr "DIAGNÓSTICO DE FALHA"
 
 #: src/ui.c:949
-#, fuzzy, c-format
+#, c-format
 msgid " [Oldest: %x %X]"
-msgstr " [Mais antigo: %D %H:%M]"
+msgstr " [Mais antigo: %x %X]"
 
 #: src/ui.c:1035
 msgid "c"
