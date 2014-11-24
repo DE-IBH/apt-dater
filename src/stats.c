@@ -167,7 +167,6 @@ gboolean getUpdatesFromStat(HostNode *n)
  gboolean adproto = FALSE;
  gfloat adpver = 0;
  gboolean adperr = FALSE;
- gboolean hasnrk = FALSE;
 
  if(!n) return (FALSE);
 
@@ -194,6 +193,7 @@ gboolean getUpdatesFromStat(HostNode *n)
  n->nbrokens = 0;
  n->forbid = 0;
  n->uuid[0] = 0;
+ n->nrkstate = ADP_STATUS_NRK_UNKNOWN;
 
  freePackages(n);
 
@@ -241,13 +241,14 @@ gboolean getUpdatesFromStat(HostNode *n)
 
   if (sscanf((gchar *) line, ADP_PATTERN_KERNELINFO, &status, buf) && !n->kernelrel) {
    n->kernelrel = g_strdup(buf);
-   if(!hasnrk) {
+
+   if(n->nrkstate == ADP_STATUS_NRK_UNKNOWN) {
      switch(status){
      case 1:
-       n->status = n->status | HOST_STATUS_KERNELNOTMATCH;
+       n->status = n->status | HOST_STATUS_KERNELVERUPGR;
        break;
      case 2:
-       n->status = n->status | HOST_STATUS_KERNELSELFBUILD;
+       n->status = n->status | HOST_STATUS_KERNELUNKNOWN;
        break;
      }
    }
@@ -400,21 +401,22 @@ gboolean getUpdatesFromStat(HostNode *n)
 #endif
 
   gint nrksta;
-  if (sscanf((gchar *) line, ADP_PATTERN_NRKSTATUS, nrksta)) {
+  if (sscanf((gchar *) line, ADP_PATTERN_NRKSTATUS, &nrksta)) {
+    n->nrkstate = nrksta;
+
     switch(nrksta) {
     case ADP_STATUS_NRK_NOUPGR:
-      hasnrk = TRUE;
-      n->status = (n->status | HOST_STATUS_KERNELNOTMATCH) ^ HOST_STATUS_KERNELNOTMATCH;
-      n->status = (n->status | HOST_STATUS_KERNELSELFBUILD) ^ HOST_STATUS_KERNELSELFBUILD;
+      n->status = (n->status | HOST_STATUS_KERNELVERUPGR | HOST_STATUS_KERNELUNKNOWN) ^ (HOST_STATUS_KERNELVERUPGR | HOST_STATUS_KERNELUNKNOWN);
       break;
     case ADP_STATUS_NRK_ABIUPGR:
-    case ADP_STATUS_NRK_VERUPGR:
-      hasnrk = TRUE;
-      n->status = n->status | HOST_STATUS_KERNELNOTMATCH;
-      n->status = (n->status | HOST_STATUS_KERNELSELFBUILD) ^ HOST_STATUS_KERNELSELFBUILD;
+      n->status = (n->status | HOST_STATUS_KERNELVERUPGR | HOST_STATUS_KERNELUNKNOWN) ^ (HOST_STATUS_KERNELVERUPGR | HOST_STATUS_KERNELUNKNOWN);
+      n->status = n->status | HOST_STATUS_KERNELABIUPGR;
       break;
-    case ADP_STATUS_NRK_UNKNOWN:
+    case ADP_STATUS_NRK_VERUPGR:
+      n->status = (n->status | HOST_STATUS_KERNELVERUPGR | HOST_STATUS_KERNELUNKNOWN) ^ HOST_STATUS_KERNELUNKNOWN;
+      break;
     default:
+      n->status = n->status | HOST_STATUS_KERNELUNKNOWN;
       break;
     }
 

@@ -163,10 +163,8 @@ static void reportHost(gpointer data, gpointer lgroup) {
 
   /* Kernel info */
   xmlTextWriterStartElement(writer, BAD_CAST("kernel"));
-  if(n->status & HOST_STATUS_KERNELNOTMATCH)
+  if(n->status & (HOST_STATUS_KERNELABIUPGR | HOST_STATUS_KERNELVERUPGR))
     xmlTextWriterWriteAttribute(writer, BAD_CAST("reboot"), BAD_CAST("1"));
-  if(n->status & HOST_STATUS_KERNELSELFBUILD)
-    xmlTextWriterWriteAttribute(writer, BAD_CAST("custom"), BAD_CAST("1"));
   if(n->kernelrel)
     xmlTextWriterWriteString(writer, BAD_CAST(n->kernelrel));
   xmlTextWriterEndElement(writer);

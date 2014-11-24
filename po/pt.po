@@ -5,10 +5,10 @@
 # Américo Monteiro <a_monteiro@gmx.com>, 2014.
 msgid ""
 msgstr ""
-"Project-Id-Version: apt-dater 0.9.0-7\n"
+"Project-Id-Version: apt-dater 1.0.0-1\n"
 "Report-Msgid-Bugs-To: apt-dater@ibh.de\n"
-"POT-Creation-Date: 2014-10-14 09:34+0200\n"
-"PO-Revision-Date: 2014-08-07 00:00+0100\n"
+"POT-Creation-Date: 2014-10-28 18:26+0100\n"
+"PO-Revision-Date: 2014-10-31 17:48+0000\n"
 "Last-Translator: Américo Monteiro <a_monteiro@gmx.com>\n"
 "Language-Team: Portuguese <traduz@debianpt.org>\n"
 "Language: pt\n"
@@ -18,332 +18,335 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Lokalize 1.4\n"
 
-#: src/apt-dater.c:80 src/apt-dater.c:83 src/apt-dater.c:122 src/keyfiles.c:47
-#: src/keyfiles.c:61 src/ui.c:3496
+#: src/apt-dater.c:79 src/apt-dater.c:82 src/apt-dater.c:121 src/keyfiles.c:46
+#: src/keyfiles.c:60 src/ui.c:3496
 msgid "Out of memory."
 msgstr "Memória insuficiente."
 
-#: src/apt-dater.c:89
+#: src/apt-dater.c:88
 #, c-format
 msgid "Failed to create initial configuration file %s."
 msgstr "Falha ao criar ficheiro de configuração inicial %s."
 
-#: src/apt-dater.c:105
+#: src/apt-dater.c:104
 msgid "Sorry, apt-dater was compiled w/o report feature!"
 msgstr "Desculpe, o apt-dater foi compilado sem a funcionalidade de reportar!"
 
-#: src/apt-dater.c:115
+#: src/apt-dater.c:114
 #, c-format
 msgid "Usage: %s [-(c config|v|[n]r)]\n"
 msgstr "Utilização: %s [-(c config|v|[n]r)]\n"
 
-#: src/apt-dater.c:117
+#: src/apt-dater.c:116
 #, c-format
 msgid "Usage: %s [-(c config|v)]\n"
 msgstr "Utilização: %s [-(c config|v)]\n"
 
-#: src/apt-dater.c:127 src/apt-dater.c:132
+#: src/apt-dater.c:126 src/apt-dater.c:131
 #, c-format
 msgid "Error on loading config file %s\n"
 msgstr "Erro ao carregar ficheiro de configuração %s\n"
 
-#: src/apt-dater.c:185
+#: src/apt-dater.c:184
 msgid "Cannot open your terminal /proc/self/fd/0 - please check."
 msgstr "Incapaz de abrir o seu terminal /proc/self/fd/0 - por favor verifique."
 
-#: src/colors.c:151
+#: src/colors.c:150
 msgid "Wrong color definition!"
 msgstr "Definição de cor errada!"
 
-#: src/keyfiles.c:51
-#, fuzzy, c-format
+#: src/keyfiles.c:50
+#, c-format
 msgid "Creating default config file %s"
-msgstr "A criar ficheiro %s"
+msgstr "A criar ficheiro de configuração predefinido %s"
 
-#: src/keyfiles.c:53
+#: src/keyfiles.c:52
 #, c-format
 msgid "Could not write to file %s."
 msgstr "Incapaz de escrever no ficheiro %s."
 
-#: src/keyfiles.c:63
+#: src/keyfiles.c:62
 #, c-format
 msgid "Mandatory config file %s does not exist!"
-msgstr ""
+msgstr "O ficheiro de configuração obrigatório %s não existe!"
 
-#: src/lock.c:54
+#: src/lock.c:53
 msgid "Can't get the name of the lock file!"
 msgstr "Incapaz de obter o nome do ficheiro lock!"
 
-#: src/lock.c:75
+#: src/lock.c:74
 #, c-format
 msgid "Failed to get lockfile %s: %s"
 msgstr "Falha ao obter ficheiro lock %s: %s"
 
-#: src/lock.c:79
+#: src/lock.c:78
 #, c-format
 msgid "Can't lock to file %s because function flock() is missing!"
 msgstr ""
 "Incapaz de trancar o ficheiro %s porque a função flock() está em falta!"
 
-#: src/report.c:56
+#: src/report.c:55
 msgid "Error creating the xml output."
 msgstr "Erro ao criar os resultados em xml."
 
-#: src/report.c:61
+#: src/report.c:60
 #, c-format
 msgid "apt-dater is refreshing %d hosts, please standby...\n"
 msgstr "O apt-dater está a refrescar %d máquinas, por favor aguarde...\n"
 
-#: src/stats.c:514
+#: src/stats.c:541
 msgid "Auto refresh triggered..."
 msgstr "Refrescamento automático activado..."
 
-#: src/ui.c:53
+#: src/ui.c:52
 msgid "Updates pending"
 msgstr "Actualizações pendentes"
 
-#: src/ui.c:54
+#: src/ui.c:53
 msgid "Up to date"
 msgstr "Actualizado"
 
-#: src/ui.c:55
+#: src/ui.c:54
 msgid "Broken packages"
 msgstr "Pacotes quebrados"
 
-#: src/ui.c:56 src/ui.c:1417
+#: src/ui.c:55 src/ui.c:1417
 #, c-format
 msgid "Refresh required"
 msgstr "Pedido de refrescamento"
 
-#: src/ui.c:57 src/ui.c:1420
+#: src/ui.c:56 src/ui.c:1420
 #, c-format
 msgid "In refresh"
 msgstr "A refrescar"
 
-#: src/ui.c:58
+#: src/ui.c:57
 msgid "Sessions"
 msgstr "Sessões"
 
-#: src/ui.c:60
+#: src/ui.c:59
 msgid "Filtered"
 msgstr "Filtrado"
 
-#: src/ui.c:62
+#: src/ui.c:61
 msgid "Unknown"
 msgstr "Desconhecido"
 
-#: src/ui.c:155
+#: src/ui.c:154
 msgid "<Left>"
 msgstr "<Esquerda>"
 
-#: src/ui.c:155 src/ui.c:156
+#: src/ui.c:154 src/ui.c:155
 msgid "shrink node"
 msgstr "encolher nó"
 
-#: src/ui.c:157
+#: src/ui.c:156
 msgid "<Right>"
 msgstr "<Direita>"
 
-#: src/ui.c:157 src/ui.c:158
+#: src/ui.c:156 src/ui.c:157
 msgid "expand node"
 msgstr "expandir nó"
 
-#: src/ui.c:159
+#: src/ui.c:158
 msgid "<Space>"
 msgstr "<Espaço>"
 
-#: src/ui.c:159 src/ui.c:160 src/ui.c:161 src/ui.c:170
+#: src/ui.c:158 src/ui.c:159 src/ui.c:160 src/ui.c:169
 msgid "shrink/expand node"
 msgstr "encolher/expandir nó"
 
-#: src/ui.c:160
+#: src/ui.c:159
 msgid "<Return>"
 msgstr "<Retorno>"
 
-#: src/ui.c:161
+#: src/ui.c:160
 msgid "<Enter>"
 msgstr "<Enter>"
 
-#: src/ui.c:162
+#: src/ui.c:161
 msgid "<Up>"
 msgstr "<Cima>"
 
-#: src/ui.c:162 src/ui.c:163
+#: src/ui.c:161 src/ui.c:162
 msgid "move up"
 msgstr "mover para cima"
 
-#: src/ui.c:164
+#: src/ui.c:163
 msgid "<Down>"
 msgstr "<Baixo>"
 
-#: src/ui.c:164 src/ui.c:165
+#: src/ui.c:163 src/ui.c:164
 msgid "move down"
 msgstr "mover para baixo"
 
-#: src/ui.c:166
+#: src/ui.c:165
 msgid "<Home>"
 msgstr "<Home>"
 
-#: src/ui.c:166
+#: src/ui.c:165
 msgid "move to the top"
 msgstr "mover para o topo"
 
-#: src/ui.c:167
+#: src/ui.c:166
 msgid "<End>"
 msgstr "<End>"
 
-#: src/ui.c:167
+#: src/ui.c:166
 msgid "move to the end"
 msgstr "mover para o fim"
 
-#: src/ui.c:168
+#: src/ui.c:167
 msgid "<PageUp>"
 msgstr "<PageUp>"
 
-#: src/ui.c:168
+#: src/ui.c:167
 msgid "previous page"
 msgstr "página anterior"
 
-#: src/ui.c:169
+#: src/ui.c:168
 msgid "<PageDown>"
 msgstr "<PageDown>"
 
-#: src/ui.c:169
+#: src/ui.c:168
 msgid "next page"
 msgstr "próxima pagina"
 
-#: src/ui.c:171
+#: src/ui.c:170
 msgid "quit"
 msgstr "terminar programa"
 
-#: src/ui.c:172
+#: src/ui.c:171
 msgid "help"
 msgstr "ajuda"
 
-#: src/ui.c:173
+#: src/ui.c:172
 msgid "search host"
 msgstr "procurar máquina"
 
-#: src/ui.c:175
+#: src/ui.c:174
 msgid "filter hosts"
 msgstr "filtrar máquinas"
 
-#: src/ui.c:177
+#: src/ui.c:176
 msgid "attach session"
 msgstr "anexar sessão"
 
-#: src/ui.c:178
+#: src/ui.c:177
 msgid "connect host"
 msgstr "ligar a máquina"
 
-#: src/ui.c:179
+#: src/ui.c:178
 msgid "file transfer"
 msgstr "transferência de ficheiro"
 
-#: src/ui.c:180
+#: src/ui.c:179
 msgid "toggle dumps"
 msgstr "trocar despejos"
 
-#: src/ui.c:181
+#: src/ui.c:180
 msgid "refresh host"
 msgstr "refrescar máquina"
 
-#: src/ui.c:182
+#: src/ui.c:181
 msgid "failure diagnostic"
 msgstr "diagnóstico de falha"
 
-#: src/ui.c:183
+#: src/ui.c:182
 msgid "install pkg"
 msgstr "instala pacote"
 
-#: src/ui.c:184
+#: src/ui.c:183
 msgid "upgrade host(s)"
 msgstr "actualizar máquina(s)"
 
-#: src/ui.c:185
+#: src/ui.c:184
 msgid "host details"
 msgstr "detalhes da máquina"
 
-#: src/ui.c:187
+#: src/ui.c:186
 msgid "host history"
 msgstr "histórico da máquina"
 
-#: src/ui.c:188
+#: src/ui.c:187
 msgid "play"
 msgstr "reproduzir"
 
-#: src/ui.c:189
+#: src/ui.c:188
 msgid "display with less"
 msgstr "mostrar com o less"
 
-#: src/ui.c:191
+#: src/ui.c:190
 msgid "next detached session"
 msgstr "próxima sessão desanexada"
 
-#: src/ui.c:192
+#: src/ui.c:191
 msgid "cycle detached sessions"
 msgstr "ciclo a sessões desanexadas"
 
-#: src/ui.c:193
+#: src/ui.c:192
 msgid "tag current host"
 msgstr "marcar máquina actual"
 
-#: src/ui.c:194
+#: src/ui.c:193
 msgid "tag all hosts matching"
 msgstr "marcar todas as máquinas correspondentes"
 
-#: src/ui.c:195
+#: src/ui.c:194
 msgid " ~c tag by codename"
 msgstr " ~c marcar por nome de código"
 
-#: src/ui.c:196
+#: src/ui.c:195
 msgid " ~d tag by distribution"
 msgstr " ~d marcar por distribuição"
 
-#: src/ui.c:197
+#: src/ui.c:196
 msgid " ~f tag by host flags"
 msgstr " ~f marcar por bandeiras da máquina"
 
-#: src/ui.c:198
+#: src/ui.c:197
 msgid " ~g tag by group"
 msgstr " ~g marcar por grupo"
 
-#: src/ui.c:199
+#: src/ui.c:198
 msgid " ~p tag by packages"
 msgstr " ~p marcar por pacotes"
 
-#: src/ui.c:200
+#: src/ui.c:199
 msgid " ~u tag by updates"
 msgstr " ~u marcar por actualizações"
 
-#: src/ui.c:201
+#: src/ui.c:200
 msgid " ~A tag all hosts"
 msgstr " ~A marcar todas as máquinas"
 
-#: src/ui.c:202
+#: src/ui.c:201
 msgid "untag all hosts matching"
 msgstr "desmarcar todas as máquinas correspondentes"
 
-#: src/ui.c:203
+#: src/ui.c:202
 msgid "apply next function to tagged hosts"
 msgstr "aplicar a próxima função às máquinas marcadas"
 
-#: src/ui.c:208
+#: src/ui.c:207
 msgid "some packages are kept back"
 msgstr "alguns pacotes forma mantidos na versão anterior"
 
-#: src/ui.c:209
+#: src/ui.c:208
 msgid "extra packages are installed"
 msgstr "são instalados pacotes extra"
 
+#: src/ui.c:209
+msgid "pending kernel upgrade (ABI compatible)"
+msgstr "pendente de actualização de kernel (compatível com ABI)"
+
 #: src/ui.c:210
-msgid "running kernel is not the latest (reboot required)"
-msgstr ""
-"o kernel a correr não é o mais recente (reiniciar do sistema requerido)"
+msgid "pending kernel upgrade"
+msgstr "pendente de actualização de kernel"
 
 #: src/ui.c:211
-msgid "a selfbuild kernel is running"
-msgstr "está a correr um kernel de compilação própria"
+msgid "unknown kernel upgrade state"
+msgstr "estado desconhecido de actualização de kernel"
 
 #: src/ui.c:212
 msgid "this is a virtualized machine"
@@ -351,7 +354,7 @@ msgstr "esta é uma máquina virtualizada"
 
 #: src/ui.c:214
 msgid "this machine is part of a cluster"
-msgstr ""
+msgstr "esta máquina é parte de um cluster"
 
 #: src/ui.c:589
 msgid "FLAG"
@@ -379,7 +382,7 @@ msgstr "Nome da Máquina:"
 
 #: src/ui.c:659
 msgid "Comment:"
-msgstr ""
+msgstr "Comentário:"
 
 #: src/ui.c:663
 msgid "Machine Type:"
@@ -426,16 +429,16 @@ msgid "Kernel version:"
 msgstr "Versão do kernel:"
 
 #: src/ui.c:720
-msgid "(reboot required)"
-msgstr "(re-iniciação do sistema necessária)"
+msgid "(pending ABI compatible upgrade)"
+msgstr "(pendente de actualização compatível com ABI)"
 
 #: src/ui.c:723
-msgid "(selfbuild kernel)"
-msgstr "(kernel de compilação própria)"
+msgid "(pending upgrade)"
+msgstr "(pendente de actualização)"
 
 #: src/ui.c:738
 msgid "Clusters: "
-msgstr ""
+msgstr "Clusters: "
 
 #: src/ui.c:750
 msgid "Packages: "
@@ -466,9 +469,9 @@ msgid "FAILURE DIAGNOSTIC"
 msgstr "DIAGNÓSTICO DE FALHA"
 
 #: src/ui.c:949
-#, fuzzy, c-format
+#, c-format
 msgid " [Oldest: %x %X]"
-msgstr " [Mais antigo: %D %H:%M]"
+msgstr " [Mais antigo: %x %X]"
 
 #: src/ui.c:1035
 msgid "c"
@@ -742,3 +745,16 @@ msgid "There is %d host in status refresh state, quit apt-dater? [y/N]: "
 msgstr ""
 "Está %d máquina no estado de refrescar o status, terminar o apt-dater? [s/"
 "N]: "
+
+#~ msgid "running kernel is not the latest (reboot required)"
+#~ msgstr ""
+#~ "o kernel a correr não é o mais recente (reiniciar do sistema requerido)"
+
+#~ msgid "a selfbuild kernel is running"
+#~ msgstr "está a correr um kernel de compilação própria"
+
+#~ msgid "(reboot required)"
+#~ msgstr "(re-iniciação do sistema necessária)"
+
+#~ msgid "(selfbuild kernel)"
+#~ msgstr "(kernel de compilação própria)"

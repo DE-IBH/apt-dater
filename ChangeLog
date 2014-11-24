@@ -1,3 +1,16 @@
+apt-dater (1.0.1) unstable; urgency=low
+
+  * Bugfixes:
+    - Documentation bugfix in hosts.config example
+      (host identifiers must not contain dots).
+    - lib/cmd script does not respect AD_SSH_HOST making SSHHost config
+      option useless.
+    - lib/cmd does not run apt-dater-host via SSH in generic-ssh handler.
+  * Update Portuguese translation.
+    (Closes Debian Bug#767524 by Américo Monteiro <a_monteiro@gmx.com>)
+
+ -- Thomas Liske <liske@ibh.de>  Fri, 31 Oct 2014 20:36:23 +0100
+
 apt-dater (1.0.0) unstable; urgency=low
 
   * Update German localization.
@@ -23,7 +36,7 @@ apt-dater (1.0.0) unstable; urgency=low
   * ADP 7.0: Eval needrestart's kernel status to detect kernel updates.
     (Closes github issue #37 by GiNeR)
 
- -- Thomas Liske <liske@ibh.de>  
+ -- Thomas Liske <liske@ibh.de>  Tue, 28 Oct 2014 18:30:10 +0100
 
 apt-dater (0.9.0) unstable; urgency=low
 
