@@ -1,3 +1,11 @@
+apt-dater (1.0.2) unstable; urgency=low
+
+  * Minor bugfixes by Simon Kainz <simon@familiekainz.at>:
+    - Segfaulting due misused g_error() call (Debian Bug#767584).
+    - Typos in manpages (Debian Bug#770444).
+
+ -- Thomas Liske <liske@ibh.de>  
+
 apt-dater (1.0.1) unstable; urgency=low
 
   * Bugfixes:
