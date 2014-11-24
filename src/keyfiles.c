@@ -151,9 +151,9 @@ gboolean loadConfig(char *filename, CfgFile *lcfg) {
     if(config_read_file(&hcfg, filename) == CONFIG_FALSE) {
 #ifdef HAVE_LIBCONFIG_ERROR_MACROS
       const char *efn = config_error_file(&hcfg);
-      g_error ("Error reading config file [%s:%d]: %s", (efn ? efn : filename), config_error_line(&hcfg), config_error_text(&hcfg));
+    g_printerr ("Error reading config file [%s:%d]: %s\n", (efn ? efn : filename), config_error_line(&hcfg), config_error_text(&hcfg));
 #else
-      g_error ("Error reading config file %s!", filename);
+      g_printerr ("Error reading config file %s!\n", filename);
 #endif
 	config_destroy(&hcfg);
 	return (FALSE);
@@ -197,14 +197,14 @@ gboolean loadConfig(char *filename, CfgFile *lcfg) {
 
     h = NULL;
     if(config_setting_lookup_string(s_ssh, "Cmd", (const char **) &h) == CONFIG_FALSE) {
-	g_error ("%s: Config option SSH.Cmd not set!", filename);
+	g_printerr ("%s: Config option SSH.Cmd not set!", filename);
 	return (FALSE);
     }
     lcfg->ssh_cmd = g_strdup(h);
 
     h = NULL;
     if(config_setting_lookup_string(s_ssh, "SFTPCmd", (const char **) &h) == CONFIG_FALSE) {
-	g_error ("%s: Config option SSH.SFTPCmd not set!", filename);
+	g_printerr ("%s: Config option SSH.SFTPCmd not set!", filename);
 	return (FALSE);
     }
     lcfg->sftp_cmd = g_strdup(h);
@@ -228,7 +228,7 @@ gboolean loadConfig(char *filename, CfgFile *lcfg) {
 	    }
 	}
 	else {
-	    g_error ("%s: setting %s must be a single string or an array of strings", filename, config_setting_name(s_addkeys));
+	    g_printerr ("%s: setting %s must be a single string or an array of strings", filename, config_setting_name(s_addkeys));
 	}
     }
 
@@ -295,9 +295,9 @@ GList *loadHosts (const char *filename) {
     if(config_read_file(&hcfg, filename) == CONFIG_FALSE) {
 #ifdef HAVE_LIBCONFIG_ERROR_MACROS
       const char *efn = config_error_file(&hcfg);
-      g_error ("Error reading host file [%s:%d]: %s", (efn ? efn : filename), config_error_line(&hcfg), config_error_text(&hcfg));
+      g_printerr ("Error reading host file [%s:%d]: %s\n", (efn ? efn : filename), config_error_line(&hcfg), config_error_text(&hcfg));
 #else
-      g_error ("Error reading host file %s!", filename);
+      g_printerr ("Error reading host file %s!\n", filename);
 #endif
 	config_destroy(&hcfg);
 	return (FALSE);
@@ -305,7 +305,7 @@ GList *loadHosts (const char *filename) {
 
     config_setting_t *cfghosts = config_lookup(&hcfg, "Hosts");
     if(cfghosts == NULL) {
-	g_error ("%s: No Hosts entries found.", filename);
+	g_printerr ("%s: No Hosts entries found.\n", filename);
 	config_destroy(&hcfg);
 	return (FALSE);
     }

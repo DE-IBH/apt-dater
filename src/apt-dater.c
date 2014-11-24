@@ -123,7 +123,7 @@ int main(int argc, char **argv, char **envp)
  cfg = initialConfig();
 
  if(!(loadConfig(cfgfilename, cfg))) {
-  g_error(_("Error on loading config file %s\n"), cfgfilename);
+  g_printerr(_("Error on loading config file %s\n"), cfgfilename);
   exit(EXIT_FAILURE);
  }
 
