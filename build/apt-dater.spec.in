@@ -89,3 +89,4 @@ make clean
 %{_mandir}/manh/*
 %lang(de) %{_datadir}/locale/de/LC_MESSAGES/apt-dater.mo
 %lang(it) %{_datadir}/locale/it/LC_MESSAGES/apt-dater.mo
+%lang(pt) %{_datadir}/locale/pt/LC_MESSAGES/apt-dater.mo
