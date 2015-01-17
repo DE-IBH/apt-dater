@@ -86,31 +86,12 @@ if test "$enable_clusters" = "yes"; then
     AC_DEFINE(FEAT_CLUSTERS, 1, [ Define if you want 'clusters' support included. ])
 fi
 
-PKG_CHECK_MODULES(LIBCONFIG, "libconfig")
-AC_MSG_CHECKING(libconfig-dev provides config_error_*() macros)
-AC_TRY_LINK([
-	#include <libconfig.h>
-],
-[
-	config_t c;
-	config_error_file(&c);
-	config_error_line(&c);
-],
-[
-	AC_DEFINE(HAVE_LIBCONFIG_ERROR_MACROS, 1, [ Define if your LIBCONFIG provides the config_error_*() macros. ])
-	AC_MSG_RESULT([yes])
-],
-[
-	AC_MSG_RESULT([no])
-])
 AC_SUBST(VERSION)
 AC_SUBST(PACKAGE)
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
 AC_SUBST(LIBXML2_CFLAGS)
 AC_SUBST(LIBXML2_LIBS)
-AC_SUBST(LIBCONFIG_CFLAGS)
-AC_SUBST(LIBCONFIG_LIBS)
 AC_PROG_INSTALL
 
 # Some additional definitions

@@ -633,8 +633,6 @@ TCL_LIBS
 TCL_CFLAGS
 cv_path_tcl
 CURSES_LIB
-LIBCONFIG_LIBS
-LIBCONFIG_CFLAGS
 LIBXML2_LIBS
 LIBXML2_CFLAGS
 GLIB_LIBS
@@ -793,9 +791,7 @@ PKG_CONFIG_LIBDIR
 GLIB_CFLAGS
 GLIB_LIBS
 LIBXML2_CFLAGS
-LIBXML2_LIBS
-LIBCONFIG_CFLAGS
-LIBCONFIG_LIBS'
+LIBXML2_LIBS'
 
 
 # Initialize some variables set by options.
@@ -1460,10 +1456,6 @@ Some influential environment variables:
               C compiler flags for LIBXML2, overriding pkg-config
   LIBXML2_LIBS
               linker flags for LIBXML2, overriding pkg-config
-  LIBCONFIG_CFLAGS
-              C compiler flags for LIBCONFIG, overriding pkg-config
-  LIBCONFIG_LIBS
-              linker flags for LIBCONFIG, overriding pkg-config
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -6718,134 +6710,6 @@ if test "$enable_clusters" = "yes"; then
 $as_echo "#define FEAT_CLUSTERS 1" >>confdefs.h
 
 fi
-
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for LIBCONFIG" >&5
-$as_echo_n "checking for LIBCONFIG... " >&6; }
-
-if test -n "$LIBCONFIG_CFLAGS"; then
-    pkg_cv_LIBCONFIG_CFLAGS="$LIBCONFIG_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\"libconfig\"\""; } >&5
-  ($PKG_CONFIG --exists --print-errors ""libconfig"") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_LIBCONFIG_CFLAGS=`$PKG_CONFIG --cflags ""libconfig"" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$LIBCONFIG_LIBS"; then
-    pkg_cv_LIBCONFIG_LIBS="$LIBCONFIG_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\"libconfig\"\""; } >&5
-  ($PKG_CONFIG --exists --print-errors ""libconfig"") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_LIBCONFIG_LIBS=`$PKG_CONFIG --libs ""libconfig"" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        LIBCONFIG_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs ""libconfig"" 2>&1`
-        else
-	        LIBCONFIG_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs ""libconfig"" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$LIBCONFIG_PKG_ERRORS" >&5
-
-	as_fn_error $? "Package requirements (\"libconfig\") were not met:
-
-$LIBCONFIG_PKG_ERRORS
-
-Consider adjusting the PKG_CONFIG_PATH environment variable if you
-installed software in a non-standard prefix.
-
-Alternatively, you may set the environment variables LIBCONFIG_CFLAGS
-and LIBCONFIG_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details." "$LINENO" 5
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
-is in your PATH or set the PKG_CONFIG environment variable to the full
-path to pkg-config.
-
-Alternatively, you may set the environment variables LIBCONFIG_CFLAGS
-and LIBCONFIG_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details.
-
-To get pkg-config, see <http://pkg-config.freedesktop.org/>.
-See \`config.log' for more details" "$LINENO" 5; }
-else
-	LIBCONFIG_CFLAGS=$pkg_cv_LIBCONFIG_CFLAGS
-	LIBCONFIG_LIBS=$pkg_cv_LIBCONFIG_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking libconfig-dev provides config_error_*() macros" >&5
-$as_echo_n "checking libconfig-dev provides config_error_*() macros... " >&6; }
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-	#include <libconfig.h>
-
-int
-main ()
-{
-
-	config_t c;
-	config_error_file(&c);
-	config_error_line(&c);
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-
-
-$as_echo "#define HAVE_LIBCONFIG_ERROR_MACROS 1" >>confdefs.h
-
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-else
-
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-
 
 
 

@@ -106,12 +106,11 @@ am_apt_dater_OBJECTS = apt-dater.$(OBJEXT) colors.$(OBJEXT) \
 apt_dater_OBJECTS = $(am_apt_dater_OBJECTS)
 am__DEPENDENCIES_1 =
 @LINUX_FALSE@apt_dater_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-@LINUX_FALSE@	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-@LINUX_FALSE@	$(am__DEPENDENCIES_1)
+@LINUX_FALSE@	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 @LINUX_TRUE@apt_dater_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 @LINUX_TRUE@	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-@LINUX_TRUE@	$(am__DEPENDENCIES_1) ../conf/apt-dater.blob \
-@LINUX_TRUE@	../conf/hosts.blob ../conf/screenrc.blob
+@LINUX_TRUE@	../conf/apt-dater.blob ../conf/hosts.blob \
+@LINUX_TRUE@	../conf/screenrc.blob
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -203,8 +202,6 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INTLLIBS = @INTLLIBS@
 INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
 LDFLAGS = @LDFLAGS@
-LIBCONFIG_CFLAGS = @LIBCONFIG_CFLAGS@
-LIBCONFIG_LIBS = @LIBCONFIG_LIBS@
 LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
