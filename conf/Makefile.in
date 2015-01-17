@@ -150,8 +150,6 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 INTLLIBS = @INTLLIBS@
 INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
 LDFLAGS = @LDFLAGS@
-LIBCONFIG_CFLAGS = @LIBCONFIG_CFLAGS@
-LIBCONFIG_LIBS = @LIBCONFIG_LIBS@
 LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
@@ -179,6 +177,7 @@ PKG_CONFIG = @PKG_CONFIG@
 PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
 PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 POSUB = @POSUB@
+SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -349,7 +348,6 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-@LINUX_FALSE@clean-local:
 clean-am: clean-generic clean-local mostlyclean-am
 
 distclean: distclean-am
@@ -427,23 +425,16 @@ uninstall-am:
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
 	pdf-am ps ps-am tags-am uninstall uninstall-am
 
-@LINUX_TRUE@all: apt-dater.blob hosts.blob screenrc.blob
+all: apt-dater.xml.inc hosts.xml.inc screenrc.inc
 
-@LINUX_TRUE@clean-local:
-@LINUX_TRUE@	rm -f *.blob
-@LINUX_FALSE@all:
+clean-local:
+	rm -f *.blob
 
-apt-dater.blob: apt-dater.config
-	$(LD) -r -b binary -o $@ $<
-
-hosts.blob: hosts.config
-	$(LD) -r -b binary -o $@ $<
-
-screenrc.blob: screenrc
-	$(LD) -r -b binary -o $@ $<
+%.inc: %
+	xxd -i $< > $@
 
 clean:
-	rm -f apt-dater.blob hosts.blob screenrc.blob
+	rm -f *.inc
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

@@ -78,7 +78,7 @@ int main(int argc, char **argv, char **envp)
  cfgdirname = g_strdup_printf("%s/%s", g_get_user_config_dir(), PACKAGE);
  if(!cfgdirname) g_error(_("Out of memory."));
 
- cfgfilename = g_strdup_printf("%s/apt-dater.config", cfgdirname);
+ cfgfilename = g_strdup_printf("%s/apt-dater.xml", cfgdirname);
  if(!cfgfilename) g_error(_("Out of memory."));
 
  g_set_prgname(PACKAGE);
