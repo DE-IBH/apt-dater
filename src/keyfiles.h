@@ -31,15 +31,4 @@ gboolean loadConfig (const char *filename, CfgFile *);
 void freeConfig (CfgFile *cfg);
 int chkForInitialConfig(const gchar *, const gchar *);
 
-#ifdef __linux
-#define EXTLD(NAME) \
-  extern const unsigned char _binary_ ## NAME ## _start[]; \
-  extern const unsigned char _binary_ ## NAME ## _end[];
-#define LDVAR(NAME) \
-  _binary_ ## NAME ## _start
-#define LDLEN(NAME) \
-  ((_binary_ ## NAME ## _end) - (_binary_ ## NAME ## _start))
-#endif
-
 #endif /* _KEYFILES_H */
-

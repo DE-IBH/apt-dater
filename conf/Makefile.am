@@ -1,20 +1,10 @@
-if LINUX
-all: apt-dater.blob hosts.blob screenrc.blob
+all: apt-dater.xml.inc hosts.xml.inc screenrc.inc
 
 clean-local:
 	rm -f *.blob
-else
-all:
-endif
 
-apt-dater.blob: apt-dater.config
-	$(LD) -r -b binary -o $@ $<
-
-hosts.blob: hosts.config
-	$(LD) -r -b binary -o $@ $<
-
-screenrc.blob: screenrc
-	$(LD) -r -b binary -o $@ $<
+%.inc: %
+	xxd -i $< > $@
 
 clean:
-	rm -f apt-dater.blob hosts.blob screenrc.blob
+	rm -f *.inc

@@ -35,43 +35,38 @@
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
 
-#ifdef __linux
-EXTLD(apt_dater_config);
-EXTLD(hosts_config);
-EXTLD(screenrc);
-#endif
+#include "../conf/apt-dater.xml.inc"
+#include "../conf/hosts.xml.inc"
+#include "../conf/screenrc.inc"
 
-#ifdef __linux
-#define DUMP_CONFIG(fn, bin)						\
-  pathtofile = g_strdup_printf("%s/%s", cfgdir, (fn));			\
-  if(!pathtofile) g_error(_("Out of memory."));				\
-  if(g_file_test(pathtofile, G_FILE_TEST_IS_REGULAR|G_FILE_TEST_EXISTS) == FALSE) { \
-    FILE *fp = NULL;							\
-    fp = fopen(pathtofile, "wx");					\
-    g_message(_("Creating default config file %s"), pathtofile);	\
-    if(fp) {								\
-      if(fwrite(LDVAR(bin), LDLEN(bin), 1, fp) != 1) g_error(_("Could not write to file %s."), pathtofile); \
-      fclose(fp);							\
-    }									\
-  }									\
-  g_free(pathtofile); 
-#else
-#define DUMP_CONFIG(fn, bin)						\
-  pathtofile = g_strdup_printf("%s/%s", cfgdir, (fn));			\
-  if(!pathtofile) g_error(_("Out of memory."));				\
-  if(g_file_test(pathtofile, G_FILE_TEST_IS_REGULAR|G_FILE_TEST_EXISTS) == FALSE) \
-    g_error(_("Mandatory config file %s does not exist!"), pathtofile)
-#endif
+void dump_config(const gchar *dir, const gchar *fn, const gchar *str, const unsigned int len) {
+  gchar *pathtofile = g_strdup_printf("%s/%s", dir, (fn));
+
+  if(!pathtofile)
+    g_error(_("Out of memory."));
+
+  if(g_file_test(pathtofile, G_FILE_TEST_IS_REGULAR|G_FILE_TEST_EXISTS) == FALSE) {
+    FILE *fp = fopen(pathtofile, "wx");
+    g_message(_("Creating default config file %s"), pathtofile);
+    if(fp) {
+      if(fwrite(str, len, 1, fp) != 1) {
+	g_printerr(_("Could not write to file %s."), pathtofile);
+	exit(1);
+      }
+      fclose(fp);
+    }
+  }
+  g_free(pathtofile);
+}
 
 int chkForInitialConfig(const gchar *cfgdir, const gchar *cfgfile) {
   if(g_file_test(cfgdir, G_FILE_TEST_IS_DIR) == FALSE) {
     if(g_mkdir_with_parents (cfgdir, 0700)) return(1);
   }
-  
-  gchar *pathtofile;
-  DUMP_CONFIG("apt-dater.config", apt_dater_config);
-  DUMP_CONFIG("hosts.config", hosts_config);
-  DUMP_CONFIG("screenrc", screenrc);
+
+  dump_config(cfgdir, "apt-dater.xml", (gchar *)apt_dater_xml, apt_dater_xml_len);
+  dump_config(cfgdir, "hosts.xml", (gchar *)hosts_xml, hosts_xml_len);
+  dump_config(cfgdir, "screenrc", (gchar *)screenrc, screenrc_len);
 
  return(0);
 }

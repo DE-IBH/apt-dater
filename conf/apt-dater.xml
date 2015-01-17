@@ -1,0 +1,93 @@
+<apt-dater>
+    <!--
+	SSH(1) options
+
+    <ssh
+	cmd="/usr/bin/ssh"
+	opt-cmd-flags="-t"
+	sftp-cmd="/usr/bin/sftp"
+	spawn-agent="false">
+
+        <add-key fn="/path/to/id_rsa1"/>
+        <add-key fn="/path/to/id_rsa2"/>
+    </ssh>
+    -->
+
+    <!--
+	Path to hosts file and status directory.
+
+    <paths
+	hosts-file="path-to/hosts.conf"
+	stats-dir="path-to/stats"/>
+    -->
+
+    <!--
+	SCREEN(1) options
+
+    <screen
+	rc-file="path-to/screenrc"
+	title="%m # %u@%h:%p"/>
+    -->
+
+    <!--
+	 Colors      = (COMPONENT FG BG ';')*
+	 COMPONENT ::= 'default' | 'menu' | 'status' | 'selector' | 'hoststatus' |
+	               'query' | 'input'
+	 FG        ::= COLOR
+	 BG        ::= COLOR
+	 COLOR     ::= 'black' | 'blue' | 'cyan' | 'green' | 'magenta' | 'red' |
+	               'white' | 'yellow'
+
+    <appearance:
+	colors="menu brightgreen blue;status brightgreen blue;selector black red;"/>
+    -->
+
+    <!--
+	Notify user by terminal bell and/or screen flash.
+
+    <notify
+	beep="true"
+	flash="true"/>
+    -->
+
+    <!--
+	plugin-dir  : directory containing host plugins
+	(pre|post)-*: run hooks before or after executing an action on a host
+
+    <hooks
+	pluginDir="etc/apt-dater/plugins";
+
+	pre-upgrade="/etc/apt-dater/pre-upg.d"
+	post-upgrade="etc/apt-dater/post-upg.d"
+	pre-refresh="etc/apt-dater/pre-ref.d"
+	post-refresh="etc/apt-dater/post-ref.d"
+	pre-install="etc/apt-dater/pre-ins.d"
+	post-install="etc/apt-dater/post-ins.d"
+	pre-connect="etc/apt-dater/pre-con.d"
+	post-connect="etc/apt-dater/post-con.d"/>
+    -->
+
+    <!--
+	Requires apt-dater to be build with enable-autoref.
+
+    <auto-ref
+        enabled="true"/>
+    -->
+
+    <!--
+	Requires apt-dater to be build with enable-history.
+
+    <history
+        record="true"
+	err-pattern="((?<!no )error|warning|fail)"/>
+    </history>
+    -->
+
+    <!--
+	Requires apt-dater to be build with enable-tclfilter.
+
+        <tcl-filter
+	    FilterExp="return [expr [string compare $lsb_distri \\\"Debian\\\"] == 0 && $lsb_rel < 4.0]"
+	    FilterFile="/path/to/file.tcl" />
+    -->
+</apt-dater>
