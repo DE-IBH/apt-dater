@@ -146,7 +146,7 @@ xmlDocPtr loadXFile(const char *filename) {
 }
 
 xmlXPathObjectPtr evalXPath(xmlXPathContextPtr context, const gchar *xpath) {
-  xmlXPathObjectPtr result = xmlXPathEvalExpression((xmlChar *)xpath, context);
+  xmlXPathObjectPtr result = xmlXPathEvalExpression(BAD_CAST(xpath), context);
   if(result == NULL) {
     g_warning("xmlXPathEvalExpression '%s' failed!\n", xpath);
     exit(1);
@@ -160,7 +160,7 @@ char *getXPropStr(const xmlNodePtr nodes[], const gchar *attr, const gchar *defv
   xmlChar *val = NULL;
 
   for(i = 0; nodes[i]; i++) {
-    val = xmlGetProp(nodes[i], (xmlChar *) attr);
+    val = xmlGetProp(nodes[i], BAD_CAST(attr));
 
     if(val) {
       gchar *ret = g_strdup((gchar *)val);
@@ -334,7 +334,7 @@ GList *loadHosts (const gchar *filename) {
     for(i = 0; i < groups->nodesetval->nodeNr; i++) {
       xmlNodePtr group = groups->nodesetval->nodeTab[i];
 
-      xmlChar *groupname = xmlGetProp(group, (xmlChar *)"name");
+      xmlChar *groupname = xmlGetProp(group, BAD_CAST("name"));
       if(!groupname) {
 	g_printerr("%s: The group element #%d does not have a name attribute!\n", filename, i+1);
 	return(FALSE);
@@ -355,7 +355,7 @@ GList *loadHosts (const gchar *filename) {
 	xmlNodePtr host = hosts->nodesetval->nodeTab[j];
 	xmlNodePtr cfgnodes[4] = {host, group, defhost, NULL};
 
-	xmlChar *hostname = xmlGetProp(host, (xmlChar *)"name");
+	xmlChar *hostname = xmlGetProp(host, BAD_CAST("name"));
 	if(!hostname) {
 	  g_printerr("%s: The host element #%d of group '%s' does not have a name attribute!\n", filename, j+1, groupname);
 
