@@ -269,7 +269,7 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     lcfg->dump_screen = !getXPropBool(s_screen, "no-dumps", FALSE);
     lcfg->query_maintainer = getXPropBool(s_screen, "query-maintainer", FALSE);
 
-    gchar *colors = getXPropStr(s_appearance, "colors", NULL);
+    gchar *colors = getXPropStr(s_appearance, "colors", "menu brightgreen blue;status brightgreen blue;selector black red;");
     if(colors)
       lcfg->colors = g_strsplit(colors, ";", -1);
 
