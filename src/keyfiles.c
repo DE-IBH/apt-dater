@@ -345,6 +345,13 @@ GList *loadHosts (const gchar *filename) {
       return(FALSE);
     }
 
+    /* Lookup global host template node. */
+    xmlXPathObjectPtr defaults = evalXPath(xctx, "/hosts/default");
+    xmlNodePtr defhost = NULL;
+    if(!xmlXPathNodeSetIsEmpty(defaults->nodesetval))
+      defhost = defaults->nodesetval->nodeTab[0];
+    xmlXPathFreeObject(defaults);
+
     /* Iterate over /hosts/group nodes. */
     xmlXPathObjectPtr groups = evalXPath(xctx, "/hosts/group");
     int i;
@@ -361,6 +368,7 @@ GList *loadHosts (const gchar *filename) {
       xctx->node = group;
       xmlXPathObjectPtr hosts = evalXPath(xctx, "host");
       if(xmlXPathNodeSetIsEmpty(hosts->nodesetval)) {
+	xmlXPathFreeObject(hosts);
 	xmlFree(groupname);
 	g_warning("%s: The group '%s' is empty!\n", filename, groupname);
 	continue;
@@ -370,11 +378,15 @@ GList *loadHosts (const gchar *filename) {
       int j;
       for(j = 0; j < hosts->nodesetval->nodeNr; j++) {
 	xmlNodePtr host = hosts->nodesetval->nodeTab[j];
-	xmlNodePtr cfgnodes[4] = {host, group, NULL, NULL};
+	xmlNodePtr cfgnodes[4] = {host, group, defhost, NULL};
 
 	xmlChar *hostname = xmlGetProp(host, (xmlChar *)"name");
 	if(!hostname) {
 	  g_printerr("%s: The host element #%d of group '%s' does not have a name attribute!\n", filename, j+1, groupname);
+
+	  xmlXPathFreeObject(hosts);
+	  xmlXPathFreeObject(groups);
+	  xmlFree(groupname);
 	  return(FALSE);
 	}
 
@@ -404,8 +416,10 @@ GList *loadHosts (const gchar *filename) {
 	xmlFree(hostname);
       }
 
+      xmlXPathFreeObject(hosts);
       xmlFree(groupname);
     }
 
+    xmlXPathFreeObject(groups);
     return hostlist;
 }
