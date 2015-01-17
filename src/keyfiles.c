@@ -254,7 +254,7 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     lcfg->screentitle = getXPropStr(s_screen, "title", g_strdup("%m # %U%H"));
 
 
-    lcfg->ssh_agent = getXPropBool(s_ssh, "spawn-agent", lcfg->ssh_agent);
+    lcfg->ssh_agent = getXPropBool(s_ssh, "spawn-agent", FALSE);
 
     xmlNodeSetPtr s_addkeys = getXNodes(xctx, "/apt-dater/ssh/add-key");
     if(!xmlXPathNodeSetIsEmpty(s_addkeys)) {
