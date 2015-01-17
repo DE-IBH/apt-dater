@@ -129,17 +129,6 @@ CfgFile *initialConfig() {
     return lcfg;
 }
 
-xmlDocPtr loadXFile(const char *filename) {
-  xmlDocPtr xml = xmlParseFile(filename);
-
-  if(xml == NULL) {
-    g_printerr ("%s: Error parsing XML document.\n", filename);
-    exit(1);
-  }
-
-  return xml;
-}
-
 xmlXPathObjectPtr evalXPath(xmlXPathContextPtr context, const gchar *xpath) {
   xmlXPathObjectPtr result = xmlXPathEvalExpression(BAD_CAST(xpath), context);
   if(result == NULL) {
@@ -184,7 +173,31 @@ int getXPropInt(const xmlNodePtr nodes[], const gchar *attr, const int defval) {
 }
 
 int getXPropBool(const xmlNodePtr nodes[], const gchar *attr, const gboolean defval) {
-  return defval;
+  gchar *val = getXPropStr(nodes, attr, NULL);
+  if(!val)
+    return defval;
+
+  g_strstrip(val);
+
+  if(g_ascii_strncasecmp(val, "false", 1) == 0 ||
+     g_ascii_strncasecmp(val, "no", 1) == 0) {
+    g_free(val);
+    return FALSE;
+  }
+
+  if(g_ascii_strncasecmp(val, "true", 1) == 0 ||
+     g_ascii_strncasecmp(val, "yes", 1) == 0) {
+    g_free(val);
+    return TRUE;
+  }
+
+  if(atoi(val)) {
+    g_free(val);
+    return TRUE;
+  }
+
+  g_free(val);
+  return FALSE;
 }
 
 xmlNodeSetPtr getXNodes(xmlXPathContextPtr context, const gchar *xpath) {
@@ -209,10 +222,8 @@ xmlNodePtr getXNode(xmlXPathContextPtr context, const gchar *xpath) {
 gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     /* Parse hosts.xml document. */
     xmlDocPtr xcfg = xmlParseFile(filename);
-    if(xcfg == NULL) {
-      g_printerr ("%s: Error parsing XML document.\n", filename);
+    if(xcfg == NULL)
       return(FALSE);
-    }
 
     /* Allocate XPath context. */
     xmlXPathContextPtr xctx = xmlXPathNewContext(xcfg);
@@ -303,10 +314,8 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
 GList *loadHosts (const gchar *filename) {
     /* Parse hosts.xml document. */
     xmlDocPtr xcfg = xmlParseFile(filename);
-    if(xcfg == NULL) {
-      g_printerr ("%s: Error parsing XML document.\n", filename);
+    if(xcfg == NULL)
       return(FALSE);
-    }
 
     /* Allocate XPath context. */
     xmlXPathContextPtr xctx = xmlXPathNewContext(xcfg);
