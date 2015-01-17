@@ -1,0 +1,43 @@
+<!--
+    Hosts file of apt-dater (parsed by libxml2)
+    ===========================================
+
+    hosts.xml configures the hosts which are managed by
+    apt-dater. Host options (except 'name') are lookuped as attributes
+    at the host node itself, the parent group node and the global
+    /hosts/default node.
+
+    The following attributes are known:
+    - name    : visible name of the host or group (required)
+    - comment : text shown in 'host details' screen
+    - type    : transport type (default: 'generic-ssh')
+    - ssh-user: overwrite SSH username
+    - ssh-host: overwrite SSH host (defaults to $name)
+    - ssh-port: overwrite SSH port
+    - ssh-id  : overwrite SSH identification file
+
+    Example:
+
+    <hosts>
+      <default ssh-user="admin"/>
+
+      <group name="Internal Hosts" ssh-user="root">
+        <host name="server1.internal"/>
+        <host name="server2.internal"/>
+        <host name="John's Machine" ssh-host="workstation.internal" />
+      </group>
+
+      <group name="External Hosts">
+        <host name="external.ibh.net" ssh-port="443"/>
+      </group>
+
+      ...
+
+    </hosts>
+-->
+
+<hosts>
+  <group name="Localnet">
+    <host name="localhost" comment="Edit ~/.config/apt-dater/hosts.xml!"/>
+  </group>
+</hosts>
