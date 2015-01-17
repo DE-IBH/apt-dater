@@ -87,7 +87,7 @@
 	Requires apt-dater to be build with enable-tclfilter.
 
         <tcl-filter
-	    FilterExp="return [expr [string compare $lsb_distri \\\"Debian\\\"] == 0 && $lsb_rel < 4.0]"
-	    FilterFile="/path/to/file.tcl" />
+	    filter-exp="return [expr [string compare $lsb_distri \\\"Debian\\\"] == 0 && $lsb_rel < 4.0]"
+	    filter-file="/path/to/file.tcl" />
     -->
 </apt-dater>

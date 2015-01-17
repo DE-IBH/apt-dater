@@ -280,8 +280,8 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
       lcfg->colors = g_strsplit(colors, ";", -1);
 
 #ifdef FEAT_TCLFILTER
-    config_setting_lookup_string(&s_tclfilter, "FilterExp", &(lcfg->filterexp));
-    config_setting_lookup_string(&s_tclfilter, "FilterFile", &(lcfg->filterfile));
+    lcfg->filterexp = getXPropStr(s_tclfilter, "filter-exp", NULL);
+    lcfg->filterfile = getXPropStr(s_tclfilter, "filter-file", NULL);
 #endif
 
 #ifdef FEAT_AUTOREF

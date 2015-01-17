@@ -6803,7 +6803,6 @@ fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $enable_xmlreport" >&5
 $as_echo "$enable_xmlreport" >&6; }
-if test "$enable_xmlreport" = "yes"; then
 
 pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for LIBXML2" >&5
@@ -6875,7 +6874,7 @@ else
 $as_echo "yes" >&6; }
 	skip_xmlreport=no
 fi
-
+if test "$enable_xmlreport" = "yes"; then
     if test "$skip_xmlreport" = "no"; then
 
 $as_echo "#define FEAT_XMLREPORT 1" >>confdefs.h
