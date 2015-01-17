@@ -33,6 +33,8 @@
 #endif
 
 #include <libconfig.h>
+#include <libxml/parser.h>
+#include <libxml/xpath.h>
 
 #ifdef __linux
 EXTLD(apt_dater_config);
@@ -98,7 +100,7 @@ CfgFile *initialConfig() {
     lcfg->_type = T_CFGFILE;
 #endif
 
-    lcfg->hostsfile = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.conf");
+    lcfg->hostsfile = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.xml");
     lcfg->statsdir = g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats");
 
     lcfg->screenrcfile = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc");
@@ -188,7 +190,7 @@ gboolean loadConfig(char *filename, CfgFile *lcfg) {
     config_setting_lookup_string(s_ssh, "OptionalCmdFlags", (const char **) &h);
     lcfg->ssh_optflags = (h ? g_strdup(h) : NULL);
 
-    CFG_GET_STRING_DEFAULT(s_paths, "HostsFile", lcfg->hostsfile, g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.config"));
+    CFG_GET_STRING_DEFAULT(s_paths, "HostsFile", lcfg->hostsfile, g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.xml"));
     CFG_GET_STRING_DEFAULT(s_paths, "StatsDir", lcfg->statsdir, g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats"));
     g_mkdir_with_parents(lcfg->statsdir, S_IRWXU | S_IRWXG | S_IRWXO);
 
@@ -275,79 +277,135 @@ gboolean loadConfig(char *filename, CfgFile *lcfg) {
     return (TRUE);
 }
 
-#define HCFG_GET_STRING(setting,var,def) \
-    var = (def); \
-    if(config_setting_lookup_string( cfghost, (setting), (const char **) &var) == CONFIG_FALSE) \
-    if(config_setting_lookup_string(cfggroup, (setting), (const char **) &var) == CONFIG_FALSE) \
-    config_setting_lookup_string(cfghosts, (setting), (const char **) &var); \
-    if(var != NULL) var = g_strdup(var)
+xmlDocPtr loadXFile(const char *filename) {
+  xmlDocPtr xml = xmlParseFile(filename);
 
-#define HCFG_GET_INT(setting,var,def) \
-    var = (def); \
-    if(config_setting_lookup_int( cfghost, (setting), &var) == CONFIG_FALSE) \
-    if(config_setting_lookup_int(cfggroup, (setting), &var) == CONFIG_FALSE) \
-    config_setting_lookup_int(cfghosts, (setting), &var)
+  if(xml == NULL) {
+    g_printerr ("%s: Error parsing XML document.\n", filename);
+    exit(1);
+  }
 
-GList *loadHosts (const char *filename) {
-    config_t hcfg;
+  return xml;
+}
 
-    config_init(&hcfg);
-    if(config_read_file(&hcfg, filename) == CONFIG_FALSE) {
-#ifdef HAVE_LIBCONFIG_ERROR_MACROS
-      const char *efn = config_error_file(&hcfg);
-      g_printerr ("Error reading host file [%s:%d]: %s\n", (efn ? efn : filename), config_error_line(&hcfg), config_error_text(&hcfg));
-#else
-      g_printerr ("Error reading host file %s!\n", filename);
-#endif
-	config_destroy(&hcfg);
-	return (FALSE);
+xmlXPathObjectPtr evalXPath(xmlXPathContextPtr context, const gchar *xpath) {
+  xmlXPathObjectPtr result = xmlXPathEvalExpression((xmlChar *)xpath, context);
+  if(result == NULL) {
+    g_warning("xmlXPathEvalExpression '%s' failed!\n", xpath);
+    exit(1);
+  }
+
+  return result;
+}
+
+char *getXPropStr(const xmlNodePtr nodes[], const gchar *attr, const gchar *defval) {
+  int i;
+  xmlChar *val = NULL;
+
+  for(i = 0; nodes[i]; i++) {
+    val = xmlGetProp(nodes[i], (xmlChar *) attr);
+
+    if(val) {
+      gchar *ret = g_strdup((gchar *)val);
+      xmlFree(val);
+      return ret;
+    }
+  }
+
+  if(defval)
+    return g_strdup(defval);
+
+  return NULL;
+}
+
+int getXPropInt(const xmlNodePtr nodes[], const gchar *attr, const int defval) {
+  gchar *sval = getXPropStr(nodes, attr, NULL);
+
+  if(!sval)
+    return defval;
+
+  int ival = atoi(sval);
+
+  g_free(sval);
+
+  return ival;
+}
+
+GList *loadHosts (const gchar *filename) {
+    /* Parse hosts.xml document. */
+    xmlDocPtr xcfg = xmlParseFile(filename);
+    if(xcfg == NULL) {
+      g_printerr ("%s: Error parsing XML document.\n", filename);
+      return(FALSE);
+    }
+    /* Allocate XPath context. */
+    xmlXPathContextPtr xctx = xmlXPathNewContext(xcfg);
+    if(!xctx) {
+      g_error("%s: xmlXPathNewContext failed!\n", filename);
+      return(FALSE);
     }
 
-    config_setting_t *cfghosts = config_lookup(&hcfg, "Hosts");
-    if(cfghosts == NULL) {
-	g_printerr ("%s: No Hosts entries found.\n", filename);
-	config_destroy(&hcfg);
-	return (FALSE);
-    }
-
-    GList *hosts = NULL;
+    /* Iterate over /hosts/group nodes. */
+    xmlXPathObjectPtr groups = evalXPath(xctx, "/hosts/group");
     int i;
-    config_setting_t *cfggroup;
-    for(i=0; (cfggroup = config_setting_get_elem(cfghosts, i)); i++) {
-	int j;
-	gchar *group;
-	CFG_GET_STRING_DEFAULT(cfggroup, "Title", group, config_setting_name(cfggroup));
+    GList *hostlist = NULL;
+    for(i = 0; i < groups->nodesetval->nodeNr; i++) {
+      xmlNodePtr group = groups->nodesetval->nodeTab[i];
 
-	config_setting_t *cfghost;
-	for(j=0; (cfghost = config_setting_get_elem(cfggroup, j)); j++) {
-	    if(cfghost->type != CONFIG_TYPE_GROUP)
-	      continue;
+      xmlChar *groupname = xmlGetProp(group, (xmlChar *)"name");
+      if(!groupname) {
+	g_printerr("%s: The group element #%d does not have a name attribute!\n", filename, i+1);
+	return(FALSE);
+      }
 
-	    HostNode *hostnode = g_new0(HostNode, 1);
-#ifndef NDEBUG
-	    hostnode->_type = T_HOSTNODE;
-#endif
-	    hostnode->hostname = g_strdup(cfghost->name);
-	    HCFG_GET_STRING("Comment", hostnode->comment, NULL);
-	    HCFG_GET_STRING("Type", hostnode->type, "generic-ssh");
-	    HCFG_GET_STRING("SSHUser", hostnode->ssh_user, NULL);
-	    HCFG_GET_STRING("SSHHost", hostnode->ssh_host, NULL);
-	    HCFG_GET_INT("SSHPort", hostnode->ssh_port, 0);
-	    HCFG_GET_STRING("SSHIdentity", hostnode->identity_file, NULL);
+      xctx->node = group;
+      xmlXPathObjectPtr hosts = evalXPath(xctx, "host");
+      if(xmlXPathNodeSetIsEmpty(hosts->nodesetval)) {
+	xmlFree(groupname);
+	g_warning("%s: The group '%s' is empty!\n", filename, groupname);
+	continue;
+      }
 
-	    hostnode->group = g_strdup(group);
+      /* Iterate over /hosts/group/host nodes. */
+      int j;
+      for(j = 0; j < hosts->nodesetval->nodeNr; j++) {
+	xmlNodePtr host = hosts->nodesetval->nodeTab[j];
+	xmlNodePtr cfgnodes[4] = {host, group, NULL, NULL};
 
-	    hostnode->statsfile = g_strdup_printf("%s/%s:%d.stat", cfg->statsdir, hostnode->hostname, hostnode->ssh_port);
-	    hostnode->fdlock = -1;
-	    hostnode->uuid[0] = 0;
-	    hostnode->tagged = FALSE;
-
-	    getUpdatesFromStat(hostnode);
-
-	    hosts = g_list_append(hosts, hostnode);
+	xmlChar *hostname = xmlGetProp(host, (xmlChar *)"name");
+	if(!hostname) {
+	  g_printerr("%s: The host element #%d of group '%s' does not have a name attribute!\n", filename, j+1, groupname);
+	  return(FALSE);
 	}
+
+	HostNode *hostnode = g_new0(HostNode, 1);
+#ifndef NDEBUG
+	hostnode->_type = T_HOSTNODE;
+#endif
+	hostnode->hostname = g_strdup((gchar *)hostname);
+	hostnode->comment = getXPropStr(cfgnodes, "comment", NULL);
+	hostnode->type = getXPropStr(cfgnodes, "type", "generic-ssh");
+	hostnode->ssh_user = getXPropStr(cfgnodes, "ssh-user", NULL);
+	hostnode->ssh_host = getXPropStr(cfgnodes, "ssh-host", NULL);
+	hostnode->ssh_port = getXPropInt(cfgnodes, "ssh-port", 0);
+	hostnode->identity_file = getXPropStr(cfgnodes, "ssh-id", NULL);
+
+	hostnode->group = g_strdup((gchar *)groupname);
+
+	hostnode->statsfile = g_strdup_printf("%s/%s:%d.stat", cfg->statsdir, hostnode->hostname, hostnode->ssh_port);
+	hostnode->fdlock = -1;
+	hostnode->uuid[0] = 0;
+	hostnode->tagged = FALSE;
+
+	getUpdatesFromStat(hostnode);
+
+	hostlist = g_list_append(hostlist, hostnode);
+
+	xmlFree(hostname);
+      }
+
+      xmlFree(groupname);
     }
 
-    config_destroy(&hcfg);
-    return hosts;
+    return hostlist;
 }
