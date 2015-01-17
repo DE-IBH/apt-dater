@@ -1,12 +1,11 @@
-2015-01-17  gettextize  <bug-gnu-gettext@gnu.org>
-
-	* configure.ac (AM_GNU_GETTEXT_VERSION): Bump to 0.19.3.
-
 apt-dater (1.0.2) unstable; urgency=low
 
   * Minor bugfixes by Simon Kainz <simon@familiekainz.at>:
     - Segfaulting due misused g_error() call (Debian Bug#767584).
     - Typos in manpages (Debian Bug#770444).
+  * Drop linking binary blobs for default configs, use portable xxd
+    based implementation (Debian Bug#767594).
+  * Switching config engine again: libxml2
 
  -- Thomas Liske <liske@ibh.de>  
 
