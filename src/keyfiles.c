@@ -32,7 +32,6 @@
 # include "config.h"
 #endif
 
-#include <libconfig.h>
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
 
@@ -135,148 +134,6 @@ CfgFile *initialConfig() {
     return lcfg;
 }
 
-#define CFG_GET_BOOL_DEFAULT(setting,key,var,def) \
-    var = (def); \
-    if((setting)) \
-        config_setting_lookup_bool((setting), (key), &(var));
-#define CFG_GET_STRING_DEFAULT(setting,key,var,def) \
-    var = (def); \
-    if((setting)) \
-        config_setting_lookup_string((setting), (key), (const char **) &(var)); \
-    if(var != NULL) var = g_strdup(var);
-
-gboolean loadConfig(char *filename, CfgFile *lcfg) {
-
-    config_t hcfg;
-
-    config_init(&hcfg);
-    if(config_read_file(&hcfg, filename) == CONFIG_FALSE) {
-#ifdef HAVE_LIBCONFIG_ERROR_MACROS
-      const char *efn = config_error_file(&hcfg);
-    g_printerr ("Error reading config file [%s:%d]: %s\n", (efn ? efn : filename), config_error_line(&hcfg), config_error_text(&hcfg));
-#else
-      g_printerr ("Error reading config file %s!\n", filename);
-#endif
-	config_destroy(&hcfg);
-	return (FALSE);
-    }
-
-#define GETREQ_SETTING_T(varn, sectn) \
-    config_setting_t *(varn) = config_lookup(&hcfg, (sectn)); \
-    if(!(varn)) {					      \
-        g_error ("Missing section %s in config file %s!", (sectn), filename); \
-	config_destroy(&hcfg); \
-	return (FALSE); \
-    }
-
-    //    config_setting_t *s_ssh = config_lookup(&hcfg, "SSH");
-    GETREQ_SETTING_T(s_ssh, "SSH");
-    config_setting_t *s_paths = config_lookup(&hcfg, "Paths");
-    config_setting_t *s_screen = config_lookup(&hcfg, "Screen");
-    config_setting_t *s_appearance = config_lookup(&hcfg, "Appearance");
-    config_setting_t *s_notify = config_lookup(&hcfg, "Notify");
-    config_setting_t *s_hooks = config_lookup(&hcfg, "Hooks");
-#ifdef FEAT_AUTOREF
-    config_setting_t *s_autoref = config_lookup(&hcfg, "AutoRef");
-#endif
-#ifdef FEAT_HISTORY
-    config_setting_t *s_history = config_lookup(&hcfg, "History");
-#endif
-#ifdef FEAT_TCLFILTER
-    config_setting_t *s_tclfilter = config_lookup(&hcfg, "TCLFilter");
-#endif
-
-    gchar *h;
-    config_setting_lookup_string(s_ssh, "OptionalCmdFlags", (const char **) &h);
-    lcfg->ssh_optflags = (h ? g_strdup(h) : NULL);
-
-    CFG_GET_STRING_DEFAULT(s_paths, "HostsFile", lcfg->hostsfile, g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.xml"));
-    CFG_GET_STRING_DEFAULT(s_paths, "StatsDir", lcfg->statsdir, g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats"));
-    g_mkdir_with_parents(lcfg->statsdir, S_IRWXU | S_IRWXG | S_IRWXO);
-
-    CFG_GET_STRING_DEFAULT(s_screen, "RCFile", lcfg->screenrcfile, g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc"));
-    CFG_GET_STRING_DEFAULT(s_screen, "Title", lcfg->screentitle, g_strdup("%m # %U%H"));
-
-    h = NULL;
-    if(config_setting_lookup_string(s_ssh, "Cmd", (const char **) &h) == CONFIG_FALSE) {
-	g_printerr ("%s: Config option SSH.Cmd not set!", filename);
-	return (FALSE);
-    }
-    lcfg->ssh_cmd = g_strdup(h);
-
-    h = NULL;
-    if(config_setting_lookup_string(s_ssh, "SFTPCmd", (const char **) &h) == CONFIG_FALSE) {
-	g_printerr ("%s: Config option SSH.SFTPCmd not set!", filename);
-	return (FALSE);
-    }
-    lcfg->sftp_cmd = g_strdup(h);
-
-    config_setting_lookup_bool(s_ssh, "SpawnAgent", &(lcfg->ssh_agent));
-
-    config_setting_t *s_addkeys = config_setting_get_member(s_ssh, "AddKeys");
-    if(s_addkeys != NULL) {
-	if(config_setting_type(s_addkeys) == CONFIG_TYPE_STRING) {
-	    lcfg->ssh_add = g_new0(char*, 2);
-	    lcfg->ssh_add[0] = g_strdup(config_setting_get_string(s_addkeys));
-	}
-	else if(config_setting_type(s_addkeys) == CONFIG_TYPE_ARRAY) {
-	    int len = config_setting_length(s_addkeys);
-	    int i;
-
-	    lcfg->ssh_add = g_new0(char*, len + 1);
-	    for(i = 0; i<len; i++) {
-		config_setting_t *e = config_setting_get_elem(s_addkeys, i++);
-		lcfg->ssh_add[i] = g_strdup(config_setting_get_string(e));
-	    }
-	}
-	else {
-	    g_printerr ("%s: setting %s must be a single string or an array of strings", filename, config_setting_name(s_addkeys));
-	}
-    }
-
-    CFG_GET_BOOL_DEFAULT(s_screen, "NoDumps", lcfg->dump_screen, FALSE);
-    lcfg->dump_screen = !lcfg->dump_screen;
-
-    CFG_GET_BOOL_DEFAULT(s_screen, "QueryMaintainer", lcfg->query_maintainer, FALSE);
-
-    h = NULL;
-    if(config_setting_lookup_string(s_appearance, "Colors", (const char **) &h) != CONFIG_FALSE)
-      lcfg->colors = g_strsplit(h, ";", -1);
-
-#ifdef FEAT_TCLFILTER
-    config_setting_lookup_string(&s_tclfilter, "FilterExp", &(lcfg->filterexp));
-    config_setting_lookup_string(&s_tclfilter, "FilterFile", &(lcfg->filterfile));
-#endif
-
-#ifdef FEAT_AUTOREF
-    CFG_GET_BOOL_DEFAULT(s_autoref, "Enabled", lcfg->auto_refresh, TRUE);
-#endif
-
-    CFG_GET_BOOL_DEFAULT(s_notify, "Beep", lcfg->beep, TRUE);
-    CFG_GET_BOOL_DEFAULT(s_notify, "Flash", lcfg->flash, TRUE);
-
-#ifdef FEAT_HISTORY
-    CFG_GET_BOOL_DEFAULT(s_history, "Record", lcfg->record_history, TRUE);
-    CFG_GET_STRING_DEFAULT(s_history, "ErrPattern", lcfg->history_errpattern, "((?<!no )error|warning|fail)");
-#endif
-
-    CFG_GET_STRING_DEFAULT(s_hooks, "PreUpgrade", lcfg->hook_pre_upgrade, "/etc/apt-dater/pre-upg.d");
-    CFG_GET_STRING_DEFAULT(s_hooks, "PreRefresh", lcfg->hook_pre_refresh, "/etc/apt-dater/pre-ref.d");
-    CFG_GET_STRING_DEFAULT(s_hooks, "PreInstall", lcfg->hook_pre_install, "/etc/apt-dater/pre-ins.d");
-    CFG_GET_STRING_DEFAULT(s_hooks, "PreConnect", lcfg->hook_pre_connect, "/etc/apt-dater/pre-con.d");
-
-    CFG_GET_STRING_DEFAULT(s_hooks, "PostUpgrade", lcfg->hook_post_upgrade, "/etc/apt-dater/post-upg.d");
-    CFG_GET_STRING_DEFAULT(s_hooks, "PostRefresh", lcfg->hook_post_refresh, "/etc/apt-dater/post-ref.d");
-    CFG_GET_STRING_DEFAULT(s_hooks, "PostInstall", lcfg->hook_post_install, "/etc/apt-dater/post-ins.d");
-    CFG_GET_STRING_DEFAULT(s_hooks, "PostConnect", lcfg->hook_post_connect, "/etc/apt-dater/post-con.d");
-
-    CFG_GET_STRING_DEFAULT(s_hooks, "PluginDir", lcfg->plugindir, "/etc/apt-dater/plugins");
-
-
-    config_destroy(&hcfg);
-    return (TRUE);
-}
-
 xmlDocPtr loadXFile(const char *filename) {
   xmlDocPtr xml = xmlParseFile(filename);
 
@@ -331,6 +188,123 @@ int getXPropInt(const xmlNodePtr nodes[], const gchar *attr, const int defval) {
   return ival;
 }
 
+int getXPropBool(const xmlNodePtr nodes[], const gchar *attr, const gboolean defval) {
+  return defval;
+}
+
+xmlNodeSetPtr getXNodes(xmlXPathContextPtr context, const gchar *xpath) {
+  xmlXPathObjectPtr xobj = xmlXPathEvalExpression(BAD_CAST(xpath), context);
+  xmlNodeSetPtr ret = xobj->nodesetval;
+  xmlXPathFreeNodeSetList(xobj);
+
+  return ret;
+}
+
+xmlNodePtr getXNode(xmlXPathContextPtr context, const gchar *xpath) {
+  xmlNodeSetPtr set = getXNodes(context, xpath);
+  xmlNodePtr ret = NULL;
+
+  if(!xmlXPathNodeSetIsEmpty(set))
+    ret = set->nodeTab[0];
+
+  xmlXPathFreeNodeSet(set);
+  return ret;
+}
+
+gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
+    /* Parse hosts.xml document. */
+    xmlDocPtr xcfg = xmlParseFile(filename);
+    if(xcfg == NULL) {
+      g_printerr ("%s: Error parsing XML document.\n", filename);
+      return(FALSE);
+    }
+
+    /* Allocate XPath context. */
+    xmlXPathContextPtr xctx = xmlXPathNewContext(xcfg);
+    if(!xctx) {
+      g_error("%s: xmlXPathNewContext failed!\n", filename);
+      return(FALSE);
+    }
+
+    xmlNodePtr s_ssh[2] = {getXNode(xctx, "/apt-dater/ssh"), NULL};
+    xmlNodePtr s_path[2] = {getXNode(xctx, "/apt-dater/paths"), NULL};
+    xmlNodePtr s_screen[2] = {getXNode(xctx, "/apt-dater/screen"), NULL};
+    xmlNodePtr s_appearance[2] = {getXNode(xctx, "/apt-dater/appearance"), NULL};
+    xmlNodePtr s_notify[2] = {getXNode(xctx, "/apt-dater/notify"), NULL};
+    xmlNodePtr s_hooks[2] = {getXNode(xctx, "/apt-dater/hooks"), NULL};
+#ifdef FEAT_AUTOREF
+    xmlNodePtr s_autoref[2] = {getXNode(xctx, "/apt-dater/auto-ref"), NULL};
+#endif
+#ifdef FEAT_HISTORY
+    xmlNodePtr s_history[2] = {getXNode(xctx, "/apt-dater/history"), NULL};
+#endif
+#ifdef FEAT_TCLFILTER
+    xmlNodePtr s_tclfilter[2] = {getXNode(xctx, "/apt-dater/tcl-filter"), NULL};
+#endif
+
+    lcfg->ssh_optflags = getXPropStr(s_ssh, "opt-cmd-flags", NULL);
+    lcfg->ssh_cmd = getXPropStr(s_ssh, "cmd", "/usr/bin/ssh");
+    lcfg->sftp_cmd = getXPropStr(s_ssh, "sftp-cmd", "/usr/bin/sftp");
+
+    lcfg->hostsfile = getXPropStr(s_path, "hosts-file", g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.xml"));
+    lcfg->statsdir = getXPropStr(s_path, "stats-dir", g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats"));
+    g_mkdir_with_parents(lcfg->statsdir, S_IRWXU | S_IRWXG | S_IRWXO);
+
+    lcfg->screenrcfile = getXPropStr(s_screen, "rc-file", g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc"));
+    lcfg->screentitle = getXPropStr(s_screen, "title", g_strdup("%m # %U%H"));
+
+
+    lcfg->ssh_agent = getXPropBool(s_ssh, "spawn-agent", lcfg->ssh_agent);
+
+    xmlNodeSetPtr s_addkeys = getXNodes(xctx, "/apt-dater/ssh/add-key");
+    if(!xmlXPathNodeSetIsEmpty(s_addkeys)) {
+      lcfg->ssh_add = g_new0(char*, s_addkeys->nodeNr + 1);
+      int i;
+      for(i = 0; i < s_addkeys->nodeNr; i++) {
+	lcfg->ssh_add[i] = g_strdup((gchar *)xmlGetProp(s_addkeys->nodeTab[i], BAD_CAST("name")));
+      }
+    }
+    xmlXPathFreeNodeSet(s_addkeys);
+
+    lcfg->dump_screen = !getXPropBool(s_screen, "no-dumps", FALSE);
+    lcfg->query_maintainer = getXPropBool(s_screen, "query-maintainer", FALSE);
+
+    gchar *colors = getXPropStr(s_appearance, "colors", NULL);
+    if(colors)
+      lcfg->colors = g_strsplit(colors, ";", -1);
+
+#ifdef FEAT_TCLFILTER
+    config_setting_lookup_string(&s_tclfilter, "FilterExp", &(lcfg->filterexp));
+    config_setting_lookup_string(&s_tclfilter, "FilterFile", &(lcfg->filterfile));
+#endif
+
+#ifdef FEAT_AUTOREF
+    lcfg->auto_refresh = getXPropBool(s_autoref, "enabled", TRUE);
+#endif
+
+    lcfg->beep = getXPropBool(s_notify, "beep", TRUE);
+    lcfg->flash = getXPropBool(s_notify, "flash", TRUE);
+
+#ifdef FEAT_HISTORY
+    lcfg->record_history = getXPropBool(s_history, "record", TRUE);
+    lcfg->history_errpattern = getXPropStr(s_history, "err-pattern", "((?<!no )error|warning|fail)");
+#endif
+
+    lcfg->hook_pre_upgrade = getXPropStr(s_hooks, "pre-upgrade", "/etc/apt-dater/pre-upg.d");
+    lcfg->hook_pre_refresh = getXPropStr(s_hooks, "pre-refresh", "/etc/apt-dater/pre-ref.d");
+    lcfg->hook_pre_install = getXPropStr(s_hooks, "pre-install", "/etc/apt-dater/pre-ins.d");
+    lcfg->hook_pre_connect = getXPropStr(s_hooks, "pre-connect", "/etc/apt-dater/pre-con.d");
+
+    lcfg->hook_post_upgrade = getXPropStr(s_hooks, "post-upgrade", "/etc/apt-dater/post-upg.d");
+    lcfg->hook_post_refresh = getXPropStr(s_hooks, "post-refresh", "/etc/apt-dater/post-ref.d");
+    lcfg->hook_post_install = getXPropStr(s_hooks, "post-install", "/etc/apt-dater/post-ins.d");
+    lcfg->hook_post_connect = getXPropStr(s_hooks, "post-connect", "/etc/apt-dater/post-con.d");
+
+    lcfg->plugindir = getXPropStr(s_hooks, "plugin-dir", "/etc/apt-dater/plugins");
+
+    return (TRUE);
+}
+
 GList *loadHosts (const gchar *filename) {
     /* Parse hosts.xml document. */
     xmlDocPtr xcfg = xmlParseFile(filename);
@@ -338,6 +312,7 @@ GList *loadHosts (const gchar *filename) {
       g_printerr ("%s: Error parsing XML document.\n", filename);
       return(FALSE);
     }
+
     /* Allocate XPath context. */
     xmlXPathContextPtr xctx = xmlXPathNewContext(xcfg);
     if(!xctx) {

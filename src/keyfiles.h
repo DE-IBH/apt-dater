@@ -27,7 +27,7 @@
 
 CfgFile *initialConfig();
 GList *loadHosts (const char *filename);
-gboolean loadConfig (char *filename, CfgFile *);
+gboolean loadConfig (const char *filename, CfgFile *);
 void freeConfig (CfgFile *cfg);
 int chkForInitialConfig(const gchar *, const gchar *);
 
