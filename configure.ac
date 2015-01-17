@@ -51,9 +51,8 @@ AC_ARG_ENABLE(xmlreport,
 	[  --enable-xmlreport      Include XML reports.], [enable_xmlreport="yes"],
 	[enable_xmlreport="no"])
 AC_MSG_RESULT($enable_xmlreport)
+PKG_CHECK_MODULES(LIBXML2, "libxml-2.0", skip_xmlreport=no, skip_xmlreport=yes)
 if test "$enable_xmlreport" = "yes"; then
-    PKG_CHECK_MODULES(LIBXML2, "libxml-2.0", skip_xmlreport=no, skip_xmlreport=yes)
-
     if test "$skip_xmlreport" = "no"; then
 	AC_DEFINE(FEAT_XMLREPORT, 1, [ Define if you want XML report support included. ])
     fi
