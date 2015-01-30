@@ -248,7 +248,7 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     xmlNodePtr s_tclfilter[2] = {getXNode(xctx, "/apt-dater/tcl-filter"), NULL};
 #endif
 
-    lcfg->ssh_optflags = getXPropStr(s_ssh, "opt-cmd-flags", NULL);
+    lcfg->ssh_optflags = getXPropStr(s_ssh, "opt-cmd-flags", "-t");
     lcfg->ssh_cmd = getXPropStr(s_ssh, "cmd", "/usr/bin/ssh");
     lcfg->sftp_cmd = getXPropStr(s_ssh, "sftp-cmd", "/usr/bin/sftp");
 
