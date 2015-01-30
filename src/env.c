@@ -36,7 +36,7 @@ env_init(gchar **envp) {
     }
 
 #define ADD_GENV(name, value) \
-    base_env = g_slist_prepend(base_env, g_strdup_printf("AD_"name"=%s", value))
+    base_env = g_slist_prepend(base_env, g_strdup_printf("AD_"name"=%s", ((value) ? (value) : "")))
 
     ADD_GENV("HOSTSFILE"        , cfg->hostsfile);
     ADD_GENV("SCREENRCFILE"     , cfg->screenrcfile);
