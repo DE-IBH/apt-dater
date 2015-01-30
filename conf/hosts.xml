@@ -12,7 +12,7 @@
     - comment : text shown in 'host details' screen
     - type    : transport type (default: 'generic-ssh')
     - ssh-user: overwrite SSH username
-    - ssh-host: overwrite SSH host (defaults to $name)
+    - ssh-host: overwrite SSH host (defaults to @name)
     - ssh-port: overwrite SSH port
     - ssh-id  : overwrite SSH identification file
 
