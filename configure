@@ -632,6 +632,7 @@ XSLTPROC
 TCL_LIBS
 TCL_CFLAGS
 cv_path_tcl
+XMLSCHEMAURI
 XMLSCHEMADIR
 CURSES_LIB
 LIBXML2_LIBS
@@ -794,7 +795,8 @@ GLIB_CFLAGS
 GLIB_LIBS
 LIBXML2_CFLAGS
 LIBXML2_LIBS
-XMLSCHEMADIR'
+XMLSCHEMADIR
+XMLSCHEMAURI'
 
 
 # Initialize some variables set by options.
@@ -1461,6 +1463,8 @@ Some influential environment variables:
               linker flags for LIBXML2, overriding pkg-config
   XMLSCHEMADIR
               XML schema directory (default: DATAROOTDIR/xml/schema/apt-dater)
+  XMLSCHEMAURI
+              XML schema URI (default: file://XMLSCHEMADIR)
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -8347,6 +8351,12 @@ XMLSCHEMADIR=`(test "x$prefix" = xNONE && prefix="$ac_default_prefix"
        eval _lcl_receval="\"$_lcl_receval\""
      done
      echo "$_lcl_receval")`
+
+# URI for schema definitions
+
+if test -z "$XMLSCHEMAURI"; then
+   XMLSCHEMAURI="file://${XMLSCHEMADIR}"
+fi
 
 # Check for TCL
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking --enable-tclfilter argument" >&5

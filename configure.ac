@@ -162,6 +162,12 @@ if test -z "$XMLSCHEMADIR"; then
 fi
 adl_RECURSIVE_EVAL([$XMLSCHEMADIR], XMLSCHEMADIR)
 
+# URI for schema definitions
+AC_ARG_VAR([XMLSCHEMAURI], [XML schema URI (default: file://XMLSCHEMADIR)])
+if test -z "$XMLSCHEMAURI"; then
+   XMLSCHEMAURI="file://${XMLSCHEMADIR}"
+fi
+
 # Check for TCL
 AC_MSG_CHECKING(--enable-tclfilter argument)
 AC_ARG_ENABLE(tclfilter,

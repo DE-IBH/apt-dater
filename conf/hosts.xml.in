@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE hosts SYSTEM "@XMLSCHEMADIR@/hosts.dtd">
+<!DOCTYPE hosts SYSTEM "@XMLSCHEMAURI@/hosts.dtd">
 <!--
     Hosts file of apt-dater (parsed by libxml2)
     ===========================================

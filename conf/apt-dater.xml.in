@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE apt-dater SYSTEM "@XMLSCHEMADIR@/apt-dater.dtd">
+<!DOCTYPE apt-dater SYSTEM "@XMLSCHEMAURI@/apt-dater.dtd">
 <apt-dater>
     <!--
 	SSH(1) options
