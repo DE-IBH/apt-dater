@@ -54,6 +54,7 @@ void initReport(GList *hosts) {
   if (writer == NULL)
     g_error(_("Error creating the xml output."));
   xmlTextWriterStartDocument(writer, NULL, NULL, NULL);
+  xmlTextWriterWriteDTD(writer, BAD_CAST("report"), NULL, BAD_CAST(XML_SCHEMA_URI"/report.dtd"), NULL);
 
   if(!hosts) return;
 
