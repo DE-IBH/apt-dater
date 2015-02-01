@@ -171,6 +171,12 @@
 /* Version number of package */
 #undef VERSION
 
+/* Where apt-dater's DTD schema files are stored. */
+#undef XML_SCHEMA_DIR
+
+/* URI to apt-dater's DTD schema files. */
+#undef XML_SCHEMA_URI
+
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
 

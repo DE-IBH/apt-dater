@@ -1419,6 +1419,7 @@ AC_SUBST([am__tar])
 AC_SUBST([am__untar])
 ]) # _AM_PROG_TAR
 
+m4_include([m4/adl_recursive_eval.m4])
 m4_include([m4/gettext.m4])
 m4_include([m4/iconv.m4])
 m4_include([m4/lib-ld.m4])

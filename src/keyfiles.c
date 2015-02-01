@@ -225,6 +225,14 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     if(xcfg == NULL)
       return(FALSE);
 
+    /* Validate against DTD. */
+    xmlValidCtxtPtr xval = xmlNewValidCtxt();
+    if(xmlValidateDocument(xval, xcfg) == 0) {
+      xmlFreeValidCtxt(xval);
+      return(FALSE);
+    }
+    xmlFreeValidCtxt(xval);
+
     /* Allocate XPath context. */
     xmlXPathContextPtr xctx = xmlXPathNewContext(xcfg);
     if(!xctx) {
@@ -248,7 +256,7 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     xmlNodePtr s_tclfilter[2] = {getXNode(xctx, "/apt-dater/tcl-filter"), NULL};
 #endif
 
-    lcfg->ssh_optflags = getXPropStr(s_ssh, "opt-cmd-flags", NULL);
+    lcfg->ssh_optflags = getXPropStr(s_ssh, "opt-cmd-flags", "-t");
     lcfg->ssh_cmd = getXPropStr(s_ssh, "cmd", "/usr/bin/ssh");
     lcfg->sftp_cmd = getXPropStr(s_ssh, "sftp-cmd", "/usr/bin/sftp");
 
@@ -316,6 +324,14 @@ GList *loadHosts (const gchar *filename) {
     xmlDocPtr xcfg = xmlParseFile(filename);
     if(xcfg == NULL)
       return(FALSE);
+
+    /* Validate against DTD. */
+    xmlValidCtxtPtr xval = xmlNewValidCtxt();
+    if(xmlValidateDocument(xval, xcfg) == 0) {
+      xmlFreeValidCtxt(xval);
+      return(FALSE);
+    }
+    xmlFreeValidCtxt(xval);
 
     /* Allocate XPath context. */
     xmlXPathContextPtr xctx = xmlXPathNewContext(xcfg);

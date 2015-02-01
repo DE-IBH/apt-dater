@@ -1,0 +1,56 @@
+<!-- Root element -->
+<!ELEMENT apt-dater (ssh?|paths?|screen?|appearance?|notify?|hooks?|auto-ref?|history?|tcl-filter?)>
+
+<!-- SSH -->
+<!ELEMENT ssh (add-key*)>
+<!ATTLIST ssh cmd CDATA #IMPLIED>
+<!ATTLIST ssh opt-cmd-flags CDATA #IMPLIED>
+<!ATTLIST ssh sftp-cmd CDATA #IMPLIED>
+<!ATTLIST ssh spawn-agent CDATA #IMPLIED>
+
+<!ELEMENT add-key EMPTY>
+<!ATTLIST add-key fn CDATA #REQUIRED>
+
+<!-- Paths -->
+<!ELEMENT paths EMPTY>
+<!ATTLIST paths host-file CDATA #IMPLIED>
+<!ATTLIST paths stats-dir CDATA #IMPLIED>
+
+<!-- SCREEN -->
+<!ELEMENT screen EMPTY>
+<!ATTLIST screen rc-file CDATA #IMPLIED>
+<!ATTLIST screen title CDATA #IMPLIED>
+
+<!-- Colors -->
+<!ELEMENT appearance EMPTY>
+<!ATTLIST appearance colors CDATA #IMPLIED>
+
+<!-- Notifications -->
+<!ELEMENT notify EMPTY>
+<!ATTLIST notify beep CDATA #IMPLIED>
+<!ATTLIST notify flash CDATA #IMPLIED>
+
+<!-- Hooks -->
+<!ELEMENT hooks EMPTY>
+<!ATTLIST hooks pre-upgrade CDATA #IMPLIED>
+<!ATTLIST hooks pre-refresh CDATA #IMPLIED>
+<!ATTLIST hooks pre-install CDATA #IMPLIED>
+<!ATTLIST hooks pre-connect CDATA #IMPLIED>
+<!ATTLIST hooks post-upgrade CDATA #IMPLIED>
+<!ATTLIST hooks post-refresh CDATA #IMPLIED>
+<!ATTLIST hooks post-install CDATA #IMPLIED>
+<!ATTLIST hooks post-connect CDATA #IMPLIED>
+
+<!-- Auto Refresh Feature -->
+<!ELEMENT auto-ref EMPTY>
+<!ATTLIST auto-ref enabled CDATA #IMPLIED>
+
+<!-- History Feature -->
+<!ELEMENT history EMPTY>
+<!ATTLIST history record CDATA #IMPLIED>
+<!ATTLIST history err-pattern CDATA #IMPLIED>
+
+<!-- TclFilter Feature -->
+<!ELEMENT tcl-filter EMPTY>
+<!ATTLIST tcl-filter filter-exp CDATA #IMPLIED>
+<!ATTLIST tcl-filter filter-file CDATA #IMPLIED>

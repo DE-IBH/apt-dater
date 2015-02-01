@@ -1,0 +1,31 @@
+<!-- Root element -->
+<!ELEMENT hosts (default?,group*)>
+
+<!-- Default node -->
+<!ELEMENT default EMPTY>
+<!ATTLIST default comment CDATA #IMPLIED>
+<!ATTLIST default type CDATA #IMPLIED>
+<!ATTLIST default ssh-user CDATA #IMPLIED>
+<!ATTLIST default ssh-host CDATA #IMPLIED>
+<!ATTLIST default ssh-port CDATA #IMPLIED>
+<!ATTLIST default ssh-id CDATA #IMPLIED>
+
+<!-- Group of host nodes -->
+<!ELEMENT group (host*)>
+<!ATTLIST group name CDATA #REQUIRED>
+<!ATTLIST group comment CDATA #IMPLIED>
+<!ATTLIST group type CDATA #IMPLIED>
+<!ATTLIST group ssh-user CDATA #IMPLIED>
+<!ATTLIST group ssh-host CDATA #IMPLIED>
+<!ATTLIST group ssh-port CDATA #IMPLIED>
+<!ATTLIST group ssh-id CDATA #IMPLIED>
+
+<!-- Host node -->
+<!ELEMENT host EMPTY>
+<!ATTLIST host name CDATA #REQUIRED>
+<!ATTLIST host comment CDATA #IMPLIED>
+<!ATTLIST host type CDATA #IMPLIED>
+<!ATTLIST host ssh-user CDATA #IMPLIED>
+<!ATTLIST host ssh-host CDATA #IMPLIED>
+<!ATTLIST host ssh-port CDATA #IMPLIED>
+<!ATTLIST host ssh-id CDATA #IMPLIED>

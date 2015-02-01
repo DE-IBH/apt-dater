@@ -10,4 +10,4 @@ config.[hls]*
 *.o
 stamp-*
 *~
-conf/*.blob
+conf/*.xml

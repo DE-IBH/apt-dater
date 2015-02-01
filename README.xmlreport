@@ -25,4 +25,4 @@ To process the XML file you could use xsltproc:
  $ xsltproc xmlreport/overview.xsl report.xml
 
 You could do anything with the results XML file. The report should
-be valid according the DTD found at xmlreport/report.dtd.
+be valid according the DTD found at schema/report.dtd.

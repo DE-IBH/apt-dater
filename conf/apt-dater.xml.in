@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE apt-dater SYSTEM "@XMLSCHEMAURI@/apt-dater.dtd">
 <apt-dater>
     <!--
 	SSH(1) options
@@ -80,14 +82,13 @@
     <history
         record="true"
 	err-pattern="((?<!no )error|warning|fail)"/>
-    </history>
     -->
 
     <!--
 	Requires apt-dater to be build with enable-tclfilter.
 
-        <tcl-filter
-	    filter-exp="return [expr [string compare $lsb_distri \\\"Debian\\\"] == 0 && $lsb_rel < 4.0]"
-	    filter-file="/path/to/file.tcl" />
+    <tcl-filter
+        filter-exp="return [expr [string compare $lsb_distri \\\"Debian\\\"] == 0 && $lsb_rel < 4.0]"
+        filter-file="/path/to/file.tcl" />
     -->
 </apt-dater>

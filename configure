@@ -632,6 +632,8 @@ XSLTPROC
 TCL_LIBS
 TCL_CFLAGS
 cv_path_tcl
+XMLSCHEMAURI
+XMLSCHEMADIR
 CURSES_LIB
 LIBXML2_LIBS
 LIBXML2_CFLAGS
@@ -792,7 +794,9 @@ PKG_CONFIG_LIBDIR
 GLIB_CFLAGS
 GLIB_LIBS
 LIBXML2_CFLAGS
-LIBXML2_LIBS'
+LIBXML2_LIBS
+XMLSCHEMADIR
+XMLSCHEMAURI'
 
 
 # Initialize some variables set by options.
@@ -1457,6 +1461,10 @@ Some influential environment variables:
               C compiler flags for LIBXML2, overriding pkg-config
   LIBXML2_LIBS
               linker flags for LIBXML2, overriding pkg-config
+  XMLSCHEMADIR
+              XML schema directory (default: DATAROOTDIR/xml/schema/apt-dater)
+  XMLSCHEMAURI
+              XML schema URI (default: file://XMLSCHEMADIR)
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -8329,6 +8337,45 @@ $as_echo "#define TM_IN_SYS_TIME 1" >>confdefs.h
 fi
 
 
+# Where to put schema definitions
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking XMLSCHEMADIR" >&5
+$as_echo_n "checking XMLSCHEMADIR... " >&6; }
+
+if test -z "$XMLSCHEMADIR"; then
+   XMLSCHEMADIR="${datarootdir}/xml/schema/apt-dater"
+fi
+_lcl_receval="$XMLSCHEMADIR"
+XMLSCHEMADIR=`(test "x$prefix" = xNONE && prefix="$ac_default_prefix"
+     test "x$exec_prefix" = xNONE && exec_prefix="${prefix}"
+     _lcl_receval_old=''
+     while test "$_lcl_receval_old" != "$_lcl_receval"; do
+       _lcl_receval_old="$_lcl_receval"
+       eval _lcl_receval="\"$_lcl_receval\""
+     done
+     echo "$_lcl_receval")`
+
+cat >>confdefs.h <<_ACEOF
+#define XML_SCHEMA_DIR "$XMLSCHEMADIR"
+_ACEOF
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $XMLSCHEMADIR" >&5
+$as_echo "$XMLSCHEMADIR" >&6; }
+
+# URI for schema definitions
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking XMLSCHEMAURI" >&5
+$as_echo_n "checking XMLSCHEMAURI... " >&6; }
+
+if test -z "$XMLSCHEMAURI"; then
+   XMLSCHEMAURI="file://${XMLSCHEMADIR}"
+fi
+
+cat >>confdefs.h <<_ACEOF
+#define XML_SCHEMA_URI "$XMLSCHEMAURI"
+_ACEOF
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $XMLSCHEMAURI" >&5
+$as_echo "$XMLSCHEMAURI" >&6; }
+
 # Check for TCL
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking --enable-tclfilter argument" >&5
 $as_echo_n "checking --enable-tclfilter argument... " >&6; }
@@ -8924,7 +8971,7 @@ fi
 done
 
 
-ac_config_files="$ac_config_files po/Makefile.in Makefile lib/Makefile man/Makefile src/Makefile conf/Makefile build/apt-dater.spec"
+ac_config_files="$ac_config_files po/Makefile.in Makefile lib/Makefile man/Makefile schema/Makefile src/Makefile conf/Makefile conf/apt-dater.xml conf/hosts.xml build/apt-dater.spec"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -9677,8 +9724,11 @@ do
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "lib/Makefile") CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
     "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
+    "schema/Makefile") CONFIG_FILES="$CONFIG_FILES schema/Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "conf/Makefile") CONFIG_FILES="$CONFIG_FILES conf/Makefile" ;;
+    "conf/apt-dater.xml") CONFIG_FILES="$CONFIG_FILES conf/apt-dater.xml" ;;
+    "conf/hosts.xml") CONFIG_FILES="$CONFIG_FILES conf/hosts.xml" ;;
     "build/apt-dater.spec") CONFIG_FILES="$CONFIG_FILES build/apt-dater.spec" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

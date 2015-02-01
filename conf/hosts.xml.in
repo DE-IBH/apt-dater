@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hosts SYSTEM "@XMLSCHEMAURI@/hosts.dtd">
 <!--
     Hosts file of apt-dater (parsed by libxml2)
     ===========================================
@@ -12,7 +14,7 @@
     - comment : text shown in 'host details' screen
     - type    : transport type (default: 'generic-ssh')
     - ssh-user: overwrite SSH username
-    - ssh-host: overwrite SSH host (defaults to $name)
+    - ssh-host: overwrite SSH host (defaults to @name)
     - ssh-port: overwrite SSH port
     - ssh-id  : overwrite SSH identification file
 
