@@ -225,6 +225,14 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     if(xcfg == NULL)
       return(FALSE);
 
+    /* Validate against DTD. */
+    xmlValidCtxtPtr xval = xmlNewValidCtxt();
+    if(xmlValidateDocument(xval, xcfg) == 0) {
+      xmlFreeValidCtxt(xval);
+      return(FALSE);
+    }
+    xmlFreeValidCtxt(xval);
+
     /* Allocate XPath context. */
     xmlXPathContextPtr xctx = xmlXPathNewContext(xcfg);
     if(!xctx) {
@@ -316,6 +324,14 @@ GList *loadHosts (const gchar *filename) {
     xmlDocPtr xcfg = xmlParseFile(filename);
     if(xcfg == NULL)
       return(FALSE);
+
+    /* Validate against DTD. */
+    xmlValidCtxtPtr xval = xmlNewValidCtxt();
+    if(xmlValidateDocument(xval, xcfg) == 0) {
+      xmlFreeValidCtxt(xval);
+      return(FALSE);
+    }
+    xmlFreeValidCtxt(xval);
 
     /* Allocate XPath context. */
     xmlXPathContextPtr xctx = xmlXPathNewContext(xcfg);
