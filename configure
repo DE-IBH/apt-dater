@@ -8338,6 +8338,8 @@ fi
 
 
 # Where to put schema definitions
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking XMLSCHEMADIR" >&5
+$as_echo_n "checking XMLSCHEMADIR... " >&6; }
 
 if test -z "$XMLSCHEMADIR"; then
    XMLSCHEMADIR="${datarootdir}/xml/schema/apt-dater"
@@ -8352,11 +8354,27 @@ XMLSCHEMADIR=`(test "x$prefix" = xNONE && prefix="$ac_default_prefix"
      done
      echo "$_lcl_receval")`
 
+cat >>confdefs.h <<_ACEOF
+#define XML_SCHEMA_DIR "$XMLSCHEMADIR"
+_ACEOF
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $XMLSCHEMADIR" >&5
+$as_echo "$XMLSCHEMADIR" >&6; }
+
 # URI for schema definitions
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking XMLSCHEMAURI" >&5
+$as_echo_n "checking XMLSCHEMAURI... " >&6; }
 
 if test -z "$XMLSCHEMAURI"; then
    XMLSCHEMAURI="file://${XMLSCHEMADIR}"
 fi
+
+cat >>confdefs.h <<_ACEOF
+#define XML_SCHEMA_URI "$XMLSCHEMAURI"
+_ACEOF
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $XMLSCHEMAURI" >&5
+$as_echo "$XMLSCHEMAURI" >&6; }
 
 # Check for TCL
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking --enable-tclfilter argument" >&5

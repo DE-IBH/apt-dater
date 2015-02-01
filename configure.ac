@@ -156,17 +156,23 @@ AC_C_INLINE
 AC_STRUCT_TM
 
 # Where to put schema definitions
+AC_MSG_CHECKING(XMLSCHEMADIR)
 AC_ARG_VAR([XMLSCHEMADIR], [XML schema directory (default: DATAROOTDIR/xml/schema/apt-dater)])
 if test -z "$XMLSCHEMADIR"; then
    XMLSCHEMADIR="${datarootdir}/xml/schema/apt-dater"
 fi
 adl_RECURSIVE_EVAL([$XMLSCHEMADIR], XMLSCHEMADIR)
+AC_DEFINE_UNQUOTED(XML_SCHEMA_DIR,"$XMLSCHEMADIR",[ Where apt-dater's DTD schema files are stored. ])
+AC_MSG_RESULT($XMLSCHEMADIR)
 
 # URI for schema definitions
+AC_MSG_CHECKING(XMLSCHEMAURI)
 AC_ARG_VAR([XMLSCHEMAURI], [XML schema URI (default: file://XMLSCHEMADIR)])
 if test -z "$XMLSCHEMAURI"; then
    XMLSCHEMAURI="file://${XMLSCHEMADIR}"
 fi
+AC_DEFINE_UNQUOTED(XML_SCHEMA_URI,"$XMLSCHEMAURI",[ URI to apt-dater's DTD schema files. ])
+AC_MSG_RESULT($XMLSCHEMAURI)
 
 # Check for TCL
 AC_MSG_CHECKING(--enable-tclfilter argument)
