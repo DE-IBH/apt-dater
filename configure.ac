@@ -155,6 +155,13 @@ AC_C_CONST
 AC_C_INLINE
 AC_STRUCT_TM
 
+# Where to put schema definitions
+AC_ARG_VAR([XMLSCHEMADIR], [XML schema directory (default: DATAROOTDIR/xml/schema/apt-dater)])
+if test -z "$XMLSCHEMADIR"; then
+   XMLSCHEMADIR="${datarootdir}/xml/schema/apt-dater"
+fi
+adl_RECURSIVE_EVAL([$XMLSCHEMADIR], XMLSCHEMADIR)
+
 # Check for TCL
 AC_MSG_CHECKING(--enable-tclfilter argument)
 AC_ARG_ENABLE(tclfilter,
@@ -360,6 +367,8 @@ lib/Makefile
 man/Makefile
 src/Makefile
 conf/Makefile
+conf/apt-dater.xml
+conf/hosts.xml
 build/apt-dater.spec
 ])
 AC_OUTPUT
