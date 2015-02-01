@@ -365,6 +365,7 @@ AC_CONFIG_FILES([ po/Makefile.in
 Makefile
 lib/Makefile
 man/Makefile
+schema/Makefile
 src/Makefile
 conf/Makefile
 conf/apt-dater.xml
