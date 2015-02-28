@@ -1,5 +1,5 @@
 <!-- Root element -->
-<!ELEMENT apt-dater (ssh?|paths?|screen?|appearance?|notify?|hooks?|auto-ref?|history?|tcl-filter?)>
+<!ELEMENT apt-dater (ssh?|paths?|screen?|appearance?|notify?|hooks?|auto-ref?|history?|tcl-filter?)*>
 <!ATTLIST apt-dater xmlns:xi CDATA #IMPLIED>
 
 <!-- SSH -->
