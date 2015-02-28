@@ -2,7 +2,7 @@
 <!DOCTYPE apt-dater SYSTEM "@XMLSCHEMAURI@/apt-dater.dtd">
 <apt-dater xmlns:xi="http://www.w3.org/2001/XInclude">
     <!-- Include global config file if available. -->
-    <xi:include href="file:///etc/apt-dater/apt-dater.xml" xpointer="xpointer(/apt-dater/*)>
+    <xi:include href="file:///etc/apt-dater/apt-dater.xml" xpointer="xpointer(/apt-dater/*)">
 	<xi:fallback />
     </xi:include>
 
