@@ -154,7 +154,7 @@ screen_attach(HostNode *n, const SessNode *s, const gboolean shared) {
 #ifdef FEAT_HISTORY
  if(n->parse_result && !screen_get_sessions(n)) {
     n->parse_result = FALSE;
-    return history_ts_failed(n);
+    return history_ts_failed(cfg, n);
  }
 #endif
 

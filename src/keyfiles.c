@@ -299,6 +299,7 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
 #ifdef FEAT_HISTORY
     lcfg->record_history = getXPropBool(s_history, "record", TRUE);
     lcfg->history_errpattern = getXPropStr(s_history, "err-pattern", "((?<!no )error|warning|fail)");
+    lcfg->history_dir = getXPropStr(s_path, "history-dir", g_strdup_printf("%s/%s/history", g_get_user_data_dir(), PACKAGE));
 #endif
 
     lcfg->hook_pre_upgrade = getXPropStr(s_hooks, "pre-upgrade", "/etc/apt-dater/pre-upg.d");

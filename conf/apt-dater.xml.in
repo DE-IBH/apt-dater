@@ -25,6 +25,7 @@
 
     <paths
 	hosts-file="path-to/hosts.xml"
+	history-dir="path-to/history/"
 	stats-dir="path-to/stats"/>
     -->
 

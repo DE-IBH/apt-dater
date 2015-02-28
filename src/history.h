@@ -39,26 +39,26 @@ typedef struct _historyEntry {
 
 
 #ifdef FEAT_HISTORY
-static inline gchar *history_path(const HostNode *n) {
-    return g_strdup_printf("%s/%s/history/%s:%d", g_get_user_data_dir(), PACKAGE, n->hostname, n->ssh_port);
+static inline gchar *history_path(const CfgFile *cfg, const HostNode *n) {
+    return g_strdup_printf("%s/%s:%d", cfg->history_dir, n->hostname, n->ssh_port);
 }
 
-static inline gchar *history_ts_path(const HostNode *n) {
-    return g_strdup_printf("%s/%s/history/%s:%d/%d-%d", g_get_user_data_dir(), PACKAGE, n->hostname, n->ssh_port, n->hist_ts, getpid());
+static inline gchar *history_ts_path(const CfgFile *cfg, const HostNode *n) {
+    return g_strdup_printf("%s/%s:%d/%d-%d", cfg->history_dir, n->hostname, n->ssh_port, n->hist_ts, getpid());
 }
 
-static inline gchar *history_rec_path(HostNode *n) {
+static inline gchar *history_rec_path(const CfgFile *cfg, HostNode *n) {
     n->hist_ts = time(NULL);
 
-    gchar *p = history_ts_path(n);
+    gchar *p = history_ts_path(cfg, n);
 
     g_mkdir_with_parents(p, S_IRWXU);
 
     return p;
 }
 
-GList *history_get_entries(const HostNode *);
-HistoryEntry *history_recent_entry(const HostNode *);
+GList *history_get_entries(const CfgFile *, const HostNode *);
+HistoryEntry *history_recent_entry(const CfgFile *, const HostNode *);
 
 void history_write_meta(const gchar *, const HistoryEntry *);
 void history_free_he(HistoryEntry *);
@@ -69,7 +69,7 @@ void history_show_replay(HistoryEntry *);
 
 void history_show_less_search(HistoryEntry *, gchar *pattern);
 
-gboolean history_ts_failed(HostNode *);
+gboolean history_ts_failed(const CfgFile *, HostNode *);
 
 #endif
 

@@ -1108,7 +1108,7 @@ static void drawHistoryEntries (HostNode *n)
 
  if(!n) return;
 
- hel = history_get_entries(inhost);
+ hel = history_get_entries(cfg, inhost);
  if(!hel) {
   drawQuery(_("No history data available!"), G_USEC_PER_SEC);
   refresh();
@@ -2923,7 +2923,7 @@ static void filterHosts(GList *hosts)
 #ifdef FEAT_HISTORY
 static void handleErrors(HostNode *n) {
  int c;
- HistoryEntry *he = history_recent_entry(n);
+ HistoryEntry *he = history_recent_entry(cfg, n);
 
  if(!he)
   return;

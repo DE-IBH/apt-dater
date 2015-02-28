@@ -18,6 +18,7 @@
 <!ELEMENT paths EMPTY>
 <!ATTLIST paths host-file CDATA #IMPLIED>
 <!ATTLIST paths stats-dir CDATA #IMPLIED>
+<!ATTLIST paths history-dir CDATA #IMPLIED>
 <!ATTLIST paths xml:base CDATA #IMPLIED>
 
 <!-- SCREEN -->

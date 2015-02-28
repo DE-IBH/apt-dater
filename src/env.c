@@ -110,7 +110,7 @@ env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEnt
 
 #ifdef FEAT_HISTORY
     if(cfg->record_history && he) {
-     gchar *hp = history_rec_path(n);
+     gchar *hp = history_rec_path(cfg, n);
      gchar *fn_meta = g_strdup_printf("%s/meta", hp);
 
      ADD_HENV("HIST_PATH"       , hp);

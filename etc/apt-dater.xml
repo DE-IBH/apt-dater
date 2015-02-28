@@ -20,8 +20,13 @@
 
     <paths
 	hosts-file="path-to/hosts.xml"
+	history-dir="path-to/history/"
 	stats-dir="path-to/stats"/>
+
     -->
+    <paths
+	history-dir="/var/lib/apt-dater/history"
+	stats-dir="/var/cache/apt-dater/stats"/>
 
     <!--
 	SCREEN(1) options
@@ -57,16 +62,16 @@
 	(pre|post)-*: run hooks before or after executing an action on a host
 
     <hooks
-	pluginDir="etc/apt-dater/plugins";
+	pluginDir="/etc/apt-dater/plugins";
 
 	pre-upgrade="/etc/apt-dater/pre-upg.d"
-	post-upgrade="etc/apt-dater/post-upg.d"
-	pre-refresh="etc/apt-dater/pre-ref.d"
-	post-refresh="etc/apt-dater/post-ref.d"
-	pre-install="etc/apt-dater/pre-ins.d"
-	post-install="etc/apt-dater/post-ins.d"
-	pre-connect="etc/apt-dater/pre-con.d"
-	post-connect="etc/apt-dater/post-con.d"/>
+	post-upgrade="/etc/apt-dater/post-upg.d"
+	pre-refresh="/etc/apt-dater/pre-ref.d"
+	post-refresh="/etc/apt-dater/post-ref.d"
+	pre-install="/etc/apt-dater/pre-ins.d"
+	post-install="/etc/apt-dater/post-ins.d"
+	pre-connect="/etc/apt-dater/pre-con.d"
+	post-connect="/etc/apt-dater/post-con.d"/>
     -->
 
     <!--
@@ -78,11 +83,11 @@
 
     <!--
 	Requires apt-dater to be build with enable-history.
-    -->
 
     <history
         record="true"
 	err-pattern="((?&lt;!no )error|warning|fail)"/>
+    -->
 
     <!--
 	Requires apt-dater to be build with enable-tclfilter.

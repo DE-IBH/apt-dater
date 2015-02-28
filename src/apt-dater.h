@@ -108,6 +108,7 @@ typedef struct _cfgfile {
 #ifdef FEAT_HISTORY
  gboolean record_history;
  gchar *history_errpattern;
+ gchar *history_dir;
 #endif
  gchar **colors;
 #ifdef FEAT_TCLFILTER
