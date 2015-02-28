@@ -24,7 +24,7 @@
 	Path to hosts file and status directory.
 
     <paths
-	hosts-file="path-to/hosts.conf"
+	hosts-file="path-to/hosts.xml"
 	stats-dir="path-to/stats"/>
     -->
 
