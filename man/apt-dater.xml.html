@@ -1,0 +1,75 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><title>APT-DATER</title><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="refentry"><a name="idp54960480"></a><div class="titlepage"></div><div class="refnamediv"><h2>Name</h2><p>apt-dater.xml &#8212; configuration file of apt-dater(8)</p></div><div class="refsynopsisdiv"><h2>Synopsis</h2><pre class="programlisting">
+
+&lt;apt-dater xmlns:xi="http://www.w3.org/2001/XInclude"&gt;
+    &lt;ssh
+	spawn-agent="true"&gt;
+
+        &lt;add-key fn="/path/to/id_rsa1"/&gt;
+        &lt;add-key fn="/path/to/id_rsa2"/&gt;
+    &lt;/ssh&gt;
+
+    &lt;paths
+	hosts-file="path-to/hosts.xml"
+	stats-dir="path-to/stats"/&gt;
+
+    &lt;history
+        record="true"
+	err-pattern="((?&lt;!no )error|warning|fail)"/&gt;
+&lt;/apt-dater&gt;
+
+    </pre></div><div class="refsect1"><a name="idp58794128"></a><h2>DESCRIPTION</h2><p>The file <em class="replaceable"><code>apt-dater.xml</code></em> is the
+      configuration file for <span class="command"><strong>apt-dater</strong></span>(8).
+      <span class="command"><strong>apt-dater</strong></span>(8) is a program to manage package updates 
+      on a large number of remote hosts using SSH.
+      This man page descripes briefly the parameters of the file
+      <em class="replaceable"><code>apt-dater.xml</code></em>. 
+      The default location of this file is <em class="replaceable"><code>$XDG_CONFIG_HOME/apt-dater/apt-dater.xml</code></em>.
+    </p><p>
+      The configuration file is parsed using libxml2 and supports Xincludes.
+    </p></div><div class="refsect1"><a name="idp58792144"></a><h2>OPTIONS</h2><div class="refsect2"><a name="idp58778800"></a><h3>Attributes of the '<span class="symbol">paths</span>' element</h3><div class="variablelist"><dl class="variablelist"><dt><span class="term"><span class="symbol">hosts-file</span>="<em class="replaceable"><code>$XDG_CONFIG_HOME/apt-dater/hosts.xml</code></em>"</span></dt><dd><p>The location of the file contains all host which will be managed with <span class="command"><strong>apt-dater</strong></span>. (optional)</p></dd><dt><span class="term"><span class="symbol">stats-dir</span>="<em class="replaceable"><code>$XDG_DATA_HOME/apt-dater</code></em>"</span></dt><dd><p>The location of the directory which contains the status files of any host. (optional)</p></dd></dl></div></div><div class="refsect2"><a name="idp58785712"></a><h3>Attributes of the'<span class="symbol">screen</span>' element</h3><div class="variablelist"><dl class="variablelist"><dt><span class="term"><span class="symbol">rc-file</span>="<em class="replaceable"><code>$XDG_CONFIG_HOME/apt-dater/screenrc</code></em>"</span></dt><dd><p>Location of screen(1) config file. (optional)</p></dd><dt><span class="term"><span class="symbol">title</span>="<em class="replaceable"><code>%m # %u@%h:%p</code></em>"</span></dt><dd><p>Template for screen titles using string escapes. (optional)</p></dd><dt><span class="term"><span class="symbol">no-dumps</span>=<em class="replaceable"><code>"false"</code></em></span></dt><dd><p>Enables/disables support of screen dumps. (optional)</p></dd><dt><span class="term"><span class="symbol">query-maintainer</span>=<em class="replaceable"><code>"false"</code></em></span></dt><dd><p>If set to 1, apt-dater will ask for the maintainers name on startup. If set to 2, apt-dater will only ask if no MAINTAINER environment variable is set.</p></dd></dl></div></div><div class="refsect2"><a name="idp54821408"></a><h3>Attributes of the'<span class="symbol">ssh</span>' element</h3><div class="variablelist"><dl class="variablelist"><dt><span class="term"><span class="symbol">cmd</span>="<em class="replaceable"><code>/usr/bin/ssh</code></em></span></dt><dd><p>The location of ssh-client binary.</p></dd><dt><span class="term"><span class="symbol">sftp-cmd</span></span></dt><dd><p>The command to initiate sftp file transfer e.g. <span class="command"><strong>/usr/bin/sftp</strong></span></p></dd><dt><span class="term"><span class="symbol">opt-cmd-flags</span></span></dt><dd><p>Additional ssh-client command flags, which will be appended.</p></dd><dt><span class="term"><span class="symbol">spawn-agent</span>=<em class="replaceable"><code>"false"</code></em></span></dt><dd><p>If enabled, apt-dater tries to spawn ssh-agent(1) if none is already running. ssh-add(1) will be called to load your private keys.</p></dd><dt><span class="term"><span class="symbol">add-keys</span></span></dt><dd><p>List of private keys which should be loaded when apt-dater calls ssh-add(1).</p></dd></dl></div><p>
+      apt-dater will try to load additional private SSH keys using ssh-add(1) during start. Those keys needs to be listed as <span class="symbol">add-key</span> child elements.
+      The attribute <span class="symbol">fn</span> refers to the filename of the private key:
+
+      
+      </p><pre class="programlisting">
+
+&lt;ssh spawn-agent="false" ..&gt;
+  &lt;add-key fn="/path/to/id_rsa1"/&gt;
+&lt;/ssh&gt;
+ 
+     </pre><p>
+    </p></div><div class="refsect2"><a name="idp54835408"></a><h3>Attributes of the'<span class="symbol">commands</span>' element</h3><div class="variablelist"><dl class="variablelist"><dt><span class="term"><span class="symbol">CmdRefresh</span>="<em class="replaceable"><code>apt-dater-host refresh</code></em>"</span></dt><dd><p>The command which will be used to refresh the status of the managed host.</p></dd><dt><span class="term"><span class="symbol">CmdUpgrade</span>="<em class="replaceable"><code>apt-dater-host upgrade</code></em>"</span></dt><dd><p>The command which will be used to intitate a upgrade of a managed host.</p></dd><dt><span class="term"><span class="symbol">CmdInstall</span>="<em class="replaceable"><code>apt-dater-host install %s</code></em>"</span></dt><dd><p>The command which will be used to update a single package. <em class="replaceable"><code>%s</code></em> will be replaced by the name of the package.</p></dd></dl></div></div><div class="refsect2"><a name="idp54867008"></a><h3>Attributes of the'<span class="symbol">appearance</span>' element</h3><div class="variablelist"><dl class="variablelist"><dt><span class="term"><span class="symbol">colors</span></span></dt><dd><p>Set your own color style of the ui components. To highlight colors you can use the <em class="replaceable"><code>bright</code></em>* keyword.
+          Example: Colors=menu brightgreen blue;status brightgreen blue;selector black red;</p>.
+   <p>Components are:</p><div class="variablelist"><dl class="variablelist"><dt></dt><dd></dd><dt></dt><dd></dd><dt></dt><dd></dd><dt></dt><dd></dd><dt></dt><dd></dd><dt></dt><dd></dd><dt></dt><dd></dd></dl></div><p>Colors are:</p><div class="variablelist"><dl class="variablelist"><dt></dt><dd></dd><dt></dt><dd></dd><dt></dt><dd></dd><dt></dt><dd></dd><dt></dt><dd></dd><dt></dt><dd></dd><dt></dt><dd></dd><dt></dt><dd></dd></dl></div></dd></dl></div></div><div class="refsect2"><a name="idp54882576"></a><h3>Attributes of the'<span class="symbol">auto-ref</span>' element</h3><div class="variablelist"><dl class="variablelist"><dt><span class="term"><span class="symbol">enabled</span>=<em class="replaceable"><code>"true"</code></em></span></dt><dd><p>Enabled the auto refresh feature if compiled in (see README.autoref).</p></dd></dl></div></div><div class="refsect2"><a name="idp59857344"></a><h3>Attributes of the'<span class="symbol">notify</span>' element</h3><div class="variablelist"><dl class="variablelist"><dt><span class="term"><span class="symbol">beep</span>=<em class="replaceable"><code>"true"</code></em></span></dt><dd><p>Enables user notification by terminal bell.</p></dd><dt><span class="term"><span class="symbol">flash</span>=<em class="replaceable"><code>"true"</code></em></span></dt><dd><p>Enables user notification by terminal flashing.</p></dd></dl></div></div><div class="refsect2"><a name="idp59862976"></a><h3>Attributes of the'<span class="symbol">history</span>' element</h3><div class="variablelist"><dl class="variablelist"><dt><span class="term"><span class="symbol">err-pattern</span>="<em class="replaceable"><code>((?&lt;!no )error|warning|fail)</code></em>"</span></dt><dd><p>
+	  A regular expression pattern to match the screen output. A match indicates
+	  the user should be asked to review the output (using less). (Optional)</p></dd><dt><span class="term"><span class="symbol">record</span>=<em class="replaceable"><code>"true"</code></em></span></dt><dd><p>Enables session recording using script(1). (Optional)</p></dd></dl></div></div><div class="refsect2"><a name="idp59868912"></a><h3>Attributes of the'<span class="symbol">hooks</span>' element</h3><div class="variablelist"><dl class="variablelist"><dt><span class="term"><span class="symbol">pre-update</span>="<em class="replaceable"><code>/etc/apt-dater/pre-upg.d</code></em>", </span><span class="term"><span class="symbol">pre-refresh</span>="<em class="replaceable"><code>/etc/apt-dater/pre-ref.d</code></em>", </span><span class="term"><span class="symbol">pre-install</span>="<em class="replaceable"><code>/etc/apt-dater/pre-ins.d</code></em>", </span><span class="term"><span class="symbol">pre-connect</span>="<em class="replaceable"><code>/etc/apt-dater/pre-con.d</code></em>", </span><span class="term"><span class="symbol">post-update</span>="<em class="replaceable"><code>/etc/apt-dater/post-upg.d</code></em>", </span><span class="term"><span class="symbol">post-refresh</span>="<em class="replaceable"><code>/etc/apt-dater/post-ref.d</code></em>", </span><span class="term"><span class="symbol">post-install</span>="<em class="replaceable"><code>/etc/apt-dater/post-ins.d</code></em>", </span><span class="term"><span class="symbol">post-connect</span>="<em class="replaceable"><code>/etc/apt-dater/post-con.d</code></em>"</span></dt><dd><p>
+	    Hooks to be run before and after an action on a host is done.
+	    The values should be path names, any executable script within
+	    these directories will be run by <span class="command"><strong>run-parts</strong></span>(8).
+	  </p></dd></dl></div></div></div><div class="refsect1"><a name="idp59880736"></a><h2>STRING ESCAPES</h2><span class="command"><strong>apt-dater</strong></span>(8) provides an string escape mechanism. The escape character is '%'.
+
+    <div class="table"><table>List of supported escapes.<thead><tr>
+        <td>escape</td>
+	<td>replaced by</td>
+      </tr></thead><tbody><tr>
+        <td>%</td>
+	<td>escape character</td>
+      </tr><tr>
+        <td>h</td>
+	<td>hostname</td>
+      </tr><tr>
+        <td>H</td>
+	<td>SSH hostname used for connecting</td>
+      </tr><tr>
+        <td>m</td>
+	<td>maintainer name</td>
+      </tr><tr>
+        <td>p</td>
+	<td>SSH port number</td>
+      </tr><tr>
+        <td>u</td>
+	<td>SSH username</td>
+      </tr><tr>
+        <td>U</td>
+	<td>SSH username appended by '@', empty string if no SSH username is configured.</td>
+      </tr></tbody></table></div></div><div class="refsect1"><a name="idp59893072"></a><h2>FILES</h2><div class="variablelist"><dl class="variablelist"><dt><span class="term"><em class="replaceable"><code>apt-dater.xml</code></em></span></dt><dd><p>The configuration file of apt-dater.</p></dd><dt><span class="term"><em class="replaceable"><code>hosts.xml</code></em></span></dt><dd><p>Contains all hosts you would like to manage.</p></dd></dl></div></div><div class="refsect1"><a name="idp59897552"></a><h2>SEE ALSO</h2><p>apt-dater(8), apt-get(1), debtrack, screen(1), script(1), ssh(1), <a class="ulink" href="http://www.freedesktop.org/Standards/basedir-spec" target="_top">XDG Base Directory Specification</a>.</p></div></div></body></html>
