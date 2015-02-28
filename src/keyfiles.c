@@ -95,13 +95,7 @@ CfgFile *initialConfig() {
     lcfg->_type = T_CFGFILE;
 #endif
 
-    lcfg->hostsfile = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.xml");
-    lcfg->statsdir = g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats");
-
-    lcfg->screenrcfile = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc");
-
     lcfg->dump_screen = TRUE;
-    lcfg->query_maintainer = FALSE;
 
 #ifdef FEAT_AUTOREF
     lcfg->auto_refresh = TRUE;
@@ -112,7 +106,6 @@ CfgFile *initialConfig() {
 
 #ifdef FEAT_HISTORY
     lcfg->record_history = TRUE;
-    lcfg->history_errpattern = "((?<!no )error|warning|fail)";
 #endif
 
     lcfg->hook_pre_upgrade = "/etc/apt-dater/pre-upg.d";
