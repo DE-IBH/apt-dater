@@ -382,6 +382,8 @@ src/Makefile
 conf/Makefile
 conf/apt-dater.xml
 conf/hosts.xml
+etc/apt-dater.xml
+etc/hosts.xml
 build/apt-dater.spec
 ])
 AC_OUTPUT

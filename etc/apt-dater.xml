@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE apt-dater SYSTEM "@XMLSCHEMAURI@/apt-dater.dtd">
+<!DOCTYPE apt-dater SYSTEM "file:///usr/local/share/xml/schema/apt-dater/apt-dater.dtd">
 <apt-dater xmlns:xi="http://www.w3.org/2001/XInclude">
-    <!-- Include global config file if available. -->
-    <xi:include href="file:///etc/apt-dater/apt-dater.xml" xpointer="xpointer(/apt-dater/*)>
-	<xi:fallback />
-    </xi:include>
-
     <!--
 	SSH(1) options
 
@@ -83,11 +78,11 @@
 
     <!--
 	Requires apt-dater to be build with enable-history.
+    -->
 
     <history
         record="true"
-	err-pattern="((?<!no )error|warning|fail)"/>
-    -->
+	err-pattern="((?&lt;!no )error|warning|fail)"/>
 
     <!--
 	Requires apt-dater to be build with enable-tclfilter.
