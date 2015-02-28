@@ -33,6 +33,7 @@
 #endif
 
 #include <libxml/parser.h>
+#include <libxml/xinclude.h>
 #include <libxml/xpath.h>
 
 #include "../conf/apt-dater.xml.inc"
@@ -225,6 +226,9 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     if(xcfg == NULL)
       return(FALSE);
 
+    /* Handle Xincludes. */
+    xmlXIncludeProcess(xcfg);
+
     /* Validate against DTD. */
     xmlValidCtxtPtr xval = xmlNewValidCtxt();
     if(xmlValidateDocument(xval, xcfg) == 0) {
@@ -324,6 +328,9 @@ GList *loadHosts (const gchar *filename) {
     xmlDocPtr xcfg = xmlParseFile(filename);
     if(xcfg == NULL)
       return(FALSE);
+
+    /* Handle Xincludes. */
+    xmlXIncludeProcess(xcfg);
 
     /* Validate against DTD. */
     xmlValidCtxtPtr xval = xmlNewValidCtxt();

@@ -38,7 +38,12 @@
     </hosts>
 -->
 
-<hosts>
+<hosts xmlns:xi="http://www.w3.org/2001/XInclude">
+  <!-- Include global config file if available. -->
+  <xi:include href="/etc/apt-dater/hosts.xml">
+    <xi:fallback />
+  </xi:include>
+
   <group name="Localnet">
     <host name="localhost" comment="Edit ~/.config/apt-dater/hosts.xml!"/>
   </group>
