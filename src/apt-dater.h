@@ -90,6 +90,7 @@ typedef struct _cfgfile {
  gchar *hostsfile;
  gchar *screenrcfile;
  gchar *screentitle;
+ mode_t umask;
  gchar *statsdir;
  gchar *plugindir;
  gchar *ssh_cmd;
@@ -108,6 +109,7 @@ typedef struct _cfgfile {
 #ifdef FEAT_HISTORY
  gboolean record_history;
  gchar *history_errpattern;
+ gchar *history_dir;
 #endif
  gchar **colors;
 #ifdef FEAT_TCLFILTER

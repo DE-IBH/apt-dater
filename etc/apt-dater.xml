@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE apt-dater SYSTEM "@XMLSCHEMAURI@/apt-dater.dtd">
+<!DOCTYPE apt-dater SYSTEM "file:///usr/local/share/xml/schema/apt-dater/apt-dater.dtd">
 <apt-dater xmlns:xi="http://www.w3.org/2001/XInclude">
-    <!-- Include global config file if available. -->
-    <xi:include href="file:///etc/apt-dater/apt-dater.xml" xpointer="xpointer(/apt-dater/*)">
-	<xi:fallback />
-    </xi:include>
-
     <!--
 	SSH(1) options
 
@@ -27,7 +22,12 @@
 	hosts-file="path-to/hosts.xml"
 	history-dir="path-to/history/"
 	stats-dir="path-to/stats"/>
+
     -->
+    <paths
+	umask="0007"
+	history-dir="/var/lib/apt-dater/history"
+	stats-dir="/var/cache/apt-dater/stats"/>
 
     <!--
 	SCREEN(1) options
@@ -63,16 +63,16 @@
 	(pre|post)-*: run hooks before or after executing an action on a host
 
     <hooks
-	pluginDir="etc/apt-dater/plugins";
+	pluginDir="/etc/apt-dater/plugins";
 
 	pre-upgrade="/etc/apt-dater/pre-upg.d"
-	post-upgrade="etc/apt-dater/post-upg.d"
-	pre-refresh="etc/apt-dater/pre-ref.d"
-	post-refresh="etc/apt-dater/post-ref.d"
-	pre-install="etc/apt-dater/pre-ins.d"
-	post-install="etc/apt-dater/post-ins.d"
-	pre-connect="etc/apt-dater/pre-con.d"
-	post-connect="etc/apt-dater/post-con.d"/>
+	post-upgrade="/etc/apt-dater/post-upg.d"
+	pre-refresh="/etc/apt-dater/pre-ref.d"
+	post-refresh="/etc/apt-dater/post-ref.d"
+	pre-install="/etc/apt-dater/pre-ins.d"
+	post-install="/etc/apt-dater/post-ins.d"
+	pre-connect="/etc/apt-dater/pre-con.d"
+	post-connect="/etc/apt-dater/post-con.d"/>
     -->
 
     <!--

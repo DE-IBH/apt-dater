@@ -1,5 +1,6 @@
 <!-- Root element -->
-<!ELEMENT apt-dater (ssh?|paths?|screen?|appearance?|notify?|hooks?|auto-ref?|history?|tcl-filter?)>
+<!ELEMENT apt-dater (ssh?|paths?|screen?|appearance?|notify?|hooks?|auto-ref?|history?|tcl-filter?)*>
+<!ATTLIST apt-dater xmlns:xi CDATA #IMPLIED>
 
 <!-- SSH -->
 <!ELEMENT ssh (add-key*)>
@@ -7,28 +8,36 @@
 <!ATTLIST ssh opt-cmd-flags CDATA #IMPLIED>
 <!ATTLIST ssh sftp-cmd CDATA #IMPLIED>
 <!ATTLIST ssh spawn-agent CDATA #IMPLIED>
+<!ATTLIST ssh xml:base CDATA #IMPLIED>
 
 <!ELEMENT add-key EMPTY>
 <!ATTLIST add-key fn CDATA #REQUIRED>
+<!ATTLIST add-key xml:base CDATA #IMPLIED>
 
 <!-- Paths -->
 <!ELEMENT paths EMPTY>
+<!ATTLIST paths umask CDATA #IMPLIED>
 <!ATTLIST paths host-file CDATA #IMPLIED>
 <!ATTLIST paths stats-dir CDATA #IMPLIED>
+<!ATTLIST paths history-dir CDATA #IMPLIED>
+<!ATTLIST paths xml:base CDATA #IMPLIED>
 
 <!-- SCREEN -->
 <!ELEMENT screen EMPTY>
 <!ATTLIST screen rc-file CDATA #IMPLIED>
 <!ATTLIST screen title CDATA #IMPLIED>
+<!ATTLIST screen xml:base CDATA #IMPLIED>
 
 <!-- Colors -->
 <!ELEMENT appearance EMPTY>
 <!ATTLIST appearance colors CDATA #IMPLIED>
+<!ATTLIST appearance xml:base CDATA #IMPLIED>
 
 <!-- Notifications -->
 <!ELEMENT notify EMPTY>
 <!ATTLIST notify beep CDATA #IMPLIED>
 <!ATTLIST notify flash CDATA #IMPLIED>
+<!ATTLIST notify xml:base CDATA #IMPLIED>
 
 <!-- Hooks -->
 <!ELEMENT hooks EMPTY>
@@ -40,17 +49,21 @@
 <!ATTLIST hooks post-refresh CDATA #IMPLIED>
 <!ATTLIST hooks post-install CDATA #IMPLIED>
 <!ATTLIST hooks post-connect CDATA #IMPLIED>
+<!ATTLIST hooks xml:base CDATA #IMPLIED>
 
 <!-- Auto Refresh Feature -->
 <!ELEMENT auto-ref EMPTY>
 <!ATTLIST auto-ref enabled CDATA #IMPLIED>
+<!ATTLIST auto-ref xml:base CDATA #IMPLIED>
 
 <!-- History Feature -->
 <!ELEMENT history EMPTY>
 <!ATTLIST history record CDATA #IMPLIED>
 <!ATTLIST history err-pattern CDATA #IMPLIED>
+<!ATTLIST history xml:base CDATA #IMPLIED>
 
 <!-- TclFilter Feature -->
 <!ELEMENT tcl-filter EMPTY>
 <!ATTLIST tcl-filter filter-exp CDATA #IMPLIED>
 <!ATTLIST tcl-filter filter-file CDATA #IMPLIED>
+<!ATTLIST tcl-filter xml:base CDATA #IMPLIED>

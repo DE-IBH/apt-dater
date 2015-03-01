@@ -1,5 +1,6 @@
 <!-- Root element -->
 <!ELEMENT hosts (default?,group*)>
+<!ATTLIST hosts xmlns:xi CDATA #IMPLIED>
 
 <!-- Default node -->
 <!ELEMENT default EMPTY>
@@ -9,6 +10,7 @@
 <!ATTLIST default ssh-host CDATA #IMPLIED>
 <!ATTLIST default ssh-port CDATA #IMPLIED>
 <!ATTLIST default ssh-id CDATA #IMPLIED>
+<!ATTLIST default xml:base CDATA #IMPLIED>
 
 <!-- Group of host nodes -->
 <!ELEMENT group (host*)>
@@ -19,6 +21,7 @@
 <!ATTLIST group ssh-host CDATA #IMPLIED>
 <!ATTLIST group ssh-port CDATA #IMPLIED>
 <!ATTLIST group ssh-id CDATA #IMPLIED>
+<!ATTLIST group xml:base CDATA #IMPLIED>
 
 <!-- Host node -->
 <!ELEMENT host EMPTY>
@@ -29,3 +32,4 @@
 <!ATTLIST host ssh-host CDATA #IMPLIED>
 <!ATTLIST host ssh-port CDATA #IMPLIED>
 <!ATTLIST host ssh-id CDATA #IMPLIED>
+<!ATTLIST host xml:base CDATA #IMPLIED>

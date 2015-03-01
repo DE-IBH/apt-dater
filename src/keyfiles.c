@@ -33,6 +33,7 @@
 #endif
 
 #include <libxml/parser.h>
+#include <libxml/xinclude.h>
 #include <libxml/xpath.h>
 
 #include "../conf/apt-dater.xml.inc"
@@ -61,7 +62,7 @@ void dump_config(const gchar *dir, const gchar *fn, const gchar *str, const unsi
 
 int chkForInitialConfig(const gchar *cfgdir, const gchar *cfgfile) {
   if(g_file_test(cfgdir, G_FILE_TEST_IS_DIR) == FALSE) {
-    if(g_mkdir_with_parents (cfgdir, 0700)) return(1);
+    if(g_mkdir_with_parents (cfgdir, S_IRWXU)) return(1);
   }
 
   dump_config(cfgdir, "apt-dater.xml", (gchar *)apt_dater_xml, apt_dater_xml_len);
@@ -94,13 +95,7 @@ CfgFile *initialConfig() {
     lcfg->_type = T_CFGFILE;
 #endif
 
-    lcfg->hostsfile = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.xml");
-    lcfg->statsdir = g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats");
-
-    lcfg->screenrcfile = g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc");
-
     lcfg->dump_screen = TRUE;
-    lcfg->query_maintainer = FALSE;
 
 #ifdef FEAT_AUTOREF
     lcfg->auto_refresh = TRUE;
@@ -111,7 +106,6 @@ CfgFile *initialConfig() {
 
 #ifdef FEAT_HISTORY
     lcfg->record_history = TRUE;
-    lcfg->history_errpattern = "((?<!no )error|warning|fail)";
 #endif
 
     lcfg->hook_pre_upgrade = "/etc/apt-dater/pre-upg.d";
@@ -165,7 +159,7 @@ int getXPropInt(const xmlNodePtr nodes[], const gchar *attr, const int defval) {
   if(!sval)
     return defval;
 
-  int ival = atoi(sval);
+  int ival = strtol(sval, NULL, 0);
 
   g_free(sval);
 
@@ -225,6 +219,9 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     if(xcfg == NULL)
       return(FALSE);
 
+    /* Handle Xincludes. */
+    xmlXIncludeProcess(xcfg);
+
     /* Validate against DTD. */
     xmlValidCtxtPtr xval = xmlNewValidCtxt();
     if(xmlValidateDocument(xval, xcfg) == 0) {
@@ -260,9 +257,12 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     lcfg->ssh_cmd = getXPropStr(s_ssh, "cmd", "/usr/bin/ssh");
     lcfg->sftp_cmd = getXPropStr(s_ssh, "sftp-cmd", "/usr/bin/sftp");
 
+    lcfg->umask = getXPropInt(s_path, "umask", S_IRWXG | S_IRWXO);
+    umask(lcfg->umask);
+
     lcfg->hostsfile = getXPropStr(s_path, "hosts-file", g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.xml"));
     lcfg->statsdir = getXPropStr(s_path, "stats-dir", g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats"));
-    g_mkdir_with_parents(lcfg->statsdir, S_IRWXU | S_IRWXG | S_IRWXO);
+    g_mkdir_with_parents(lcfg->statsdir, S_IRWXU | S_IRWXG);
 
     lcfg->screenrcfile = getXPropStr(s_screen, "rc-file", g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc"));
     lcfg->screentitle = getXPropStr(s_screen, "title", g_strdup("%m # %U%H"));
@@ -302,6 +302,7 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
 #ifdef FEAT_HISTORY
     lcfg->record_history = getXPropBool(s_history, "record", TRUE);
     lcfg->history_errpattern = getXPropStr(s_history, "err-pattern", "((?<!no )error|warning|fail)");
+    lcfg->history_dir = getXPropStr(s_path, "history-dir", g_strdup_printf("%s/%s/history", g_get_user_data_dir(), PACKAGE));
 #endif
 
     lcfg->hook_pre_upgrade = getXPropStr(s_hooks, "pre-upgrade", "/etc/apt-dater/pre-upg.d");
@@ -324,6 +325,9 @@ GList *loadHosts (const gchar *filename) {
     xmlDocPtr xcfg = xmlParseFile(filename);
     if(xcfg == NULL)
       return(FALSE);
+
+    /* Handle Xincludes. */
+    xmlXIncludeProcess(xcfg);
 
     /* Validate against DTD. */
     xmlValidCtxtPtr xval = xmlNewValidCtxt();

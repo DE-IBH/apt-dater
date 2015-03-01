@@ -145,7 +145,7 @@ ssh_cmd_upgrade(HostNode *n, const gboolean detached)
 #ifdef FEAT_HISTORY
  if(!detached && n->parse_result && !screen_get_sessions(n)) {
     n->parse_result = FALSE;
-    return history_ts_failed(n);
+    return history_ts_failed(cfg, n);
  }
 #endif
 
@@ -201,7 +201,7 @@ ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
 #ifdef FEAT_HISTORY
  if(!detached && n->parse_result && !screen_get_sessions(n)) {
     n->parse_result = FALSE;
-    return history_ts_failed(n);
+    return history_ts_failed(cfg, n);
  }
 #endif
 

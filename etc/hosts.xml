@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE hosts SYSTEM "@XMLSCHEMAURI@/hosts.dtd">
+<!DOCTYPE hosts SYSTEM "file:///usr/local/share/xml/schema/apt-dater/hosts.dtd">
 <!--
     Hosts file of apt-dater (parsed by libxml2)
     ===========================================
@@ -39,12 +39,7 @@
 -->
 
 <hosts xmlns:xi="http://www.w3.org/2001/XInclude">
-  <!-- Include global config file if available. -->
-  <xi:include href="file:///etc/apt-dater/hosts.xml" xpointer="xpointer(/hosts/*)">
-    <xi:fallback />
-  </xi:include>
-
-  <group name="Localnet">
-    <host name="localhost" comment="Edit ~/.config/apt-dater/hosts.xml!"/>
+  <group name="Localnet2">
+    <host name="localhost2" comment="Edit ~/.config/apt-dater/hosts.xml!"/>
   </group>
 </hosts>

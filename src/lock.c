@@ -55,7 +55,7 @@ int setLockForHost(HostNode *n)
  }
 
  if(n->fdlock < 0) {
-  if((n->fdlock = open(lockfile, O_CREAT|O_RDWR, S_IRUSR|S_IWUSR))< 0) {
+  if((n->fdlock = open(lockfile, O_CREAT|O_RDWR, S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP))< 0) {
      g_error("%s: %s", lockfile, strerror(errno));
      g_free(lockfile);
      return(EXIT_FAILURE);

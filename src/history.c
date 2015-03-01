@@ -93,10 +93,10 @@ static gint cmp_he(gconstpointer a, gconstpointer b) {
     return 1;
 }
 
-GList *history_get_entries(const HostNode *n) {
+GList *history_get_entries(const CfgFile *cfg, const HostNode *n) {
     const gchar *fn;
     GList *hel = NULL;
-    gchar *path = history_path(n);
+    gchar *path = history_path(cfg, n);
     GDir *dir = g_dir_open(path, 0, NULL);
 
     if(!dir) {
@@ -122,8 +122,8 @@ GList *history_get_entries(const HostNode *n) {
     return hel;
 }
 
-HistoryEntry *history_recent_entry(const HostNode *n) {
-    gchar *path = history_ts_path(n);
+HistoryEntry *history_recent_entry(const CfgFile *cfg, const HostNode *n) {
+    gchar *path = history_ts_path(cfg, n);
     gchar *meta = g_strdup_printf("%s/meta", path);
     gchar *timing = g_strdup_printf("%s/timingfile", path);
 
@@ -204,8 +204,8 @@ void history_show_less_search(HistoryEntry *he, gchar *pattern) {
  }
 }
 
-gboolean history_ts_failed(HostNode *n) {
- gchar *p = history_ts_path(n);
+gboolean history_ts_failed(const CfgFile *cfg, HostNode *n) {
+ gchar *p = history_ts_path(cfg, n);
  gchar *fn = g_strdup_printf("%s/failed", p);
 
  g_free(p);
