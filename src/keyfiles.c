@@ -62,7 +62,7 @@ void dump_config(const gchar *dir, const gchar *fn, const gchar *str, const unsi
 
 int chkForInitialConfig(const gchar *cfgdir, const gchar *cfgfile) {
   if(g_file_test(cfgdir, G_FILE_TEST_IS_DIR) == FALSE) {
-    if(g_mkdir_with_parents (cfgdir, 0700)) return(1);
+    if(g_mkdir_with_parents (cfgdir, S_IRWXU)) return(1);
   }
 
   dump_config(cfgdir, "apt-dater.xml", (gchar *)apt_dater_xml, apt_dater_xml_len);
@@ -159,7 +159,7 @@ int getXPropInt(const xmlNodePtr nodes[], const gchar *attr, const int defval) {
   if(!sval)
     return defval;
 
-  int ival = atoi(sval);
+  int ival = strtol(sval, NULL, 0);
 
   g_free(sval);
 
@@ -257,9 +257,12 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     lcfg->ssh_cmd = getXPropStr(s_ssh, "cmd", "/usr/bin/ssh");
     lcfg->sftp_cmd = getXPropStr(s_ssh, "sftp-cmd", "/usr/bin/sftp");
 
+    lcfg->umask = getXPropInt(s_path, "umask", S_IRWXG | S_IRWXO);
+    umask(lcfg->umask);
+
     lcfg->hostsfile = getXPropStr(s_path, "hosts-file", g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.xml"));
     lcfg->statsdir = getXPropStr(s_path, "stats-dir", g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats"));
-    g_mkdir_with_parents(lcfg->statsdir, S_IRWXU | S_IRWXG | S_IRWXO);
+    g_mkdir_with_parents(lcfg->statsdir, S_IRWXU | S_IRWXG);
 
     lcfg->screenrcfile = getXPropStr(s_screen, "rc-file", g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc"));
     lcfg->screentitle = getXPropStr(s_screen, "title", g_strdup("%m # %U%H"));

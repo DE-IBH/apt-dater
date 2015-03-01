@@ -90,6 +90,7 @@ typedef struct _cfgfile {
  gchar *hostsfile;
  gchar *screenrcfile;
  gchar *screentitle;
+ mode_t umask;
  gchar *statsdir;
  gchar *plugindir;
  gchar *ssh_cmd;

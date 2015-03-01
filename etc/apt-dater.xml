@@ -25,6 +25,7 @@
 
     -->
     <paths
+	umask="0007"
 	history-dir="/var/lib/apt-dater/history"
 	stats-dir="/var/cache/apt-dater/stats"/>
 

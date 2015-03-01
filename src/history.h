@@ -52,7 +52,7 @@ static inline gchar *history_rec_path(const CfgFile *cfg, HostNode *n) {
 
     gchar *p = history_ts_path(cfg, n);
 
-    g_mkdir_with_parents(p, S_IRWXU);
+    g_mkdir_with_parents(p, S_IRWXU | S_IRWXG);
 
     return p;
 }
