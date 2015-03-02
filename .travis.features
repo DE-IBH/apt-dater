@@ -1,0 +1,16 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use Algorithm::Combinatorics qw(combinations);
+my @features = qw(debug xmlreport autoref history clusters tclfilter tmux);
+my $count = scalar @features;
+
+foreach my $c (0..$count) {
+    foreach my $set (combinations(\@features, $c)) {
+	print " - features=\"";
+	print join(' ', map { "--enable-$_"; } sort @$set);
+	print "\"\n";
+    }
+}
