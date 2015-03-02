@@ -200,7 +200,7 @@ static void reportHost(gpointer data, gpointer lgroup) {
 
 #ifdef FEAT_HISTORY
   /* history data */
-  GList *hel = history_get_entries(n);
+  GList *hel = history_get_entries(cfg, n);
   if(hel) {
     xmlTextWriterStartElement(writer, BAD_CAST("history"));
     g_list_foreach(hel, reportHistory, NULL);
