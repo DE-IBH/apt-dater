@@ -319,6 +319,33 @@ fi
 AC_DEFINE_UNQUOTED(SCREEN_SOCKPATH,"$screen_sockpath",[ Where screen stores the sockets. ])
 echo "$screen_sockpath"
 
+
+# Check if `tmux' support is enabled.
+AC_MSG_CHECKING(--enable-tmux argument)
+AC_ARG_ENABLE(tmux,
+	[  --enable-tmux      Enable tmux terminal multiplexer (replaces screen).], [enable_tmux="yes"],
+	[enable_tmux="no"])
+AC_MSG_RESULT($enable_tmux)
+if test "$enable_tmux" = "yes"; then
+    # Check if `tmux' is installed on your system
+    echo -n "checking for tmux... "
+    if test -x /usr/bin/tmux; then
+	tmux_binary="/usr/bin/tmux"
+    elif test -x /usr/local/bin/tmux; then
+	tmux_binary="/usr/local/bin/tmux"
+    elif test -x /bin/tmux; then
+	tmux_binary="/bin/tmux"
+    else
+	echo "not found at configure time."
+	echo "Using mostly common systemdefault /usr/bin/tmux."
+	tmux_binary="/usr/bin/tmux"
+    fi
+    AC_DEFINE_UNQUOTED(TMUX_BINARY,"$tmux_binary",[ Where is the command tmux located. ])
+    echo "$tmux_binary"
+    AC_DEFINE(FEAT_TMUX, 1, [ Define if you want to use tmux terminal multiplexer. ])
+fi
+
+
 # Check if `env' is installed on your system (used by history feature)
 if test "$enable_history" = "yes"; then
     echo -n "checking for env... "

@@ -22,6 +22,9 @@
 /* Define if you want TCL filter support included. */
 #undef FEAT_TCLFILTER
 
+/* Define if you want to use tmux terminal multiplexer. */
+#undef FEAT_TMUX
+
 /* Define if you want XML report support included. */
 #undef FEAT_XMLREPORT
 
@@ -164,6 +167,9 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Where is the command tmux located. */
+#undef TMUX_BINARY
 
 /* Define to 1 if your <sys/time.h> declares `struct tm'. */
 #undef TM_IN_SYS_TIME
