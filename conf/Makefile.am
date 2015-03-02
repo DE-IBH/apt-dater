@@ -1,4 +1,4 @@
-all: apt-dater.xml.inc hosts.xml.inc screenrc.inc
+all: apt-dater.xml.inc hosts.xml.inc screenrc.inc tmux.conf.inc
 
 clean-local:
 	rm -f *.blob

@@ -11,3 +11,5 @@ config.[hls]*
 stamp-*
 *~
 conf/*.xml
+\#*#
+.#*

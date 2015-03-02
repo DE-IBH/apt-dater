@@ -778,6 +778,7 @@ enable_history
 enable_clusters
 enable_tclfilter
 with_tclsh
+enable_tmux
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1430,6 +1431,7 @@ Optional Features:
   --enable-history      Include 'history' support.
   --enable-clusters      Include 'clusters' support.
   --enable-tclfilter      Include Tcl interpreter.
+  --enable-tmux      Enable tmux terminal multiplexer (replaces screen).
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -8704,6 +8706,45 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 echo "$screen_sockpath"
+
+
+# Check if `tmux' support is enabled.
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking --enable-tmux argument" >&5
+$as_echo_n "checking --enable-tmux argument... " >&6; }
+# Check whether --enable-tmux was given.
+if test "${enable_tmux+set}" = set; then :
+  enableval=$enable_tmux; enable_tmux="yes"
+else
+  enable_tmux="no"
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $enable_tmux" >&5
+$as_echo "$enable_tmux" >&6; }
+if test "$enable_tmux" = "yes"; then
+    # Check if `tmux' is installed on your system
+    echo -n "checking for tmux... "
+    if test -x /usr/bin/tmux; then
+	tmux_binary="/usr/bin/tmux"
+    elif test -x /usr/local/bin/tmux; then
+	tmux_binary="/usr/local/bin/tmux"
+    elif test -x /bin/tmux; then
+	tmux_binary="/bin/tmux"
+    else
+	echo "not found at configure time."
+	echo "Using mostly common systemdefault /usr/bin/tmux."
+	tmux_binary="/usr/bin/tmux"
+    fi
+
+cat >>confdefs.h <<_ACEOF
+#define TMUX_BINARY "$tmux_binary"
+_ACEOF
+
+    echo "$tmux_binary"
+
+$as_echo "#define FEAT_TMUX 1" >>confdefs.h
+
+fi
+
 
 # Check if `env' is installed on your system (used by history feature)
 if test "$enable_history" = "yes"; then

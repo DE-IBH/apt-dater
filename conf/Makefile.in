@@ -433,7 +433,7 @@ uninstall-am:
 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
 	pdf-am ps ps-am tags-am uninstall uninstall-am
 
-all: apt-dater.xml.inc hosts.xml.inc screenrc.inc
+all: apt-dater.xml.inc hosts.xml.inc screenrc.inc tmux.conf.inc
 
 clean-local:
 	rm -f *.blob
