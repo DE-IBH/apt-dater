@@ -32,7 +32,7 @@
 #include "apt-dater.h"
 #include "ui.h"
 #include "colors.h"
-#include "screen.h"
+#include "ttymux.h"
 #include "exec.h"
 #include "stats.h"
 #include "keyfiles.h"
@@ -1484,7 +1484,7 @@ void drawPackageEntry (DrawNode *n)
 
 static gboolean refreshDumpWindow (DrawNode *n)
 {
- gchar *dump = n->type == SESSION ? screen_get_dump((SessNode *) n->p) : NULL;
+ gchar *dump = n->type == SESSION ? TTYMUX_GET_DUMP((SessNode *) n->p) : NULL;
  gchar *hostname = NULL;
  char   h[BUF_MAX_LEN];
  
@@ -1525,7 +1525,7 @@ void drawSessionEntry (DrawNode *n)
  strftime(&h[strlen(h)], sizeof(h)-strlen(h), _("%D %H:%M "), tm_mtime);
 
  snprintf(&h[strlen(h)], sizeof(h)-strlen(h), "(%s)",
-	  (screen_is_attached((SessNode *) n->p) ? _("Attached") : _("Detached")));
+	  (TTYMUX_IS_ATTACHED((SessNode *) n->p) ? _("Attached") : _("Detached")));
 
 
  attron(n->attrs);
@@ -1540,7 +1540,7 @@ void drawSessionEntry (DrawNode *n)
     drawQuery(_("Could not read session dump."), G_USEC_PER_SEC);
   } else {
    snprintf(statusln, sizeof(statusln), "Session is %s",
-	    (screen_is_attached((SessNode *) n->p) ? _("attached") : _("detached")));
+	    (TTYMUX_IS_ATTACHED((SessNode *) n->p) ? _("attached") : _("detached")));
    drawStatus(statusln, TRUE);
   }
  }
@@ -1598,7 +1598,7 @@ gchar *getStrFromDrawNode (DrawNode *n)
   strftime(&h[strlen(h)], sizeof(h)-strlen(h), _("%D %H:%M "), tm_mtime);
 
   snprintf(&h[strlen(h)], sizeof(h)-strlen(h), "(%s)",
-	   (screen_is_attached((SessNode *) n->p) ? _("Attached") : _("Detached")));  
+	   (TTYMUX_IS_ATTACHED((SessNode *) n->p) ? _("Attached") : _("Detached")));
 
   ret = h;
   break;
@@ -3511,12 +3511,12 @@ gboolean ctrlUI (GList *hosts)
        continue;
       }
 
-      if (!screen_is_attached((SessNode *)scr->data)) {
+      if (!TTYMUX_IS_ATTACHED((SessNode *)scr->data)) {
        cleanUI();
 #ifdef FEAT_HISTORY
        gboolean f =
 #endif
-       screen_attach(m, (SessNode *)scr->data, FALSE);
+       TTYMUX_ATTACH(m, (SessNode *)scr->data, FALSE);
 #ifdef FEAT_HISTORY
        if(f)
         handleErrors(m);
@@ -3561,7 +3561,7 @@ gboolean ctrlUI (GList *hosts)
     gboolean may_share = FALSE;
 
     /* Session already attached! */
-    if (screen_is_attached(s)) {
+    if (TTYMUX_IS_ATTACHED(s)) {
      if (!queryConfirm(_("Already attached - share session? [y/N]: "), FALSE, NULL))
       break;
 
@@ -3573,7 +3573,7 @@ gboolean ctrlUI (GList *hosts)
 #ifdef FEAT_HISTORY
     gboolean f =
 #endif
-    screen_attach(inhost, s, may_share);
+    TTYMUX_ATTACH(inhost, s, may_share);
 #ifdef FEAT_HISTORY
     if(f)
      handleErrors(inhost);

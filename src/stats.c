@@ -26,7 +26,7 @@
 
 #include "apt-dater.h"
 #include "exec.h"
-#include "screen.h"
+#include "ttymux.h"
 #include "stats.h"
 #include "lock.h"
 #include "autoref.h"
@@ -472,7 +472,7 @@ gboolean refreshStats(GList *hosts)
  while(ho) {
   HostNode *n = (HostNode *) ho->data;
 
-  if(screen_get_sessions(n)) {
+  if(TTYMUX_GET_SESSIONS(n)) {
    if(n->category != C_SESSIONS) {
     n->category = C_SESSIONS;
     rebuilddl = TRUE;
