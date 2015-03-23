@@ -100,10 +100,10 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_apt_dater_OBJECTS = apt-dater.$(OBJEXT) colors.$(OBJEXT) \
 	exec.$(OBJEXT) keyfiles.$(OBJEXT) lock.$(OBJEXT) \
-	parsecmd.$(OBJEXT) report.$(OBJEXT) screen.$(OBJEXT) \
-	sighandler.$(OBJEXT) stats.$(OBJEXT) ui.$(OBJEXT) \
-	autoref.$(OBJEXT) tag.$(OBJEXT) history.$(OBJEXT) \
-	env.$(OBJEXT) clusters.$(OBJEXT)
+	parsecmd.$(OBJEXT) report.$(OBJEXT) sighandler.$(OBJEXT) \
+	stats.$(OBJEXT) ui.$(OBJEXT) autoref.$(OBJEXT) tag.$(OBJEXT) \
+	history.$(OBJEXT) env.$(OBJEXT) clusters.$(OBJEXT) \
+	tmux.$(OBJEXT) screen.$(OBJEXT)
 apt_dater_OBJECTS = $(am_apt_dater_OBJECTS)
 am__DEPENDENCIES_1 =
 apt_dater_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -312,8 +312,6 @@ apt_dater_SOURCES = \
 	parsecmd.h			\
 	report.c			\
 	report.h			\
-	screen.c			\
-	screen.h			\
 	sighandler.c			\
 	sighandler.h			\
 	stats.c				\
@@ -329,7 +327,14 @@ apt_dater_SOURCES = \
 	env.c				\
 	env.h				\
 	clusters.c			\
-	clusters.h
+	clusters.h			\
+if FEAT_TMUX				\
+	tmux.h				\
+	tmux.c				\
+else					\
+	screen.c			\
+	screen.h			\
+endif
 
 apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS) $(LIBCONFIG_LIBS)
 AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"'
@@ -438,6 +443,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sighandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stats.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tmux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ui.Po@am__quote@
 
 .c.o:

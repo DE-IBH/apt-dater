@@ -23,7 +23,6 @@
  */
 
 #include "apt-dater.h"
-#include "screen.h"
 #include "keyfiles.h"
 #include "stats.h"
 #include "lock.h"

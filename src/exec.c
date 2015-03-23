@@ -4,7 +4,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008-2014 (C) IBH IT-Service GmbH [https://www.ibh.de/apt-dater/]
+ *   2008-2015 (C) IBH IT-Service GmbH [https://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
  */
 
 #include "apt-dater.h"
-#include "screen.h"
+#include "ttymux.h"
 #include "exec.h"
 #include "stats.h"
 #include "parsecmd.h"
@@ -115,7 +115,7 @@ ssh_cmd_upgrade(HostNode *n, const gboolean detached)
  he.action = "upgrade";
  he.data = NULL;
 
- gchar **screen_argv = screen_new(n, detached);
+ gchar **screen_argv = TTYMUX_NEW(n, detached);
 
  argv = (gchar **) g_malloc0(sizeof(gchar *) * (g_strv_length(screen_argv) + 2));
  for(i = 0; i < g_strv_length(screen_argv); i++)
@@ -143,7 +143,7 @@ ssh_cmd_upgrade(HostNode *n, const gboolean detached)
  }
 
 #ifdef FEAT_HISTORY
- if(!detached && n->parse_result && !screen_get_sessions(n)) {
+ if(!detached && n->parse_result && !TTYMUX_GET_SESSIONS(n)) {
     n->parse_result = FALSE;
     return history_ts_failed(cfg, n);
  }
@@ -171,7 +171,7 @@ ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
  he.action = "install";
  he.data = package;
 
- gchar **screen_argv = screen_new(n, detached);
+ gchar **screen_argv = TTYMUX_NEW(n, detached);
 
  argv = (gchar **) g_malloc0(sizeof(gchar *) * (g_strv_length(screen_argv) + 2));
  for(i = 0; i < g_strv_length(screen_argv); i++)
@@ -199,7 +199,7 @@ ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
  }
 
 #ifdef FEAT_HISTORY
- if(!detached && n->parse_result && !screen_get_sessions(n)) {
+ if(!detached && n->parse_result && !TTYMUX_GET_SESSIONS(n)) {
     n->parse_result = FALSE;
     return history_ts_failed(cfg, n);
  }
@@ -221,7 +221,7 @@ void ssh_connect(HostNode *n, const gboolean detached)
  he.action = "connect";
  he.data = NULL;
 
- gchar **screen_argv = screen_new(n, detached);
+ gchar **screen_argv = TTYMUX_NEW(n, detached);
 
  argv = (gchar **) g_malloc0(sizeof(gchar *) * (g_strv_length(screen_argv) + 2));
  for(i = 0; i < g_strv_length(screen_argv); i++)
@@ -260,7 +260,7 @@ void sftp_connect(HostNode *n)
  he.action = "transfer";
  he.data = NULL;
 
- gchar **screen_argv = screen_new(n, FALSE);
+ gchar **screen_argv = TTYMUX_NEW(n, FALSE);
 
  argv = (gchar **) g_malloc0(sizeof(gchar *) * (g_strv_length(screen_argv) + 2));
  for(i = 0; i < g_strv_length(screen_argv); i++)

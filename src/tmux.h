@@ -4,7 +4,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008-2015 (C) IBH IT-Service GmbH [https://www.ibh.de/apt-dater/]
+ *   2008-2014 (C) IBH IT-Service GmbH [https://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -22,32 +22,28 @@
  *   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#ifndef _TTYMUX_H
-#define _TTYMUX_H
+#ifndef _TMUX_H
+#define _TMUX_H
 
 #include "apt-dater.h"
 #include "history.h"
 
-#ifdef FEAT_TMUX
+#define TMUX_SDFORMT "%s/S-%s"
+#define TMUX_SOCKPRE "apt-dater_"
+#define TMUX_SOCKPATH "/tmp"
 
-#include "tmux.h"
+gboolean tmux_get_sessions(HostNode *n);
 
-#define TTYMUX_GET_SESSIONS(n)       tmux_get_sessions((n))
-#define TTYMUX_NEW(n,detached)       tmux_new((n), (detached))
-#define TTYMUX_ATTACH(n, s, shared)  tmux_attach((n), (s), (shared))
-#define TTYMUX_GET_DUMP(s)           tmux_get_dump((s))
-#define TTYMUX_IS_ATTACHED(s)        tmux_is_attached((s))
+gchar **tmux_new(HostNode *n, const gboolean detached);
+gboolean tmux_attach(HostNode *n, const SessNode *s, const gboolean shared);
+gchar *tmux_get_dump(const SessNode *s);
 
-#else
+static inline gboolean
+tmux_is_attached(const SessNode *s) {
+  if (s->st.st_mode & S_IXUSR)
+    return TRUE;
 
-#include "screen.h"
+  return FALSE;
+}
 
-#define TTYMUX_GET_SESSIONS(n)       screen_get_sessions((n))
-#define TTYMUX_NEW(n,detached)       screen_new((n), (detached))
-#define TTYMUX_ATTACH(n, s, shared)  screen_attach((n), (s), (shared))
-#define TTYMUX_GET_DUMP(s)           screen_get_dump((s))
-#define TTYMUX_IS_ATTACHED(s)        screen_is_attached((s))
-
-#endif
-
-#endif /* _TTYMUX_H */
+#endif /* _TMUX_H */

@@ -17,8 +17,6 @@ apt_dater_SOURCES =			\
 	parsecmd.h			\
 	report.c			\
 	report.h			\
-	screen.c			\
-	screen.h			\
 	sighandler.c			\
 	sighandler.h			\
 	stats.c				\
@@ -34,7 +32,14 @@ apt_dater_SOURCES =			\
 	env.c				\
 	env.h				\
 	clusters.c			\
-	clusters.h
+	clusters.h			\
+if FEAT_TMUX				\
+	tmux.h				\
+	tmux.c				\
+else					\
+	screen.c			\
+	screen.h			\
+endif
 
 apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS) $(LIBCONFIG_LIBS)
 
