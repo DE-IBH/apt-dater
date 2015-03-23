@@ -109,14 +109,15 @@ tmux_new(HostNode *n, const gboolean detached) {
   gchar *title = parse_string(cfg->screentitle, n);
 
   _argv[0] = g_strdup(TMUX_BINARY);
-  _argv[1] = g_strdup_printf("-%sS", detached ? "dm" : "");
+  _argv[1] = g_strdup_printf("-%sS", detached ? "d" : "");
   _argv[2] = g_strdup_printf(TMUX_SOCKPRE"%s_%s_%d", n->ssh_user,
 			     n->hostname, 
 			     n->ssh_port);
-  _argv[3] = g_strdup("-t");
-  _argv[4] = title;
-  _argv[5] = g_strdup("-c");
-  _argv[6] = g_strdup(cfg->screenrcfile);
+  _argv[3] = g_strdup("new-session");
+  _argv[4] = g_strdup("-n");
+  _argv[5] = title;
+  /*  _argv[5] = g_strdup("-c");
+      _argv[6] = g_strdup(cfg->screenrcfile);*/
 
   return _argv;
 }
