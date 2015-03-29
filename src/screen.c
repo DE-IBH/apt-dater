@@ -33,6 +33,8 @@
 # include "config.h"
 #endif
 
+#ifndef FEAT_TMUX
+
 #include "screen.h"
 #include "parsecmd.h"
 #include "history.h"
@@ -209,3 +211,4 @@ screen_get_dump(const SessNode *s) {
 
  return c;
 }
+#endif /* !FEAT_TMUX */

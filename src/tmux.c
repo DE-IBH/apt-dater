@@ -64,41 +64,25 @@ tmux_get_sessions(HostNode *n) {
   if (!sdir)
     return FALSE;
 
-  GDir *d = g_dir_open(sdir, 0, NULL);
+  GDir *d = g_dir_open(cfg->tmuxsockpath, 0, NULL);
   if (!d) {
    return FALSE;
   }
 
-  gchar *search = g_strdup_printf(TMUX_SOCKPRE"%s_%s_%d", n->ssh_user, n->hostname, n->ssh_port);
+  gchar *sock = g_strdup_printf("%s/%s_%s_%d", cfg->tmuxsockpath, n->ssh_user, n->hostname, n->ssh_port);
 
-  const gchar *f;
-  while ((f = g_dir_read_name(d))) {
-    gchar *fn = g_strdup_printf("%s/%s", sdir, f);
-
-    if (g_file_test(fn, G_FILE_TEST_EXISTS)) {
-      gint pid = atoi(f);
-      char *name = strchr(f, '.');
-
-      if ((pid > 1) &&
-	  (name) &&
-	  (strcmp(name+1, search) == 0)) {
-
+  if (g_file_test(sock, G_FILE_TEST_EXISTS)) {
 	SessNode *s = g_new0(SessNode, 1);
 #ifndef NDEBUG
 	s->_type = T_SESSNODE;
 #endif
-	s->pid = pid;
-	stat(fn, &s->st);
+	s->pid = 1;
+	stat(sock, &s->st);
 
 	n->screens = g_list_prepend(n->screens, s);
-      }
     }
 
-    g_free(fn);
-  }
-  g_dir_close(d);
-
-  g_free(search);
+  g_free(sock);
 
   return g_list_length(n->screens) > 0;
 }
@@ -106,13 +90,11 @@ tmux_get_sessions(HostNode *n) {
 gchar **
 tmux_new(HostNode *n, const gboolean detached) {
   gchar **_argv = (gchar **) g_malloc0(sizeof(gchar *) * 8);
-  gchar *title = parse_string(cfg->screentitle, n);
+  gchar *title = parse_string("%m # %U%H", n);
 
   _argv[0] = g_strdup(TMUX_BINARY);
   _argv[1] = g_strdup_printf("-%sS", detached ? "d" : "");
-  _argv[2] = g_strdup_printf(TMUX_SOCKPRE"%s_%s_%d", n->ssh_user,
-			     n->hostname, 
-			     n->ssh_port);
+  _argv[2] = g_strdup_printf("%s/%s_%s_%d", cfg->tmuxsockpath, n->ssh_user, n->hostname, n->ssh_port);
   _argv[3] = g_strdup("new-session");
   _argv[4] = g_strdup("-n");
   _argv[5] = title;

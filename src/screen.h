@@ -25,6 +25,10 @@
 #ifndef _SCREEN_H
 #define _SCREEN_H
 
+#include "config.h"
+
+#ifndef FEAT_TMUX
+
 #include "apt-dater.h"
 #include "history.h"
 
@@ -45,5 +49,6 @@ screen_is_attached(const SessNode *s) {
 
   return FALSE;
 }
+#endif /* !FEAT_TMUX */
 
 #endif /* _SCREEN_H */

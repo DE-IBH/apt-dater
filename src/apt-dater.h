@@ -88,8 +88,12 @@ typedef struct _cfgfile {
  etype _type;
 #endif
  gchar *hostsfile;
+#ifdef FEAT_TMUX
+ gchar *tmuxsockpath;
+#else
  gchar *screenrcfile;
  gchar *screentitle;
+#endif
  mode_t umask;
  gchar *statsdir;
  gchar *plugindir;

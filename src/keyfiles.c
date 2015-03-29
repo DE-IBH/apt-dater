@@ -37,7 +37,11 @@
 
 #include "../conf/apt-dater.xml.inc"
 #include "../conf/hosts.xml.inc"
+#ifdef FEAT_TMUX
+#include "../conf/tmux.conf.inc"
+#else
 #include "../conf/screenrc.inc"
+#endif
 
 void dump_config(const gchar *dir, const gchar *fn, const gchar *str, const unsigned int len) {
   gchar *pathtofile = g_strdup_printf("%s/%s", dir, (fn));
@@ -66,7 +70,11 @@ int chkForInitialConfig(const gchar *cfgdir, const gchar *cfgfile) {
 
   dump_config(cfgdir, "apt-dater.xml", (gchar *)apt_dater_xml, apt_dater_xml_len);
   dump_config(cfgdir, "hosts.xml", (gchar *)hosts_xml, hosts_xml_len);
+#ifdef FEAT_TMUX
+  dump_config(cfgdir, "tmux.conf", (gchar *)tmux_conf, tmux_conf_len);
+#else
   dump_config(cfgdir, "screenrc", (gchar *)screenrc, screenrc_len);
+#endif
 
  return(0);
 }
@@ -81,8 +89,12 @@ void freeConfig (CfgFile *cfg)
  g_free(cfg->cmd_refresh);
  g_free(cfg->cmd_upgrade);
  g_free(cfg->cmd_install);
+#ifdef FEAT_TMUX
+ g_free(cfg->tmuxsockpath);
+#else
  g_free(cfg->screenrcfile);
  g_free(cfg->screentitle);
+#endif
  g_strfreev(cfg->colors);
 
  g_free(cfg);
@@ -238,7 +250,11 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
 
     xmlNodePtr s_ssh[2] = {getXNode(xctx, "/apt-dater/ssh"), NULL};
     xmlNodePtr s_path[2] = {getXNode(xctx, "/apt-dater/paths"), NULL};
+#ifdef FEAT_TMUX
+    xmlNodePtr s_tmux[2] = {getXNode(xctx, "/apt-dater/tmux"), NULL};
+#else
     xmlNodePtr s_screen[2] = {getXNode(xctx, "/apt-dater/screen"), NULL};
+#endif
     xmlNodePtr s_appearance[2] = {getXNode(xctx, "/apt-dater/appearance"), NULL};
     xmlNodePtr s_notify[2] = {getXNode(xctx, "/apt-dater/notify"), NULL};
     xmlNodePtr s_hooks[2] = {getXNode(xctx, "/apt-dater/hooks"), NULL};
@@ -263,9 +279,13 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     lcfg->statsdir = getXPropStr(s_path, "stats-dir", g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats"));
     g_mkdir_with_parents(lcfg->statsdir, S_IRWXU | S_IRWXG);
 
+#ifdef FEAT_TMUX
+    lcfg->tmuxsockpath = getXPropStr(s_tmux, "socket-path", g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "tmux"));
+    g_mkdir_with_parents(lcfg->tmuxsockpath, S_IRWXU | S_IRWXG);
+#else
     lcfg->screenrcfile = getXPropStr(s_screen, "rc-file", g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc"));
     lcfg->screentitle = getXPropStr(s_screen, "title", g_strdup("%m # %U%H"));
-
+#endif
 
     lcfg->ssh_agent = getXPropBool(s_ssh, "spawn-agent", FALSE);
 
@@ -279,8 +299,15 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     }
     xmlXPathFreeNodeSet(s_addkeys);
 
+#ifdef FEAT_TMUX
+    // XXX needs to be ported to tmux XXX
+    lcfg->dump_screen = FALSE;
+    lcfg->query_maintainer = FALSE;
+    // XXX needs to be ported to tmux XXX
+#else
     lcfg->dump_screen = !getXPropBool(s_screen, "no-dumps", FALSE);
     lcfg->query_maintainer = getXPropBool(s_screen, "query-maintainer", FALSE);
+#endif
 
     gchar *colors = getXPropStr(s_appearance, "colors", "menu brightgreen blue;status brightgreen blue;selector black red;");
     if(colors)
