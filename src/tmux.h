@@ -38,12 +38,4 @@ gchar **tmux_new(HostNode *n, const gboolean detached);
 gboolean tmux_attach(HostNode *n, const SessNode *s, const gboolean shared);
 gchar *tmux_get_dump(const SessNode *s);
 
-static inline gboolean
-tmux_is_attached(const SessNode *s) {
-  if (s->st.st_mode & S_IXUSR)
-    return TRUE;
-
-  return FALSE;
-}
-
 #endif /* _TMUX_H */

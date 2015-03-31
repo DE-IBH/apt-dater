@@ -72,7 +72,7 @@ tmux_get_sessions(HostNode *n) {
   }
 
   gchar *sock = g_strdup_printf("%s/%s_%s_%d", cfg->tmuxsockpath, n->ssh_user, n->hostname, n->ssh_port);
-  gchar *argv[7] = {TMUX_BINARY, "-S", sock, "list-session", "-F", "#{session_id}\t#{session_created_string}\t#{session_attached}", NULL};
+  gchar *argv[7] = {TMUX_BINARY, "-S", sock, "list-session", "-F", "#{session_id}\t#{session_created}\t#{session_attached}", NULL};
   gchar *out = NULL;
   gint rc;
   GError *error = NULL;
@@ -98,20 +98,39 @@ tmux_get_sessions(HostNode *n) {
   if(!out)
     return FALSE;
 
-  gchar *p = out;
-  gchar *q;
-  while((q = strchr(p, '\n')) && *q) {
+  gchar **lines = g_strsplit(out, "\n", 0xff);
+  gint i = -1;
+  while(lines[++i] && strlen(lines[iq])) {
     SessNode *s = g_new0(SessNode, 1);
 #ifndef NDEBUG
     s->_type = T_SESSNODE;
 #endif
-    s->pid = 1;
-    stat(sock, &s->st);
+    gchar **line = g_strsplit(lines[i], "\t", 4);
+    gint j = -1;
+    while(line[++j] && j < 3) {
+      if(j == 0) {
+	sscanf(line[j], "$%d", &(s->pid));
+	continue;
+      }
+
+      if(j == 1) {
+	sscanf(line[j], "%d", &(s->st.st_mtime));
+	continue;
+      }
+
+      if(j == 2) {
+	gint h;
+	sscanf(line[j], "%d", &h);
+	s->attached = (h != 0);
+	continue;
+      }
+    }
+    g_strfreev(line);
 
     n->screens = g_list_prepend(n->screens, s);
-    p = q + 1;
   }
 
+  g_strfreev(lines);
   return g_list_length(n->screens) > 0;
 }
 

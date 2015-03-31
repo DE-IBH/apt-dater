@@ -42,13 +42,6 @@ gchar **screen_new(HostNode *n, const gboolean detached);
 gboolean screen_attach(HostNode *n, const SessNode *s, const gboolean shared);
 gchar *screen_get_dump(const SessNode *s);
 
-static inline gboolean
-screen_is_attached(const SessNode *s) {
-  if (s->st.st_mode & S_IXUSR)
-    return TRUE;
-
-  return FALSE;
-}
 #endif /* !FEAT_TMUX */
 
 #endif /* _SCREEN_H */

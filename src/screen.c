@@ -91,6 +91,7 @@ screen_get_sessions(HostNode *n) {
 #endif
 	s->pid = pid;
 	stat(fn, &s->st);
+	s->attached = s->st.st_mode & S_IXUSR;
 
 	n->screens = g_list_prepend(n->screens, s);
       }

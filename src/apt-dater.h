@@ -149,6 +149,7 @@ typedef struct _session {
 #endif
   gint pid;
   struct stat st;
+  gboolean attached;
 } SessNode;
 
 typedef enum {

@@ -36,7 +36,7 @@
 #define TTYMUX_NEW(n,detached)       tmux_new((n), (detached))
 #define TTYMUX_ATTACH(n, s, shared)  tmux_attach((n), (s), (shared))
 #define TTYMUX_GET_DUMP(s)           tmux_get_dump((s))
-#define TTYMUX_IS_ATTACHED(s)        tmux_is_attached((s))
+#define TTYMUX_IS_ATTACHED(s)        ((s)->attached)
 
 #else
 
@@ -46,7 +46,7 @@
 #define TTYMUX_NEW(n,detached)       screen_new((n), (detached))
 #define TTYMUX_ATTACH(n, s, shared)  screen_attach((n), (s), (shared))
 #define TTYMUX_GET_DUMP(s)           screen_get_dump((s))
-#define TTYMUX_IS_ATTACHED(s)        screen_is_attached((s))
+#define TTYMUX_IS_ATTACHED(s)        ((s)->attached)
 
 #endif
 
