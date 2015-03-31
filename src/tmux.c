@@ -55,6 +55,8 @@ tmux_get_sdir() {
 
 gboolean
 tmux_get_sessions(HostNode *n) {
+  g_assert(n);
+
   if (n->screens) {
     g_list_free(n->screens);
     n->screens = NULL;
@@ -70,19 +72,45 @@ tmux_get_sessions(HostNode *n) {
   }
 
   gchar *sock = g_strdup_printf("%s/%s_%s_%d", cfg->tmuxsockpath, n->ssh_user, n->hostname, n->ssh_port);
-
-  if (g_file_test(sock, G_FILE_TEST_EXISTS)) {
-	SessNode *s = g_new0(SessNode, 1);
-#ifndef NDEBUG
-	s->_type = T_SESSNODE;
-#endif
-	s->pid = 1;
-	stat(sock, &s->st);
-
-	n->screens = g_list_prepend(n->screens, s);
-    }
-
+  gchar *argv[7] = {TMUX_BINARY, "-S", sock, "list-session", "-F", "#{session_id}\t#{session_created_string}\t#{session_attached}", NULL};
+  gchar *out = NULL;
+  gint rc;
+  GError *error = NULL;
+  gboolean r = g_spawn_sync(g_getenv ("HOME"), /* working_directory */
+			    argv,
+			    NULL,  /* envp */
+			    G_SPAWN_STDERR_TO_DEV_NULL | G_SPAWN_SEARCH_PATH, /* GSpawnFlags */
+			    NULL,  /* GSpawnChildSetupFunc */
+			    NULL,  /* user_data */
+			    &out, /* &standard_output */
+			    NULL,  /* standard_error */
+			    &rc,
+			    &error);
   g_free(sock);
+
+  if(r == FALSE) {
+    g_warning("%s", error->message);
+    g_clear_error (&error);
+
+    return FALSE;
+  }
+
+  if(!out)
+    return FALSE;
+
+  gchar *p = out;
+  gchar *q;
+  while((q = strchr(p, '\n')) && *q) {
+    SessNode *s = g_new0(SessNode, 1);
+#ifndef NDEBUG
+    s->_type = T_SESSNODE;
+#endif
+    s->pid = 1;
+    stat(sock, &s->st);
+
+    n->screens = g_list_prepend(n->screens, s);
+    p = q + 1;
+  }
 
   return g_list_length(n->screens) > 0;
 }
