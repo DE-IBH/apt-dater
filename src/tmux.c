@@ -100,7 +100,7 @@ tmux_get_sessions(HostNode *n) {
 
   gchar **lines = g_strsplit(out, "\n", 0xff);
   gint i = -1;
-  while(lines[++i] && strlen(lines[iq])) {
+  while(lines[++i] && strlen(lines[i])) {
     SessNode *s = g_new0(SessNode, 1);
 #ifndef NDEBUG
     s->_type = T_SESSNODE;
@@ -114,7 +114,7 @@ tmux_get_sessions(HostNode *n) {
       }
 
       if(j == 1) {
-	sscanf(line[j], "%d", &(s->st.st_mtime));
+	s->st.st_mtime = strtoull(line[j], NULL, 10);
 	continue;
       }
 
