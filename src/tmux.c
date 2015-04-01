@@ -33,6 +33,8 @@
 # include "config.h"
 #endif
 
+#ifdef FEAT_TMUX
+
 #include "tmux.h"
 #include "parsecmd.h"
 #include "history.h"
@@ -195,3 +197,5 @@ gchar *
 tmux_get_dump(const SessNode *s) {
   return NULL;
 }
+
+#endif /* FEAT_TMUX */
