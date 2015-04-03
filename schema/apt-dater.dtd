@@ -1,5 +1,5 @@
 <!-- Root element -->
-<!ELEMENT apt-dater (ssh?|paths?|screen?|appearance?|notify?|hooks?|auto-ref?|history?|tcl-filter?)*>
+<!ELEMENT apt-dater (ssh?|paths?|screen?|tmux?|appearance?|notify?|hooks?|auto-ref?|history?|tcl-filter?)*>
 <!ATTLIST apt-dater xmlns:xi CDATA #IMPLIED>
 
 <!-- SSH -->
@@ -27,6 +27,11 @@
 <!ATTLIST screen rc-file CDATA #IMPLIED>
 <!ATTLIST screen title CDATA #IMPLIED>
 <!ATTLIST screen xml:base CDATA #IMPLIED>
+
+<!-- TMUX -->
+<!ELEMENT tmux EMPTY>
+<!ATTLIST tmux socket-path CDATA #IMPLIED>
+<!ATTLIST tmux xml:base CDATA #IMPLIED>
 
 <!-- Colors -->
 <!ELEMENT appearance EMPTY>
