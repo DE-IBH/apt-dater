@@ -129,7 +129,7 @@ tmux_get_sessions(HostNode *n) {
     }
     g_strfreev(line);
 
-    n->screens = g_list_prepend(n->screens, s);
+    n->screens = g_list_append(n->screens, s);
   }
 
   g_strfreev(lines);
