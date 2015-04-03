@@ -154,12 +154,15 @@ tmux_new(HostNode *n, const gboolean detached) {
 }
 
 static gchar **
-tmux_attach_cmd(const SessNode *s, const gboolean shared) {
-  gchar **_argv = (gchar **) g_malloc0(sizeof(gchar *) * 4);
+tmux_attach_cmd(const HostNode *n, const SessNode *s, const gboolean shared) {
+  gchar **_argv = (gchar **) g_malloc0(sizeof(gchar *) * 7);
 
   _argv[0] = g_strdup(TMUX_BINARY);
-  _argv[1] = g_strdup_printf("-r%s", shared ? "x" : "");
-  _argv[2] = g_strdup_printf("%d", s->pid);
+  _argv[1] = g_strdup("-S");
+  _argv[2] = g_strdup_printf("%s/%s_%s_%d", cfg->tmuxsockpath, n->ssh_user, n->hostname, n->ssh_port);
+  _argv[3] = g_strdup("attach-session");
+  _argv[4] = g_strdup("-t");
+  _argv[5] = g_strdup_printf("%d", s->pid);
 
   return _argv;
 }
@@ -168,7 +171,7 @@ gboolean
 tmux_attach(HostNode *n, const SessNode *s, const gboolean shared) {
  gboolean r;
  GError *error = NULL;
- gchar **argv = tmux_attach_cmd(s, shared);
+ gchar **argv = tmux_attach_cmd(n, s, shared);
 
  g_assert(n);
 
