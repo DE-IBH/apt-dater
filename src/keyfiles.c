@@ -31,6 +31,8 @@
 # include "config.h"
 #endif
 
+#include <errno.h>
+
 #include <libxml/parser.h>
 #include <libxml/xinclude.h>
 #include <libxml/xpath.h>
@@ -277,11 +279,17 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
 
     lcfg->hostsfile = getXPropStr(s_path, "hosts-file", g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.xml"));
     lcfg->statsdir = getXPropStr(s_path, "stats-dir", g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats"));
-    g_mkdir_with_parents(lcfg->statsdir, S_IRWXU | S_IRWXG);
+    if(g_mkdir_with_parents(lcfg->statsdir, S_IRWXU | S_IRWXG) == -1) {
+      g_warning("Failed to create %s: %s", lcfg->statsdir, g_strerror(errno));
+      exit(1);
+    }
 
 #ifdef FEAT_TMUX
     lcfg->tmuxsockpath = getXPropStr(s_tmux, "socket-path", g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "tmux"));
-    g_mkdir_with_parents(lcfg->tmuxsockpath, S_IRWXU | S_IRWXG);
+    if(g_mkdir_with_parents(lcfg->tmuxsockpath, S_IRWXU | S_IRWXG) == -1) {
+      g_warning("Failed to create %s: %s", lcfg->tmuxsockpath, g_strerror(errno));
+      exit(1);
+    }
 #else
     lcfg->screenrcfile = getXPropStr(s_screen, "rc-file", g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc"));
     lcfg->screentitle = getXPropStr(s_screen, "title", g_strdup("%m # %U%H"));
