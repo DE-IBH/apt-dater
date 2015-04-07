@@ -59,11 +59,6 @@ gboolean
 tmux_get_sessions(HostNode *n) {
   g_assert(n);
 
-  if (n->screens) {
-    g_list_free(n->screens);
-    n->screens = NULL;
-  }
-
   const gchar *sdir = tmux_get_sdir();
   if (!sdir)
     return FALSE;
@@ -78,27 +73,36 @@ tmux_get_sessions(HostNode *n) {
   gchar *out = NULL;
   gint rc;
   GError *error = NULL;
-  gboolean r = g_spawn_sync(g_getenv ("HOME"), /* working_directory */
+  gboolean r = g_spawn_sync(NULL,  /* working_directory */
 			    argv,
 			    NULL,  /* envp */
 			    G_SPAWN_STDERR_TO_DEV_NULL | G_SPAWN_SEARCH_PATH, /* GSpawnFlags */
 			    NULL,  /* GSpawnChildSetupFunc */
 			    NULL,  /* user_data */
-			    &out, /* &standard_output */
+			    &out,  /* &standard_output */
 			    NULL,  /* standard_error */
-			    &rc,
+			    &rc,   /* return code */
 			    &error);
   g_free(sock);
 
   if(r == FALSE) {
-    g_warning("%s", error->message);
+    g_warning("failed to run tmux: %s", error->message);
     g_clear_error (&error);
 
     return FALSE;
   }
 
-  if(!out)
+  if(!g_spawn_check_exit_status(rc, &error)) {
+    g_warning("error on list-sessions: %s", error->message);
+    g_clear_error (&error);
+
     return FALSE;
+  }
+
+  if (n->screens) {
+    g_list_free(n->screens);
+    n->screens = NULL;
+  }
 
   gchar **lines = g_strsplit(out, "\n", 0xff);
   gint i = -1;
