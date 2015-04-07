@@ -637,6 +637,8 @@ XMLSCHEMADIR
 CURSES_LIB
 LIBXML2_LIBS
 LIBXML2_CFLAGS
+GIO_LIBS
+GIO_CFLAGS
 GLIB_LIBS
 GLIB_CFLAGS
 PKG_CONFIG_LIBDIR
@@ -794,6 +796,8 @@ PKG_CONFIG_PATH
 PKG_CONFIG_LIBDIR
 GLIB_CFLAGS
 GLIB_LIBS
+GIO_CFLAGS
+GIO_LIBS
 LIBXML2_CFLAGS
 LIBXML2_LIBS
 XMLSCHEMADIR
@@ -1459,6 +1463,8 @@ Some influential environment variables:
               path overriding pkg-config's built-in search path
   GLIB_CFLAGS C compiler flags for GLIB, overriding pkg-config
   GLIB_LIBS   linker flags for GLIB, overriding pkg-config
+  GIO_CFLAGS  C compiler flags for GIO, overriding pkg-config
+  GIO_LIBS    linker flags for GIO, overriding pkg-config
   LIBXML2_CFLAGS
               C compiler flags for LIBXML2, overriding pkg-config
   LIBXML2_LIBS
@@ -6784,6 +6790,78 @@ else
 $as_echo "yes" >&6; }
 	enable_glib_=yes
 fi
+gio_module="gio-2.0 >= 2.15.0"
+
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for GIO" >&5
+$as_echo_n "checking for GIO... " >&6; }
+
+if test -n "$GIO_CFLAGS"; then
+    pkg_cv_GIO_CFLAGS="$GIO_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\"\$gio_module\"\""; } >&5
+  ($PKG_CONFIG --exists --print-errors ""$gio_module"") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_GIO_CFLAGS=`$PKG_CONFIG --cflags ""$gio_module"" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$GIO_LIBS"; then
+    pkg_cv_GIO_LIBS="$GIO_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"\"\$gio_module\"\""; } >&5
+  ($PKG_CONFIG --exists --print-errors ""$gio_module"") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_GIO_LIBS=`$PKG_CONFIG --libs ""$gio_module"" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        GIO_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs ""$gio_module"" 2>&1`
+        else
+	        GIO_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs ""$gio_module"" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$GIO_PKG_ERRORS" >&5
+
+	enable_gio_=no
+elif test $pkg_failed = untried; then
+     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+	enable_gio_=no
+else
+	GIO_CFLAGS=$pkg_cv_GIO_CFLAGS
+	GIO_LIBS=$pkg_cv_GIO_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+	enable_gio_=yes
+fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking --enable-debug argument" >&5
 $as_echo_n "checking --enable-debug argument... " >&6; }
@@ -6942,6 +7020,8 @@ if test "$enable_clusters" = "yes"; then
 $as_echo "#define FEAT_CLUSTERS 1" >>confdefs.h
 
 fi
+
+
 
 
 

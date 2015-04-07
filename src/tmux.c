@@ -28,6 +28,7 @@
 #include <pwd.h>
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <gio/gio.h>
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -40,6 +41,7 @@
 #include "history.h"
 
 static struct passwd *pw = NULL;
+static GFileMonitor *gfm = NULL;
 
 const static gchar *
 tmux_get_sdir() {
@@ -53,6 +55,21 @@ tmux_get_sdir() {
   g_snprintf(sdir, sizeof(sdir), TMUX_SDFORMT, TMUX_SOCKPATH, pw->pw_name);
 
   return sdir;
+}
+
+void
+tmux_initialize() {
+  GFile *gpath = g_file_new_for_path(tmux_get_sdir());
+  gfm = g_file_monitor_directory(gpath, G_FILE_MONITOR_NONE, NULL, NULL);
+}
+
+void
+tmux_changed(GFileMonitor     *monitor,
+	     GFile            *file,
+	     GFile            *other_file,
+	     GFileMonitorEvent event_type,
+	     gpointer          user_data) {
+  fprintf(stderr, "NOTIFY: %s => %s\n", g_file_get_parse_name(file), g_file_get_parse_name(other_file));
 }
 
 gboolean
