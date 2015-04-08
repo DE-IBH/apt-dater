@@ -34,6 +34,7 @@ getOldestMtime(GList *hosts);
 void
 freeUpdates(GList *updates);
 
+void stats_initialize(HostNode *);
 gboolean refreshStats(GList *);
 gboolean setStatsFileFromIOC(GIOChannel *, GIOCondition, gpointer);
 gchar *getStatsFileName(const HostNode *);

@@ -23,6 +23,7 @@
  */
 
 #include <glib/gstdio.h>
+#include <gio/gio.h>
 
 #include "apt-dater.h"
 #include "exec.h"
@@ -35,6 +36,32 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
+void
+stats_changed(GFileMonitor     *monitor,
+	     GFile            *file,
+	     GFile            *other_file,
+	     GFileMonitorEvent event_type,
+	     gpointer          user_data) {
+
+  if(event_type != G_FILE_MONITOR_EVENT_CHANGED)
+    return;
+
+  HostNode *n = user_data;
+
+  g_assert(n);
+
+  getUpdatesFromStat(n);
+}
+
+void stats_initialize(HostNode *n) {
+  GFile *path = g_file_new_for_path(n->statsfile);
+  n->mon_stats = g_file_monitor(path, G_FILE_MONITOR_SEND_MOVED, NULL, NULL);
+  g_object_unref(path);
+
+  g_signal_connect(n->mon_stats, "changed", G_CALLBACK(stats_changed), n);
+}
+
 
 gchar *getStatsFile(const HostNode *n)
 {

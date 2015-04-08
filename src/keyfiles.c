@@ -446,6 +446,7 @@ GList *loadHosts (const gchar *filename) {
 	getUpdatesFromStat(hostnode);
 
 	TTYMUX_INITIALIZE(hostnode);
+	stats_initialize(hostnode);
 
 	hostlist = g_list_append(hostlist, hostnode);
 
