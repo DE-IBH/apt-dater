@@ -209,7 +209,7 @@ int main(int argc, char **argv, char **envp)
  g_timeout_add(1000, (GSourceFunc) refreshStats, hosts);
 #endif
 XXX */
- refreshStats(hostsq);
+ refreshStats(hosts);
  
 #ifdef FEAT_XMLREPORT
  if(report)
