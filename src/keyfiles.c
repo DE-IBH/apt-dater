@@ -26,6 +26,7 @@
 #include "keyfiles.h"
 #include "stats.h"
 #include "lock.h"
+#include "ttymux.h"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -443,6 +444,8 @@ GList *loadHosts (const gchar *filename) {
 	hostnode->tagged = FALSE;
 
 	getUpdatesFromStat(hostnode);
+
+	TTYMUX_INITIALIZE(hostnode);
 
 	hostlist = g_list_append(hostlist, hostnode);
 

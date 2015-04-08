@@ -41,7 +41,6 @@
 #include "history.h"
 
 static struct passwd *pw = NULL;
-static GFileMonitor *gfm = NULL;
 
 const static gchar *
 tmux_get_sdir() {
@@ -58,23 +57,39 @@ tmux_get_sdir() {
 }
 
 void
-tmux_initialize() {
-  GFile *gpath = g_file_new_for_path(tmux_get_sdir());
-  gfm = g_file_monitor_directory(gpath, G_FILE_MONITOR_NONE, NULL, NULL);
-}
-
-void
 tmux_changed(GFileMonitor     *monitor,
 	     GFile            *file,
 	     GFile            *other_file,
 	     GFileMonitorEvent event_type,
 	     gpointer          user_data) {
-  fprintf(stderr, "NOTIFY: %s => %s\n", g_file_get_parse_name(file), g_file_get_parse_name(other_file));
+  HostNode *n = user_data;
+
+  g_assert(n);
+
+  GList *nl = g_list_append(NULL, n);
+  refreshStats(nl);
+  nl = g_list_remove(nl, n);
+}
+
+void
+tmux_initialize(HostNode *n) {
+  gchar *sp = g_strdup_printf("%s/%s_%s_%d", cfg->tmuxsockpath, n->ssh_user, n->hostname, n->ssh_port);
+  GFile *path = g_file_new_for_path(sp);
+  g_free(sp);
+  n->mon_ttymux = g_file_monitor(path, G_FILE_MONITOR_SEND_MOVED, NULL, NULL);
+  g_object_unref(path);
+
+  g_signal_connect(n->mon_ttymux, "changed", G_CALLBACK(tmux_changed), n);
 }
 
 gboolean
 tmux_get_sessions(HostNode *n) {
   g_assert(n);
+
+  if (n->screens) {
+    g_list_free(n->screens);
+    n->screens = NULL;
+  }
 
   const gchar *sdir = tmux_get_sdir();
   if (!sdir)
@@ -110,15 +125,10 @@ tmux_get_sessions(HostNode *n) {
   }
 
   if(!g_spawn_check_exit_status(rc, &error)) {
-    g_warning("error on list-sessions: %s", error->message);
-    g_clear_error (&error);
+    /*    g_warning("error on list-sessions: %s", error->message);
+	  g_clear_error (&error);*/
 
     return FALSE;
-  }
-
-  if (n->screens) {
-    g_list_free(n->screens);
-    n->screens = NULL;
   }
 
   gchar **lines = g_strsplit(out, "\n", 0xff);

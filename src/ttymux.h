@@ -32,7 +32,7 @@
 
 #include "tmux.h"
 
-#define TTYMUX_INITIALIZE()          tmux_initialize()
+#define TTYMUX_INITIALIZE(n)         tmux_initialize((n))
 #define TTYMUX_GET_SESSIONS(n)       tmux_get_sessions((n))
 #define TTYMUX_NEW(n,detached)       tmux_new((n), (detached))
 #define TTYMUX_ATTACH(n, s, shared)  tmux_attach((n), (s), (shared))
@@ -43,7 +43,7 @@
 
 #include "screen.h"
 
-#define TTYMUX_INITIALIZE()          screen_initialize()
+#define TTYMUX_INITIALIZE(n)         
 #define TTYMUX_GET_SESSIONS(n)       screen_get_sessions((n))
 #define TTYMUX_NEW(n,detached)       screen_new((n), (detached))
 #define TTYMUX_ATTACH(n, s, shared)  screen_attach((n), (s), (shared))

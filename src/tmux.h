@@ -32,6 +32,7 @@
 #define TMUX_SOCKPRE "apt-dater_"
 #define TMUX_SOCKPATH "/tmp"
 
+void tmux_initialize(HostNode *n);
 gboolean tmux_get_sessions(HostNode *n);
 
 gchar **tmux_new(HostNode *n, const gboolean detached);

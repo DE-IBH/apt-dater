@@ -38,6 +38,7 @@
 
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <gio/gio.h>
 
 #include "../config.h"
 #include "../include/adproto.h"
@@ -213,6 +214,8 @@ typedef struct _hostnode {
  gboolean  parse_result;
  gint      hist_ts;
 #endif
+ GFileMonitor *mon_ttymux;
+ GFileMonitor *mon_stats;
  Category  category;
  GList     *packages;
  gint      nupdates;
