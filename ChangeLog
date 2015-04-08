@@ -6,6 +6,9 @@ apt-dater (1.0.2) unstable; urgency=low
   * Drop linking binary blobs for default configs, use portable xxd
     based implementation (Debian Bug#767594).
   * Switching config engine again: libxml2
+  * Update host states using GFileMonitor instead of polling.
+  * Make apt-dater usable by different concurrent users sharing the
+    same hosts and sessions.
 
  -- Thomas Liske <liske@ibh.de>  
 
