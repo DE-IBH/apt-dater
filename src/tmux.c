@@ -39,6 +39,7 @@
 #include "tmux.h"
 #include "parsecmd.h"
 #include "history.h"
+#include "stats.h"
 
 static struct passwd *pw = NULL;
 
