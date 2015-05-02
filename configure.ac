@@ -148,7 +148,9 @@ AC_CHECK_HEADERS(popt.h)
 AC_CHECK_LIB([popt], [poptParseArgvString])
 AC_CHECK_LIB([glib-2.0], [g_main_loop_run])
 AC_CHECK_LIB([glib-2.0], [g_timeout_add_seconds],
-AC_DEFINE(HAVE_GLIB_TIMEOUT_ADD_SECONDS, 1, [ Define if your GLIB supports the g_timeout_add_seconds call. ]))
+AC_DEFINE(HAVE_GLIB_TIMEOUT_ADD_SECONDS, 1, [ Define to 1 if your GLIB supports the g_timeout_add_seconds call. ]))
+AC_CHECK_LIB([glib-2.0], [g_spawn_check_exit_status],
+AC_DEFINE(HAVE_GLIB_SPAWN_CHECK_EXIT_STATUS, 1, [ Define to 1 if your GLIB supports the g_spawn_check_exit_status call. ]))
 
 # Checks for header files.
 AC_HEADER_STDC
