@@ -55,7 +55,10 @@
 /* Define if the GNU gettext() function is already present or preinstalled. */
 #undef HAVE_GETTEXT
 
-/* Define if your GLIB supports the g_timeout_add_seconds call. */
+/* Define to 1 if your GLIB supports the g_spawn_check_exit_status call. */
+#undef HAVE_GLIB_SPAWN_CHECK_EXIT_STATUS
+
+/* Define to 1 if your GLIB supports the g_timeout_add_seconds call. */
 #undef HAVE_GLIB_TIMEOUT_ADD_SECONDS
 
 /* Define if you have the iconv() function and it works. */

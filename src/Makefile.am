@@ -33,6 +33,8 @@ apt_dater_SOURCES =			\
 	env.h				\
 	clusters.c			\
 	clusters.h			\
+	glue.c				\
+	glue.h				\
 if FEAT_TMUX				\
 	tmux.h				\
 	tmux.c				\
