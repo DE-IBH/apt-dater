@@ -178,12 +178,15 @@ int main(int argc, char **argv, char **envp)
 #ifdef FEAT_XMLREPORT
  if(!report) {
 #endif
+
+#ifndef FEAT_TMUX
 #ifdef __linux__
    /* Test if we are the owner of the TTY or die. */
    if(g_access("/proc/self/fd/0", R_OK|W_OK)) {
      g_error(_("Cannot open your terminal /proc/self/fd/0 - please check."));
      exit(EXIT_FAILURE);
    }
+#endif
 #endif
 
    getOldestMtime(hosts);
@@ -202,11 +205,7 @@ int main(int argc, char **argv, char **envp)
 
  loop = g_main_loop_new (NULL, FALSE);
 
-#ifdef HAVE_GLIB_TIMEOUT_ADD_SECONDS
- g_timeout_add_seconds(1, (GSourceFunc) refreshStats, hosts);
-#else
  g_timeout_add(1000, (GSourceFunc) refreshStats, hosts);
-#endif
  
 #ifdef FEAT_XMLREPORT
  if(report)

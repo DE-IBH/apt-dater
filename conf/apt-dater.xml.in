@@ -38,6 +38,12 @@
     -->
 
     <!--
+	TMUX(1) options
+    <tmux
+	socket-path="path-to/tmux"/>
+    -->
+
+    <!--
 	 Colors      = (COMPONENT FG BG ';')*
 	 COMPONENT ::= 'default' | 'menu' | 'status' | 'selector' | 'hoststatus' |
 	               'query' | 'input'

@@ -4,7 +4,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008-2014 (C) IBH IT-Service GmbH [https://www.ibh.de/apt-dater/]
+ *   2008-2015 (C) IBH IT-Service GmbH [https://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -22,26 +22,34 @@
  *   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#ifndef _SCREEN_H
-#define _SCREEN_H
-
-#include "config.h"
-
-#ifndef FEAT_TMUX
+#ifndef _TTYMUX_H
+#define _TTYMUX_H
 
 #include "apt-dater.h"
 #include "history.h"
 
-#define SCREEN_SDFORMT "%s/S-%s"
-#define SCREEN_SOCKPRE "apt-dater_"
+#ifdef FEAT_TMUX
 
-gboolean
-screen_get_sessions(HostNode *n);
+#include "tmux.h"
 
-gchar **screen_new(HostNode *n, const gboolean detached);
-gboolean screen_attach(HostNode *n, const SessNode *s, const gboolean shared);
-gchar *screen_get_dump(const SessNode *s);
+#define TTYMUX_INITIALIZE(n)         tmux_initialize((n))
+#define TTYMUX_GET_SESSIONS(n)       tmux_get_sessions((n))
+#define TTYMUX_NEW(n,detached)       tmux_new((n), (detached))
+#define TTYMUX_ATTACH(n, s, shared)  tmux_attach((n), (s), (shared))
+#define TTYMUX_GET_DUMP(s)           tmux_get_dump((s))
+#define TTYMUX_IS_ATTACHED(s)        ((s)->attached)
 
-#endif /* !FEAT_TMUX */
+#else
 
-#endif /* _SCREEN_H */
+#include "screen.h"
+
+#define TTYMUX_INITIALIZE(n)         
+#define TTYMUX_GET_SESSIONS(n)       screen_get_sessions((n))
+#define TTYMUX_NEW(n,detached)       screen_new((n), (detached))
+#define TTYMUX_ATTACH(n, s, shared)  screen_attach((n), (s), (shared))
+#define TTYMUX_GET_DUMP(s)           screen_get_dump((s))
+#define TTYMUX_IS_ATTACHED(s)        ((s)->attached)
+
+#endif
+
+#endif /* _TTYMUX_H */

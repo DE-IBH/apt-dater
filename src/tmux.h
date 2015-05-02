@@ -22,25 +22,21 @@
  *   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#ifndef _STATS_H
-#define _STATS_H
+#ifndef _TMUX_H
+#define _TMUX_H
 
-#include <glib.h>
 #include "apt-dater.h"
+#include "history.h"
 
-void
-getOldestMtime(GList *hosts);
+#define TMUX_SDFORMT "%s/S-%s"
+#define TMUX_SOCKPRE "apt-dater_"
+#define TMUX_SOCKPATH "/tmp"
 
-void
-freeUpdates(GList *updates);
+void tmux_initialize(HostNode *n);
+gboolean tmux_get_sessions(HostNode *n);
 
-void stats_initialize(HostNode *);
-gboolean refreshStats(GList *);
-gboolean setStatsFileFromIOC(GIOChannel *, GIOCondition, gpointer);
-gchar *getStatsFileName(const HostNode *);
-gboolean prepareStatsFile(HostNode *);
-gboolean getUpdatesFromStat(HostNode *);
-void refreshStatsOfNode(gpointer);
-gchar *getStatsContent(const HostNode *);
+gchar **tmux_new(HostNode *n, const gboolean detached);
+gboolean tmux_attach(HostNode *n, const SessNode *s, const gboolean shared);
+gchar *tmux_get_dump(const SessNode *s);
 
-#endif /* _STATS_H */
+#endif /* _TMUX_H */

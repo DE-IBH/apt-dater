@@ -36,6 +36,8 @@ AC_CHECK_HEADERS(locale.h)
 
 glib_module="glib-2.0 >= 2.3.6"
 PKG_CHECK_MODULES(GLIB, "$glib_module", enable_glib_=yes, enable_glib_=no)
+gio_module="gio-2.0 >= 2.15.0"
+PKG_CHECK_MODULES(GIO, "$gio_module", enable_gio_=yes, enable_gio_=no)
 
 AC_MSG_CHECKING(--enable-debug argument)
 AC_ARG_ENABLE(debug,
@@ -89,6 +91,8 @@ AC_SUBST(VERSION)
 AC_SUBST(PACKAGE)
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
+AC_SUBST(GIO_CFLAGS)
+AC_SUBST(GIO_LIBS)
 AC_SUBST(LIBXML2_CFLAGS)
 AC_SUBST(LIBXML2_LIBS)
 AC_PROG_INSTALL

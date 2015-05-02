@@ -39,7 +39,11 @@ env_init(gchar **envp) {
     base_env = g_slist_prepend(base_env, g_strdup_printf("AD_"name"=%s", ((value) ? (value) : "")))
 
     ADD_GENV("HOSTSFILE"        , cfg->hostsfile);
+#ifdef FEAT_TMUX
+    ADD_GENV("TMUXSOCKPATH"     , cfg->tmuxsockpath);
+#else
     ADD_GENV("SCREENRCFILE"     , cfg->screenrcfile);
+#endif
     ADD_GENV("STATSDIR"         , cfg->statsdir);
     ADD_GENV("SSH_CMD"          , cfg->ssh_cmd);
     ADD_GENV("SFTP_CMD"         , cfg->sftp_cmd);
@@ -64,9 +68,9 @@ env_init(gchar **envp) {
 
 gchar **
 env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEntry *he) {
-    gchar **new_env = (gchar **) g_new0(gchar**, g_slist_length(base_env) + 21
+    gchar **new_env = (gchar **) g_new0(gchar**, g_slist_length(base_env) + 22
 #ifdef FEAT_CLUSTERS
-    + 1 + g_list_length(n->clusters)
+    + g_list_length(n->clusters)
 #endif
     );
     gint i = 0;

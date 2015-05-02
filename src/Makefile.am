@@ -17,8 +17,6 @@ apt_dater_SOURCES =			\
 	parsecmd.h			\
 	report.c			\
 	report.h			\
-	screen.c			\
-	screen.h			\
 	sighandler.c			\
 	sighandler.h			\
 	stats.c				\
@@ -34,9 +32,16 @@ apt_dater_SOURCES =			\
 	env.c				\
 	env.h				\
 	clusters.c			\
-	clusters.h
+	clusters.h			\
+if FEAT_TMUX				\
+	tmux.h				\
+	tmux.c				\
+else					\
+	screen.c			\
+	screen.h			\
+endif
 
-apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS) $(LIBCONFIG_LIBS)
+apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS) $(GIO_LIBS)
 
 AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"'
 if LINUX
@@ -46,4 +51,4 @@ AM_LDFLAGS = -Wl
 endif
 
 
-INCLUDES = $(GLIB_CFLAGS) $(TCL_CFLAGS) $(LIBXML2_CFLAGS) $(LIBCONFIG_CFLAGS)
+INCLUDES = $(GLIB_CFLAGS) $(TCL_CFLAGS) $(LIBXML2_CFLAGS) $(GIO_CFLAGS)

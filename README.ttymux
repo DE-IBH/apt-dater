@@ -1,0 +1,37 @@
+tty muxer
+=========
+
+apt-dater uses a 3rd party tty muxer. In version before apt-dater 1.0.2
+only screen(1) was supported. Since apt-dater 1.0.2 tmux(1) is also
+supported. The tty muxer backend is selected at compile time.
+
+
+screen
+------
+
+For each session an induvidual screen process is launched. Sessions are
+not accessible by other users (limited by screen).
+
+
+tmux
+----
+
+For each host a shared tmux daemon is created by the first session. Sessions
+can be shared between users. The default configuration (~/.config/*.xml)
+will include global configuration from /etc/apt-dater/. You have to setup
+the configured global directories to be accessible by all participating
+users:
+
+# addgroup apt-dater
+
+# mkdir /var/cache/apt-dater
+# chown :apt-dater /var/cache/apt-dater
+# chmod 02770 /var/cache/apt-dater
+
+# mkdir /var/lib/apt-dater
+# chown :apt-dater /var/lib/apt-dater
+# chmod 02770 /var/lib/apt-dater
+
+Due to the relaxed umask config in /etc/apt-dater/apt-dater.xml and the set
+group ID on execution of the directories all files and tmux sockets are
+accessible by all users belonging to the group apt-dater.

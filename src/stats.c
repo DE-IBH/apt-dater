@@ -23,10 +23,11 @@
  */
 
 #include <glib/gstdio.h>
+#include <gio/gio.h>
 
 #include "apt-dater.h"
 #include "exec.h"
-#include "screen.h"
+#include "ttymux.h"
 #include "stats.h"
 #include "lock.h"
 #include "autoref.h"
@@ -35,6 +36,40 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
+void
+stats_changed(GFileMonitor     *monitor,
+	     GFile            *file,
+	     GFile            *other_file,
+	     GFileMonitorEvent event_type,
+	     gpointer          user_data) {
+
+  HostNode *n = user_data;
+  g_assert(n);
+
+  switch(event_type) {
+  case G_FILE_MONITOR_EVENT_DELETED:
+    n->category = (g_file_test(n->statstmpf, G_FILE_TEST_EXISTS) ? C_REFRESH : C_UNKNOWN);
+    rebuilddl = TRUE; /* Trigger a DrawList rebuild */
+    ;;
+  case G_FILE_MONITOR_EVENT_CREATED:
+    getUpdatesFromStat(n);
+    rebuilddl = TRUE; /* Trigger a DrawList rebuild */
+    ;;
+  default:
+    return;
+    ;;
+  }
+}
+
+void stats_initialize(HostNode *n) {
+  GFile *path = g_file_new_for_path(n->statsfile);
+  n->mon_stats = g_file_monitor(path, G_FILE_MONITOR_SEND_MOVED, NULL, NULL);
+  g_object_unref(path);
+
+  g_signal_connect(n->mon_stats, "changed", G_CALLBACK(stats_changed), n);
+}
+
 
 gchar *getStatsFile(const HostNode *n)
 {
@@ -47,25 +82,27 @@ gchar *getStatsFile(const HostNode *n)
 gboolean prepareStatsFile(HostNode *n)
 {
  g_unlink(n->statsfile);
-
- n->fpstat = fopen(n->statsfile, "wx");
+ g_unlink(n->statstmpf);
+ n->fpstat = fopen(n->statstmpf, "wx");
 
  return n->fpstat != NULL;
 }
 
 
-void refreshStatsOfNode(gpointer n)
+void refreshStatsOfNode(gpointer p)
 {
- if( ((HostNode *)n)->fpstat ) {
-    fclose(((HostNode *)n)->fpstat);
-    ((HostNode *)n)->fpstat = NULL;
- }
+  HostNode *n = (HostNode *)p;
+  if(n->fpstat ) {
+    fclose(n->fpstat);
+    n->fpstat = NULL;
 
- getUpdatesFromStat(((HostNode *) n));
+    g_rename(n->statstmpf, n->statsfile);
+  }
+ 
+  /* getUpdatesFromStat(n);*/
+  unsetLockForHost(n);
 
- unsetLockForHost((HostNode *) n);
-
- rebuilddl = TRUE; /* Trigger a DrawList rebuild */
+  //  rebuilddl = TRUE; /* Trigger a DrawList rebuild */
 }
 
 
@@ -170,11 +207,6 @@ gboolean getUpdatesFromStat(HostNode *n)
 
  if(!n) return (FALSE);
 
- if(!getStatsFile(n)) {
-  n->category = C_UNKNOWN;
-  return (TRUE);
- }
-
 #ifdef FEAT_AUTOREF
  struct stat sbuf;
  if(!stat(n->statsfile, &sbuf))
@@ -182,7 +214,7 @@ gboolean getUpdatesFromStat(HostNode *n)
 #endif
 
  if(!(fp = (FILE *) g_fopen(n->statsfile, "r"))) {
-  n->category = C_UNKNOWN;
+  n->category = (g_file_test(n->statstmpf, G_FILE_TEST_EXISTS) ? C_REFRESH : C_UNKNOWN);
   return (TRUE);
  }
 
@@ -472,7 +504,7 @@ gboolean refreshStats(GList *hosts)
  while(ho) {
   HostNode *n = (HostNode *) ho->data;
 
-  if(screen_get_sessions(n)) {
+  if(TTYMUX_GET_SESSIONS(n)) {
    if(n->category != C_SESSIONS) {
     n->category = C_SESSIONS;
     rebuilddl = TRUE;

@@ -26,7 +26,8 @@
     -->
     <paths
 	history-dir="/var/lib/apt-dater/history"
-	stats-dir="/var/cache/apt-dater/stats"/>
+	stats-dir="/var/cache/apt-dater/stats"
+	umask="007"/>
 
     <!--
 	SCREEN(1) options
@@ -35,6 +36,12 @@
 	rc-file="path-to/screenrc"
 	title="%m # %u@%h:%p"/>
     -->
+
+    <!--
+	TMUX(1) options
+    -->
+    <tmux
+	socket-path="/var/cache/apt-dater/tmux"/>
 
     <!--
 	 Colors      = (COMPONENT FG BG ';')*

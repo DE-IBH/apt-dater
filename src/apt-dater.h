@@ -38,6 +38,7 @@
 
 #include <glib.h>
 #include <glib/gstdio.h>
+#include <gio/gio.h>
 
 #include "../config.h"
 #include "../include/adproto.h"
@@ -88,8 +89,12 @@ typedef struct _cfgfile {
  etype _type;
 #endif
  gchar *hostsfile;
+#ifdef FEAT_TMUX
+ gchar *tmuxsockpath;
+#else
  gchar *screenrcfile;
  gchar *screentitle;
+#endif
  mode_t umask;
  gchar *statsdir;
  gchar *plugindir;
@@ -145,6 +150,7 @@ typedef struct _session {
 #endif
   gint pid;
   struct stat st;
+  gboolean attached;
 } SessNode;
 
 typedef enum {
@@ -208,6 +214,8 @@ typedef struct _hostnode {
  gboolean  parse_result;
  gint      hist_ts;
 #endif
+ GFileMonitor *mon_ttymux;
+ GFileMonitor *mon_stats;
  Category  category;
  GList     *packages;
  gint      nupdates;
@@ -218,6 +226,7 @@ typedef struct _hostnode {
  gint      fdlock;
  FILE      *fpstat;
  gchar     *statsfile;
+ gchar     *statstmpf;
  gchar     *lsb_distributor;
  gchar     *lsb_release;
  gchar     *lsb_codename;

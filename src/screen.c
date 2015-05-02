@@ -33,6 +33,8 @@
 # include "config.h"
 #endif
 
+#ifndef FEAT_TMUX
+
 #include "screen.h"
 #include "parsecmd.h"
 #include "history.h"
@@ -89,6 +91,7 @@ screen_get_sessions(HostNode *n) {
 #endif
 	s->pid = pid;
 	stat(fn, &s->st);
+	s->attached = s->st.st_mode & S_IXUSR;
 
 	n->screens = g_list_prepend(n->screens, s);
       }
@@ -209,3 +212,4 @@ screen_get_dump(const SessNode *s) {
 
  return c;
 }
+#endif /* !FEAT_TMUX */
