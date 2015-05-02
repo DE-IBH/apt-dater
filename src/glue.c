@@ -34,16 +34,20 @@ g_timeout_add_seconds(guint interval, GSourceFunc function, gpointer data) {
 
 #ifndef HAVE_GLIB_SPAWN_CHECK_EXIT_STATUS
 #warning Your glib2 does not support g_spawn_check_exit_status (glib >= 2.33.4) - using glue code.
+/* Implementation has been taken from:
+ *
+ * gspawn.[ch] - Process launching
+ *
+ *  Copyright 2000 Red Hat, Inc.
+ *  g_execvpe implementation based on GNU libc execvp:
+ *   Copyright 1991, 92, 95, 96, 97, 98, 99 Free Software Foundation, Inc.
+ */
+#include <sys/types.h>
+#include <sys/wait.h>
+#define G_SPAWN_EXIT_ERROR g_spawn_exit_error_quark ()
+GQuark g_spawn_exit_error_quark (void);
 gboolean
 g_spawn_check_exit_status(gint exit_status, GError **error) {
-  /* Implementation has been taken from:
-   *
-   * gspawn.c - Process launching
-   *
-   *  Copyright 2000 Red Hat, Inc.
-   *  g_execvpe implementation based on GNU libc execvp:
-   *   Copyright 1991, 92, 95, 96, 97, 98, 99 Free Software Foundation, Inc.
-   */
   gboolean ret = FALSE;
 
   if (WIFEXITED (exit_status))
