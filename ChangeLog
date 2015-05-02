@@ -9,6 +9,8 @@ apt-dater (1.0.2) unstable; urgency=low
   * Update host states using GFileMonitor instead of polling.
   * Make apt-dater usable by different concurrent users sharing the
     same hosts and sessions.
+  * Add support using tmux for tty muxing instead of screen
+    (required to support different users sharing sessions).
 
  -- Thomas Liske <liske@ibh.de>  
 
