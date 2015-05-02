@@ -226,6 +226,7 @@ typedef struct _hostnode {
  gint      fdlock;
  FILE      *fpstat;
  gchar     *statsfile;
+ gchar     *statstmpf;
  gchar     *lsb_distributor;
  gchar     *lsb_release;
  gchar     *lsb_codename;

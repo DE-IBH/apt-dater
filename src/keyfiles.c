@@ -439,6 +439,7 @@ GList *loadHosts (const gchar *filename) {
 	hostnode->group = g_strdup((gchar *)groupname);
 
 	hostnode->statsfile = g_strdup_printf("%s/%s:%d.stat", cfg->statsdir, hostnode->hostname, hostnode->ssh_port);
+	hostnode->statstmpf = g_strdup_printf("%s/%s:%d.stat.new", cfg->statsdir, hostnode->hostname, hostnode->ssh_port);
 	hostnode->fdlock = -1;
 	hostnode->uuid[0] = 0;
 	hostnode->tagged = FALSE;

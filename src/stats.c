@@ -44,14 +44,22 @@ stats_changed(GFileMonitor     *monitor,
 	     GFileMonitorEvent event_type,
 	     gpointer          user_data) {
 
-  if(event_type != G_FILE_MONITOR_EVENT_CHANGED)
-    return;
-
   HostNode *n = user_data;
-
   g_assert(n);
 
-  getUpdatesFromStat(n);
+  switch(event_type) {
+  case G_FILE_MONITOR_EVENT_DELETED:
+    n->category = (g_file_test(n->statstmpf, G_FILE_TEST_EXISTS) ? C_REFRESH : C_UNKNOWN);
+    rebuilddl = TRUE; /* Trigger a DrawList rebuild */
+    ;;
+  case G_FILE_MONITOR_EVENT_CREATED:
+    getUpdatesFromStat(n);
+    rebuilddl = TRUE; /* Trigger a DrawList rebuild */
+    ;;
+  default:
+    return;
+    ;;
+  }
 }
 
 void stats_initialize(HostNode *n) {
@@ -74,25 +82,27 @@ gchar *getStatsFile(const HostNode *n)
 gboolean prepareStatsFile(HostNode *n)
 {
  g_unlink(n->statsfile);
-
- n->fpstat = fopen(n->statsfile, "wx");
+ g_unlink(n->statstmpf);
+ n->fpstat = fopen(n->statstmpf, "wx");
 
  return n->fpstat != NULL;
 }
 
 
-void refreshStatsOfNode(gpointer n)
+void refreshStatsOfNode(gpointer p)
 {
- if( ((HostNode *)n)->fpstat ) {
-    fclose(((HostNode *)n)->fpstat);
-    ((HostNode *)n)->fpstat = NULL;
- }
+  HostNode *n = (HostNode *)p;
+  if(n->fpstat ) {
+    fclose(n->fpstat);
+    n->fpstat = NULL;
 
- getUpdatesFromStat(((HostNode *) n));
+    g_rename(n->statstmpf, n->statsfile);
+  }
+ 
+  /* getUpdatesFromStat(n);*/
+  unsetLockForHost(n);
 
- unsetLockForHost((HostNode *) n);
-
- rebuilddl = TRUE; /* Trigger a DrawList rebuild */
+  //  rebuilddl = TRUE; /* Trigger a DrawList rebuild */
 }
 
 
@@ -197,11 +207,6 @@ gboolean getUpdatesFromStat(HostNode *n)
 
  if(!n) return (FALSE);
 
- if(!getStatsFile(n)) {
-  n->category = C_UNKNOWN;
-  return (TRUE);
- }
-
 #ifdef FEAT_AUTOREF
  struct stat sbuf;
  if(!stat(n->statsfile, &sbuf))
@@ -209,7 +214,7 @@ gboolean getUpdatesFromStat(HostNode *n)
 #endif
 
  if(!(fp = (FILE *) g_fopen(n->statsfile, "r"))) {
-  n->category = C_UNKNOWN;
+  n->category = (g_file_test(n->statstmpf, G_FILE_TEST_EXISTS) ? C_REFRESH : C_UNKNOWN);
   return (TRUE);
  }
 

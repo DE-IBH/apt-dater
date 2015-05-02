@@ -202,7 +202,7 @@ int main(int argc, char **argv, char **envp)
 
  loop = g_main_loop_new (NULL, FALSE);
 
- refreshStats(hosts);
+ g_timeout_add(1000, (GSourceFunc) refreshStats, hosts);
  
 #ifdef FEAT_XMLREPORT
  if(report)
