@@ -22,6 +22,7 @@
  *   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
+#include "apt-dater.h"
 #include "glue.h"
 
 #ifndef HAVE_GLIB_TIMEOUT_ADD_SECONDS
@@ -44,8 +45,6 @@ g_timeout_add_seconds(guint interval, GSourceFunc function, gpointer data) {
  */
 #include <sys/types.h>
 #include <sys/wait.h>
-#define G_SPAWN_EXIT_ERROR g_spawn_exit_error_quark ()
-GQuark g_spawn_exit_error_quark (void);
 gboolean
 g_spawn_check_exit_status(gint exit_status, GError **error) {
   gboolean ret = FALSE;
@@ -54,7 +53,7 @@ g_spawn_check_exit_status(gint exit_status, GError **error) {
     {
       if (WEXITSTATUS (exit_status) != 0)
 	{
-	  g_set_error (error, G_SPAWN_EXIT_ERROR, WEXITSTATUS (exit_status),
+	  g_set_error (error, G_SPAWN_EXIT, WEXITSTATUS (exit_status),
 		       _("Child process exited with code %ld"),
 		       (long) WEXITSTATUS (exit_status));
 	  goto out;
