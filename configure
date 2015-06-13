@@ -9134,7 +9134,7 @@ fi
 done
 
 
-ac_config_files="$ac_config_files po/Makefile.in Makefile lib/Makefile man/Makefile schema/Makefile src/Makefile conf/Makefile conf/apt-dater.xml conf/hosts.xml etc/apt-dater.xml etc/hosts.xml build/apt-dater.spec"
+ac_config_files="$ac_config_files po/Makefile.in Makefile etc/Makefile lib/Makefile man/Makefile schema/Makefile src/Makefile conf/Makefile conf/apt-dater.xml conf/hosts.xml etc/apt-dater.xml etc/hosts.xml build/apt-dater.spec"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -9885,6 +9885,7 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "po/Makefile.in") CONFIG_FILES="$CONFIG_FILES po/Makefile.in" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "etc/Makefile") CONFIG_FILES="$CONFIG_FILES etc/Makefile" ;;
     "lib/Makefile") CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
     "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
     "schema/Makefile") CONFIG_FILES="$CONFIG_FILES schema/Makefile" ;;
