@@ -1,4 +1,4 @@
-SUBDIRS = conf po man src lib etc
+SUBDIRS = conf po man src lib etc schema
 
 AUTOMAKE_OPTIONS = 							\
 	1.9								\

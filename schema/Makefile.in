@@ -435,7 +435,7 @@ uninstall-am:
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(XMLSCHEMADIR)
 	for dtd in apt-dater.dtd hosts.dtd report.dtd; do \
-		$(INSTALL) "$dtd" "$(DESTDIR)$(XMLSCHEMADIR)/"; \
+		$(INSTALL) "$$dtd" "$(DESTDIR)$(XMLSCHEMADIR)/"; \
 	done
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
