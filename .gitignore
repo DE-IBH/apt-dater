@@ -15,5 +15,5 @@ conf/*.xml
 .#*
 etc/apt-dater.xml
 etc/hosts.xml
-lib/conf2xml
+lib/hosts2xml
 debian

@@ -410,7 +410,7 @@ AC_CONFIG_FILES([ po/Makefile.in
 Makefile
 etc/Makefile
 lib/Makefile
-lib/conf2xml
+lib/hosts2xml
 man/Makefile
 schema/Makefile
 src/Makefile
