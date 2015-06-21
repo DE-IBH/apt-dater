@@ -61,8 +61,11 @@ my %xparams = (
     DATA_INDENT => 4,
     );
 
-$xparams{OUTPUT} = IO::File->new(">$opt_o")
-    if($opt_o);
+if($opt_o) {
+    $xparams{OUTPUT} = IO::File->new(">$opt_o");
+    die "$LOGPREF Failed to open '$opt_o': $!\n"
+        unless($xparams{OUTPUT});
+}
 
 my $xml = XML::Writer->new(%xparams);
 $xml->doctype('hosts', undef, '@XMLSCHEMAURI@/hosts.dtd');
