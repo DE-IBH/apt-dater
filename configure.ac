@@ -408,7 +408,9 @@ AC_CHECK_FUNCS([memset strchr strdup strerror])
 
 AC_CONFIG_FILES([ po/Makefile.in
 Makefile
+etc/Makefile
 lib/Makefile
+lib/hosts2xml
 man/Makefile
 schema/Makefile
 src/Makefile

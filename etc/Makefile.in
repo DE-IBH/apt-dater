@@ -78,9 +78,10 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-subdir = lib
+subdir = etc
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/mkinstalldirs $(srcdir)/hosts2xml.in
+	$(top_srcdir)/mkinstalldirs $(srcdir)/apt-dater.xml.in \
+	$(srcdir)/hosts.xml.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/adl_recursive_eval.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -92,7 +93,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = hosts2xml
+CONFIG_CLEAN_FILES = apt-dater.xml hosts.xml
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -249,7 +250,7 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DISTS = cmd hosts2xml
+EXTRA_DISTS = apt-dater.xml hosts.xml
 all: all-am
 
 .SUFFIXES:
@@ -262,9 +263,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu lib/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu etc/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu lib/Makefile
+	  $(AUTOMAKE) --gnu etc/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -283,7 +284,9 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
-hosts2xml: $(top_builddir)/config.status $(srcdir)/hosts2xml.in
+apt-dater.xml: $(top_builddir)/config.status $(srcdir)/apt-dater.xml.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+hosts.xml: $(top_builddir)/config.status $(srcdir)/hosts.xml.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 tags TAGS:
 
@@ -437,10 +440,14 @@ uninstall-am:
 	pdf-am ps ps-am tags-am uninstall uninstall-am
 
 
+cmd: cmd
+
 install-exec-hook:
-	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL) cmd $(DESTDIR)$(pkglibdir)
-	$(INSTALL) hosts2xml $(DESTDIR)$(pkglibdir)
+	$(mkinstalldirs) $(DESTDIR)/etc/apt-dater/
+	$(INSTALL) $(EXTRA_DISTS) $(DESTDIR)/etc/apt-dater/
+	$(mkinstalldirs) $(DESTDIR)/var/lib/apt-dater/history/
+	$(mkinstalldirs) $(DESTDIR)/var/cache/apt-dater/stats/
+	$(mkinstalldirs) $(DESTDIR)/var/cache/apt-dater/tmux/
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

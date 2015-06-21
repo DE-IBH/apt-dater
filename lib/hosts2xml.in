@@ -1,0 +1,170 @@
+#!/usr/bin/perl
+
+use warnings;
+use strict;
+
+use Getopt::Std;
+use Glib;
+use XML::Writer;
+
+$Getopt::Std::STANDARD_HELP_VERSION++;
+my $LOGPREF = '[hosts2xml]';
+
+sub HELP_MESSAGE {
+    print <<USG;
+Usage:
+
+  hosts2xml [-i <fn>] [-o <fn>]
+
+    -i          input filename
+    -o          output filename
+
+    --help      show this help
+    --version   show version information
+
+USG
+}
+
+sub VERSION_MESSAGE {
+    print <<LIC;
+
+apt-dater - terminal-based remote package update manager
+
+Authors:
+  Thomas Liske <liske\@ibh.de>
+
+Copyright Holder:
+  2008-2015 (C) IBH IT-Service GmbH [https://www.ibh.de/apt-dater/]
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+LIC
+#/
+}
+
+our $opt_i = glob(q(~/.config/apt-dater/hosts.conf));
+our $opt_o = glob(q(~/.config/apt-dater/hosts.xml));
+unless(getopts('i:o:')) {
+    HELP_MESSAGE;
+    exit 1;
+}
+
+my $fhin = IO::File->new("< $opt_i");
+die "$LOGPREF Failed to open '$opt_i': $!\n"
+    unless($fhin);
+
+my %xparams = (
+    DATA_MODE => 1,
+    DATA_INDENT => 4,
+    );
+
+if($opt_o) {
+    $xparams{OUTPUT} = IO::File->new(">$opt_o");
+    die "$LOGPREF Failed to open '$opt_o': $!\n"
+        unless($xparams{OUTPUT});
+}
+
+my $xml = XML::Writer->new(%xparams);
+$xml->doctype('hosts', undef, '@XMLSCHEMAURI@/hosts.dtd');
+$xml->comment("
+    Hosts file of apt-dater (parsed by libxml2)
+    ===========================================
+
+    hosts.xml configures the hosts which are managed by
+    apt-dater. Host options (except 'name') are lookuped as attributes
+    at the host node itself, the parent group node and the global
+    /hosts/default node.
+
+    The following attributes are known:
+    - name    : visible name of the host or group (required)
+    - comment : text shown in 'host details' screen
+    - type    : transport type (default: 'generic-ssh')
+    - ssh-user: overwrite SSH username
+    - ssh-host: overwrite SSH host (defaults to \@name)
+    - ssh-port: overwrite SSH port
+    - ssh-id  : overwrite SSH identification file
+
+    Example:
+
+    <hosts>
+      <default ssh-user=\"admin\"/>
+
+      <group name=\"Internal Hosts\" ssh-user=\"root\">
+        <host name=\"server1.internal\"/>
+        <host name=\"server2.internal\"/>
+        <host name=\"John's Machine\" ssh-host=\"workstation.internal\" />
+      </group>
+
+      <group name=\"External Hosts\">
+        <host name=\"external.ibh.net\" ssh-port=\"443\"/>
+      </group>
+
+      ...
+
+    </hosts>
+");
+$xml->startTag('hosts', 'xmlns:xi' => q(http://www.w3.org/2001/XInclude));
+
+$xml->comment('Include global config file if available.');
+$xml->startTag('xi:include', href => q(file:///etc/apt-dater/hosts.xml), xpointer => q(xpointer(/hosts/*)));
+$xml->emptyTag('xi:fallback');
+$xml->endTag('xi:include');
+
+my %sections;
+my @sections;
+my $csect;
+while(<$fhin>) {
+    chomp;
+    s/(^\s+|\s+$|#.*$)//g;
+    next unless($_);
+
+    if(/^\[([^\]]+)\]/) {
+        $csect = $1;
+	push(@sections, $csect);
+        next;
+    }
+
+    if(/^(Hosts)=(.+)/i) {
+        $sections{$csect}->{lc($1)} = $2;
+        next;
+    }
+
+    warn("$LOGPREF Garbage line: $_\n");
+}
+$fhin->close;
+
+foreach my $csect (@sections) {
+    my @group = ('group', name => $csect);
+
+    if($sections{$csect}->{type}) {
+        push(@group, type => $sections{$csect}->{type});
+    }
+
+    $xml->startTag(@group);
+    foreach my $host (split(/;/, $sections{$csect}->{hosts})) {
+	$host =~ s/:(\d+)//;
+	my $sport = $1;
+
+	$host =~ s/(.+)@//;
+	my $suser = $1;
+
+        my @host = ('host', name => $host);
+	push(@host, 'ssh-user' => $suser)
+	    if($suser);
+	push(@host, 'ssh-port' => $sport)
+	    if($sport);
+
+        $xml->emptyTag(@host);
+    }
+    $xml->endTag('group');
+}
+
+$xml->endTag('hosts');
+$xml->end();
+$xparams{OUTPUT}->close()
+    if($xparams{OUTPUT});
+
+print STDERR "$LOGPREF '$opt_i' has been converted to '$opt_o'!\n";
