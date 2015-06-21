@@ -8,6 +8,7 @@ use Glib;
 use XML::Writer;
 
 $Getopt::Std::STANDARD_HELP_VERSION++;
+my $LOGPREF = '[hosts2xml]';
 
 sub HELP_MESSAGE {
     print <<USG;
@@ -52,7 +53,7 @@ unless(getopts('i:o:')) {
 }
 
 my $fhin = IO::File->new("< $opt_i");
-die "Failed to open '$opt_i': $!\n"
+die "$LOGPREF Failed to open '$opt_i': $!\n"
     unless($fhin);
 
 my %xparams = (
@@ -128,7 +129,7 @@ while(<$fhin>) {
         next;
     }
 
-    warn("Garbage line: $_\n");
+    warn("$LOGPREF Garbage line: $_\n");
 }
 $fhin->close;
 
@@ -162,3 +163,5 @@ $xml->endTag('hosts');
 $xml->end();
 $xparams{OUTPUT}->close()
     if($xparams{OUTPUT});
+
+print STDERR "$LOGPREF '$opt_i' has been converted to '$opt_o'!\n";
