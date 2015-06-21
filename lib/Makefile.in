@@ -80,7 +80,7 @@ host_triplet = @host@
 target_triplet = @target@
 subdir = lib
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
-	$(top_srcdir)/mkinstalldirs
+	$(top_srcdir)/mkinstalldirs $(srcdir)/conf2xml.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/adl_recursive_eval.m4 \
 	$(top_srcdir)/m4/gettext.m4 $(top_srcdir)/m4/iconv.m4 \
@@ -92,7 +92,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = conf2xml
 CONFIG_CLEAN_VPATH_FILES =
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -249,7 +249,7 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DISTS = cmd
+EXTRA_DISTS = cmd conf2xml
 all: all-am
 
 .SUFFIXES:
@@ -283,6 +283,8 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
+conf2xml: $(top_builddir)/config.status $(srcdir)/conf2xml.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 tags TAGS:
 
 ctags CTAGS:
@@ -437,9 +439,13 @@ uninstall-am:
 
 cmd: cmd
 
+conf2xml:
+	chmod +x conf2xml
+
 install-exec-hook:
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
 	$(INSTALL) cmd $(DESTDIR)$(pkglibdir)
+	$(INSTALL) conf2xml $(DESTDIR)$(pkglibdir)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
