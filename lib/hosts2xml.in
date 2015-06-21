@@ -13,10 +13,8 @@ sub HELP_MESSAGE {
     print <<USG;
 Usage:
 
-  convert_conf2xml <-(a|h)> [-i <fn>] [-o <fn>]
+  hosts2xml [-i <fn>] [-o <fn>]
 
-    -a		input is apt-dater.conf
-    -h		input is hosts.conf
     -i          input filename
     -o          output filename
 
@@ -46,30 +44,16 @@ LIC
 #/
 }
 
-our $opt_a;
-our $opt_h;
-our $opt_i;
-our $opt_o;
-unless(getopts('ahi:o:')) {
+our $opt_i = glob(q(~/.config/apt-dater/hosts.conf));
+our $opt_o = glob(q(~/.config/apt-dater/hosts.xml));
+unless(getopts('i:o:')) {
     HELP_MESSAGE;
     exit 1;
 }
 
-die "Don't use -a and -h at the same time!\n"
-    if($opt_a && $opt_h);
-
-
-die "Missing option (-a or -h)!\n"
-    unless($opt_a || $opt_h);
-
-if($opt_a) {
-    $opt_i = q(~/.config/apt-dater/apt-dater.conf) unless($opt_i);
-    $opt_o = q(~/.config/apt-dater/apt-dater.xml) unless($opt_o);
-}
-else {
-    $opt_i = q(~/.config/apt-dater/hosts.conf) unless($opt_i);
-    $opt_o = q(~/.config/apt-dater/hosts.xml) unless($opt_o);
-}
+my $fhin = IO::File->new("< $opt_i");
+die "Failed to open '$opt_i': $!\n"
+    unless($fhin);
 
 my %xparams = (
     DATA_MODE => 1,
@@ -80,14 +64,101 @@ $xparams{OUTPUT} = IO::File->new(">$opt_o")
     if($opt_o);
 
 my $xml = XML::Writer->new(%xparams);
-$xml->doctype('apt-dater', undef, '@XMLSCHEMAURI@/apt-dater.dtd');
-$xml->startTag('apt-dater', 'xmlns:xi' => q(http://www.w3.org/2001/XInclude));
+$xml->doctype('hosts', undef, '@XMLSCHEMAURI@/hosts.dtd');
+$xml->comment("
+    Hosts file of apt-dater (parsed by libxml2)
+    ===========================================
+
+    hosts.xml configures the hosts which are managed by
+    apt-dater. Host options (except 'name') are lookuped as attributes
+    at the host node itself, the parent group node and the global
+    /hosts/default node.
+
+    The following attributes are known:
+    - name    : visible name of the host or group (required)
+    - comment : text shown in 'host details' screen
+    - type    : transport type (default: 'generic-ssh')
+    - ssh-user: overwrite SSH username
+    - ssh-host: overwrite SSH host (defaults to \@name)
+    - ssh-port: overwrite SSH port
+    - ssh-id  : overwrite SSH identification file
+
+    Example:
+
+    <hosts>
+      <default ssh-user=\"admin\"/>
+
+      <group name=\"Internal Hosts\" ssh-user=\"root\">
+        <host name=\"server1.internal\"/>
+        <host name=\"server2.internal\"/>
+        <host name=\"John's Machine\" ssh-host=\"workstation.internal\" />
+      </group>
+
+      <group name=\"External Hosts\">
+        <host name=\"external.ibh.net\" ssh-port=\"443\"/>
+      </group>
+
+      ...
+
+    </hosts>
+");
+$xml->startTag('hosts', 'xmlns:xi' => q(http://www.w3.org/2001/XInclude));
 
 $xml->comment('Include global config file if available.');
-$xml->startTag('xi:include', href => q(file:///etc/apt-dater/apt-dater.xml), xpointer => q(xpointer(/apt-dater/*)));
+$xml->startTag('xi:include', href => q(file:///etc/apt-dater/hosts.xml), xpointer => q(xpointer(/hosts/*)));
 $xml->emptyTag('xi:fallback');
 $xml->endTag('xi:include');
 
-$xml->endTag('apt-dater');
+my %sections;
+my @sections;
+my $csect;
+while(<$fhin>) {
+    chomp;
+    s/(^\s+|\s+$|#.*$)//g;
+    next unless($_);
+
+    if(/^\[([^\]]+)\]/) {
+        $csect = $1;
+	push(@sections, $csect);
+        next;
+    }
+
+    if(/^(Hosts)=(.+)/i) {
+        $sections{$csect}->{lc($1)} = $2;
+        next;
+    }
+
+    warn("Garbage line: $_\n");
+}
+$fhin->close;
+
+foreach my $csect (@sections) {
+    my @group = ('group', name => $csect);
+
+    if($sections{$csect}->{type}) {
+        push(@group, type => $sections{$csect}->{type});
+    }
+
+    $xml->startTag(@group);
+    foreach my $host (split(/;/, $sections{$csect}->{hosts})) {
+	$host =~ s/:(\d+)//;
+	my $sport = $1;
+
+	$host =~ s/(.+)@//;
+	my $suser = $1;
+
+        my @host = ('host', name => $host);
+	push(@host, 'ssh-user' => $suser)
+	    if($suser);
+	push(@host, 'ssh-port' => $sport)
+	    if($sport);
+
+        $xml->emptyTag(@host);
+    }
+    $xml->endTag('group');
+}
+
+$xml->endTag('hosts');
 $xml->end();
-$xparams{OUTPUT}->close();
+$xparams{OUTPUT}->close()
+    if($xparams{OUTPUT});
