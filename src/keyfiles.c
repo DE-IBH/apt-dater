@@ -72,6 +72,21 @@ int chkForInitialConfig(const gchar *cfgdir, const gchar *cfgfile) {
   }
 
   dump_config(cfgdir, "apt-dater.xml", (gchar *)apt_dater_xml, apt_dater_xml_len);
+
+  /* Convert legacy hosts.conf to new hosts.xml using external helper script. */
+  gchar *fnold = g_strdup_printf("%s/%s", cfgdir, "hosts.conf");
+  gchar *fnnew = g_strdup_printf("%s/%s", cfgdir, "hosts.xml");
+  if((g_file_test(fnnew, G_FILE_TEST_IS_REGULAR|G_FILE_TEST_EXISTS) == FALSE) &&
+     (g_file_test(fnold, G_FILE_TEST_IS_REGULAR|G_FILE_TEST_EXISTS) == TRUE)) {
+
+    gchar *argv[3] = {PKGLIBDIR"/hosts2xml", "hosts2xml", NULL};
+    GError *error = NULL;
+    if(g_spawn_sync(g_getenv ("HOME"), argv, NULL, G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL, NULL, NULL, NULL, &error) == FALSE) {
+      g_warning("%s", error->message);
+      g_clear_error (&error);
+    }
+  }
+
   dump_config(cfgdir, "hosts.xml", (gchar *)hosts_xml, hosts_xml_len);
 #ifdef FEAT_TMUX
   dump_config(cfgdir, "tmux.conf", (gchar *)tmux_conf, tmux_conf_len);
