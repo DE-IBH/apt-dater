@@ -1,11 +1,12 @@
-Changes in 1.0.0
+Changes in 1.0.2
 ================
 
 The config file backend has been switched from glib's keyfile to
-libconfig. The filenames have been changed:
+libxml2. The filenames have changed:
 
-    apt-dater.conf => apt-dater.config
-    hosts.conf     => hosts.config
+    apt-dater.conf => apt-dater.xml
+    hosts.conf     => hosts.xml
 
-Manual convertion to the new format is required! apt-dater creates some
-default config files if a file does not exist.
+apt-dater uses a external perl script to convert the legacy hosts.conf
+file. Manual convertion of apt-dater.conf is required! apt-dater creates
+some default config files if a file does not exist during startup.
