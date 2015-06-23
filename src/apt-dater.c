@@ -45,7 +45,11 @@
 #include "report.h"
 #endif
 
-#define VERSTEXT PACKAGE_STRING " - " __DATE__ " " __TIME__ "\n\n" \
+#ifndef BUILD_DATE
+#define BUILD_DATE __DATE__ " " __TIME__
+#endif
+
+#define VERSTEXT PACKAGE_STRING " - " BUILD_DATE "\n\n" \
   "Copyright Holder: IBH IT-Service GmbH [https://www.ibh.net/]\n\n" \
   "This program is free software; you can redistribute it and/or modify\n" \
   "it under the terms of the GNU General Public License as published by\n" \
