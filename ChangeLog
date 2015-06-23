@@ -12,6 +12,8 @@ apt-dater (1.0.2) unstable; urgency=low
     same hosts and sessions.
   * Add support using tmux for tty muxing instead of screen
     (required to support different users sharing sessions).
+  * Allow reproducible builds.
+    (Debian Bug#789648 by Dhole <dhole@openmailbox.org>)
 
  -- Thomas Liske <liske@ibh.de>  
 
