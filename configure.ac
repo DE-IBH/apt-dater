@@ -6,6 +6,9 @@ PACKAGE=apt-dater
 AC_PREREQ(2.61)
 AC_INIT(apt-dater, 1.0.2, apt-dater@ibh.de)
 
+# include local macros
+m4_include([m4/adl_recursive_eval.m4])
+
 # Environment
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET

@@ -2259,6 +2259,10 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
+# include local macros
+
+
+
 # Environment
 ac_aux_dir=
 for ac_dir in "$srcdir" "$srcdir/.." "$srcdir/../.."; do
