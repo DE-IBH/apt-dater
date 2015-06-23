@@ -14,6 +14,11 @@
         <add-key fn="/path/to/id_rsa2"/>
     </ssh>
     -->
+    <!--
+	Disable StrictHostKeyChecking in multi-user setups.
+	ssh_config(5)
+    -->
+    <ssh opt-cmd-flags="-t -o StrictHostKeyChecking=no" />
 
     <!--
 	Path to hosts file and status directory.
