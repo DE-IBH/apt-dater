@@ -213,8 +213,13 @@ int main(int argc, char **argv, char **envp)
 
  loop = g_main_loop_new (NULL, FALSE);
 
+ /* tmux supports GFileMonitor, screen requires polling */
+#ifdef FEAT_TMUX
+ refreshStats(hosts);
+#else
  g_timeout_add_seconds(1, (GSourceFunc) refreshStats, hosts);
- 
+#endif
+
 #ifdef FEAT_XMLREPORT
  if(report)
   g_idle_add ((GSourceFunc) ctrlReport, hosts);
