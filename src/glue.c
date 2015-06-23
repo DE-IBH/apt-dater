@@ -53,7 +53,7 @@ g_spawn_check_exit_status(gint exit_status, GError **error) {
     {
       if (WEXITSTATUS (exit_status) != 0)
 	{
-	  g_set_error (error, G_SPAWN_EXIT_ERROR, WEXITSTATUS (exit_status),
+	  g_set_error (error, G_SPAWN_ERROR, WEXITSTATUS (exit_status),
 		       _("Child process exited with code %ld"),
 		       (long) WEXITSTATUS (exit_status));
 	  goto out;
