@@ -145,11 +145,11 @@ foreach my $csect (@sections) {
 
     $xml->startTag(@group);
     foreach my $host (split(/;/, $sections{$csect}->{hosts})) {
-	$host =~ s/:(\d+)//;
-	my $sport = $1;
-
-	$host =~ s/(.+)@//;
-	my $suser = $1;
+	my $sport;
+	$sport = $1 if($host =~ s/:(\d+)//);
+	
+	my $suser;
+	$suser = $1 if($host =~ s/(.+)@//);
 
         my @host = ('host', name => $host);
 	push(@host, 'ssh-user' => $suser)

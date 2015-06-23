@@ -96,11 +96,6 @@ tmux_get_sessions(HostNode *n) {
   if (!sdir)
     return FALSE;
 
-  GDir *d = g_dir_open(cfg->tmuxsockpath, 0, NULL);
-  if (!d) {
-   return FALSE;
-  }
-
   gchar *sock = g_strdup_printf("%s/%s_%s_%d", cfg->tmuxsockpath, n->ssh_user, n->hostname, n->ssh_port);
   gchar *argv[7] = {TMUX_BINARY, "-S", sock, "list-session", "-F", "#{session_id}\t#{session_created}\t#{session_attached}", NULL};
   gchar *out = NULL;
