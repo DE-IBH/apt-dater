@@ -61,6 +61,9 @@
 /* Define to 1 if your GLIB supports the g_timeout_add_seconds call. */
 #undef HAVE_GLIB_TIMEOUT_ADD_SECONDS
 
+/* Define to 1 if your GLIB requires the g_type_init call. */
+#undef HAVE_GLIB_TYPE_INIT
+
 /* Define if you have the iconv() function and it works. */
 #undef HAVE_ICONV
 
@@ -158,6 +161,9 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
+
+/* Define to 1 if your GLIB requires the g_type_init call. */
+#undef REQUIRE_GLIB_TYPE_INIT
 
 /* Define as the return type of signal handlers (`int' or `void'). */
 #undef RETSIGTYPE

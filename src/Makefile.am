@@ -1,5 +1,8 @@
 bin_PROGRAMS = apt-dater
 
+# define in case BUILD_DATE is not exported
+BUILD_DATE ?= $(shell date '%b %e %Y %H:%M:%S')
+
 apt_dater_SOURCES =			\
 	adproto.h			\
 	apt-dater.c			\
@@ -45,7 +48,7 @@ endif
 
 apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS) $(GIO_LIBS)
 
-AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"'
+AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"' -DBUILD_DATE="\"$(BUILD_DATE)\""
 if LINUX
 AM_LDFLAGS = -Wl,--as-needed
 else

@@ -6,6 +6,9 @@ PACKAGE=apt-dater
 AC_PREREQ(2.61)
 AC_INIT(apt-dater, 1.0.2, apt-dater@ibh.de)
 
+# include local macros
+m4_include([m4/adl_recursive_eval.m4])
+
 # Environment
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
@@ -36,6 +39,10 @@ AC_CHECK_HEADERS(locale.h)
 
 glib_module="glib-2.0 >= 2.3.6"
 PKG_CHECK_MODULES(GLIB, "$glib_module", enable_glib_=yes, enable_glib_=no)
+PKG_CHECK_MODULES(GLIB2_36, glib-2.0 >= 2.36,
+[],
+AC_DEFINE(REQUIRE_GLIB_TYPE_INIT, 1, [ Define to 1 if your GLIB requires the g_type_init call. ]),
+)
 gio_module="gio-2.0 >= 2.15.0"
 PKG_CHECK_MODULES(GIO, "$gio_module", enable_gio_=yes, enable_gio_=no)
 
@@ -53,11 +60,9 @@ AC_ARG_ENABLE(xmlreport,
 	[  --enable-xmlreport      Include XML reports.], [enable_xmlreport="yes"],
 	[enable_xmlreport="no"])
 AC_MSG_RESULT($enable_xmlreport)
-PKG_CHECK_MODULES(LIBXML2, "libxml-2.0", skip_xmlreport=no, skip_xmlreport=yes)
+PKG_CHECK_MODULES(LIBXML2, "libxml-2.0")
 if test "$enable_xmlreport" = "yes"; then
-    if test "$skip_xmlreport" = "no"; then
 	AC_DEFINE(FEAT_XMLREPORT, 1, [ Define if you want XML report support included. ])
-    fi
 fi
 
 AC_MSG_CHECKING(--enable-autoref argument)
@@ -151,6 +156,8 @@ AC_CHECK_LIB([glib-2.0], [g_timeout_add_seconds],
 AC_DEFINE(HAVE_GLIB_TIMEOUT_ADD_SECONDS, 1, [ Define to 1 if your GLIB supports the g_timeout_add_seconds call. ]))
 AC_CHECK_LIB([glib-2.0], [g_spawn_check_exit_status],
 AC_DEFINE(HAVE_GLIB_SPAWN_CHECK_EXIT_STATUS, 1, [ Define to 1 if your GLIB supports the g_spawn_check_exit_status call. ]))
+AC_CHECK_LIB([glib-2.0], [g_type_init],
+AC_DEFINE(HAVE_GLIB_TYPE_INIT, 1, [ Define to 1 if your GLIB requires the g_type_init call. ]))
 
 # Checks for header files.
 AC_HEADER_STDC

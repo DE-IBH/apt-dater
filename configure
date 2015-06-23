@@ -639,6 +639,8 @@ LIBXML2_LIBS
 LIBXML2_CFLAGS
 GIO_LIBS
 GIO_CFLAGS
+GLIB2_36_LIBS
+GLIB2_36_CFLAGS
 GLIB_LIBS
 GLIB_CFLAGS
 PKG_CONFIG_LIBDIR
@@ -796,6 +798,8 @@ PKG_CONFIG_PATH
 PKG_CONFIG_LIBDIR
 GLIB_CFLAGS
 GLIB_LIBS
+GLIB2_36_CFLAGS
+GLIB2_36_LIBS
 GIO_CFLAGS
 GIO_LIBS
 LIBXML2_CFLAGS
@@ -1463,6 +1467,10 @@ Some influential environment variables:
               path overriding pkg-config's built-in search path
   GLIB_CFLAGS C compiler flags for GLIB, overriding pkg-config
   GLIB_LIBS   linker flags for GLIB, overriding pkg-config
+  GLIB2_36_CFLAGS
+              C compiler flags for GLIB2_36, overriding pkg-config
+  GLIB2_36_LIBS
+              linker flags for GLIB2_36, overriding pkg-config
   GIO_CFLAGS  C compiler flags for GIO, overriding pkg-config
   GIO_LIBS    linker flags for GIO, overriding pkg-config
   LIBXML2_CFLAGS
@@ -2256,6 +2264,10 @@ ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+
+
+# include local macros
 
 
 
@@ -6790,6 +6802,81 @@ else
 $as_echo "yes" >&6; }
 	enable_glib_=yes
 fi
+
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for GLIB2_36" >&5
+$as_echo_n "checking for GLIB2_36... " >&6; }
+
+if test -n "$GLIB2_36_CFLAGS"; then
+    pkg_cv_GLIB2_36_CFLAGS="$GLIB2_36_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"glib-2.0 >= 2.36\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "glib-2.0 >= 2.36") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_GLIB2_36_CFLAGS=`$PKG_CONFIG --cflags "glib-2.0 >= 2.36" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$GLIB2_36_LIBS"; then
+    pkg_cv_GLIB2_36_LIBS="$GLIB2_36_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"glib-2.0 >= 2.36\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "glib-2.0 >= 2.36") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_GLIB2_36_LIBS=`$PKG_CONFIG --libs "glib-2.0 >= 2.36" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        GLIB2_36_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "glib-2.0 >= 2.36" 2>&1`
+        else
+	        GLIB2_36_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "glib-2.0 >= 2.36" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$GLIB2_36_PKG_ERRORS" >&5
+
+
+$as_echo "#define REQUIRE_GLIB_TYPE_INIT 1" >>confdefs.h
+
+elif test $pkg_failed = untried; then
+     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+$as_echo "#define REQUIRE_GLIB_TYPE_INIT 1" >>confdefs.h
+
+else
+	GLIB2_36_CFLAGS=$pkg_cv_GLIB2_36_CFLAGS
+	GLIB2_36_LIBS=$pkg_cv_GLIB2_36_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
 gio_module="gio-2.0 >= 2.15.0"
 
 pkg_failed=no
@@ -6950,24 +7037,42 @@ fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$LIBXML2_PKG_ERRORS" >&5
 
-	skip_xmlreport=yes
+	as_fn_error $? "Package requirements (\"libxml-2.0\") were not met:
+
+$LIBXML2_PKG_ERRORS
+
+Consider adjusting the PKG_CONFIG_PATH environment variable if you
+installed software in a non-standard prefix.
+
+Alternatively, you may set the environment variables LIBXML2_CFLAGS
+and LIBXML2_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details." "$LINENO" 5
 elif test $pkg_failed = untried; then
      	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-	skip_xmlreport=yes
+	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
+is in your PATH or set the PKG_CONFIG environment variable to the full
+path to pkg-config.
+
+Alternatively, you may set the environment variables LIBXML2_CFLAGS
+and LIBXML2_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.
+
+To get pkg-config, see <http://pkg-config.freedesktop.org/>.
+See \`config.log' for more details" "$LINENO" 5; }
 else
 	LIBXML2_CFLAGS=$pkg_cv_LIBXML2_CFLAGS
 	LIBXML2_LIBS=$pkg_cv_LIBXML2_LIBS
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-	skip_xmlreport=no
+
 fi
 if test "$enable_xmlreport" = "yes"; then
-    if test "$skip_xmlreport" = "no"; then
 
 $as_echo "#define FEAT_XMLREPORT 1" >>confdefs.h
 
-    fi
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking --enable-autoref argument" >&5
@@ -8170,6 +8275,48 @@ $as_echo "$ac_cv_lib_glib_2_0_g_spawn_check_exit_status" >&6; }
 if test "x$ac_cv_lib_glib_2_0_g_spawn_check_exit_status" = xyes; then :
 
 $as_echo "#define HAVE_GLIB_SPAWN_CHECK_EXIT_STATUS 1" >>confdefs.h
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for g_type_init in -lglib-2.0" >&5
+$as_echo_n "checking for g_type_init in -lglib-2.0... " >&6; }
+if ${ac_cv_lib_glib_2_0_g_type_init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lglib-2.0  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char g_type_init ();
+int
+main ()
+{
+return g_type_init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_glib_2_0_g_type_init=yes
+else
+  ac_cv_lib_glib_2_0_g_type_init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_glib_2_0_g_type_init" >&5
+$as_echo "$ac_cv_lib_glib_2_0_g_type_init" >&6; }
+if test "x$ac_cv_lib_glib_2_0_g_type_init" = xyes; then :
+
+$as_echo "#define HAVE_GLIB_TYPE_INIT 1" >>confdefs.h
 
 fi
 
