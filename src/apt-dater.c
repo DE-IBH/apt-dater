@@ -75,6 +75,10 @@ int main(int argc, char **argv, char **envp)
  textdomain(PACKAGE);
 #endif
 
+#ifdef HAVE_GLIB_TYPE_INIT
+ g_type_init();
+#endif
+
  cfgdirname = g_strdup_printf("%s/%s", g_get_user_config_dir(), PACKAGE);
  if(!cfgdirname) g_error(_("Out of memory."));
 
