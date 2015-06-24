@@ -90,6 +90,7 @@ typedef struct _cfgfile {
 #endif
  gchar *hostsfile;
 #ifdef FEAT_TMUX
+ gchar *tmuxconffile;
  gchar *tmuxsockpath;
 #else
  gchar *screenrcfile;

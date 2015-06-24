@@ -108,6 +108,7 @@ void freeConfig (CfgFile *cfg)
  g_free(cfg->cmd_upgrade);
  g_free(cfg->cmd_install);
 #ifdef FEAT_TMUX
+ g_free(cfg->tmuxconffile);
  g_free(cfg->tmuxsockpath);
 #else
  g_free(cfg->screenrcfile);
@@ -301,6 +302,7 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     }
 
 #ifdef FEAT_TMUX
+    lcfg->tmuxconffile = getXPropStr(s_tmux, "conf-file", g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "tmux.conf"));
     lcfg->tmuxsockpath = getXPropStr(s_tmux, "socket-path", g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "tmux"));
     if(g_mkdir_with_parents(lcfg->tmuxsockpath, S_IRWXU | S_IRWXG) == -1) {
       g_warning("Failed to create %s: %s", lcfg->tmuxsockpath, g_strerror(errno));
@@ -319,7 +321,14 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
       int i;
       for(i = 0; i < s_addkeys->nodeNr; i++) {
 	lcfg->ssh_add[i] = g_strdup((gchar *)xmlGetProp(s_addkeys->nodeTab[i], BAD_CAST("name")));
+	xmlChar *c = xmlGetProp(s_addkeys->nodeTab[i], BAD_CAST("fn"));
+	if(!c) {
+	    g_printerr(_("Empty SSH key filename (%s/@fn) in configuration."), xmlGetNodePath(s_addkeys->nodeTab[i]));
+	    exit(1);
+	}
+	lcfg->ssh_add[i] = g_strdup((gchar *)c);
       }
+      lcfg->ssh_numadd = s_addkeys->nodeNr;
     }
     xmlXPathFreeNodeSet(s_addkeys);
 
