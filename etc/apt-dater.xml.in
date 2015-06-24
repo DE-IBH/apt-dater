@@ -13,12 +13,18 @@
         <add-key fn="/path/to/id_rsa1"/>
         <add-key fn="/path/to/id_rsa2"/>
     </ssh>
-    -->
-    <!--
-	Disable StrictHostKeyChecking in multi-user setups.
-	ssh_config(5)
-    -->
-    <ssh opt-cmd-flags="-t -o StrictHostKeyChecking=no" />
+-->
+<!--
+    Multiuser setup:
+    - Disable StrictHostKeyChecking (ssh_config(5)).
+    - Spawn ssh-agent(1).
+    - Add shared ssh key.
+-->
+    <ssh
+	opt-cmd-flags="-t -o StrictHostKeyChecking=no"
+	spawn-agent="true">
+<!--        <add-key fn="/etc/apt-dater/ssh/id_rsa" />-->
+    </ssh>
 
     <!--
 	Path to hosts file and status directory.
