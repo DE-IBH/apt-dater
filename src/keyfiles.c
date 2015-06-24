@@ -319,7 +319,14 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
       int i;
       for(i = 0; i < s_addkeys->nodeNr; i++) {
 	lcfg->ssh_add[i] = g_strdup((gchar *)xmlGetProp(s_addkeys->nodeTab[i], BAD_CAST("name")));
+	xmlChar *c = xmlGetProp(s_addkeys->nodeTab[i], BAD_CAST("fn"));
+	if(!c) {
+	    g_printerr(_("Empty SSH key filename (%s/@fn) in configuration."), xmlGetNodePath(s_addkeys->nodeTab[i]));
+	    exit(1);
+	}
+	lcfg->ssh_add[i] = g_strdup((gchar *)c);
       }
+      lcfg->ssh_numadd = s_addkeys->nodeNr;
     }
     xmlXPathFreeNodeSet(s_addkeys);
 
