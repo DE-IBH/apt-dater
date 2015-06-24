@@ -30,6 +30,7 @@
 
 <!-- TMUX -->
 <!ELEMENT tmux EMPTY>
+<!ATTLIST tmux conf-file CDATA #IMPLIED>
 <!ATTLIST tmux socket-path CDATA #IMPLIED>
 <!ATTLIST tmux xml:base CDATA #IMPLIED>
 

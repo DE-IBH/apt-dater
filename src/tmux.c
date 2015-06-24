@@ -172,7 +172,7 @@ tmux_new(HostNode *n, const gboolean detached) {
   _argv[1] = g_strdup("-S");
   _argv[2] = g_strdup_printf("%s/%s_%s_%d", cfg->tmuxsockpath, n->ssh_user, n->hostname, n->ssh_port);
   _argv[3] = g_strdup("-f");
-  _argv[4] = g_strdup(cfg->tmuxsockpath);
+  _argv[4] = g_strdup(cfg->tmuxconffile);
   _argv[5] = g_strdup("new-session");
   _argv[6] = g_strdup_printf("-%sn", detached ? "d" : "");
   _argv[7] = title;
