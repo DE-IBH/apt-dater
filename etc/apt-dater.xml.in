@@ -13,13 +13,12 @@
         <add-key fn="/path/to/id_rsa1"/>
         <add-key fn="/path/to/id_rsa2"/>
     </ssh>
--->
-<!--
+
     Multiuser setup:
     - Disable StrictHostKeyChecking (ssh_config(5)).
     - Spawn ssh-agent(1).
     - Add shared ssh key.
--->
+    -->
     <ssh
 	opt-cmd-flags="-t -o StrictHostKeyChecking=no"
 	spawn-agent="true">
@@ -34,8 +33,13 @@
 	history-dir="path-to/history/"
 	stats-dir="path-to/stats"/>
 
+    Multiuser setup:
+    - use global hosts file
+    - use shared dictories
+    - use explicit umask
     -->
     <paths
+	hosts-file="/etc/apt-dater/hosts.xml"
 	history-dir="/var/lib/apt-dater/history"
 	stats-dir="/var/cache/apt-dater/stats"
 	umask="007"/>
@@ -50,6 +54,9 @@
 
     <!--
 	TMUX(1) options
+
+    Multiuser setup:
+    - use shared socket path
     -->
     <tmux
 	socket-path="/var/cache/apt-dater/tmux"/>
