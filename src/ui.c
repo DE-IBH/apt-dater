@@ -3730,6 +3730,7 @@ gboolean ctrlUI (GList *hosts)
  }
 
  if(refscr == TRUE) {
+  refreshStats(hosts);
   getOldestMtime(hosts);
   refreshDraw();
  }
