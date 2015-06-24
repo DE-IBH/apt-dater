@@ -3093,6 +3093,9 @@ gboolean ctrlUI (GList *hosts)
        refscr = TRUE;
       }
      }
+#ifdef FEAT_TMUX
+   refreshStats(hosts);
+#endif
    break; /* case SC_KEY_REFRESH */
 
   case SC_KEY_REFRESH+TAGGED_MASK:
@@ -3131,6 +3134,9 @@ gboolean ctrlUI (GList *hosts)
      g_list_free (thosts);
     }
    }
+#ifdef FEAT_TMUX
+   refreshStats(hosts);
+#endif
    break; /* case SC_KEY_REFRESH + KEY_TAGGED_MASK */
 
   case SC_KEY_TAGACTION:
@@ -3203,6 +3209,9 @@ gboolean ctrlUI (GList *hosts)
     rebuildDrawList(hosts);
     initUI();
     refscr = TRUE;
+#ifdef FEAT_TMUX
+    refreshStats(hosts);
+#endif
     break;
    case CATEGORY:
    case GROUP:
@@ -3537,6 +3546,9 @@ gboolean ctrlUI (GList *hosts)
       ho = g_list_next(ho);
     }
    }
+#ifdef FEAT_TMUX
+   refreshStats(hosts);
+#endif
    break; /* case SC_KEY_NEXTSESS */
 
   case SC_KEY_ATTACH:
@@ -3581,6 +3593,9 @@ gboolean ctrlUI (GList *hosts)
     initUI();
    }
    refscr = TRUE;
+#ifdef FEAT_TMUX
+   refreshStats(hosts);
+#endif
    break; /* case SC_KEY_ATTACH */
 
   case SC_KEY_TOGGLEDUMPS:
@@ -3730,7 +3745,6 @@ gboolean ctrlUI (GList *hosts)
  }
 
  if(refscr == TRUE) {
-  refreshStats(hosts);
   getOldestMtime(hosts);
   refreshDraw();
  }
