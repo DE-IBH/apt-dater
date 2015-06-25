@@ -51,7 +51,7 @@ endif
 
 apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS) $(GIO_LIBS)
 
-AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"' -DSOURCE_DATE_RFC2822="\"$(shell date -d @$(SOURCE_DATE_EPOCH) -R)\""
+AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"' -DSOURCE_DATE_UTC="\"$(shell date -d @$(SOURCE_DATE_EPOCH) -u)\""
 if LINUX
 AM_LDFLAGS = -Wl,--as-needed
 else
