@@ -674,7 +674,7 @@ uninstall-am: uninstall-binPROGRAMS
 
 
 # define in case BUILD_DATE is not exported
-BUILD_DATE ?= $(shell date '%b %e %Y %H:%M:%S')
+BUILD_DATE ?= $(shell date +'%b %e %Y %H:%M:%S')
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

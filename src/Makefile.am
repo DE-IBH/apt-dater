@@ -1,7 +1,7 @@
 bin_PROGRAMS = apt-dater
 
 # define in case BUILD_DATE is not exported
-BUILD_DATE ?= $(shell date '%b %e %Y %H:%M:%S')
+BUILD_DATE ?= $(shell date +'%b %e %Y %H:%M:%S')
 
 apt_dater_SOURCES =			\
 	adproto.h			\
