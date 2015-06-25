@@ -4,7 +4,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2008-2014 (C) IBH IT-Service GmbH [https://www.ibh.de/apt-dater/]
+ *   2008-2015 (C) IBH IT-Service GmbH [https://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -45,11 +45,11 @@
 #include "report.h"
 #endif
 
-#ifndef BUILD_DATE
-#define BUILD_DATE __DATE__ " " __TIME__
+#ifndef SOURCE_DATE_UTC
+#error SOURCE_DATE_UTC is undefined!
 #endif
 
-#define VERSTEXT PACKAGE_STRING " - " BUILD_DATE "\n\n" \
+#define VERSTEXT PACKAGE_STRING " - " SOURCE_DATE_UTC "\n\n" \
   "Copyright Holder: IBH IT-Service GmbH [https://www.ibh.net/]\n\n" \
   "This program is free software; you can redistribute it and/or modify\n" \
   "it under the terms of the GNU General Public License as published by\n" \

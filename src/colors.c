@@ -4,7 +4,7 @@
  *   Thomas Liske <liske@ibh.de>
  *
  * Copyright Holder:
- *   2012-2014 (C) IBH IT-Service GmbH [https://www.ibh.de/apt-dater/]
+ *   2012-2015 (C) IBH IT-Service GmbH [https://www.ibh.de/apt-dater/]
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
