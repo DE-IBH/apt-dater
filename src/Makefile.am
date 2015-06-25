@@ -1,7 +1,10 @@
 bin_PROGRAMS = apt-dater
 
-# define in case BUILD_DATE is not exported
-BUILD_DATE ?= $(shell date +'%b %e %Y %H:%M:%S')
+# Define in case SOURCE_DATE_EPOCH is not exported.
+# See also:
+# - Debian Bug#789648,
+# - https://wiki.debian.org/ReproducibleBuilds/TimestampsProposal
+SOURCE_DATE_EPOCH ?= $(shell date +%s)
 
 apt_dater_SOURCES =			\
 	adproto.h			\
@@ -48,7 +51,7 @@ endif
 
 apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS) $(GIO_LIBS)
 
-AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"' -DBUILD_DATE="\"$(BUILD_DATE)\""
+AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"' -DSOURCE_DATE_RFC2822="\"$(shell date -d @$(SOURCE_DATE_EPOCH) -R)\""
 if LINUX
 AM_LDFLAGS = -Wl,--as-needed
 else
