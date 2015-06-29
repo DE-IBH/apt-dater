@@ -379,6 +379,10 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     return (TRUE);
 }
 
+gint cmp_hosts(gconstpointer a, gconstpointer b, gpointer p) {
+  return g_strcmp0(((HostNode *)a)->hostname, ((HostNode *)b)->hostname);
+}
+
 GList *loadHosts (const gchar *filename) {
     /* Parse hosts.xml document. */
     xmlDocPtr xcfg = xmlParseFile(filename);
@@ -473,7 +477,7 @@ GList *loadHosts (const gchar *filename) {
 	TTYMUX_INITIALIZE(hostnode);
 	stats_initialize(hostnode);
 
-	hostlist = g_list_append(hostlist, hostnode);
+	hostlist = g_list_prepend(hostlist, hostnode);
 
 	xmlFree(hostname);
       }
@@ -483,5 +487,5 @@ GList *loadHosts (const gchar *filename) {
     }
 
     xmlXPathFreeObject(groups);
-    return hostlist;
+    return g_list_sort_with_data(hostlist, cmp_hosts, NULL);
 }
