@@ -380,7 +380,15 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
 }
 
 gint cmp_hosts(gconstpointer a, gconstpointer b, gpointer p) {
-  return g_strcmp0(((HostNode *)a)->hostname, ((HostNode *)b)->hostname);
+  HostNode *ha = (HostNode *)a;
+  HostNode *hb = (HostNode *)b;
+  gint ret;
+
+  ret = g_strcmp0(ha->group, hb->group);
+  if(ret == 0)
+    ret = g_strcmp0(ha->hostname, hb->hostname);
+
+  return ret;
 }
 
 GList *loadHosts (const gchar *filename) {
