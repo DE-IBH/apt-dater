@@ -164,7 +164,7 @@ int main(int argc, char **argv, char **envp)
     gint i;
     gchar **add_argv = g_new0(gchar *, cfg->ssh_numadd+2);
 
-    add_argv[0] = "ssh-add";
+    add_argv[0] = PKGLIBDIR"/ssh-addonce";
 
     for(i=0; i<cfg->ssh_numadd; i++)
      add_argv[i+1] = cfg->ssh_add[i];
