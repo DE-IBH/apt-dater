@@ -1,0 +1,46 @@
+#!/bin/sh
+
+# apt-dater - terminal-based remote package update manager
+#
+# Authors:
+#   Thomas Liske <liske@ibh.de>
+#
+# Copyright Holder:
+#   2009-2015 (C) IBH IT-Service GmbH [https://www.ibh.de/apt-dater/]
+#
+# License:
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this package; if not, write to the Free Software
+#   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+#
+
+KEYFN="$1"
+
+if [ -z "$KEYFN" ]; then
+    echo "Usage: $0 <keyfile>" 1>&2
+    exit 1
+fi
+
+if [ ! -r "$KEYFN" ]; then
+    echo "Key file '$KEYFN' not readable!" 1>&2
+    exit 1
+fi
+
+ssh-keygen -l -f "$KEYFN" | cut '-d ' -f1,2 | while read keyid; do
+    o=$(ssh-add -l | grep "^$keyid ")
+    if [ -z "$o" ]; then
+	exec ssh-add "$KEYFN"
+    else
+	echo "Identity found: $KEYFN"
+    fi
+done
