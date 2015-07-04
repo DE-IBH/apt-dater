@@ -136,7 +136,7 @@ while(<$fhin>) {
 }
 $fhin->close;
 
-foreach my $csect (@sections) {
+foreach my $csect (sort @sections) {
     my @group = ('group', name => $csect);
 
     if($sections{$csect}->{type}) {
@@ -144,7 +144,7 @@ foreach my $csect (@sections) {
     }
 
     $xml->startTag(@group);
-    foreach my $host (split(/;/, $sections{$csect}->{hosts})) {
+    foreach my $host (sort split(/;/, $sections{$csect}->{hosts})) {
 	my $sport;
 	$sport = $1 if($host =~ s/:(\d+)//);
 	
