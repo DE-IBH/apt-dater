@@ -169,7 +169,7 @@ int main(int argc, char **argv, char **envp)
     for(i=0; i<cfg->ssh_numadd; i++)
      add_argv[i+1] = cfg->ssh_add[i];
 
-    GError *error;
+    GError *error = NULL;
     if(g_spawn_sync(NULL, add_argv, NULL, 
          G_SPAWN_SEARCH_PATH | G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
          NULL, NULL, NULL, &error) == FALSE) {
