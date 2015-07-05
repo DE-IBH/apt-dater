@@ -40,6 +40,13 @@ run_hist_cmd () {
 	echo "ERRPATTERN=$AD_HIST_ERRPATTERN" >> "$AD_HIST_PATH/meta"
 	touch "$AD_HIST_PATH/failed"
     fi
+
+    if [ -n "$TMUX_PANE" ]; then
+	tm_pref = $(tmux list-keys | grep send-prefix$ | (read a b c ; echo $b))
+	tm_kill = $(tmux list-keys | grep kill-pane$ | (read a b c ; echo $b))
+
+	echo "=== Session terminated, press $tm_pref $tm_kill to close pane. ($(date +%c)) ===" 1>&2
+    fi
 }
 
 run_cmd () {
