@@ -42,10 +42,10 @@ run_hist_cmd () {
     fi
 
     if [ -n "$TMUX_PANE" ]; then
-	tm_pref = $(tmux list-keys | grep send-prefix$ | (read a b c ; echo $b))
-	tm_kill = $(tmux list-keys | grep kill-pane$ | (read a b c ; echo $b))
+	tm_pref=$(tmux list-keys | grep send-prefix$ | (read a b c ; echo $b))
+	tm_kill=$(tmux list-keys | grep kill-pane$ | (read a b c ; echo $b))
 
-	echo "=== Session terminated, press $tm_pref $tm_kill to close pane. ($(date +%c)) ===" 1>&2
+	echo "=== Session terminated, press $tm_pref $tm_kill to close pane. ===" 1>&2
     fi
 }
 
