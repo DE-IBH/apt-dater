@@ -97,7 +97,7 @@ tmux_get_sessions(HostNode *n) {
     return FALSE;
 
   gchar *sock = g_strdup_printf("%s/%s_%s_%d", cfg->tmuxsockpath, n->ssh_user, n->hostname, n->ssh_port);
-  gchar *argv[7] = {TMUX_BINARY, "-S", sock, "list-session", "-F", "#{session_id}\t#{session_created}\t#{session_attached}", NULL};
+  gchar *argv[7] = {TMUX_BINARY, "-S", sock, "list-session", "-F", "#{session_name}\t#{session_created}\t#{session_attached}", NULL};
   gchar *out = NULL;
   gint rc;
   GError *error = NULL;
@@ -138,7 +138,7 @@ tmux_get_sessions(HostNode *n) {
     gint j = -1;
     while(line[++j] && j < 3) {
       if(j == 0) {
-	sscanf(line[j], "$%d", &(s->pid));
+	sscanf(line[j], "%d", &(s->pid));
 	continue;
       }
 
