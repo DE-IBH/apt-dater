@@ -252,7 +252,7 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DISTS = cmd hosts2xml
+EXTRA_DISTS = cmd hosts2xml ssh-addonce tmux-hint
 all: all-am
 
 .SUFFIXES:
@@ -442,9 +442,7 @@ uninstall-am:
 
 install-exec-hook:
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL) cmd $(DESTDIR)$(pkglibdir)
-	$(INSTALL) hosts2xml $(DESTDIR)$(pkglibdir)
-	$(INSTALL) ssh-addonce $(DESTDIR)$(pkglibdir)
+	$(INSTALL) $(EXTRA_DISTS) $(DESTDIR)$(pkglibdir)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
