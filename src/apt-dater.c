@@ -161,23 +161,25 @@ int main(int argc, char **argv, char **envp)
   }
   /* Add keys */
   else {
-    gint i;
-    gchar **add_argv = g_new0(gchar *, cfg->ssh_numadd+2);
+    if(cfg->ssh_numadd) {
+	gint i;
+	gchar **add_argv = g_new0(gchar *, cfg->ssh_numadd+2);
 
-    add_argv[0] = PKGLIBDIR"/ssh-addonce";
+	add_argv[0] = PKGLIBDIR"/ssh-addonce";
 
-    for(i=0; i<cfg->ssh_numadd; i++)
-     add_argv[i+1] = cfg->ssh_add[i];
+	for(i=0; i<cfg->ssh_numadd; i++)
+	 add_argv[i+1] = cfg->ssh_add[i];
 
-    GError *error = NULL;
-    if(g_spawn_sync(NULL, add_argv, NULL, 
-         G_SPAWN_SEARCH_PATH | G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
-         NULL, NULL, NULL, &error) == FALSE) {
-      g_warning("%s", error->message);
-      g_clear_error (&error);
+	GError *error = NULL;
+	if(g_spawn_sync(NULL, add_argv, NULL,
+	     G_SPAWN_SEARCH_PATH | G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
+	     NULL, NULL, NULL, &error) == FALSE) {
+	  g_warning("%s", error->message);
+	  g_clear_error (&error);
+	}
+
+	g_free(add_argv);
     }
-
-    g_free(add_argv);
   }
  }
 
