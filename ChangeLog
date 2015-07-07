@@ -16,7 +16,7 @@ apt-dater (1.0.2) unstable; urgency=low
     (Debian Bug#789648 by Dhole <dhole@openmailbox.org>)
   * Do not run ssh-add for keys already in ssh-agent.
 
- -- Thomas Liske <liske@ibh.de>  
+ -- Thomas Liske <liske@ibh.de>  Tue, 07 Jul 2015 11:25:15 +0200
 
 apt-dater (1.0.1) unstable; urgency=low
 

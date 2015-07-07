@@ -1,5 +1,5 @@
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(XMLSCHEMADIR)
 	for dtd in apt-dater.dtd hosts.dtd report.dtd; do \
-		$(INSTALL) "$$dtd" "$(DESTDIR)$(XMLSCHEMADIR)/"; \
+		$(INSTALL) -m 0644 "$$dtd" "$(DESTDIR)$(XMLSCHEMADIR)/"; \
 	done
