@@ -13,8 +13,8 @@ action on a host. Hooks executables are located in:
 |         | /etc/apt-dater/post-ins.d |
 | refresh | /etc/apt-dater/pre-ref.d  |
 |         | /etc/apt-dater/post-ref.d |
-| update  | /etc/apt-dater/pre-upd.d  |
-|         | /etc/apt-dater/post-upd.d |
+| upgrade | /etc/apt-dater/pre-upg.d  |
+|         | /etc/apt-dater/post-upg.d |
 +---------+---------------------------+
 
 The executables are run by run-parts(8). The environment contains
