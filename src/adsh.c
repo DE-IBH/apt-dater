@@ -60,12 +60,8 @@ typedef struct _hostfind {
 
 
 gint adsh_find(gconstpointer phost, gconstpointer ptarget) {
-  fprintf(stderr, "FIND\n");
   HostNode *host = (HostFind *)phost;
   HostFind *target = (HostFind *)ptarget;
-
-  fprintf(stderr, "%s:%d\tvs.\t", (host->ssh_host ? host->ssh_host : host->hostname), host->ssh_port);
-  fprintf(stderr, "%s:%d\n", target->ssh_host, target->ssh_port);
 
   if(strcasecmp((host->ssh_host ? host->ssh_host : host->hostname), target->ssh_host) == 0 && host->ssh_port == target->ssh_port) {
     return 0;
@@ -142,11 +138,13 @@ int main(int argc, char **argv, char **envp)
      adsh_target.ssh_host = strrchr(adsh_target.ssh_host, '@');
    }
    GList *adsh_host = g_list_find_custom(hosts, &adsh_target, adsh_find);
-   
-   fprintf(stderr, "%d\t%s\t=> %d\n", ac, av[0], adsh_host);
+
+   if(adsh_host) {
+     fprintf(stderr, "%d\t%s\t=> %d\n", ac, av[0], adsh_host);
+     exit(EXIT_FAILURE);
+   }
  }
 
- exit(1);
-
- exit(EXIT_SUCCESS);
+ execve("/usr/bin/ssh", argv, envp);
+ exit(EXIT_FAILURE);
 }
