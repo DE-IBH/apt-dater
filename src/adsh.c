@@ -40,6 +40,7 @@
 #include "sighandler.h"
 #include "lock.h"
 #include "env.h"
+#include "ttymux.h"
 
 #ifndef SOURCE_DATE_UTC
 #error SOURCE_DATE_UTC is undefined!
@@ -140,7 +141,33 @@ int main(int argc, char **argv, char **envp)
    GList *adsh_host = g_list_find_custom(hosts, &adsh_target, adsh_find);
 
    if(adsh_host) {
+     HostNode *n = adsh_host->data;
      fprintf(stderr, "%d\t%s\t=> %d\n", ac, av[0], adsh_host);
+
+     HistoryEntry he;
+     he.ts = time(NULL);
+     he.maintainer = maintainer;
+     he.action = "connect";
+     he.data = NULL;
+
+     gchar **screen_argv = TTYMUX_NEW(n, false);
+     gchar **argv2 = (gchar **) g_malloc0(sizeof(gchar *) * (g_strv_length(screen_argv) + 2));
+     gint i;
+     for(i = 0; i < g_strv_length(screen_argv); i++)
+       argv2[i] = g_strdup(screen_argv[i]);
+     argv2[i] = g_strdup(PKGLIBDIR"/cmd");
+
+     g_strfreev(screen_argv);
+     
+     gchar **env = env_build(n, "connect", NULL, &he);
+     GError *error;
+     g_spawn_sync(g_getenv("HOME"), argv2, env,
+		  G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
+		  NULL, NULL, NULL, &error);
+     
+     g_strfreev(env);
+     g_strfreev(argv2);
+
      exit(EXIT_FAILURE);
    }
  }
