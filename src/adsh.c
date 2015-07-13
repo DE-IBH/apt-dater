@@ -53,11 +53,25 @@
   "(at your option) any later version.\n\n" \
   "Send bug reports to " PACKAGE_BUGREPORT ".\n\n"
 
+typedef struct _hostfind {
+  gchar     *ssh_host;
+  gint      ssh_port;
+} HostFind;
 
-gint adsh_find(gconstpointer hdata, gconstpointer starget) {
-  gchar **target = (gchar **)target;
-  /*  gchar *target = tstring;
-      return(1);*/
+
+gint adsh_find(gconstpointer phost, gconstpointer ptarget) {
+  fprintf(stderr, "FIND\n");
+  HostNode *host = (HostFind *)phost;
+  HostFind *target = (HostFind *)ptarget;
+
+  fprintf(stderr, "%s:%d\tvs.\t", (host->ssh_host ? host->ssh_host : host->hostname), host->ssh_port);
+  fprintf(stderr, "%s:%d\n", target->ssh_host, target->ssh_port);
+
+  if(strcasecmp((host->ssh_host ? host->ssh_host : host->hostname), target->ssh_host) == 0 && host->ssh_port == target->ssh_port) {
+    return 0;
+  }
+
+  return 1;
 }
 
 int main(int argc, char **argv, char **envp)
@@ -70,7 +84,6 @@ int main(int argc, char **argv, char **envp)
  gboolean report = FALSE;
  gboolean refresh = TRUE;
 #endif
- gchar *adsh_target = NULL;
 
 #ifdef HAVE_GETTEXT
  setlocale(LC_ALL, "");
@@ -93,24 +106,20 @@ int main(int argc, char **argv, char **envp)
  if(chkForInitialConfig(cfgdirname, cfgfilename))
   g_warning(_("Failed to create initial configuration file %s."), cfgfilename);
 
- while ((opts = getopt(argc, argv, "c:vs:")) != EOF) {
-  switch(opts) {
-  case 'c':
-   if(cfgfilename) free(cfgfilename);
-   cfgfilename = (char *) strdup(optarg);
-   break;
-  case 'v':
-    g_print(VERSTEXT);
-    exit(0);
-   break;
-  case 's':
-    adsh_target = g_strdup(optarg);
-    break;
-  default:
-   g_printerr(_("Usage: %s [-(c <conffile>|v)] -s <host>:<port>\n"), g_get_prgname());
-   exit(EXIT_FAILURE);
-  }
+ HostFind adsh_target;
+ adsh_target.ssh_port = 0;
+ opterr = 0;
+ while ((opts = getopt(argc, argv, "1246ab:c:e:fgi:kl:m:no:p:qstvxACD:E:F:I:KL:MNO:PQ:R:S:TVw:W:XYy")) != EOF) {
+   switch (opts) {
+   case 'p':
+     adsh_target.ssh_port = atoi(optarg);
+     break;
+   }
  }
+
+ int ac = argc - optind;
+ char **av = argv + optind;
+ 
  if(!cfgfilename) g_error(_("Out of memory."));
 
  cfg = initialConfig();
@@ -127,16 +136,16 @@ int main(int argc, char **argv, char **envp)
 
  env_init(envp);
 
- fprintf(stderr, "adsh: %s\n", adsh_target);
- gchar *adsh_ssh[2] = { NULL, NULL };
- GList *adsh_host = g_list_find_custom(hosts, adsh_target, adsh_find);
+ if(ac > 0) {
+   adsh_target.ssh_host = av[0];
+   if(strrchr(adsh_target.ssh_host, '@')) {
+     adsh_target.ssh_host = strrchr(adsh_target.ssh_host, '@');
+   }
+   GList *adsh_host = g_list_find_custom(hosts, &adsh_target, adsh_find);
+   
+   fprintf(stderr, "%d\t%s\t=> %d\n", ac, av[0], adsh_host);
+ }
 
-
- freeConfig(cfg);
- g_free(cfgfilename);
- g_free(cfgdirname);
-
- 
  exit(1);
 
  exit(EXIT_SUCCESS);
