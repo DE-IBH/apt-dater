@@ -6,6 +6,7 @@ po/POTFILES
 po/*.gmo
 src/.deps
 src/apt-dater
+src/adsh
 config.[hls]*
 *.o
 stamp-*
