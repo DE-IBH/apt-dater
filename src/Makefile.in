@@ -79,7 +79,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-bin_PROGRAMS = apt-dater$(EXEEXT)
+bin_PROGRAMS = apt-dater$(EXEEXT) adsh$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/mkinstalldirs $(top_srcdir)/depcomp
@@ -99,14 +99,20 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_apt_dater_OBJECTS = apt-dater.$(OBJEXT) colors.$(OBJEXT) \
-	exec.$(OBJEXT) keyfiles.$(OBJEXT) lock.$(OBJEXT) \
-	parsecmd.$(OBJEXT) report.$(OBJEXT) sighandler.$(OBJEXT) \
-	stats.$(OBJEXT) ui.$(OBJEXT) autoref.$(OBJEXT) tag.$(OBJEXT) \
-	history.$(OBJEXT) env.$(OBJEXT) clusters.$(OBJEXT) \
-	glue.$(OBJEXT) tmux.$(OBJEXT) screen.$(OBJEXT)
-apt_dater_OBJECTS = $(am_apt_dater_OBJECTS)
+am__objects_1 = apt-dater.$(OBJEXT) colors.$(OBJEXT) exec.$(OBJEXT) \
+	keyfiles.$(OBJEXT) lock.$(OBJEXT) parsecmd.$(OBJEXT) \
+	report.$(OBJEXT) sighandler.$(OBJEXT) stats.$(OBJEXT) \
+	ui.$(OBJEXT) autoref.$(OBJEXT) tag.$(OBJEXT) history.$(OBJEXT) \
+	env.$(OBJEXT) clusters.$(OBJEXT) glue.$(OBJEXT) tmux.$(OBJEXT) \
+	screen.$(OBJEXT)
+am_adsh_OBJECTS = adsh.$(OBJEXT) $(am__objects_1)
+adsh_OBJECTS = $(am_adsh_OBJECTS)
 am__DEPENDENCIES_1 =
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+adsh_DEPENDENCIES = $(am__DEPENDENCIES_2)
+am_apt_dater_OBJECTS = main.$(OBJEXT) $(am__objects_1)
+apt_dater_OBJECTS = $(am_apt_dater_OBJECTS)
 apt_dater_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -137,8 +143,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(apt_dater_SOURCES)
-DIST_SOURCES = $(apt_dater_SOURCES)
+SOURCES = $(adsh_SOURCES) $(apt_dater_SOURCES)
+DIST_SOURCES = $(adsh_SOURCES) $(apt_dater_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -300,7 +306,7 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-apt_dater_SOURCES = \
+SHARED_SOURCES = \
 	adproto.h			\
 	apt-dater.c			\
 	apt-dater.h			\
@@ -343,7 +349,16 @@ else					\
 	screen.h			\
 endif
 
+apt_dater_SOURCES = \
+	main.c				\
+	$(SHARED_SOURCES)
+
 apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS) $(GIO_LIBS)
+adsh_SOURCES = \
+	adsh.c				\
+	$(SHARED_SOURCES)
+
+adsh_LDADD = $(apt_dater_LDADD)
 AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"' -DSOURCE_DATE_UTC="\"$(shell date -d @$(SOURCE_DATE_EPOCH) -u)\""
 @LINUX_FALSE@AM_LDFLAGS = -Wl
 @LINUX_TRUE@AM_LDFLAGS = -Wl,--as-needed
@@ -425,6 +440,10 @@ uninstall-binPROGRAMS:
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 
+adsh$(EXEEXT): $(adsh_OBJECTS) $(adsh_DEPENDENCIES) $(EXTRA_adsh_DEPENDENCIES) 
+	@rm -f adsh$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(adsh_OBJECTS) $(adsh_LDADD) $(LIBS)
+
 apt-dater$(EXEEXT): $(apt_dater_OBJECTS) $(apt_dater_DEPENDENCIES) $(EXTRA_apt_dater_DEPENDENCIES) 
 	@rm -f apt-dater$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(apt_dater_OBJECTS) $(apt_dater_LDADD) $(LIBS)
@@ -435,6 +454,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adsh.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/apt-dater.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/autoref.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/clusters.Po@am__quote@
@@ -445,6 +465,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/history.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/keyfiles.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lock.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parsecmd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/report.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/screen.Po@am__quote@

@@ -586,6 +586,7 @@ PACKAGE_BUGREPORT='apt-dater@ibh.de'
 PACKAGE_URL=''
 
 ac_unique_file="src/apt-dater.c"
+ac_unique_file="src/adsh.c"
 gt_needs=
 # Factoring default headers for most tests.
 ac_includes_default="\
@@ -3022,6 +3023,7 @@ else
   FREEBSD_TRUE='#'
   FREEBSD_FALSE=
 fi
+
 
 
 
