@@ -124,6 +124,11 @@ handle_generic_ssh () {
     fi
 
     case "$AD_ACTION" in
+	adsh)
+	    run_hook "$AD_HOOK_PRE_CONNECT"
+	    $WRAP $AD_SSH_CMD $@
+	    run_hook "$AD_HOOK_POST_CONNECT"
+	    ;;
 	connect)
 	    run_hook "$AD_HOOK_PRE_CONNECT"
 	    $WRAP $AD_SSH_CMD $AD_SSH_ID $AD_SSH_OPTFLAGS $my_ssh_user $my_ssh_port "$AD_SSH_HOST"

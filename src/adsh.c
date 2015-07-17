@@ -147,19 +147,22 @@ int main(int argc, char **argv, char **envp)
      HistoryEntry he;
      he.ts = time(NULL);
      he.maintainer = maintainer;
-     he.action = "connect";
+     he.action = "adsh";
      he.data = NULL;
 
      gchar **screen_argv = TTYMUX_NEW(n, false);
-     gchar **argv2 = (gchar **) g_malloc0(sizeof(gchar *) * (g_strv_length(screen_argv) + 2));
+     gchar **argv2 = (gchar **) g_malloc0(sizeof(gchar *) * (g_strv_length(screen_argv) + 2 + argc));
      gint i;
      for(i = 0; i < g_strv_length(screen_argv); i++)
        argv2[i] = g_strdup(screen_argv[i]);
      argv2[i] = g_strdup(PKGLIBDIR"/cmd");
+     gint j;
+     for(; i < g_strv_length(screen_argv); i++)
+       argv2[i] = g_strdup(screen_argv[i]);
 
      g_strfreev(screen_argv);
      
-     gchar **env = env_build(n, "connect", NULL, &he);
+     gchar **env = env_build(n, "adsh", NULL, &he);
      GError *error;
      g_spawn_sync(g_getenv("HOME"), argv2, env,
 		  G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
