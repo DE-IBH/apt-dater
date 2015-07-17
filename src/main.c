@@ -74,6 +74,9 @@ int main(int argc, char **argv, char **envp)
  textdomain(PACKAGE);
 #endif
 
+ /* initialize libxml2 & check for ABI mismatches */
+ LIBXML_TEST_VERSION
+
 #ifdef REQUIRE_GLIB_TYPE_INIT
  g_type_init();
 #endif
