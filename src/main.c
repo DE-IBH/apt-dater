@@ -32,6 +32,7 @@
 #ifdef HAVE_LOCALE_H
 #include <locale.h>
 #endif
+#include <libxml/xmlversion.h>
 
 #include "apt-dater.h"
 #include "keyfiles.h"
