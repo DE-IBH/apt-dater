@@ -179,10 +179,10 @@ handle_generic_ssh () {
 }
 
 if [ -z "$AD_TYPE" -o "$AD_TYPE" = 'generic-ssh' ]; then
-    handle_generic_ssh
+    handle_generic_ssh $@
 else
     if [ -x "$AD_PLUGINDIR/$AD_TYPE/cmd" ]; then
-	$WRAP "$AD_PLUGINDIR/$AD_TYPE/cmd"
+	$WRAP "$AD_PLUGINDIR/$AD_TYPE/cmd" $@
     else
 	echo "No plugin to handle type '$AD_TYPE'!" 1>&2
 	echo 1>&2

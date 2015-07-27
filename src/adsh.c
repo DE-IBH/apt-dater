@@ -61,7 +61,7 @@ typedef struct _hostfind {
 
 
 gint adsh_find(gconstpointer phost, gconstpointer ptarget) {
-  HostNode *host = (HostFind *)phost;
+  HostNode *host = (HostNode *)phost;
   HostFind *target = (HostFind *)ptarget;
 
   if(strcasecmp((host->ssh_host ? host->ssh_host : host->hostname), target->ssh_host) == 0 && host->ssh_port == target->ssh_port) {
@@ -77,10 +77,6 @@ int main(int argc, char **argv, char **envp)
  gchar *cfgfilename = NULL;
  gchar *cfgdirname = NULL;
  GList *hosts = NULL;
-#ifdef FEAT_XMLREPORT
- gboolean report = FALSE;
- gboolean refresh = TRUE;
-#endif
 
 #ifdef HAVE_GETTEXT
  setlocale(LC_ALL, "");
@@ -142,35 +138,17 @@ int main(int argc, char **argv, char **envp)
 
    if(adsh_host) {
      HostNode *n = adsh_host->data;
-     fprintf(stderr, "%d\t%s\t=> %d\n", ac, av[0], adsh_host);
-
+     
      HistoryEntry he;
      he.ts = time(NULL);
      he.maintainer = maintainer;
      he.action = "adsh";
      he.data = NULL;
 
-     gchar **screen_argv = TTYMUX_NEW(n, false);
-     gchar **argv2 = (gchar **) g_malloc0(sizeof(gchar *) * (g_strv_length(screen_argv) + 2 + argc));
-     gint i;
-     for(i = 0; i < g_strv_length(screen_argv); i++)
-       argv2[i] = g_strdup(screen_argv[i]);
-     argv2[i] = g_strdup(PKGLIBDIR"/cmd");
-     gint j;
-     for(; i < g_strv_length(screen_argv); i++)
-       argv2[i] = g_strdup(screen_argv[i]);
-
-     g_strfreev(screen_argv);
-     
      gchar **env = env_build(n, "adsh", NULL, &he);
-     GError *error;
-     g_spawn_sync(g_getenv("HOME"), argv2, env,
-		  G_SPAWN_CHILD_INHERITS_STDIN, NULL, NULL,
-		  NULL, NULL, NULL, &error);
-     
-     g_strfreev(env);
-     g_strfreev(argv2);
 
+     execve(PKGLIBDIR"/cmd", argv, env);
+     perror("Failed to run "PKGLIBDIR"/cmd");
      exit(EXIT_FAILURE);
    }
  }
