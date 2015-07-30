@@ -23,6 +23,7 @@
  */
 
 #include "env.h"
+#include "ui.h"
 
 GSList *base_env = NULL;
 
@@ -68,7 +69,7 @@ env_init(gchar **envp) {
 
 gchar **
 env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEntry *he) {
-    gchar **new_env = (gchar **) g_new0(gchar**, g_slist_length(base_env) + 22
+    gchar **new_env = (gchar **) g_new0(gchar**, g_slist_length(base_env) + 24
 #ifdef FEAT_CLUSTERS
     + g_list_length(n->clusters)
 #endif
@@ -149,6 +150,10 @@ env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEnt
      ADD_HENV("PARAM"           , param);
     else
      ADD_HENV("PARAM"           , "");
+
+    ADD_HENV("MAINTAINER", maintainer);
+    /* add legacy MAINTAINER env variable */
+    new_env[i++] = g_strdup_printf("MAINTAINER=%s", maintainer);
 
     return new_env;
 }

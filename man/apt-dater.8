@@ -39,7 +39,7 @@ This manual page documents briefly the
 command\&.
 .PP
 \fBapt\-dater\fR
-is a program to manage package updates on a large number of remote hosts using SSH\&.
+is a program to manage package updats on a large number of remote hosts using SSH\&.
 .SH "OPTIONS"
 .PP
 \fBapt\-dater\fR
@@ -48,7 +48,7 @@ accepts the following command parameters:
 \fB\-c \fR\fB\fIconfig\fR\fR
 .RS 4
 Use alternative config file\&. Default is
-\fI$XDG_CONFIG_HOME/apt\-dater/apt\-dater\&.config\fR\&.
+\fI$XDG_CONFIG_HOME/apt\-dater/apt\-dater\&.xml\fR\&.
 .RE
 .PP
 \fB\-v\fR
@@ -63,7 +63,7 @@ Refresh hosts and create XML report on stdout\&. apt\-dater must be compiled wit
 .PP
 \fB\-n\fR
 .RS 4
-Prevent hosts to be refreshed before creating XML report (useful for cronjobs which do not have access to SSH key(s))\&.
+Prevent hosts to be refreshed before create XML report (useful for cronjobs which do not have access to SSH key(s))\&.
 .RE
 .SH "ENVIRONMENT"
 .PP
@@ -74,18 +74,18 @@ The maintainer\*(Aqs name (i\&.e\&. used by
 .RE
 .SH "FILES"
 .PP
-\fI~/\&.config/apt\-dater/apt\-dater\&.config\fR
+\fI~/\&.config/apt\-dater/apt\-dater\&.xml\fR
 .RS 4
 The configuration file of apt\-dater
 .RE
 .PP
-\fI~/\&.config/apt\-dater/hosts\&.config\fR
+\fI~/\&.config/apt\-dater/hosts\&.xml\fR
 .RS 4
 Contains all hosts you would like to manage
 .RE
 .SH "SEE ALSO"
 .PP
-apt\-dater\&.config(5), apt\-get(1), debtrack, screen(1), ssh(1),
+apt\-dater\&.xml(5), apt\-get(1), debtrack, ssh(1),
 \m[blue]\fBXDG Base Directory Specification\fR\m[]\&\s-2\u[1]\d\s+2\&.
 .SH "AUTHORS"
 .PP

@@ -1858,8 +1858,6 @@ void doUI (GList *hosts)
      strncpy(maintainer, pw->pw_name, sizeof(maintainer));
    else
      maintainer[0] = 0;
-
-   setenv("MAINTAINER", maintainer, TRUE);
  }
 
  if ((cfg->query_maintainer == 1) ||
@@ -1886,8 +1884,6 @@ void doUI (GList *hosts)
 
    delwin(w);
    refreshDraw();
-
-   setenv("MAINTAINER", maintainer, TRUE);
  }
 }
 

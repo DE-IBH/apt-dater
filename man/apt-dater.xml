@@ -105,7 +105,7 @@ and docbook-xsl in your Build-Depends control field.
       <varlistentry>
         <term><option>-c <replaceable>config</replaceable></option></term>
         <listitem>
-          <para>Use alternative config file. Default is <replaceable>$XDG_CONFIG_HOME/apt-dater/apt-dater.config</replaceable>.</para>
+          <para>Use alternative config file. Default is <replaceable>$XDG_CONFIG_HOME/apt-dater/apt-dater.xml</replaceable>.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -146,13 +146,13 @@ and docbook-xsl in your Build-Depends control field.
 
     <variablelist>
       <varlistentry>
-	<term><replaceable>~/.config/apt-dater/apt-dater.config</replaceable></term>
+	<term><replaceable>~/.config/apt-dater/apt-dater.xml</replaceable></term>
 	<listitem>
 	  <para>The configuration file of apt-dater</para>
 	</listitem>
       </varlistentry>
       <varlistentry>
-	<term><replaceable>~/.config/apt-dater/hosts.config</replaceable></term>
+	<term><replaceable>~/.config/apt-dater/hosts.xml</replaceable></term>
 	<listitem>
 	  <para>Contains all hosts you would like to manage</para>
 	</listitem>
@@ -162,6 +162,6 @@ and docbook-xsl in your Build-Depends control field.
   <refsect1>
     <title>SEE ALSO</title>
 	
-    <para>apt-dater.config(5), apt-get(1), debtrack, screen(1), ssh(1), <ulink url="http://www.freedesktop.org/Standards/basedir-spec">XDG Base Directory Specification</ulink>.</para>
+    <para>apt-dater.xml(5), apt-get(1), debtrack, ssh(1), <ulink url="http://www.freedesktop.org/Standards/basedir-spec">XDG Base Directory Specification</ulink>.</para>
   </refsect1>
 </refentry>

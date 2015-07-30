@@ -1,4 +1,4 @@
-bin_PROGRAMS = apt-dater
+bin_PROGRAMS = apt-dater adsh
 
 # Define in case SOURCE_DATE_EPOCH is not exported.
 # See also:
@@ -6,7 +6,7 @@ bin_PROGRAMS = apt-dater
 # - https://wiki.debian.org/ReproducibleBuilds/TimestampsProposal
 SOURCE_DATE_EPOCH ?= $(shell date +%s)
 
-apt_dater_SOURCES =			\
+SHARED_SOURCES =			\
 	adproto.h			\
 	apt-dater.c			\
 	apt-dater.h			\
@@ -49,7 +49,20 @@ else					\
 	screen.h			\
 endif
 
+
+apt_dater_SOURCES =			\
+	main.c				\
+	$(SHARED_SOURCES)
+
 apt_dater_LDADD = $(GLIB_LIBS) $(TCL_LIBS) $(LIBXML2_LIBS) $(GIO_LIBS)
+
+
+adsh_SOURCES =				\
+	adsh.c				\
+	$(SHARED_SOURCES)
+
+adsh_LDADD = $(apt_dater_LDADD)
+
 
 AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"' -DSOURCE_DATE_UTC="\"$(shell date -d @$(SOURCE_DATE_EPOCH) -u)\""
 if LINUX

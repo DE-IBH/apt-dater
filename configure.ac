@@ -32,6 +32,7 @@ AM_CONDITIONAL(LINUX, test x"$linux" = x"yes")
 AM_CONDITIONAL(FREEBSD, test x"$freebsd" = x"yes")
 
 AC_CONFIG_SRCDIR([src/apt-dater.c])
+AC_CONFIG_SRCDIR([src/adsh.c])
 AC_CONFIG_HEADER([config.h])
 
 AM_GNU_GETTEXT([external])

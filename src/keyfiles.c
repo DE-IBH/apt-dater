@@ -243,6 +243,44 @@ xmlNodePtr getXNode(xmlXPathContextPtr context, const gchar *xpath) {
   return ret;
 }
 
+void xmlErrIgnoreHandler(void *ctx, const char *msg, ...) {
+}
+
+void handleXMLError(const xmlErrorPtr e) {
+  if(!e)
+    return;
+
+  if(e->domain == XML_FROM_IO && e->code == XML_IO_LOAD_ERROR && e->level == XML_ERR_WARNING)
+    return;
+
+  switch(e->level) {
+  case XML_ERR_WARNING:
+    fprintf(stderr, "WARNING - ");
+    break;
+  case XML_ERR_ERROR:
+    fprintf(stderr, "ERROR - ");
+    break;
+  case XML_ERR_FATAL:
+    fprintf(stderr, "FATAL - ");
+    break;
+  default:
+    break;
+  }
+
+  if(e->file && e->line) {
+    fprintf(stderr, "%s:%d: ", e->file, e->line);
+  }
+  else {
+    if(e->file) {
+      fprintf(stderr, "%s: ", e->file);
+    }
+  }
+
+  fprintf(stderr, "%s", e->message);
+
+  xmlResetError(e);
+}
+
 gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     /* Parse hosts.xml document. */
     xmlDocPtr xcfg = xmlParseFile(filename);
@@ -250,7 +288,10 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
       return(FALSE);
 
     /* Handle Xincludes. */
+    xmlSetGenericErrorFunc(NULL, xmlErrIgnoreHandler);
     xmlXIncludeProcess(xcfg);
+    handleXMLError( xmlGetLastError() );
+    xmlSetGenericErrorFunc(NULL, NULL);
 
     /* Validate against DTD. */
     xmlValidCtxtPtr xval = xmlNewValidCtxt();
@@ -398,7 +439,10 @@ GList *loadHosts (const gchar *filename) {
       return(FALSE);
 
     /* Handle Xincludes. */
+    xmlSetGenericErrorFunc(NULL, xmlErrIgnoreHandler);
     xmlXIncludeProcess(xcfg);
+    handleXMLError( xmlGetLastError() );
+    xmlSetGenericErrorFunc(NULL, NULL);
 
     /* Validate against DTD. */
     xmlValidCtxtPtr xval = xmlNewValidCtxt();

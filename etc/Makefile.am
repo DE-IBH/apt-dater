@@ -13,9 +13,9 @@ install-exec-hook:
 	ln -s ../../../$(pkglibdir)/tmux-hint $(DESTDIR)/etc/apt-dater/post-ins.d/
 	$(mkinstalldirs) -m 0750 $(DESTDIR)/etc/apt-dater/pre-ref.d
 	$(mkinstalldirs) -m 0750 $(DESTDIR)/etc/apt-dater/post-ref.d
-	$(mkinstalldirs) -m 0750 $(DESTDIR)/etc/apt-dater/pre-upd.d
-	$(mkinstalldirs) -m 0750 $(DESTDIR)/etc/apt-dater/post-upd.d
-	ln -s ../../../$(pkglibdir)/tmux-hint $(DESTDIR)/etc/apt-dater/post-upd.d/
+	$(mkinstalldirs) -m 0750 $(DESTDIR)/etc/apt-dater/pre-upg.d
+	$(mkinstalldirs) -m 0750 $(DESTDIR)/etc/apt-dater/post-upg.d
+	ln -s ../../../$(pkglibdir)/tmux-hint $(DESTDIR)/etc/apt-dater/post-upg.d/
 	$(mkinstalldirs) -m 0710 $(DESTDIR)/etc/apt-dater/ssh
 	$(INSTALL) -m 0640 $(EXTRA_DISTS) $(DESTDIR)/etc/apt-dater/
 	$(mkinstalldirs) -m 02770 $(DESTDIR)/var/lib/apt-dater/history/
