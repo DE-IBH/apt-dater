@@ -24,7 +24,7 @@
 #   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 #
 
-if [ "$#" == "0" ]; then
+if [ "$#" = "0" ]; then
     echo "Usage: $0 <keyfile> ..." 1>&2
     exit 1
 fi
