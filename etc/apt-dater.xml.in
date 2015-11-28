@@ -87,7 +87,7 @@
 	(pre|post)-*: run hooks before or after executing an action on a host
 
     <hooks
-	pluginDir="@sysconfdir@/apt-dater/plugins";
+	plugin-dir="@sysconfdir@/apt-dater/plugins";
 
 	pre-upgrade="@sysconfdir@/apt-dater/pre-upg.d"
 	post-upgrade="@sysconfdir@/apt-dater/post-upg.d"

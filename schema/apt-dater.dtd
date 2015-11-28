@@ -47,6 +47,7 @@
 
 <!-- Hooks -->
 <!ELEMENT hooks EMPTY>
+<!ATTLIST hooks plugin-dir CDATA #IMPLIED>
 <!ATTLIST hooks pre-upgrade CDATA #IMPLIED>
 <!ATTLIST hooks pre-refresh CDATA #IMPLIED>
 <!ATTLIST hooks pre-install CDATA #IMPLIED>

@@ -10,6 +10,8 @@ apt-dater (1.0.3) unstable; urgency=low
     - check libxml2 ABI interface
     - fix MAINTAINER env variable handling
     - replace MAINTAINER by AD_MAINTAINER environment variable
+    - fix hooks/plugin-dir example and schema definition
+      (closes github issue #100 by @fufroma)
 
  -- Thomas Liske <liske@ibh.de>  
 
