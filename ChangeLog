@@ -1,17 +1,21 @@
 apt-dater (1.0.3) unstable; urgency=low
 
   * adsh: ssh wrapper which records ssh sessions using script
-  * man: change config filenames (s/(apt-dater|hosts).config/$1.xml/g;)
-    (Debian Bug#793100 by Stephan Sürken <absurd@debian.org>)
-  * etc: take account of --sysconfdir
-    (github issue #101 by Alex Dunn @dunn)
   * Bugfixes:
+    - man: change config filenames (s/(apt-dater|hosts).config/$1.xml/g;)
+      (Debian Bug#793100 by Stephan Sürken <absurd@debian.org>)
+    - etc: take account of --sysconfdir
+      (github issue #101 by Alex Dunn @dunn)
     - suppress I/O warnings triggered by XInclude
     - check libxml2 ABI interface
     - fix MAINTAINER env variable handling
     - replace MAINTAINER by AD_MAINTAINER environment variable
     - fix hooks/plugin-dir example and schema definition
-      (closes github issue #100 by @fufroma)
+      (github issue #100 by @fufroma)
+    - fix syntax of string comparison in ssh-addonce
+      (github merge request #103 by @jvsalo)
+    - fix hosts stuck in refresh
+      (Debian Bug#801994 by Stefan Bühler <stbuehler@lighttpd.net>)
 
  -- Thomas Liske <liske@ibh.de>  
 

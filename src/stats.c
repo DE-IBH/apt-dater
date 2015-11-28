@@ -64,7 +64,7 @@ stats_changed(GFileMonitor     *monitor,
 
 void stats_initialize(HostNode *n) {
   GFile *path = g_file_new_for_path(n->statsfile);
-  n->mon_stats = g_file_monitor(path, G_FILE_MONITOR_SEND_MOVED, NULL, NULL);
+  n->mon_stats = g_file_monitor(path, G_FILE_MONITOR_NONE, NULL, NULL);
   g_object_unref(path);
 
   g_signal_connect(n->mon_stats, "changed", G_CALLBACK(stats_changed), n);
