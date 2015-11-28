@@ -2,7 +2,7 @@
 <!DOCTYPE apt-dater SYSTEM "@XMLSCHEMAURI@/apt-dater.dtd">
 <apt-dater xmlns:xi="http://www.w3.org/2001/XInclude">
     <!-- Include global config file if available. -->
-    <xi:include href="file:///etc/apt-dater/apt-dater.xml" xpointer="xpointer(/apt-dater/*)">
+    <xi:include href="file://@sysconfdir@/apt-dater/apt-dater.xml" xpointer="xpointer(/apt-dater/*)">
 	<xi:fallback />
     </xi:include>
 
@@ -69,16 +69,16 @@
 	(pre|post)-*: run hooks before or after executing an action on a host
 
     <hooks
-	pluginDir="etc/apt-dater/plugins";
+	pluginDir="@sysconfdir@/apt-dater/plugins";
 
-	pre-upgrade="/etc/apt-dater/pre-upg.d"
-	post-upgrade="etc/apt-dater/post-upg.d"
-	pre-refresh="etc/apt-dater/pre-ref.d"
-	post-refresh="etc/apt-dater/post-ref.d"
-	pre-install="etc/apt-dater/pre-ins.d"
-	post-install="etc/apt-dater/post-ins.d"
-	pre-connect="etc/apt-dater/pre-con.d"
-	post-connect="etc/apt-dater/post-con.d"/>
+	pre-upgrade="@sysconfdir@/apt-dater/pre-upg.d"
+	post-upgrade="@sysconfdir@/apt-dater/post-upg.d"
+	pre-refresh="@sysconfdir@/apt-dater/pre-ref.d"
+	post-refresh="@sysconfdir@/apt-dater/post-ref.d"
+	pre-install="@sysconfdir@/apt-dater/pre-ins.d"
+	post-install="@sysconfdir@/apt-dater/post-ins.d"
+	pre-connect="@sysconfdir@/apt-dater/pre-con.d"
+	post-connect="@sysconfdir@/apt-dater/post-con.d"/>
     -->
 
     <!--

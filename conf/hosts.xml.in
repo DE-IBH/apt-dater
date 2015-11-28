@@ -40,7 +40,7 @@
 
 <hosts xmlns:xi="http://www.w3.org/2001/XInclude">
   <!-- Include global config file if available. -->
-  <xi:include href="file:///etc/apt-dater/hosts.xml" xpointer="xpointer(/hosts/*)">
+  <xi:include href="file://@sysconfdir@/apt-dater/hosts.xml" xpointer="xpointer(/hosts/*)">
     <xi:fallback />
   </xi:include>
 

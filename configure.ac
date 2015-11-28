@@ -4,7 +4,7 @@
 PACKAGE=apt-dater
 
 AC_PREREQ(2.61)
-AC_INIT(apt-dater, 1.0.2, apt-dater@ibh.de)
+AC_INIT(apt-dater, 1.0.3, apt-dater@ibh.de)
 
 # include local macros
 m4_include([m4/adl_recursive_eval.m4])
@@ -175,7 +175,6 @@ AC_ARG_VAR([XMLSCHEMADIR], [XML schema directory (default: DATAROOTDIR/xml/schem
 if test -z "$XMLSCHEMADIR"; then
    XMLSCHEMADIR="${datarootdir}/xml/schema/apt-dater"
 fi
-adl_RECURSIVE_EVAL([$XMLSCHEMADIR], XMLSCHEMADIR)
 AC_DEFINE_UNQUOTED(XML_SCHEMA_DIR,"$XMLSCHEMADIR",[ Where apt-dater's DTD schema files are stored. ])
 AC_MSG_RESULT($XMLSCHEMADIR)
 
@@ -413,6 +412,9 @@ AC_TYPE_SIGNAL
 AC_FUNC_STAT
 AC_FUNC_STRFTIME
 AC_CHECK_FUNCS([memset strchr strdup strerror])
+
+# Recursive eval some vars
+adl_RECURSIVE_EVAL([$sysconfdir], sysconfdir)
 
 AC_CONFIG_FILES([ po/Makefile.in
 Makefile

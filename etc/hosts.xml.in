@@ -40,6 +40,6 @@
 
 <hosts xmlns:xi="http://www.w3.org/2001/XInclude">
   <group name="Localnet2">
-    <host name="localhost2" comment="Edit /etc/apt-dater/hosts.xml!"/>
+    <host name="localhost2" comment="Edit @sysconfdir@/apt-dater/hosts.xml!"/>
   </group>
 </hosts>
