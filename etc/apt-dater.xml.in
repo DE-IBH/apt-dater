@@ -40,8 +40,8 @@
     -->
     <paths
 	hosts-file="@sysconfdir@/apt-dater/hosts.xml"
-	history-dir="/var/lib/apt-dater/history"
-	stats-dir="/var/cache/apt-dater/stats"
+	history-dir="@localstatedir@/lib/apt-dater/history"
+	stats-dir="@localstatedir@/cache/apt-dater/stats"
 	umask="007"/>
 
     <!--
@@ -59,7 +59,7 @@
     - use shared socket path
     -->
     <tmux
-	socket-path="/var/cache/apt-dater/tmux"/>
+	socket-path="@localstatedir@/cache/apt-dater/tmux"/>
 
     <!--
 	 Colors      = (COMPONENT FG BG ';')*
