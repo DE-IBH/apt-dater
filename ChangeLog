@@ -13,9 +13,11 @@ apt-dater (1.0.3) unstable; urgency=low
     - fix hooks/plugin-dir example and schema definition
       (github issue #100 by @fufroma)
     - fix syntax of string comparison in ssh-addonce
-      (github merge request #103 by @jvsalo)
+      (github pull request #103 by @jvsalo)
     - fix hosts stuck in refresh
       (Debian Bug#801994 by Stefan Bühler <stbuehler@lighttpd.net>)
+    - use localstatedir in stead of static /var
+      (github pull request #109 by Thomas Wouters @twouters)
 
  -- Thomas Liske <liske@ibh.de>  
 
