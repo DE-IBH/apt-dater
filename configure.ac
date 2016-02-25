@@ -415,6 +415,7 @@ AC_CHECK_FUNCS([memset strchr strdup strerror])
 
 # Recursive eval some vars
 adl_RECURSIVE_EVAL([$sysconfdir], sysconfdir)
+adl_RECURSIVE_EVAL([$localstatedir], localstatedir)
 
 AC_CONFIG_FILES([ po/Makefile.in
 Makefile
