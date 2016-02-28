@@ -45,6 +45,11 @@ const static gchar *
 screen_get_sdir() {
   static gchar sdir[256];
 
+  if (g_strcmp0(getenv("SCREENDIR"), NULL) != 0) {
+    g_stpcpy(sdir, getenv("SCREENDIR"));
+    return sdir;
+  }
+
   if (!pw)
     pw = getpwuid(getuid());
   if (!pw)
