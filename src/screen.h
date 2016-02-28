@@ -32,7 +32,11 @@
 #include "apt-dater.h"
 #include "history.h"
 
+#ifndef __APPLE__
 #define SCREEN_SDFORMT "%s/S-%s"
+#else
+#define SCREEN_SDFORMT "%s/.screen"
+#endif
 #define SCREEN_SOCKPRE "apt-dater_"
 
 gboolean
