@@ -18,6 +18,8 @@ apt-dater (1.0.3) unstable; urgency=low
       (Debian Bug#801994 by Stefan Bühler <stbuehler@lighttpd.net>)
     - use localstatedir in stead of static /var
       (github pull request #109 by Thomas Wouters @twouters)
+    - recursive eval datarootdir fixing default value of XML_SCHEMA_DIR
+      (github issue #112 by @kpengboy)
 
  -- Thomas Liske <liske@ibh.de>  
 
