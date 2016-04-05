@@ -2272,6 +2272,35 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
+# Recursive eval some vars
+_lcl_receval="$sysconfdir"
+sysconfdir=`(test "x$prefix" = xNONE && prefix="$ac_default_prefix"
+     test "x$exec_prefix" = xNONE && exec_prefix="${prefix}"
+     _lcl_receval_old=''
+     while test "$_lcl_receval_old" != "$_lcl_receval"; do
+       _lcl_receval_old="$_lcl_receval"
+       eval _lcl_receval="\"$_lcl_receval\""
+     done
+     echo "$_lcl_receval")`
+_lcl_receval="$localstatedir"
+localstatedir=`(test "x$prefix" = xNONE && prefix="$ac_default_prefix"
+     test "x$exec_prefix" = xNONE && exec_prefix="${prefix}"
+     _lcl_receval_old=''
+     while test "$_lcl_receval_old" != "$_lcl_receval"; do
+       _lcl_receval_old="$_lcl_receval"
+       eval _lcl_receval="\"$_lcl_receval\""
+     done
+     echo "$_lcl_receval")`
+_lcl_receval="$datarootdir"
+datarootdir=`(test "x$prefix" = xNONE && prefix="$ac_default_prefix"
+     test "x$exec_prefix" = xNONE && exec_prefix="${prefix}"
+     _lcl_receval_old=''
+     while test "$_lcl_receval_old" != "$_lcl_receval"; do
+       _lcl_receval_old="$_lcl_receval"
+       eval _lcl_receval="\"$_lcl_receval\""
+     done
+     echo "$_lcl_receval")`
+
 # Environment
 ac_aux_dir=
 for ac_dir in "$srcdir" "$srcdir/.." "$srcdir/../.."; do
@@ -9273,17 +9302,6 @@ _ACEOF
 fi
 done
 
-
-# Recursive eval some vars
-_lcl_receval="$sysconfdir"
-sysconfdir=`(test "x$prefix" = xNONE && prefix="$ac_default_prefix"
-     test "x$exec_prefix" = xNONE && exec_prefix="${prefix}"
-     _lcl_receval_old=''
-     while test "$_lcl_receval_old" != "$_lcl_receval"; do
-       _lcl_receval_old="$_lcl_receval"
-       eval _lcl_receval="\"$_lcl_receval\""
-     done
-     echo "$_lcl_receval")`
 
 ac_config_files="$ac_config_files po/Makefile.in Makefile etc/Makefile lib/Makefile lib/hosts2xml man/Makefile schema/Makefile src/Makefile conf/Makefile conf/apt-dater.xml conf/hosts.xml etc/apt-dater.xml etc/hosts.xml build/apt-dater.spec"
 

@@ -9,6 +9,11 @@ AC_INIT(apt-dater, 1.0.3, apt-dater@ibh.de)
 # include local macros
 m4_include([m4/adl_recursive_eval.m4])
 
+# Recursive eval some vars
+adl_RECURSIVE_EVAL([$sysconfdir], sysconfdir)
+adl_RECURSIVE_EVAL([$localstatedir], localstatedir)
+adl_RECURSIVE_EVAL([$datarootdir], datarootdir)
+
 # Environment
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
@@ -412,10 +417,6 @@ AC_TYPE_SIGNAL
 AC_FUNC_STAT
 AC_FUNC_STRFTIME
 AC_CHECK_FUNCS([memset strchr strdup strerror])
-
-# Recursive eval some vars
-adl_RECURSIVE_EVAL([$sysconfdir], sysconfdir)
-adl_RECURSIVE_EVAL([$localstatedir], localstatedir)
 
 AC_CONFIG_FILES([ po/Makefile.in
 Makefile
