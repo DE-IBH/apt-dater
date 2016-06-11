@@ -179,7 +179,7 @@ static void history_show_cmd(gchar *cmd, gchar *param1, gchar *param2, HistoryEn
 }
 
 void history_show_less(HistoryEntry *he) {
- history_show_cmd("less", "-fr", "typescript", he);
+ history_show_cmd("less", "-R", "typescript", he);
 }
 
 void history_show_replay(HistoryEntry *he) {
@@ -189,9 +189,7 @@ void history_show_replay(HistoryEntry *he) {
 void history_show_less_search(HistoryEntry *he, gchar *pattern) {
  GError *error = NULL;
  gchar *argv[6] = {
-  ENV_BINARY,
-  "less",
-  "-ifrp",
+  PKGLIBDIR"/pcre-less",
   pattern,
   "typescript",
   NULL};
