@@ -111,7 +111,7 @@
 
     <history
         record="true"
-	err-pattern="((?&lt;!no )error|(?&lt;!insserv: )warning|fail)"/>
+	err-pattern="((?&lt;!no )error|(?&lt;!insserv: )warning|fail(ed)?)"/>
     -->
 
     <!--
