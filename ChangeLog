@@ -1,6 +1,8 @@
 apt-dater (1.0.3) unstable; urgency=low
 
   * adsh: ssh wrapper which records ssh sessions using script
+  * screen: add support for SCREENDIR env variable
+    (github pull request #111 by Thomas Wouters @twouters)
   * Bugfixes:
     - man: change config filenames (s/(apt-dater|hosts).config/$1.xml/g;)
       (Debian Bug#793100 by Stephan Sürken <absurd@debian.org>)
@@ -20,6 +22,12 @@ apt-dater (1.0.3) unstable; urgency=low
       (github pull request #109 by Thomas Wouters @twouters)
     - recursive eval datarootdir fixing default value of XML_SCHEMA_DIR
       (github issue #112 by @kpengboy)
+    - fix typo in german translation
+      (Debian Bug#813103 by Alexander Schier <alexander_schier@yahoo.de>)
+    - workaround for less: use errpattern with grep -P only and enable
+      colorized output in less
+    - change default screen socket dir on OS X
+      (github issue #110 by Thomas Wouters @twouters)
 
  -- Thomas Liske <liske@ibh.de>  
 

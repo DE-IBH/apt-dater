@@ -399,7 +399,7 @@ msgstr "Untersagt:"
 
 #: src/ui.c:679
 msgid "refresh"
-msgstr "Host(s) aktuallisieren"
+msgstr "Host(s) aktualisieren"
 
 #: src/ui.c:686
 msgid "upgrade"
@@ -731,9 +731,9 @@ msgstr "Sitzungsausgabe deaktiviert."
 #: src/ui.c:3693
 #, c-format
 msgid "There are %d hosts in status refresh state, quit apt-dater? [y/N]: "
-msgstr "Es werden %d Hosts aktuallisiert, apt-dater beenden? [j/N]: "
+msgstr "Es werden %d Hosts aktualisiert, apt-dater beenden? [j/N]: "
 
 #: src/ui.c:3696
 #, c-format
 msgid "There is %d host in status refresh state, quit apt-dater? [y/N]: "
-msgstr "Es wird %d Host aktuallisiert, apt-dater beenden? [j/N]: "
+msgstr "Es wird %d Host aktualisiert, apt-dater beenden? [j/N]: "
