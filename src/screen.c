@@ -50,7 +50,11 @@ screen_get_sdir() {
   if (!pw)
     return NULL;
 
+  #ifndef __APPLE__
   g_snprintf(sdir, sizeof(sdir), SCREEN_SDFORMT, SCREEN_SOCKPATH, pw->pw_name);
+  #else
+  g_snprintf(sdir, sizeof(sdir), SCREEN_SDFORMT, SCREEN_SOCKPATH);
+  #endif
 
   return sdir;
 }
