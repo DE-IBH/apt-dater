@@ -45,12 +45,21 @@ const static gchar *
 screen_get_sdir() {
   static gchar sdir[256];
 
+  if (g_strcmp0(getenv("SCREENDIR"), NULL) != 0) {
+    g_stpcpy(sdir, getenv("SCREENDIR"));
+    return sdir;
+  }
+
   if (!pw)
     pw = getpwuid(getuid());
   if (!pw)
     return NULL;
 
+  #ifndef __APPLE__
   g_snprintf(sdir, sizeof(sdir), SCREEN_SDFORMT, SCREEN_SOCKPATH, pw->pw_name);
+  #else
+  g_snprintf(sdir, sizeof(sdir), SCREEN_SDFORMT, SCREEN_SOCKPATH);
+  #endif
 
   return sdir;
 }
