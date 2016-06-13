@@ -3,6 +3,7 @@ apt-dater (1.0.3) unstable; urgency=low
   * adsh: ssh wrapper which records ssh sessions using script
   * screen: add support for SCREENDIR env variable
     (github pull request #111 by Thomas Wouters @twouters)
+  * Update to automake 1.15.
   * Bugfixes:
     - man: change config filenames (s/(apt-dater|hosts).config/$1.xml/g;)
       (Debian Bug#793100 by Stephan Sürken <absurd@debian.org>)
