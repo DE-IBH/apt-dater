@@ -1,4 +1,4 @@
-man_MANS=apt-dater.8 apt-dater.html apt-dater.xml.5 apt-dater.xml.html apt-dater-host.1
+man_MANS=apt-dater.8 apt-dater.html apt-dater.xml.5 apt-dater.xml.html
 
 XSLTPROC=@XSLTPROC@
 DBXSL=@DBXSL@
