@@ -23,6 +23,7 @@ apt-dater (1.0.3) unstable; urgency=low
       (github pull request #109 by Thomas Wouters @twouters)
     - recursive eval datarootdir fixing default value of XML_SCHEMA_DIR
       (github issue #112 by @kpengboy)
+      (Debian Bug#826403 by Evgeni Golov <evgeni@debian.org>)
     - fix typo in german translation
       (Debian Bug#813103 by Alexander Schier <alexander_schier@yahoo.de>)
     - workaround for less: use errpattern with grep -P only and enable
