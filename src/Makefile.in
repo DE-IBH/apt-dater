@@ -366,7 +366,7 @@ adsh_SOURCES = \
 	$(SHARED_SOURCES)
 
 adsh_LDADD = $(apt_dater_LDADD)
-AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"' -DSOURCE_DATE_UTC="\"$(shell date -d @$(SOURCE_DATE_EPOCH) -u)\""
+AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"' -DSOURCE_DATE_UTC="\"$(shell LC_ALL=C date -d @$(SOURCE_DATE_EPOCH) -u)\""
 @LINUX_FALSE@AM_LDFLAGS = -Wl
 @LINUX_TRUE@AM_LDFLAGS = -Wl,--as-needed
 INCLUDES = $(GLIB_CFLAGS) $(TCL_CFLAGS) $(LIBXML2_CFLAGS) $(GIO_CFLAGS)
