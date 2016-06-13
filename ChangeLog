@@ -32,7 +32,7 @@ apt-dater (1.0.3) unstable; urgency=low
     - tmux: silence obsolete tmux 2.2 option "status-utf8"
       (Debian Bug#827107 by Evgeni Golov <evgeni@debian.org>)
 
- -- Thomas Liske <liske@ibh.de>  
+ -- Thomas Liske <liske@ibh.de>  Mon, 13 Jun 2016 15:44:30 +0200
 
 apt-dater (1.0.2) unstable; urgency=low
 
