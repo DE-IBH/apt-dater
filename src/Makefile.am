@@ -64,7 +64,7 @@ adsh_SOURCES =				\
 adsh_LDADD = $(apt_dater_LDADD)
 
 
-AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"' -DSOURCE_DATE_UTC="\"$(shell date -d @$(SOURCE_DATE_EPOCH) -u)\""
+AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"' -DSOURCE_DATE_UTC="\"$(shell LC_ALL=C date -d @$(SOURCE_DATE_EPOCH) -u)\""
 if LINUX
 AM_LDFLAGS = -Wl,--as-needed
 else
