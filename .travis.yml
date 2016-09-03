@@ -1,3 +1,6 @@
+sudo: required
+dist: trusty
+
 language: c
 
 env:
@@ -131,9 +134,11 @@ env:
  - features="--enable-autoref --enable-clusters --enable-debug --enable-history --enable-tclfilter --enable-tmux --enable-xmlreport"
 
 before_install:
- - sudo add-apt-repository ppa:dns/gnu --yes  # this PPA has a newer automake (1.14) than one in default repo (1.11)
  - sudo apt-get update -qq
  - sudo apt-get install -qq automake libpopt-dev libglib2.0-dev libncursesw5-dev tcl8.5-dev libxml2-dev libconfig-dev screen tmux
+ - aclocal
+ - autoconf
+ - automake --add-missing --force-missing
  - ./configure $features
 
 install:
