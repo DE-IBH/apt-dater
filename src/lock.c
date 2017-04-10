@@ -25,6 +25,7 @@
 #include "apt-dater.h"
 #include "lock.h"
 #include "stats.h"
+#include <fcntl.h>
 #include <sys/file.h>
 #include <errno.h>
 
