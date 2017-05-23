@@ -1,3 +1,10 @@
+apt-dater (1.0.4) unstable; urgency=low
+
+  * Bugfixes:
+    - Fix Tcl filters never matching due to broken return code handling.
+
+ -- Thomas Liske <liske@ibh.de>  
+
 apt-dater (1.0.3) unstable; urgency=low
 
   * adsh: ssh wrapper which records ssh sessions using script

@@ -2813,10 +2813,10 @@ void applyFilter(GList *hosts) {
 	case TCL_OK:
 	case TCL_RETURN:
 	    filtered = atoi(Tcl_GetStringResult(tcl_interp)) > 0;
-	    ;;
+	    break;
 	default:
 	    filtered = FALSE;
-	    ;;
+	    break;
     }
 
     if(filtered != n->filtered) {
