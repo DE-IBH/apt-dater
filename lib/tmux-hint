@@ -34,9 +34,26 @@ case "$AD_ACTION" in
     ;;
 
     *)
-	tm_pref=$(tmux list-keys | grep send-prefix$ | (read a b c ; echo $b))
-	tm_kill=$(tmux list-keys | grep kill-pane$ | (read a b c ; echo $b))
-	echo "=== Session terminated, press $tm_pref $tm_kill to close pane. ===" 1>&2
+	tm_pref=$(tmux show-options -gv prefix)
+	tmux list-keys | grep 'kill-pane$' | (
+		keys=""
+		while read bindkey optt table key cmd; do
+			[ "${bindkey}" != "bind-key" ] && continue
+			[ "${optt}" != "-T" ] && continue
+			if [ "${table}" = "prefix" ]; then
+				key="${tm_pref} ${key}"
+			elif [ "${table}" != "root" ]; then
+				continue
+			fi
+			if [ "${keys}" = "" ]; then
+				keys="${key}"
+			else
+				keys="${keys} or ${key}"
+			fi
+		done
+		: ${keys:=${tm_pref} :kill-pane <enter>}
+		echo "=== Session terminated, press ${keys} to close pane. ===" 1>&2
+	)
 	exit 0
     ;;
 esac
