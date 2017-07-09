@@ -2,6 +2,8 @@ apt-dater (1.0.4) unstable; urgency=low
 
   * Bugfixes:
     - Fix Tcl filters never matching due to broken return code handling.
+    - Do not fail on make install on updating due to symlinks creation.
+      (github issue #131 by Robin Kluth @Commifreak)
 
  -- Thomas Liske <liske@ibh.de>  
 
