@@ -92,7 +92,12 @@ target_triplet = @target@
 bin_PROGRAMS = apt-dater$(EXEEXT) adsh$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/adl_recursive_eval.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intlmacosx.m4 \
+	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
+	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/nls.m4 \
+	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
+	$(top_srcdir)/m4/adl_recursive_eval.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -107,8 +112,8 @@ am__objects_1 = apt-dater.$(OBJEXT) colors.$(OBJEXT) exec.$(OBJEXT) \
 	keyfiles.$(OBJEXT) lock.$(OBJEXT) parsecmd.$(OBJEXT) \
 	report.$(OBJEXT) sighandler.$(OBJEXT) stats.$(OBJEXT) \
 	ui.$(OBJEXT) autoref.$(OBJEXT) tag.$(OBJEXT) history.$(OBJEXT) \
-	env.$(OBJEXT) clusters.$(OBJEXT) glue.$(OBJEXT) tmux.$(OBJEXT) \
-	screen.$(OBJEXT)
+	env.$(OBJEXT) clusters.$(OBJEXT) glue.$(OBJEXT) \
+	runcust.$(OBJEXT) tmux.$(OBJEXT) screen.$(OBJEXT)
 am_adsh_OBJECTS = adsh.$(OBJEXT) $(am__objects_1)
 adsh_OBJECTS = $(am_adsh_OBJECTS)
 am__DEPENDENCIES_1 =
@@ -348,6 +353,10 @@ SHARED_SOURCES = \
 	clusters.h			\
 	glue.c				\
 	glue.h				\
+if FEAT_RUNCUST				\
+	runcust.h			\
+	runcust.c			\
+endif					\
 if FEAT_TMUX				\
 	tmux.h				\
 	tmux.c				\
@@ -474,6 +483,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parsecmd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/report.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/runcust.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/screen.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sighandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stats.Po@am__quote@

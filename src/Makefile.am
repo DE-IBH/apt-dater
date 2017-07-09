@@ -41,6 +41,10 @@ SHARED_SOURCES =			\
 	clusters.h			\
 	glue.c				\
 	glue.h				\
+if FEAT_RUNCUST				\
+	runcust.h			\
+	runcust.c			\
+endif					\
 if FEAT_TMUX				\
 	tmux.h				\
 	tmux.c				\

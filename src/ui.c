@@ -47,6 +47,10 @@
 #include <tcl.h>
 #endif
 
+#ifdef FEAT_RUNCUST
+#include "runcust.h"
+#endif
+
 static GList *drawlist = NULL;
 gchar *drawCategories[] = {
     N_("Updates pending"),
@@ -189,6 +193,9 @@ static struct ShortCut shortCuts[] = {
 #endif
  {SC_KEY_NEXTSESS, 'n', "n" , N_("next detached session") , FALSE, 0},
  {SC_KEY_CYCLESESS, 'N', "N" , N_("cycle detached sessions") , FALSE, 0},
+#ifdef FEAT_RUNCUST
+ {SC_KEY_RUNCUST, 'r', "r" , N_("run custom command") , FALSE, VK_RUNCUST},
+#endif
  {SC_KEY_TAG, 't', "t" , N_("tag current host") , FALSE, 0},
  {SC_KEY_TAGMATCH, 'T', "T" , N_("tag all hosts matching") , FALSE, 0},
  {SC_KEY_UNUSED, KEY_MAX, "" , N_(" ~c tag by codename") , FALSE, 0},
@@ -1392,6 +1399,9 @@ void drawHostEntry (DrawNode *n)
   switch(((HostNode *) n->p)->category) {
   case C_UPDATES_PENDING:
    mask = VK_CONNECT | VK_UPGRADE | VK_REFRESH | VK_INSTALL;
+#ifdef FEAT_RUNCUST
+    mask |= VK_RUNCUST;
+#endif
    if (((HostNode *) n->p)->nupdates > 1 || ((HostNode *) n->p)->nupdates == 0) {
     snprintf(statusln, sizeof(statusln), _("%d Updates required"), ((HostNode *) n->p)->nupdates);
    }
@@ -1401,10 +1411,16 @@ void drawHostEntry (DrawNode *n)
    break;
   case C_UP_TO_DATE:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
+#ifdef FEAT_RUNCUST
+    mask |= VK_RUNCUST;
+#endif
    sprintf(statusln, _("No update required"));
    break;
   case C_BROKEN_PKGS:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
+#ifdef FEAT_RUNCUST
+    mask |= VK_RUNCUST;
+#endif
    if (((HostNode *) n->p)->nbrokens > 1 || ((HostNode *) n->p)->nbrokens == 0) {
     snprintf(statusln, sizeof(statusln), _("%d Broken packages"), ((HostNode *) n->p)->nbrokens);
    }
@@ -1414,6 +1430,9 @@ void drawHostEntry (DrawNode *n)
    break;
   case C_REFRESH_REQUIRED:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL;
+#ifdef FEAT_RUNCUST
+    mask |= VK_RUNCUST;
+#endif
    sprintf(statusln, _("Refresh required"));
    break;
   case C_REFRESH:
@@ -1430,6 +1449,9 @@ void drawHostEntry (DrawNode *n)
    break;
   default:
    mask = VK_CONNECT | VK_REFRESH | VK_INSTALL | VK_ERRDIAG;
+#ifdef FEAT_RUNCUST
+    mask |= VK_RUNCUST;
+#endif
    if(((HostNode *) n->p)->adperr == NULL) {
     sprintf(statusln, _("Status is unknown"));
    }
@@ -3726,6 +3748,17 @@ gboolean ctrlUI (GList *hosts)
    refscr = FALSE;
    g_main_loop_quit (loop);
    break; /* case SC_KEY_QUIT */
+
+
+#ifdef FEAT_RUNCUST
+  case SC_KEY_RUNCUST:
+   runCustom();
+
+   rebuildDrawList(hosts);
+   refscr = TRUE;
+   break; /* case SC_KEY_RUNCUST */
+#endif
+
 
   default:
    break;
