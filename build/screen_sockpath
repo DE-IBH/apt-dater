@@ -26,8 +26,8 @@
 
 # Tries to get the path where screen stores it's sockets.
 
-screen=$1
+screen=${1:-/usr/bin/screen}
 
 if [ -x "$screen" ]; then
-    $screen -list | perl -ne 'print "$2\n" if(/^\S+ Sockets? (found )?in (\/.+)\/[^\/]+\.$/);'
+    LANG=C $screen -list | perl -ne 'print "$2\n" if(/^\S+ Sockets? (found )?in (\/.+)\/[^\/]+\.$/);'
 fi
