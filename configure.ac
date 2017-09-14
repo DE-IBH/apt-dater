@@ -98,6 +98,15 @@ if test "$enable_clusters" = "yes"; then
     AC_DEFINE(FEAT_CLUSTERS, 1, [ Define if you want 'clusters' support included. ])
 fi
 
+AC_MSG_CHECKING(--enable-runcust argument)
+AC_ARG_ENABLE(runcust,
+	[  --enable-runcust      Include 'run custom commands' support.], [enable_runcust="yes"],
+	[enable_runcust="no"])
+AC_MSG_RESULT($enable_runcust)
+if test "$enable_runcust" = "yes"; then
+    AC_DEFINE(FEAT_RUNCUST, 1, [ Define if you want 'run custom commands' support included. ])
+fi
+
 AC_SUBST(VERSION)
 AC_SUBST(PACKAGE)
 AC_SUBST(GLIB_CFLAGS)

@@ -19,6 +19,9 @@
 /* Define if you want 'history' support included. */
 #undef FEAT_HISTORY
 
+/* Define if you want 'run custom commands' support included. */
+#undef FEAT_RUNCUST
+
 /* Define if you want TCL filter support included. */
 #undef FEAT_TCLFILTER
 

@@ -55,6 +55,9 @@ typedef enum {
  VK_PLAY=256,
  VK_LESS=512,
 #endif
+#ifdef FEAT_RUNCUST
+ VK_RUNCUST=1024,
+#endif
 } EVisKeyMask;
 
 typedef enum {
@@ -96,6 +99,9 @@ typedef enum {
 #endif
  SC_KEY_NEXTSESS,
  SC_KEY_CYCLESESS,
+#ifdef FEAT_RUNCUST
+ SC_KEY_RUNCUST,
+#endif
  SC_KEY_TAG,
  SC_KEY_TAGMATCH,
  SC_KEY_UNTAGMATCH,

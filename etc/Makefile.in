@@ -90,7 +90,12 @@ host_triplet = @host@
 target_triplet = @target@
 subdir = etc
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/adl_recursive_eval.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/intlmacosx.m4 \
+	$(top_srcdir)/m4/lib-ld.m4 $(top_srcdir)/m4/lib-link.m4 \
+	$(top_srcdir)/m4/lib-prefix.m4 $(top_srcdir)/m4/nls.m4 \
+	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
+	$(top_srcdir)/m4/adl_recursive_eval.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
@@ -456,15 +461,15 @@ install-exec-hook:
 	$(mkinstalldirs) -m 0750 $(DESTDIR)$(sysconfdir)/apt-dater/
 	$(mkinstalldirs) -m 0750 $(DESTDIR)$(sysconfdir)/apt-dater/pre-con.d
 	$(mkinstalldirs) -m 0750 $(DESTDIR)$(sysconfdir)/apt-dater/post-con.d
-	ln -s ../../../$(pkglibdir)/tmux-hint $(DESTDIR)$(sysconfdir)/apt-dater/post-con.d/
+	ln -fs ../../../$(pkglibdir)/tmux-hint $(DESTDIR)$(sysconfdir)/apt-dater/post-con.d/
 	$(mkinstalldirs) -m 0750 $(DESTDIR)$(sysconfdir)/apt-dater/pre-ins.d
 	$(mkinstalldirs) -m 0750 $(DESTDIR)$(sysconfdir)/apt-dater/post-ins.d
-	ln -s ../../../$(pkglibdir)/tmux-hint $(DESTDIR)$(sysconfdir)/apt-dater/post-ins.d/
+	ln -fs ../../../$(pkglibdir)/tmux-hint $(DESTDIR)$(sysconfdir)/apt-dater/post-ins.d/
 	$(mkinstalldirs) -m 0750 $(DESTDIR)$(sysconfdir)/apt-dater/pre-ref.d
 	$(mkinstalldirs) -m 0750 $(DESTDIR)$(sysconfdir)/apt-dater/post-ref.d
 	$(mkinstalldirs) -m 0750 $(DESTDIR)$(sysconfdir)/apt-dater/pre-upg.d
 	$(mkinstalldirs) -m 0750 $(DESTDIR)$(sysconfdir)/apt-dater/post-upg.d
-	ln -s ../../../$(pkglibdir)/tmux-hint $(DESTDIR)$(sysconfdir)/apt-dater/post-upg.d/
+	ln -fs ../../../$(pkglibdir)/tmux-hint $(DESTDIR)$(sysconfdir)/apt-dater/post-upg.d/
 	$(mkinstalldirs) -m 0710 $(DESTDIR)$(sysconfdir)/apt-dater/ssh
 	$(INSTALL) -m 0640 $(EXTRA_DISTS) $(DESTDIR)$(sysconfdir)/apt-dater/
 	$(mkinstalldirs) -m 02770 $(DESTDIR)$(localstatedir)/lib/apt-dater/history/

@@ -2,6 +2,11 @@ apt-dater (1.0.4) unstable; urgency=low
 
   * Bugfixes:
     - Fix Tcl filters never matching due to broken return code handling.
+    - Do not fail on make install on updating due to symlinks creation.
+      (github issue #131 by Robin Kluth @Commifreak)
+    - Revert a82d3f7: default config value for 'err-pattern' should not
+      use html entities.
+      (github issue #124 by Stephan Sürken <absurd@debian.org>)
 
  -- Thomas Liske <liske@ibh.de>  
 
