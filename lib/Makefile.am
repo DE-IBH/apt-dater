@@ -1,4 +1,4 @@
-EXTRA_DISTS=cmd hosts2xml ssh-addonce tmux-hint pcre-less
+EXTRA_DISTS=cmd hosts2xml ssh-addonce tmux-bind-q-kill-pane tmux-hint pcre-less
 
 install-exec-hook:
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
