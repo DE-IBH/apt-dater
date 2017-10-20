@@ -143,4 +143,4 @@ install:
  - docker commit travis-install travis-install
 
 script:
- - docker run --rm -it travis-install /prj/src/apt-dater -v
+ - docker run --rm -v $(pwd):/prj -it travis-install /prj/src/apt-dater -v
