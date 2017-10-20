@@ -20,7 +20,7 @@ AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE
 
-AM_GNU_GETTEXT_VERSION([0.19.3])
+AM_GNU_GETTEXT
 
 case "${target_os}" in
 darwin*)
