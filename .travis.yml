@@ -1,7 +1,8 @@
 sudo: required
-dist: trusty
+language: generic
 
-language: c
+services:
+  - docker
 
 env:
  - features=""
@@ -134,15 +135,12 @@ env:
  - features="--enable-autoref --enable-clusters --enable-debug --enable-history --enable-tclfilter --enable-tmux --enable-xmlreport"
 
 before_install:
- - sudo apt-get update -qq
- - sudo apt-get install -qq automake libpopt-dev libglib2.0-dev libncursesw5-dev tcl8.5-dev libxml2-dev libconfig-dev screen tmux
- - aclocal
- - autoconf
- - automake --add-missing --force-missing
- - ./configure $features
+ - docker run --name travis-build -e features="$features" -v $(pwd):/prj -it debian /prj/build/travis-before.sh
+ - docker commit travis-build travis-build
 
 install:
- - make
+ - docker run --name travis-install -e features="$features" -v $(pwd):/prj -it travis-build /prj/build/travis-install.sh
+ - docker commit travis-install travis-install
 
 script:
- - ./src/apt-dater -v
+ - docker run --rm -it travis-install /prj/src/apt-dater -v
