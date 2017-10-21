@@ -292,7 +292,7 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DISTS = cmd hosts2xml ssh-addonce tmux-bind-q-kill-pane tmux-hint pcre-less
+EXTRA_DISTS = cmd hosts2xml ssh-addonce tmux-hint pcre-less
 all: all-am
 
 .SUFFIXES:
