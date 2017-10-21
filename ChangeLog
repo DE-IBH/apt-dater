@@ -1,5 +1,11 @@
 apt-dater (1.0.4) unstable; urgency=low
 
+  * tmux
+    - bind kill-pane to `q` w/o prefix key (requires tmux 2.1+)
+      (github pull request #130 by Stefan Bühler @stbuehler)
+  * Travis CI:
+    - use docker for recent Debian build environment
+      (github issue #139 by Lukas Kallies @kallies)
   * Bugfixes:
     - Fix Tcl filters never matching due to broken return code handling.
     - Do not fail on make install on updating due to symlinks creation.

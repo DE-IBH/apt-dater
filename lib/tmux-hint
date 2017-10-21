@@ -28,32 +28,16 @@ if [ -z "$TMUX_PANE" ]; then
     exit 0
 fi
 
+KEY_QUIT='q'
+
 case "$AD_ACTION" in
     refresh)
 	exit 0
     ;;
 
     *)
-	tm_pref=$(tmux show-options -gv prefix)
-	tmux list-keys | grep 'kill-pane$' | (
-		keys=""
-		while read bindkey optt table key cmd; do
-			[ "${bindkey}" != "bind-key" ] && continue
-			[ "${optt}" != "-T" ] && continue
-			if [ "${table}" = "prefix" ]; then
-				key="${tm_pref} ${key}"
-			elif [ "${table}" != "root" ]; then
-				continue
-			fi
-			if [ "${keys}" = "" ]; then
-				keys="${key}"
-			else
-				keys="${keys} or ${key}"
-			fi
-		done
-		: ${keys:=${tm_pref} :kill-pane <enter>}
-		echo "=== Session terminated, press ${keys} to close pane. ===" 1>&2
-	)
+	tmux bind-key -T root $KEY_QUIT kill-pane
+	echo "=== Session terminated, press '$KEY_QUIT' to close pane. ===" 1>&2
 	exit 0
     ;;
 esac
