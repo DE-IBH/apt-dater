@@ -28,7 +28,7 @@ Managed hosts by apt-dater:
   Modify the /etc/sudoers:
 
 	Defaults env_reset,env_keep=MAINTAINER
-	the-user ALL=NOPASSWD: /usr/bin/apt-get, /usr/sbin/needrestart
+	the-user ALL=NOPASSWD: /usr/bin/apt-get,/usr/sbin/needrestart
 
 
 At your management server:
