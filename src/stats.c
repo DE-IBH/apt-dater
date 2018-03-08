@@ -323,6 +323,11 @@ gboolean getUpdatesFromStat(HostNode *n)
 	    pkgnode->flag = HOST_STATUS_PKGUPDATE;
 	    n->nupdates++;
 	    break;
+	case 'U':
+	    n->status = n->status | HOST_STATUS_PKGUPDATE | HOST_STATUS_PKGSECUPDATE;
+	    pkgnode->flag = HOST_STATUS_PKGUPDATE | HOST_STATUS_PKGSECUPDATE;
+	    n->nupdates++;
+	    break;
 	case 'h':
 	    n->status = n->status | HOST_STATUS_PKGKEPTBACK;
 	    pkgnode->flag = HOST_STATUS_PKGKEPTBACK;

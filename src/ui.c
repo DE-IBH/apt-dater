@@ -1476,7 +1476,9 @@ void drawPackageEntry (DrawNode *n)
  attron(n->attrs);
  mvremln(n->scrpos, 0, COLS);
 
- if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGUPDATE)
+ if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGSECUPDATE)
+   mvaddstr(n->scrpos, 7, "U:");
+ else if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGUPDATE)
    mvaddstr(n->scrpos, 7, "u:");
  else if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGKEPTBACK)
    mvaddstr(n->scrpos, 7, "h:");
