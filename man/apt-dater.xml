@@ -92,7 +92,7 @@ and docbook-xsl in your Build-Depends control field.
     <para>This manual page documents briefly the
       <command>&dhpackage;</command> command.</para>
 
-    <para><command>&dhpackage;</command> is a program to manage package updats on a large
+    <para><command>&dhpackage;</command> is a program to manage package updates on a large
       number of remote hosts using SSH.</para>
 
   </refsect1>
