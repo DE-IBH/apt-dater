@@ -143,6 +143,7 @@ typedef struct _update {
  gchar *version;
  gint flag;
  gchar *data;
+ gchar *security_update_version;
 } PkgNode;
 
 typedef struct _session {
