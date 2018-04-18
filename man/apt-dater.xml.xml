@@ -96,7 +96,7 @@ and docbook-xsl in your Build-Depends control field.
 
     <history
         record="true"
-	err-pattern="((?<!no )error|warning|fail)"/>
+	err-pattern="((?<!no )error|warning|failed|fail(?!2ban))"/>
 </apt-dater>
 ]]>
     </programlisting>
@@ -319,7 +319,7 @@ and docbook-xsl in your Build-Depends control field.
 
     <variablelist>
       <varlistentry>
-        <term><symbol>err-pattern</symbol>="<replaceable>((?&lt;!no )error|warning|fail)</replaceable>"</term>
+        <term><symbol>err-pattern</symbol>="<replaceable>((?&lt;!no )error|warning|failed|fail(?!2ban))</replaceable>"</term>
         <listitem>
 	  <para>
 	  A regular expression pattern to match the screen output. A match indicates
