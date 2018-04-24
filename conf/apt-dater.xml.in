@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE apt-dater SYSTEM "@XMLSCHEMAURI@/apt-dater.dtd">
 <apt-dater xmlns:xi="http://www.w3.org/2001/XInclude">
-    <!-- Include global config file if available. -->
-    <xi:include href="file://@sysconfdir@/apt-dater/apt-dater.xml" xpointer="xpointer(/apt-dater/*)">
-	<xi:fallback />
-    </xi:include>
-
     <!--
 	SSH(1) options
 
@@ -103,4 +98,9 @@
         filter-exp="return [expr [string compare $lsb_distri \\\"Debian\\\"] == 0 && $lsb_rel < 4.0]"
         filter-file="/path/to/file.tcl" />
     -->
+
+    <!-- Include global config file if available. -->
+    <xi:include href="file://@sysconfdir@/apt-dater/apt-dater.xml" xpointer="xpointer(/apt-dater/*)">
+	<xi:fallback />
+    </xi:include>
 </apt-dater>
