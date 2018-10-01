@@ -1,0 +1,3 @@
+dkms: WARNING: Linux headers are missing, which may explain the above failures.
+insserv: warning: script 'K01ppp' missing LSB tags and overrides
+Restart fail2ban service
