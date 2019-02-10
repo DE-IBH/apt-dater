@@ -7,7 +7,7 @@
 <!ATTLIST group name CDATA #REQUIRED>
 
 <!-- Host node -->
-<!ELEMENT host (#PCDATA|status,ssh,kernel,lsb,history?,clusters?,packages)>
+<!ELEMENT host (status,ssh,kernel,lsb,history?,clusters?,packages)>
 <!ATTLIST host hostname CDATA #REQUIRED>
 <!ATTLIST host comment CDATA #IMPLIED>
 

@@ -13,6 +13,8 @@ apt-dater (1.0.4) unstable; urgency=low
     - Revert a82d3f7: default config value for 'err-pattern' should not
       use html entities.
       (github issue #124 by Stephan Sürken <absurd@debian.org>)
+    - Fix syntax of report.dtd schema.
+      (github issue #153 by Mathieu Parent @sathieu)
   * Update to automake 1.16.
 
  -- Thomas Liske <liske@ibh.de>  Sun, 10 Feb 2019 21:42:11 +0100
