@@ -17,7 +17,7 @@ apt-dater (1.0.4) unstable; urgency=low
       (github issue #153 by Mathieu Parent @sathieu)
   * Update to automake 1.16.
 
- -- Thomas Liske <liske@ibh.de>  Sun, 10 Feb 2019 21:42:11 +0100
+ -- Thomas Liske <liske@ibh.de>  Sun, 10 Feb 2019 22:15:45 +0100
 
 apt-dater (1.0.3) unstable; urgency=low
 
