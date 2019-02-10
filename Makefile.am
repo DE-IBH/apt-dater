@@ -1,7 +1,7 @@
 SUBDIRS = conf po man src lib etc schema
 
-AUTOMAKE_OPTIONS = 							\
-	1.9								\
+AUTOMAKE_OPTIONS =
+	1.16
 	dist-bzip2
 
 distclean-local:
