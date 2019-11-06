@@ -3684,6 +3684,7 @@ gboolean ctrlUI (GList *hosts)
     }
     drawEntry(n);
    } else beep();
+   refscr = ctrlKeyUpDown(KEY_DOWN);
    break;
 
 #ifdef FEAT_TCLFILTER
