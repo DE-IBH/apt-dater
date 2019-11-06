@@ -439,6 +439,34 @@ DrawNode *getSelectedDrawNode()
  return (DrawNode *)dl->data;
 }
 
+DrawNode *getFirstDrawNode()
+{
+ GList *dl;
+
+ dl = g_list_first(drawlist);
+ while (dl && (((DrawNode *) dl->data)->scrpos != 1)) dl = g_list_next(dl);
+
+ if (!dl) return NULL;
+
+ ASSERT_TYPE((DrawNode *)dl->data, T_DRAWNODE);
+
+ return (DrawNode *)dl->data;
+}
+
+DrawNode *getLastDrawNode()
+{
+ GList *dl;
+
+ dl = g_list_last(drawlist);
+ while (dl && (((DrawNode *) dl->data)->scrpos == 0)) dl = g_list_previous(dl);
+
+ if (!dl) return NULL;
+
+ ASSERT_TYPE((DrawNode *)dl->data, T_DRAWNODE);
+
+ return (DrawNode *)dl->data;
+}
+
 guint getCategoryNumber(gchar *category)
 {
  guint i = 0;
@@ -2417,25 +2445,19 @@ gboolean ctrlKeyRight(GList *hosts)
 gboolean ctrlKeyPgDown()
 {
  gboolean ret = TRUE;
- GList *dl;
+ DrawNode *dn_s, *dn_l;
 
- dl = g_list_first(drawlist);
- while (dl && (((DrawNode *) dl->data)->selected != TRUE)) dl = g_list_next(dl);
+ dn_s = getSelectedDrawNode();
+ dn_l = getLastDrawNode();
 
- setEntryActiveStatus((DrawNode *) dl->data, FALSE);
- reorderScrpos(bottomDrawLine);
+ if (dn_s) setEntryActiveStatus(dn_s, FALSE);
 
- dl = g_list_first(drawlist);
- while (dl && (((DrawNode *) dl->data)->scrpos != 1)) dl = g_list_next(dl);
-
- if(dl) setEntryActiveStatus((DrawNode *) dl->data, TRUE);
- else {
-  dl = g_list_last(drawlist);
-  if(dl) {
-   setEntryActiveStatus((DrawNode *) dl->data, TRUE);
-   ((DrawNode *) dl->data)->scrpos =1;
-  }
+ if (dn_s->scrpos == (bottomDrawLine - 1)) {
+  reorderScrpos(bottomDrawLine - 1);
+  dn_l = getLastDrawNode();
  }
+
+ setEntryActiveStatus(dn_l, TRUE);
 
  return (ret);
 }
@@ -2444,32 +2466,28 @@ gboolean ctrlKeyPgUp()
 {
  gboolean   ret = TRUE;
  gint       i = 0;
- GList      *dl, *dl_1;
+ GList      *dl_f, *dl_c;
+ DrawNode   *dn_f, *dn_s;
 
- dl = g_list_first(drawlist);
- while (dl && (((DrawNode *) dl->data)->selected != TRUE)) dl = g_list_next(dl);
+ dn_f = getFirstDrawNode();
+ dn_s = getSelectedDrawNode();
 
- setEntryActiveStatus((DrawNode *) dl->data, FALSE);
+ if (dn_s) setEntryActiveStatus(dn_s, FALSE);
 
- dl = g_list_first(drawlist);
- while (dl && (((DrawNode *) dl->data)->scrpos != 1)) dl = g_list_next(dl);
+ if (dn_s->scrpos == 1) {
+  dl_f = g_list_first(drawlist);
+  dl_c = dl_f;
+  while (dl_c && (((DrawNode *) dl_c->data)->scrpos != 1)) dl_c = g_list_next(dl_c);
+  while (dl_c && (++i < bottomDrawLine)                  ) dl_c = g_list_previous(dl_c);
 
- dl_1 = dl;
- dl_1 = g_list_previous(dl_1);
+  if      (dl_c) ((DrawNode *) dl_c->data)->scrpos = 1;
+  else if (dl_f) ((DrawNode *) dl_f->data)->scrpos = 1;
 
- while (dl && (++i < bottomDrawLine)) dl = g_list_previous(dl);
-
- if (dl && dl_1) {
-  ((DrawNode *) dl->data)->scrpos =1;
-  setEntryActiveStatus((DrawNode *) dl_1->data, TRUE);
+  dn_f = getFirstDrawNode();
  }
- else {
-  dl = g_list_first(drawlist);
-  if(dl) {
-   ((DrawNode *) dl->data)->scrpos =1;
-   setEntryActiveStatus((DrawNode *) dl->data, TRUE);
-  }
- }
+
+ setEntryActiveStatus(dn_f, TRUE);
+
  reorderScrpos(1);
  return (ret);
 }
