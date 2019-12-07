@@ -1782,11 +1782,8 @@ void checkSelected()
 
  dn = getSelectedDrawNode();
  if (!dn) {
-  dl = g_list_first(drawlist);
-  while (dl && (((DrawNode *) dl->data)->scrpos < bottomDrawLine)) 
-   dl = g_list_next(dl);
-  if (!dl) dl = g_list_last(drawlist);
-  setEntryActiveStatus((DrawNode *) dl->data, TRUE);
+  dn = getLastDrawNode();
+  setEntryActiveStatus(dn, TRUE);
   return;
  }
  if (dn -> scrpos == 0 || dn -> scrpos > bottomDrawLine) {
