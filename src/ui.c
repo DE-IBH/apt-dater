@@ -227,9 +227,9 @@ const struct HostFlag hostFlags[] = {
 static int getKeyForShortcut(EShortCuts sc)
 {
  gint i;
- 
- for(i = 0; shortCuts[i].keycode; i++) 
-  if(shortCuts[i].sc == sc) return shortCuts[i].keycode; 
+
+ for(i = 0; shortCuts[i].keycode; i++)
+  if(shortCuts[i].sc == sc) return shortCuts[i].keycode;
 
  return -1;
 }
@@ -374,7 +374,7 @@ int getnLine(WINDOW *win, gchar *str, gint n, gboolean usews)
 
   if(dobeep == TRUE) beep();
  }
- 
+
  disableInput();
 
  memcpy(str, modstr, n+1);
@@ -420,7 +420,7 @@ void freeDrawNode (DrawNode *n)
 void cleanBetween()
 {
  gint i;
- 
+
  for(i=1; i < bottomDrawLine;i++) mvremln(i, 0, COLS);
 }
 
@@ -589,7 +589,7 @@ static void drawHelp ()
  WINDOW   *wp = newpad(32+SC_MAX, COLS);
  gint     l = 0;
  int      wic = 0, pminrow = 0, kcquit = 'q';
-    
+
  keypad(wp, TRUE);
 
  wattron(wp, A_BOLD);
@@ -604,7 +604,7 @@ static void drawHelp ()
   l++;
  }
  l++;
-     
+
  wattron(wp, A_BOLD);
  mvwaddnstr(wp, l  ,  2, _("KEY")        , COLS - 2);
  mvwaddnstr(wp, l++, 16, _("DESCRIPTION"), COLS - 16);
@@ -614,7 +614,7 @@ static void drawHelp ()
  while(shortCuts[++i].key) {
   mvwaddnstr(wp, l,  2, shortCuts[i].key  , COLS - 2);
   mvwaddnstr(wp, l, 16, _(shortCuts[i].descr), COLS - 16);
-       
+
   l++;
  }
 
@@ -647,7 +647,7 @@ static void drawHelp ()
 static void drawHostDetails(HostNode *h)
 {
  WINDOW *wp = newpad(32 + h->nupdates + h->nholds + h->nextras +
-		     h->nbrokens + g_list_length(h->packages), COLS);
+                     h->nbrokens + g_list_length(h->packages), COLS);
  char buf[0x1ff];
  gint l = 0;
  int  wic = 0, pminrow = 0, kcquit = 'q', i = 0;
@@ -721,7 +721,7 @@ static void drawHostDetails(HostNode *h)
  if (h->kernelrel) {
   mvwaddnstr(wp, l  ,  2, _("Kernel version:"), COLS -  2);
   mvwaddnstr(wp, l++, 20, h->kernelrel, COLS - 20);
-	
+
   switch(h->status & (HOST_STATUS_KERNELABIUPGR | HOST_STATUS_KERNELVERUPGR)) {
   case HOST_STATUS_KERNELABIUPGR:
    strcpy(buf, _("(pending ABI compatible upgrade)"));
@@ -756,8 +756,8 @@ static void drawHostDetails(HostNode *h)
 
   mvwaddnstr(wp, l  , 2, _("Packages: "), COLS - 2);
   snprintf(buf, sizeof(buf), "%d installed (%d update%s, %d hold back, %d broken, %d extra)",
-	   g_list_length(h->packages), h->nupdates, h->nupdates == 1 ? "" : "s",
-	   h->nholds, h->nbrokens, h->nextras);
+           g_list_length(h->packages), h->nupdates, h->nupdates == 1 ? "" : "s",
+           h->nholds, h->nbrokens, h->nextras);
   mvwaddnstr(wp, l++, 20, buf, COLS - 20);
  }
 
@@ -1042,8 +1042,8 @@ gboolean queryConfirm(const gchar *query, const gboolean enter_is_yes, gboolean 
     *has_canceled = ((c == _("c")[0]) || (c == _("C")[0]) || (c == 27));
  }
 
- return ((c == _("y")[0]) || (c == _("Y")[0]) || 
-	 (enter_is_yes == TRUE && (c == 0xd || c == KEY_ENTER)));
+ return ((c == _("y")[0]) || (c == _("Y")[0]) ||
+         (enter_is_yes == TRUE && (c == 0xd || c == KEY_ENTER)));
 }
 
 
@@ -1099,8 +1099,8 @@ static void drawHistoryLine(WINDOW *wp, const HistoryEntry *he, const gint l) {
  mvwaddnstr(wp, l  , 36, he->maintainer       , MAXCOLS(36, 13));
  mvwaddnstr(wp, l  , 51, he->action           , MAXCOLS(51, COLS-51));
  if (he->data)
-  mvwaddnstr(wp, l  , 52+strlen(he->action), he->data, 
-	     MAXCOLS(52+strlen(he->action), COLS- 52- strlen(he->action)));
+  mvwaddnstr(wp, l  , 52+strlen(he->action), he->data,
+             MAXCOLS(52+strlen(he->action), COLS- 52- strlen(he->action)));
 }
 
 
@@ -1122,10 +1122,10 @@ static void drawHistoryEntries (HostNode *n)
   return;
  }
 
- snprintf(statusln, BUF_MAX_LEN, 
-	  g_list_length (hel) == 1 ? _("History of %s (%d entry available)") :
-	  _("History of %s (%d entries available)"), 
-	  n->hostname ? n->hostname : "", g_list_length (hel));
+ snprintf(statusln, BUF_MAX_LEN,
+          g_list_length (hel) == 1 ? _("History of %s (%d entry available)") :
+          _("History of %s (%d entries available)"),
+          n->hostname ? n->hostname : "", g_list_length (hel));
  drawStatus(statusln, FALSE);
  drawMenu(VK_PLAY|VK_LESS);
  refresh();
@@ -1139,7 +1139,7 @@ static void drawHistoryEntries (HostNode *n)
  while(hep) {
   if(!l)  wattron(wp, uicolors[UI_COLOR_SELECTOR]);
   drawHistoryLine(wp, (HistoryEntry *)hep->data, l++);
-  wattroff(wp, uicolors[UI_COLOR_SELECTOR]); 
+  wattroff(wp, uicolors[UI_COLOR_SELECTOR]);
 
   hep = g_list_next(hep);
  }
@@ -1151,7 +1151,7 @@ static void drawHistoryEntries (HostNode *n)
  prefresh(wp, pminrow, 0, 1, 0, LINES-3, COLS);
  while(sc != SC_KEY_QUIT) {
   wic = wgetch(wp);
-  for(i = 0; shortCuts[i].keycode; i++) 
+  for(i = 0; shortCuts[i].keycode; i++)
    if(shortCuts[i].keycode == wic) sc = shortCuts[i].sc;
 
   orow = crow;
@@ -1245,7 +1245,7 @@ void drawCategoryEntry (DrawNode *n)
 {
  char statusln[BUF_MAX_LEN];
 
- attron(n->attrs); 
+ attron(n->attrs);
  mvremln(n->scrpos, 0, COLS);
 
  mvaddstr(n->scrpos, 0, " [");
@@ -1281,7 +1281,7 @@ void drawGroupEntry (DrawNode *n)
  char statusln[BUF_MAX_LEN];
 
  attron(n->attrs);
- mvremln(n->scrpos, 0, COLS); 
+ mvremln(n->scrpos, 0, COLS);
  mvaddstr(n->scrpos, 2, " [");
  addch(n->elements > 0 && n->extended == FALSE ? '+' : '-');
  addstr("]");
@@ -1360,20 +1360,20 @@ void drawHostEntry (DrawNode *n)
 
  if(((HostNode *) n->p)->lsb_distributor) {
   if(!HOST_SSHPORT_SET((HostNode *) n->p))
-   hostentry = g_strdup_printf("%s (%s %s %s; %s)", 
-			      ((HostNode *) n->p)->hostname,
-			      ((HostNode *) n->p)->lsb_distributor, 
-			      ((HostNode *) n->p)->lsb_release,
-			      ((HostNode *) n->p)->lsb_codename,
-			      ((HostNode *) n->p)->kernelrel);
+   hostentry = g_strdup_printf("%s (%s %s %s; %s)",
+                              ((HostNode *) n->p)->hostname,
+                              ((HostNode *) n->p)->lsb_distributor,
+                              ((HostNode *) n->p)->lsb_release,
+                              ((HostNode *) n->p)->lsb_codename,
+                              ((HostNode *) n->p)->kernelrel);
   else
-   hostentry = g_strdup_printf("%s:%d (%s %s %s; %s)", 
-			      ((HostNode *) n->p)->hostname,
-			      ((HostNode *) n->p)->ssh_port,
-			      ((HostNode *) n->p)->lsb_distributor, 
-			      ((HostNode *) n->p)->lsb_release,
-			      ((HostNode *) n->p)->lsb_codename,
-			      ((HostNode *) n->p)->kernelrel);
+   hostentry = g_strdup_printf("%s:%d (%s %s %s; %s)",
+                              ((HostNode *) n->p)->hostname,
+                              ((HostNode *) n->p)->ssh_port,
+                              ((HostNode *) n->p)->lsb_distributor,
+                              ((HostNode *) n->p)->lsb_release,
+                              ((HostNode *) n->p)->lsb_codename,
+                              ((HostNode *) n->p)->kernelrel);
 
   addnstr((char *) hostentry, COLS - 11);
   g_free(hostentry);
@@ -1382,8 +1382,8 @@ void drawHostEntry (DrawNode *n)
    addnstr((char *) ((HostNode *) n->p)->hostname, COLS - 11);
   else {
    hostentry = g_strdup_printf("%s:%d",
-			      ((HostNode *) n->p)->hostname,
-			      ((HostNode *) n->p)->ssh_port);
+                              ((HostNode *) n->p)->hostname,
+                              ((HostNode *) n->p)->ssh_port);
    addnstr((char *) hostentry, COLS - 11);
    g_free(hostentry);
   }
@@ -1461,7 +1461,7 @@ void drawHostEntry (DrawNode *n)
    break;
   }
 
-  if (((HostNode *) n->p)->status & HOST_STATUS_LOCKED) 
+  if (((HostNode *) n->p)->status & HOST_STATUS_LOCKED)
    strcat(statusln, _(" - host locked by another process"));
   drawMenu(mask);
 
@@ -1509,7 +1509,7 @@ static gboolean refreshDumpWindow (DrawNode *n)
  gchar *dump = n->type == SESSION ? TTYMUX_GET_DUMP((SessNode *) n->p) : NULL;
  gchar *hostname = NULL;
  char   h[BUF_MAX_LEN];
- 
+
  if(dump) {
   if (win_dump) {
    mvwaddstr(win_dump, 1, 0, dump);
@@ -1518,14 +1518,14 @@ static gboolean refreshDumpWindow (DrawNode *n)
    mvwremln(win_dump, 0, 0, COLS);
    if(n->parent && n->parent->type == HOST)
     hostname = ((HostNode *) n->parent->p)->hostname;
-   snprintf(h, sizeof(h), _("Running session %s [%5d]:"), 
-	    hostname ? hostname : "", ((SessNode *) n->p)->pid);
+   snprintf(h, sizeof(h), _("Running session %s [%5d]:"),
+            hostname ? hostname : "", ((SessNode *) n->p)->pid);
    mvwaddstr(win_dump, 0, 0, h);
    wattroff(win_dump, uicolors[UI_COLOR_STATUS]);
 
    wrefresh(win_dump);
   }
-  
+
   g_free(dump);
 
   return TRUE;
@@ -1534,7 +1534,7 @@ static gboolean refreshDumpWindow (DrawNode *n)
   return FALSE;
 }
 
- 
+
 void drawSessionEntry (DrawNode *n)
 {
  char h[BUF_MAX_LEN];
@@ -1547,7 +1547,7 @@ void drawSessionEntry (DrawNode *n)
  strftime(&h[strlen(h)], sizeof(h)-strlen(h), _("%D %H:%M "), tm_mtime);
 
  snprintf(&h[strlen(h)], sizeof(h)-strlen(h), "(%s)",
-	  (TTYMUX_IS_ATTACHED((SessNode *) n->p) ? _("Attached") : _("Detached")));
+          (TTYMUX_IS_ATTACHED((SessNode *) n->p) ? _("Attached") : _("Detached")));
 
 
  attron(n->attrs);
@@ -1562,7 +1562,7 @@ void drawSessionEntry (DrawNode *n)
     drawQuery(_("Could not read session dump."), G_USEC_PER_SEC);
   } else {
    snprintf(statusln, sizeof(statusln), "Session is %s",
-	    (TTYMUX_IS_ATTACHED((SessNode *) n->p) ? _("attached") : _("detached")));
+            (TTYMUX_IS_ATTACHED((SessNode *) n->p) ? _("attached") : _("detached")));
    drawStatus(statusln, TRUE);
   }
  }
@@ -1620,7 +1620,7 @@ gchar *getStrFromDrawNode (DrawNode *n)
   strftime(&h[strlen(h)], sizeof(h)-strlen(h), _("%D %H:%M "), tm_mtime);
 
   snprintf(&h[strlen(h)], sizeof(h)-strlen(h), "(%s)",
-	   (TTYMUX_IS_ATTACHED((SessNode *) n->p) ? _("Attached") : _("Detached")));
+           (TTYMUX_IS_ATTACHED((SessNode *) n->p) ? _("Attached") : _("Detached")));
 
   ret = h;
   break;
@@ -1815,7 +1815,7 @@ void buildIntialDrawList(GList *hosts)
   drawnode->elements = getHostCatCnt(hosts, i);
   drawnode->etagged = getHostCatTaggedCnt(hosts, i);
   drawnode->parent = NULL;
-  if((i == (Category) C_UPDATES_PENDING || 
+  if((i == (Category) C_UPDATES_PENDING ||
       i == (Category) C_BROKEN_PKGS ||
       i == (Category) C_SESSIONS ) && drawnode->elements > 0)
    drawnode->attrs = A_BOLD;
@@ -1940,7 +1940,7 @@ gboolean ctrlKeyUpDown(int ic)
    setEntryActiveStatus((DrawNode *) dl->data, FALSE);
    dl = g_list_next(dl);
    setEntryActiveStatus((DrawNode *) dl->data, TRUE);
-   if(((DrawNode *) dl->data)->scrpos >= bottomDrawLine || 
+   if(((DrawNode *) dl->data)->scrpos >= bottomDrawLine ||
       ((DrawNode *) dl->data)->scrpos == 0) reorderScrpos(2);
    ret = TRUE;
   }
@@ -1957,7 +1957,7 @@ gboolean ctrlKeyUpDown(int ic)
   setEntryActiveStatus((DrawNode *) dl->data, FALSE);
   dl = g_list_last(drawlist);
   setEntryActiveStatus((DrawNode *) dl->data, TRUE);
-  if(((DrawNode *) dl->data)->scrpos == 0 || 
+  if(((DrawNode *) dl->data)->scrpos == 0 ||
      ((DrawNode *) dl->data)->scrpos > bottomDrawLine) {
    i = 0;
    while (dl) {
@@ -1985,13 +1985,13 @@ gboolean compDrawNodes(DrawNode* n1, DrawNode* n2)
    return(TRUE);
   break;
  case HOST:
-  if (!g_ascii_strcasecmp(((HostNode *) (n1->p))->hostname, 
-		    ((HostNode *)(n2->p))->hostname))
+  if (!g_ascii_strcasecmp(((HostNode *)(n1->p))->hostname,
+                          ((HostNode *)(n2->p))->hostname))
    return(TRUE);
   break;
  case PKG:
   if (!g_ascii_strcasecmp(((PkgNode *) n1->p)->package,
-		    ((PkgNode *) n2->p)->package)) return(TRUE);
+                          ((PkgNode *) n2->p)->package)) return(TRUE);
   break;
  case SESSION:
   if (((SessNode *) n1->p)->pid ==
@@ -2007,7 +2007,7 @@ void rebuildDrawList(GList *hosts)
 {
  GList *dl_new = NULL;
  GList *dl_old = NULL;
- GList *old_drawlist = NULL; 
+ GList *old_drawlist = NULL;
  DrawNode *n_old = NULL;
  DrawNode *n_new = NULL;
  guint i=0, j=0, k=0, savesel=0;
@@ -2107,7 +2107,7 @@ void rebuildDrawList(GList *hosts)
  }
 
  reorderScrpos(1);
- 
+
  if(drawlist) freeDl(old_drawlist);
  else drawlist = old_drawlist;
 }
@@ -2136,8 +2136,8 @@ void extDrawListCategory(gint atpos, gchar *category, GList *hosts)
 #endif
      (((HostNode *) ho->data)->category == i)
     ) {
-   if((drawnode) && (!g_ascii_strcasecmp(drawnode->p, 
-				   ((HostNode *) ho->data)->group))) {
+   if((drawnode) && (!g_ascii_strcasecmp(drawnode->p,
+                                         ((HostNode *) ho->data)->group))) {
     if(((HostNode *) ho->data)->tagged == TRUE) drawnode->etagged++;
     ho = g_list_next(ho);
     continue;
@@ -2176,7 +2176,7 @@ void extDrawListGroup(gint atpos, gchar *group, GList *hosts)
  parent = g_list_nth_data(drawlist, (guint) atpos);
 
  while(ho) {
-  if(!g_ascii_strcasecmp(((HostNode *) ho->data)->group, group) && 
+  if(!g_ascii_strcasecmp(((HostNode *) ho->data)->group, group) &&
      (
 #ifdef FEAT_TCLFILTER
       (incategory == drawCategories[C_FILTERED] && ((HostNode *) ho->data)->filtered) ||
@@ -2195,7 +2195,7 @@ void extDrawListGroup(gint atpos, gchar *group, GList *hosts)
    drawnode->parent = parent;
    if (((HostNode *) ho->data)->category != C_SESSIONS)
      drawnode->elements = ((HostNode *) ho->data)->nupdates + ((HostNode *) ho->data)->nholds +
-			  ((HostNode *) ho->data)->nextras + ((HostNode *) ho->data)->nbrokens;
+                          ((HostNode *) ho->data)->nextras  + ((HostNode *) ho->data)->nbrokens;
    else
      drawnode->elements = g_list_length(((HostNode *) ho->data)->screens);
    drawnode->attrs = A_NORMAL;
@@ -2537,8 +2537,7 @@ void searchEntry(GList *hosts) {
    else if((c == '/') || (c == '\t')) {
      if(selmatch && matches) {
        selmatch = g_list_next(selmatch);
-       if(!selmatch)
-	 selmatch = g_list_first(matches);
+       if(!selmatch) selmatch = g_list_first(matches);
      }
 
      if(!selmatch)
@@ -2584,13 +2583,13 @@ void searchEntry(GList *hosts) {
        if(!g_list_find(matches, selmatch->data))
          selmatch = g_list_first(matches);
      } else selmatch = g_list_first(matches);
-    
+
 
      if(selmatch) {
       attron(uicolors[UI_COLOR_INPUT]);
       attron(A_REVERSE);
       gchar *selstr = getStrFromDrawNode((DrawNode *) selmatch->data);
-   
+
       mvaddstr(LINES-1, offset+pos+1, &selstr[pos]);
       attroff(A_REVERSE);
       attroff(uicolors[UI_COLOR_INPUT]);
@@ -2608,9 +2607,9 @@ void searchEntry(GList *hosts) {
       while(m) {
        DrawNode *parent = ((DrawNode *) m->data)->parent;
        while(parent) {
-	/* Keep the following drawnodes extended. */
-	dlkeep = g_list_append(dlkeep, parent);
-	parent = parent->parent;
+        /* Keep the following drawnodes extended. */
+        dlkeep = g_list_append(dlkeep, parent);
+        parent = parent->parent;
        }
        m = g_list_next(m);
       }
@@ -2620,20 +2619,20 @@ void searchEntry(GList *hosts) {
        DrawNode *dn = (DrawNode *) dl->data;
 
        if(dn->extended == TRUE) {
-	GList *k = g_list_first(dlkeep);
-	while(k) {
-	 if(k->data == dn) break;
+        GList *k = g_list_first(dlkeep);
+        while(k) {
+         if(k->data == dn) break;
 
-	 k = g_list_next(k);
-	}
-	
-	/* Shrink the list, if is not found in the search list. */
-	if(!k) {
-	 dn->extended = FALSE;
-	 extDrawList(g_list_index(drawlist, dn), FALSE, dn, hosts);
-	}
+         k = g_list_next(k);
+        }
+
+        /* Shrink the list, if is not found in the search list. */
+        if(!k) {
+         dn->extended = FALSE;
+         extDrawList(g_list_index(drawlist, dn), FALSE, dn, hosts);
+        }
        }
-      
+
        dl = g_list_previous(dl);
       }
 
@@ -2645,24 +2644,24 @@ void searchEntry(GList *hosts) {
        /* clear selection */
        DrawNode *n = getSelectedDrawNode();
        if (n)
-	 setEntryActiveStatus(n, FALSE);
+        setEntryActiveStatus(n, FALSE);
 
        /* traverse drawlist bottom up... and only expand
-	* the path to the selmatch */
+        * the path to the selmatch */
        dl = g_list_last(drawlist);
        while(dl) {
-	 DrawNode *dn = (DrawNode *) dl->data;
+        DrawNode *dn = (DrawNode *) dl->data;
 
-	 dn->scrpos = 0;
-	 if(selmatch->data == dn) {
-	   setEntryActiveStatus(dn, TRUE);
-	   dn->scrpos = 1;
-	   reorderScrpos(1);
+        dn->scrpos = 0;
+        if(selmatch->data == dn) {
+         setEntryActiveStatus(dn, TRUE);
+         dn->scrpos = 1;
+         reorderScrpos(1);
 
-	   break;
-	 }
- 
-	 dl = g_list_previous(dl);
+         break;
+        }
+
+        dl = g_list_previous(dl);
        }
 
        cleanBetween();
@@ -2707,7 +2706,7 @@ void searchEntry(GList *hosts) {
 
    refresh();
  }
- 
+
  attroff(uicolors[UI_COLOR_INPUT]);
 
  disableInput();
@@ -2727,71 +2726,71 @@ void applyFilter(GList *hosts) {
  GList *l = hosts;
 
  Tcl_Preserve(tcl_interp);
- 
+
  while(l) {
     HostNode *n = (HostNode *)l->data;
 
     for(i=0; tclmap[i].name; i++) {
       switch(tclmap[i].type) {
         case TCLM_STRING:
-	  switch(tclmap[i].code) {
-	    case TCLMK_GROUP:
-        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->group, 0);
-		break;
-	    case TCLMK_HOSTNAME:
-        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->hostname, 0);
-		break;
-	    case TCLMK_COMMENT:
-	        Tcl_SetVar(tcl_interp, tclmap[i].name, n->comment, 0);
-		break;
-	    case TCLMK_KERNEL:
-        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->kernelrel, 0);
-		break;
-	    case TCLMK_LSBCNAME:
-        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->lsb_codename, 0);
-		break;
-	    case TCLMK_LSBDISTRI:
-        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->lsb_distributor, 0);
-		break;
-	    case TCLMK_LSBREL:
-        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->lsb_release, 0);
-		break;
-	    case TCLMK_UNKERNEL:
-        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->uname_kernel, 0);
-		break;
-	    case TCLMK_UNMACHINE:
-        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->uname_machine, 0);
-		break;
-	    case TCLMK_VIRT:
-        	Tcl_SetVar(tcl_interp, tclmap[i].name, n->virt, 0);
-		break;
-	    default:
-		g_warning(_("Internal error: unhandled TCL TCLM_STRING mapping!"));
-	  }
-	  break;
-	case TCLM_INT:
-	  {
-	    gchar *h = NULL;
+          switch(tclmap[i].code) {
+            case TCLMK_GROUP:
+              Tcl_SetVar(tcl_interp, tclmap[i].name, n->group, 0);
+              break;
+            case TCLMK_HOSTNAME:
+              Tcl_SetVar(tcl_interp, tclmap[i].name, n->hostname, 0);
+              break;
+            case TCLMK_COMMENT:
+              Tcl_SetVar(tcl_interp, tclmap[i].name, n->comment, 0);
+              break;
+            case TCLMK_KERNEL:
+              Tcl_SetVar(tcl_interp, tclmap[i].name, n->kernelrel, 0);
+              break;
+            case TCLMK_LSBCNAME:
+              Tcl_SetVar(tcl_interp, tclmap[i].name, n->lsb_codename, 0);
+              break;
+            case TCLMK_LSBDISTRI:
+              Tcl_SetVar(tcl_interp, tclmap[i].name, n->lsb_distributor, 0);
+              break;
+            case TCLMK_LSBREL:
+              Tcl_SetVar(tcl_interp, tclmap[i].name, n->lsb_release, 0);
+              break;
+            case TCLMK_UNKERNEL:
+              Tcl_SetVar(tcl_interp, tclmap[i].name, n->uname_kernel, 0);
+              break;
+            case TCLMK_UNMACHINE:
+              Tcl_SetVar(tcl_interp, tclmap[i].name, n->uname_machine, 0);
+              break;
+            case TCLMK_VIRT:
+              Tcl_SetVar(tcl_interp, tclmap[i].name, n->virt, 0);
+              break;
+            default:
+              g_warning(_("Internal error: unhandled TCL TCLM_STRING mapping!"));
+          }
+          break;
+        case TCLM_INT:
+          {
+            gchar *h = NULL;
 
-	    switch(tclmap[i].code) {
-		case TCLMK_CATEGORY:
-		    h = g_strdup_printf("%d", n->category);
-		    break;
-		case TCLMK_FORBID:
-		    h = g_strdup_printf("%d", n->forbid);
-		    break;
-		default:
-		    g_warning(_("Internal error: unhandled TCL TCLM_INT mapping!"));
-	    }
+            switch(tclmap[i].code) {
+              case TCLMK_CATEGORY:
+                h = g_strdup_printf("%d", n->category);
+                break;
+              case TCLMK_FORBID:
+                h = g_strdup_printf("%d", n->forbid);
+                break;
+              default:
+                g_warning(_("Internal error: unhandled TCL TCLM_INT mapping!"));
+            }
 
-	    Tcl_SetVar(tcl_interp, tclmap[i].name, h, 0);
-	    g_free(h);
-	  }
-	  break;
-	case TCLM_IGNORE:
-	  break;
-	default:
-	  g_warning(_("Internal error: unknown TCL mapping type!"));
+            Tcl_SetVar(tcl_interp, tclmap[i].name, h, 0);
+            g_free(h);
+          }
+          break;
+        case TCLM_IGNORE:
+          break;
+        default:
+          g_warning(_("Internal error: unknown TCL mapping type!"));
       }
     }
 
@@ -2811,7 +2810,7 @@ void applyFilter(GList *hosts) {
 
       if( ((PkgNode *)p->data)->flag & HOST_STATUS_PKGEXTRA)
         Tcl_SetVar2(tcl_interp, "extras", ((PkgNode *)(p->data))->package, ((PkgNode *)(p->data))->version, 0);
-	
+
       p = g_list_next(p);
     }
 
@@ -2825,20 +2824,20 @@ void applyFilter(GList *hosts) {
     Tcl_UnsetVar(tcl_interp, "clusters", 0);
     GList *c = n->clusters;
     while(c) {
-	Tcl_SetVar2(tcl_interp, "clusters", c->data, c->data, 0);
-	c = g_list_next(c);
+     Tcl_SetVar2(tcl_interp, "clusters", c->data, c->data, 0);
+     c = g_list_next(c);
     }
 #endif
 
     Tcl_ResetResult(tcl_interp);
     switch(Tcl_Eval(tcl_interp, filterexp)) {
-	case TCL_OK:
-	case TCL_RETURN:
-	    filtered = atoi(Tcl_GetStringResult(tcl_interp)) > 0;
-	    break;
-	default:
-	    filtered = FALSE;
-	    break;
+      case TCL_OK:
+      case TCL_RETURN:
+        filtered = atoi(Tcl_GetStringResult(tcl_interp)) > 0;
+        break;
+      default:
+        filtered = FALSE;
+        break;
     }
 
     if(filtered != n->filtered) {
@@ -2977,33 +2976,33 @@ static void handleErrors(HostNode *n) {
     case 'I':
     case 'q':
     case 'Q':
-	history_free_he(he);
-	return;
+      history_free_he(he);
+      return;
 
     /* connect */
     case 'c':
     case 'C':
-	history_free_he(he);
+      history_free_he(he);
 
-	ignoreSIGINT(TRUE);
-	endwin();
+      ignoreSIGINT(TRUE);
+      endwin();
 
-	ssh_connect(n, FALSE);
+      ssh_connect(n, FALSE);
 
-	ignoreSIGINT(FALSE);
-	refresh();
-	return;
+      ignoreSIGINT(FALSE);
+      refresh();
+      return;
 
     default:
-	ignoreSIGINT(TRUE);
-	endwin();
+      ignoreSIGINT(TRUE);
+      endwin();
 
-	history_show_less_search(he, cfg->history_errpattern);
+      history_show_less_search(he, cfg->history_errpattern);
 
-	ignoreSIGINT(FALSE);
-	refresh();
+      ignoreSIGINT(FALSE);
+      refresh();
 
-	break;
+      break;
   }
  }
 
@@ -3032,8 +3031,8 @@ gboolean ctrlUI (GList *hosts)
 
  if((ic = getch()) == -1)
   refresh();
- else 
-  for(i = 0; shortCuts[i].keycode; i++) 
+ else
+  for(i = 0; shortCuts[i].keycode; i++)
    if(shortCuts[i].keycode == ic) sc = shortCuts[i].sc;
 
 #ifdef KEY_RESIZE
@@ -3095,8 +3094,8 @@ gboolean ctrlUI (GList *hosts)
     if(n->type == GROUP) {
      if(n->extended == TRUE) n->extended = FALSE;
      if(drawCategories[getCategoryNumber(incategory)]) {
-      setHostsCategory(hosts, getCategoryNumber(incategory), ingroup, 
-		       (Category) C_REFRESH_REQUIRED);
+      setHostsCategory(hosts, getCategoryNumber(incategory), ingroup,
+                       (Category) C_REFRESH_REQUIRED);
       rebuildDrawList(hosts);
       refscr = TRUE;
      }
@@ -3105,8 +3104,8 @@ gboolean ctrlUI (GList *hosts)
      if(n->type == CATEGORY) {
       if(n->extended == TRUE) n->extended = FALSE;
       if(drawCategories[getCategoryNumber(incategory)]) {
-       setHostsCategory(hosts, getCategoryNumber(incategory), NULL, 
-			(Category) C_REFRESH_REQUIRED);
+       setHostsCategory(hosts, getCategoryNumber(incategory), NULL,
+                        (Category) C_REFRESH_REQUIRED);
        rebuildDrawList(hosts);
        refscr = TRUE;
       }
@@ -3121,15 +3120,15 @@ gboolean ctrlUI (GList *hosts)
     GList *thosts = NULL;
 
     GList *ho = g_list_first(hosts);
-    
+
     while(ho) {
      HostNode *m = (HostNode *)ho->data;
      if(m->tagged == TRUE)
       thosts = g_list_prepend(thosts, m);
-    
+
      ho = g_list_next(ho);
     }
-   
+
     if(thosts && g_list_length (thosts) > 0) {
      qrystr = g_strdup_printf(_("Refresh %d tagged hosts? [y/N]: "), g_list_length (thosts));
      retqry = queryConfirm(qrystr, FALSE, NULL);
@@ -3137,18 +3136,18 @@ gboolean ctrlUI (GList *hosts)
 
      if(retqry == TRUE) {
       GList *ho = g_list_first(thosts);
-     
+
       while(ho) {
        HostNode *m = (HostNode *)ho->data;
 
        m->category = C_REFRESH_REQUIRED;
        refscr = TRUE;
-      
+
        ho = g_list_next(ho);
       }
       if(refscr == TRUE) rebuildDrawList(hosts);
      }
-    
+
      g_list_free (thosts);
     }
    }
@@ -3184,7 +3183,7 @@ gboolean ctrlUI (GList *hosts)
 
     if (g_list_length(inhost->screens)) {
      if (!queryConfirm(_("There are running sessions on this host! Continue? [y/N]: "),
-		       FALSE, NULL))
+                       FALSE, NULL))
       break;
     }
 
@@ -3210,7 +3209,7 @@ gboolean ctrlUI (GList *hosts)
 
     if (g_list_length(inhost->screens)) {
      if (!queryConfirm(_("There are running sessions on this host! Continue? [y/N]: "),
-		       FALSE, NULL))
+                       FALSE, NULL))
       break;
     }
 
@@ -3236,7 +3235,7 @@ gboolean ctrlUI (GList *hosts)
    default:
     {
      if(((n->type == CATEGORY) && !queryConfirm(_("Run update for the whole category? [y/N]: "), FALSE, NULL)) ||
-	((n->type == GROUP) && !queryConfirm(_("Run update for the whole group? [y/N]: "), FALSE, NULL)))
+        ((n->type == GROUP) && !queryConfirm(_("Run update for the whole group? [y/N]: "), FALSE, NULL)))
       break;
 
      GList *ho = g_list_first(hosts);
@@ -3245,14 +3244,14 @@ gboolean ctrlUI (GList *hosts)
      while(ho) {
       HostNode *m = (HostNode *)ho->data;
 #ifdef FEAT_TCLFILTER
-      if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) && 
-	  ((cat == C_FILTERED && m->filtered == TRUE) || m->category == cat)) ||
-	 (n->type == CATEGORY && 
-	  ((cat == C_FILTERED && m->filtered == TRUE) || m->category == cat))) {
+      if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) &&
+          ((cat == C_FILTERED && m->filtered == TRUE) || m->category == cat)) ||
+         (n->type == CATEGORY &&
+          ((cat == C_FILTERED && m->filtered == TRUE) || m->category == cat))) {
 #else
-      if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) && 
-	  m->category == cat) ||
-	 (n->type == CATEGORY && m->category == cat)) {
+      if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) &&
+          m->category == cat) ||
+         (n->type == CATEGORY && m->category == cat)) {
 #endif
        if(m->forbid ^ HOST_FORBID_UPGRADE)
         ssh_cmd_upgrade(m, TRUE);
@@ -3270,15 +3269,15 @@ gboolean ctrlUI (GList *hosts)
     GList *thosts = NULL;
 
     GList *ho = g_list_first(hosts);
-    
+
     while(ho) {
      HostNode *m = (HostNode *)ho->data;
      if(m->forbid ^ HOST_FORBID_UPGRADE && m->nupdates > 0 && m->tagged == TRUE)
       thosts = g_list_prepend(thosts, m);
-    
+
      ho = g_list_next(ho);
     }
-   
+
     if(thosts && g_list_length (thosts) > 0) {
      qrystr = g_strdup_printf(_("Run update for %d tagged and updatable hosts? [y/N]: "), g_list_length (thosts));
      retqry = queryConfirm(qrystr, FALSE, NULL);
@@ -3286,18 +3285,18 @@ gboolean ctrlUI (GList *hosts)
 
      if(retqry == TRUE) {
       GList *ho = g_list_first(thosts);
-     
+
       while(ho) {
        HostNode *m = (HostNode *)ho->data;
        ssh_cmd_upgrade(m, TRUE);
-      
+
        ho = g_list_next(ho);
       }
      }
-    
+
      g_list_free (thosts);
     } else beep();
-   
+
    }
    break; /* case SC_KEY_UPGRADE + TAGGED_MASK */
 
@@ -3341,7 +3340,7 @@ gboolean ctrlUI (GList *hosts)
 
     if (g_list_length(inhost->screens)) {
      if (!queryConfirm(_("There are running sessions on this host! Continue? [y/N]: "),
-		       FALSE, NULL))
+                       FALSE, NULL))
       break;
     }
 
@@ -3366,7 +3365,7 @@ gboolean ctrlUI (GList *hosts)
       break;
 
      if(((n->type == CATEGORY) && !queryConfirm(_("Run install for the whole category? [y/N]: "), FALSE, NULL)) ||
-	((n->type == GROUP) && !queryConfirm(_("Run install for the whole group? [y/N]: "), FALSE, NULL)))
+        ((n->type == GROUP) && !queryConfirm(_("Run install for the whole group? [y/N]: "), FALSE, NULL)))
       break;
 
      GList *ho = g_list_first(hosts);
@@ -3375,14 +3374,14 @@ gboolean ctrlUI (GList *hosts)
      while(ho) {
       HostNode *m = (HostNode *)ho->data;
 #ifdef FEAT_TCLFILTER
-      if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) && 
-	  ((cat == C_FILTERED && m->filtered == TRUE) || m->category == cat)) ||
-	 (n->type == CATEGORY && 
-	  ((cat == C_FILTERED && m->filtered == TRUE) || m->category == cat))) {
+      if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) &&
+          ((cat == C_FILTERED && m->filtered == TRUE) || m->category == cat)) ||
+         (n->type == CATEGORY &&
+          ((cat == C_FILTERED && m->filtered == TRUE) || m->category == cat))) {
 #else
-      if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) && 
-	  m->category == cat) ||
-	 (n->type == CATEGORY && m->category == cat)) {
+      if((n->type == GROUP && (strcmp(m->group, ingroup) == 0) &&
+          m->category == cat) ||
+         (n->type == CATEGORY && m->category == cat)) {
 #endif
 
        if(m->forbid ^ HOST_FORBID_INSTALL)
@@ -3401,15 +3400,15 @@ gboolean ctrlUI (GList *hosts)
     GList *thosts = NULL;
 
     GList *ho = g_list_first(hosts);
-    
+
     while(ho) {
      HostNode *m = (HostNode *)ho->data;
      if(m->forbid ^ HOST_FORBID_INSTALL && m->tagged == TRUE)
       thosts = g_list_prepend(thosts, m);
-    
+
      ho = g_list_next(ho);
     }
-   
+
     if(thosts && g_list_length (thosts) > 0) {
      qrystr = g_strdup_printf(_("Install package on %d tagged hosts: "), g_list_length (thosts));
      if(!qrystr) break;
@@ -3421,34 +3420,34 @@ gboolean ctrlUI (GList *hosts)
      if(retqry == TRUE) {
       pkg = in;
       GList *ho = g_list_first(thosts);
-     
+
       while(ho) {
        HostNode *m = (HostNode *)ho->data;
        ssh_cmd_install(m, pkg, TRUE);
-      
+
        ho = g_list_next(ho);
       }
      }
-    
+
      g_list_free (thosts);
     } else beep();
-   
+
    }
    break; /* case SC_KEY_INSTALL + TAGGED_MASK */
 
   case SC_KEY_TAGMATCH:
   case SC_KEY_UNTAGMATCH:
    {
-    if(queryString(sc == SC_KEY_TAGMATCH ? _("Tag hosts matching: ") : 
-		    _("Untag hosts matching: "), in2, 
-		    sizeof(in2)-1) == FALSE) break;
+    if(queryString(sc == SC_KEY_TAGMATCH ? _("Tag hosts matching: ") :
+                    _("Untag hosts matching: "), in2,
+                    sizeof(in2)-1) == FALSE) break;
     if (strlen(in2)==0) break;
 
     GList *ho = g_list_first(hosts);
 
     while(ho) {
      HostNode *n = (HostNode *)ho->data;
-     
+
      if(strlen(n->hostname) >= strlen(in2)) {
       if(compHostWithPattern (n, in2, strlen(in2)) == TRUE) {
        n->tagged= sc == SC_KEY_TAGMATCH ? TRUE : FALSE;
@@ -3458,7 +3457,7 @@ gboolean ctrlUI (GList *hosts)
 
      ho = g_list_next(ho);
     }
-    
+
     if(refscr == FALSE) beep();
     else {
      GList *dl = g_list_first(drawlist);
@@ -3469,17 +3468,17 @@ gboolean ctrlUI (GList *hosts)
       if(drawnode->type == CATEGORY) {
        i=0;
        while(*(drawCategories+i)) {
-	if(*(drawCategories+i) == drawnode->p) 
-	 drawnode->etagged = getHostCatTaggedCnt(hosts, i);
-	i++;
+        if(*(drawCategories+i) == drawnode->p)
+         drawnode->etagged = getHostCatTaggedCnt(hosts, i);
+        i++;
        }
       }
       else if(drawnode->type == GROUP) {
        i=0;
        while(*(drawCategories+i)) {
-	if(*(drawCategories+i) == drawnode->parent->p) 
-	 drawnode->etagged = getHostGrpCatTaggedCnt(hosts, drawnode->p, i);
-	i++;
+        if(*(drawCategories+i) == drawnode->parent->p)
+         drawnode->etagged = getHostGrpCatTaggedCnt(hosts, drawnode->p, i);
+        i++;
        }
       }
 
@@ -3516,8 +3515,8 @@ gboolean ctrlUI (GList *hosts)
 
      while(scr) {
       qrystr = g_strdup_printf(_("Attach host %s session %d (%d %s left) [Y/n/c]: "),
-			       m->hostname, ((SessNode *)scr->data)->pid, 
-			       i, i == 1 ? _("session") : _("sessions"));
+                               m->hostname, ((SessNode *)scr->data)->pid,
+                               i, i == 1 ? _("session") : _("sessions"));
       i--;
       if(!qrystr) {
        g_warning(_("Out of memory."));
@@ -3551,8 +3550,8 @@ gboolean ctrlUI (GList *hosts)
        initUI();
 
        if(ic != getKeyForShortcut(sc)) {
-	ho = NULL;
-	break;
+        ho = NULL;
+        break;
        }
 
       }
@@ -3765,7 +3764,7 @@ gboolean ctrlUI (GList *hosts)
   } /* switch (sc) */
  }
 
- if(((keytagactive == TRUE && sc != SC_KEY_TAGACTION) || 
+ if(((keytagactive == TRUE && sc != SC_KEY_TAGACTION) ||
      (keytagactive == FALSE && SC_KEY_TAGACTION)) && ic != -1) {
   keytagactive = FALSE;
   refscr = TRUE;
