@@ -46,7 +46,7 @@ This XSLT program prints an overview of the status of all hosts.
 </xsl:text>
     <xsl:text> Packages installed: </xsl:text><xsl:value-of select="count(packages/pkg)"/><xsl:text>
 </xsl:text>
-    <xsl:text> Updates           : </xsl:text><xsl:value-of select="count(packages/pkg[@update = '1'])"/><xsl:text>
+    <xsl:text> Updates           : </xsl:text><xsl:value-of select="count(packages/pkg[@hasupdate = '1'])"/><xsl:text>
 </xsl:text>
     <xsl:text> Packages hold back: </xsl:text><xsl:value-of select="count(packages/pkg[@onhold = '1'])"/><xsl:text>
 </xsl:text>
