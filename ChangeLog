@@ -13,8 +13,16 @@ apt-dater (1.0.4) unstable; urgency=low
     - Revert a82d3f7: default config value for 'err-pattern' should not
       use html entities.
       (github issue #124 by Stephan Sürken <absurd@debian.org>)
+    - Update err-pattern to ignore fail2ban string.
+      (github pull request #151 by Hermann van Rink @helmo)
     - Fix syntax of report.dtd schema.
       (github issue #153 by Mathieu Parent @sathieu)
+    - Clean up whitespaces and indenting.
+      (github pull request #170 by Mike Beattie @mjbnz)
+    - Fix attribute hasupdate in report.dtd.
+      (github pull request #172 by @gratuxri)
+    - Fix quoting of examples in apt-dater.xml.
+      (github pull request #174 by @gratuxri)
   * Update to automake 1.16.
 
  -- Thomas Liske <liske@ibh.de>  Sun, 10 Feb 2019 22:15:45 +0100
