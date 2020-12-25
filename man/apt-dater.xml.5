@@ -47,7 +47,7 @@ apt-dater.xml \- configuration file of apt\-dater(8)
 
     <history
         record="true"
-	err\-pattern="((?<!no )error|warning|fail)"/>
+	err\-pattern="((?<!no )error|(?<!insserv: )warning|failed|fail(?!2ban))"/>
 </apt\-dater>
 
     
@@ -255,7 +255,7 @@ Enables user notification by terminal flashing\&.
 .RE
 .SS "Attributes of the\*(Aqhistory\*(Aq element"
 .PP
-err\-pattern="\fI((?<!no )error|warning|fail)\fR"
+err\-pattern="\fI((?<!no )error|(?<!insserv: )warning|failed|fail(?!2ban))\fR"
 .RS 4
 A regular expression pattern to match the screen output\&. A match indicates the user should be asked to review the output (using less)\&. (Optional)
 .RE

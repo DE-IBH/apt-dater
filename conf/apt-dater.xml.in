@@ -93,7 +93,7 @@
 
     <history
         record="true"
-	err-pattern="((?&lt;!no )error|(?&lt;!insserv: )warning|fail(ed)?)"/>
+	err-pattern="((?&lt;!no )error|(?&lt;!insserv: )warning|failed|fail(?!2ban))"/>
     -->
 
     <!--

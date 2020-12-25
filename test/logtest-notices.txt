@@ -1,0 +1,4 @@
+/usr/sbin/grub-probe: warning: Couldn't find physical volume `pv1'. Some modules may be missing from core image..
+Job for supervisor.service failed. See 'systemctl status supervisor.service' and 'journalctl -xn' for details.
+Some fatal error needs your attention
+Help I failed
