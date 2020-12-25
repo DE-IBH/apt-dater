@@ -19,6 +19,8 @@ apt-dater (1.0.4) unstable; urgency=low
       (github issue #153 by Mathieu Parent @sathieu)
     - Clean up whitespaces and indenting.
       (github pull request #170 by Mike Beattie @mjbnz)
+    - Fix link in README.autoref.
+      (github issue #171 by Jakob Haufe @sur5r)
     - Fix attribute hasupdate in report.dtd.
       (github pull request #172 by @gratuxri)
     - Fix quoting of examples in apt-dater.xml.
