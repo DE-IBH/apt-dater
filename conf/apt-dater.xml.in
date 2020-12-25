@@ -98,9 +98,16 @@
 
     <!--
 	Requires apt-dater to be build with enable-tclfilter.
+  next characters should be replaced in xml:
+    "   &quot;
+    '   &apos;
+    <   &lt;
+    >   &gt;
+    &   &amp;
+
 
     <tcl-filter
-        filter-exp="return [expr [string compare $lsb_distri \\\"Debian\\\"] == 0 && $lsb_rel < 4.0]"
+        filter-exp="return [expr [string compare $lsb_distri &quot;Debian&quot;] == 0 &amp;&amp; $lsb_rel &lt; 9.0]"
         filter-file="/path/to/file.tcl" />
     -->
 </apt-dater>
