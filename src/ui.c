@@ -1469,6 +1469,14 @@ void drawHostEntry (DrawNode *n)
  }
 }
 
+int snprintf_statusln(char* statusln, char* format, DrawNode *n)
+{
+ return snprintf(statusln, BUF_MAX_LEN, format,
+		 ((PkgNode *) n->p)->version,
+		 ((PkgNode *) n->p)->data                    ? ((PkgNode *) n->p)->data                    : "none",
+		 ((PkgNode *) n->p)->security_update_version ? ((PkgNode *) n->p)->security_update_version : "none");
+}
+
 void drawPackageEntry (DrawNode *n)
 {
  char statusln[BUF_MAX_LEN];
@@ -1476,7 +1484,9 @@ void drawPackageEntry (DrawNode *n)
  attron(n->attrs);
  mvremln(n->scrpos, 0, COLS);
 
- if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGUPDATE)
+ if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGSECUPDATE)
+   mvaddstr(n->scrpos, 7, "s:");
+ else if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGUPDATE)
    mvaddstr(n->scrpos, 7, "u:");
  else if(((PkgNode *) n->p)->flag & HOST_STATUS_PKGKEPTBACK)
    mvaddstr(n->scrpos, 7, "h:");
@@ -1491,13 +1501,13 @@ void drawPackageEntry (DrawNode *n)
  attroff(A_BOLD);
  attroff(n->attrs);
  if(n->selected == TRUE) {
-  if(((PkgNode *) n->p)->data) {
+  if((((PkgNode *) n->p)->data) || (((PkgNode *) n->p)->security_update_version)) {
     if (((PkgNode *) n->p)->flag & HOST_STATUS_PKGBROKEN)
-     snprintf(statusln, BUF_MAX_LEN, "%s (%s)", ((PkgNode *) n->p)->version, ((PkgNode *) n->p)->data);
+     snprintf_statusln(statusln, "%s (%s) (security: %s)",  n);
     else
-     snprintf(statusln, BUF_MAX_LEN, "%s -> %s", ((PkgNode *) n->p)->version, ((PkgNode *) n->p)->data);
+     snprintf_statusln(statusln, "%s -> %s (security: %s)", n);
   } else
-    snprintf(statusln, BUF_MAX_LEN, "%s", ((PkgNode *) n->p)->version);
+    snprintf_statusln( statusln, "%s",                      n);
   drawMenu(VK_INSTALL);
   drawStatus(statusln, TRUE);
  }

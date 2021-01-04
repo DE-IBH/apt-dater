@@ -169,6 +169,8 @@ void freePkgNode(PkgNode *n)
   g_free(n->version);
   if(n->data)
    g_free(n->data);
+  if(n->security_update_version)
+   g_free(n->security_update_version);
   g_free(n);
  }
 }
@@ -346,6 +348,19 @@ gboolean getUpdatesFromStat(HostNode *n)
 	 g_free(pkgnode);
 	 g_strfreev(argv);
 	 continue;
+    }
+
+    if(i > 3) { /* read SecurityUpdateVersion */
+      switch(argv[3][0]) {
+	  case 's':
+	      pkgnode->security_update_version = g_strdup(&argv[3][2]);
+	      n->status = n->status | HOST_STATUS_PKGSECUPDATE;
+	      pkgnode->flag = pkgnode->flag | HOST_STATUS_PKGSECUPDATE;
+	      break;
+	  default:
+	      /* unknow SecurityUpdateVersion content - ignore */
+            g_warning("ignoring unknown SecurityUpdateVersion contents '%s'", argv[3]);
+	}
     }
     g_strfreev(argv);
 

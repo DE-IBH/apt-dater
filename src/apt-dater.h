@@ -143,6 +143,7 @@ typedef struct _update {
  gchar *version;
  gint flag;
  gchar *data;
+ gchar *security_update_version;
 } PkgNode;
 
 typedef struct _session {
@@ -181,6 +182,7 @@ typedef enum {
 #ifdef FEAT_CLUSTERS
 #define HOST_STATUS_CLUSTERED       512
 #endif
+#define HOST_STATUS_PKGSECUPDATE   1024
 
 #define HOST_FORBID_REFRESH           1
 #define HOST_FORBID_UPGRADE           2
