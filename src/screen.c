@@ -46,7 +46,7 @@ screen_get_sdir() {
   static gchar sdir[PATH_MAX];
 
   if (g_strcmp0(getenv("SCREENDIR"), NULL) != 0) {
-    g_strlcpy(sdir, sizeof(sdir), getenv("SCREENDIR"));
+    g_strlcpy(sdir, getenv("SCREENDIR"), sizeof(sdir));
     return sdir;
   }
 
