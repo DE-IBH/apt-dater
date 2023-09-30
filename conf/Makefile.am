@@ -1,9 +1,11 @@
-all: apt-dater.xml.inc hosts.xml.inc screenrc.inc tmux.conf.inc
+INCS = apt-dater.xml.inc hosts.xml.inc screenrc.inc tmux.conf.inc
+
+all: $(INCS)
 
 clean-local:
 	rm -f *.blob
 
-%.inc: %
+$(INCS): %.inc: %
 	xxd -i $< > $@
 
 clean:
