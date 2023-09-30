@@ -165,7 +165,7 @@ tmux_get_sessions(HostNode *n) {
 
 gchar **
 tmux_new(HostNode *n, const gboolean detached) {
-  gchar **_argv = (gchar **) g_malloc0(sizeof(gchar *) * 8);
+  gchar **_argv = (gchar **) g_malloc0(sizeof(gchar *) * 9);
   gchar *title = parse_string("%m # %U%H", n);
 
   _argv[0] = g_strdup(TMUX_BINARY);
