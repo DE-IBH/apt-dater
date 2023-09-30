@@ -12,9 +12,26 @@ config.[hls]*
 stamp-*
 *~
 conf/*.xml
+conf/*.inc
+man/*.html
+man/*.5
+man/*.8
 \#*#
 .#*
 etc/apt-dater.xml
 etc/hosts.xml
 lib/hosts2xml
 debian
+# autoreconf
+aclocal.m4
+compile
+config.guess
+config.h.in
+config.sub
+configure
+depcomp
+INSTALL
+install-sh
+Makefile.in
+missing
+mkinstalldirs

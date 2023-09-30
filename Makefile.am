@@ -28,7 +28,7 @@ distclean-local:
 
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST += config.rpath m4/ChangeLog mkinstalldirs
+EXTRA_DIST += config.rpath m4/ChangeLog
 
 check-gettext:
 	@if test x$(USE_NLS) != "xyes" ; then echo "Missing gettext. Rerun configure and check for" \
