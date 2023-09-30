@@ -1,10 +1,8 @@
 bin_PROGRAMS = apt-dater adsh
 
-# Define in case SOURCE_DATE_EPOCH is not exported.
-# See also:
-# - Debian Bug#789648,
-# - https://wiki.debian.org/ReproducibleBuilds/TimestampsProposal
+# https://reproducible-builds.org/docs/source-date-epoch/#makefile
 SOURCE_DATE_EPOCH ?= $(shell date +%s)
+SOURCE_DATE_UTC ?= $(shell LC_ALL=C date -u -d "@$(SOURCE_DATE_EPOCH)" 2>/dev/null || LC_ALL=C date -u -r "$(SOURCE_DATE_EPOCH)" 2>/dev/null || LC_ALL=C date -u)
 
 SHARED_SOURCES =			\
 	adproto.h			\
@@ -68,7 +66,7 @@ adsh_SOURCES =				\
 adsh_LDADD = $(apt_dater_LDADD)
 
 
-AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"' -DSOURCE_DATE_UTC="\"$(shell LC_ALL=C date -d @$(SOURCE_DATE_EPOCH) -u)\""
+AM_CFLAGS = -Wall -DPKGLIBDIR='"'$(pkglibdir)'"' -DSOURCE_DATE_UTC="\"$(SOURCE_DATE_UTC)\""
 if LINUX
 AM_LDFLAGS = -Wl,--as-needed
 else
