@@ -31,12 +31,12 @@
 # include "config.h"
 #endif
 
-#ifndef HAVE_GLIB_TIMEOUT_ADD_SECONDS
+#if !GLIB_CHECK_VERSION(2, 14, 0)
 guint
 g_timeout_add_seconds (guint interval, GSourceFunc function, gpointer data);
 #endif
 
-#ifndef HAVE_GLIB_SPAWN_CHECK_EXIT_STATUS
+#if !GLIB_CHECK_VERSION(2, 34, 0)
 gboolean
 g_spawn_check_exit_status (gint exit_status, GError **error);
 #endif

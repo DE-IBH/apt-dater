@@ -36,10 +36,6 @@ AC_CHECK_HEADERS(locale.h)
 
 glib_module="glib-2.0 >= 2.3.6"
 PKG_CHECK_MODULES(GLIB, "$glib_module", enable_glib_=yes, enable_glib_=no)
-PKG_CHECK_MODULES(GLIB2_36, glib-2.0 >= 2.36,
-[],
-AC_DEFINE(REQUIRE_GLIB_TYPE_INIT, 1, [ Define to 1 if your GLIB requires the g_type_init call. ]),
-)
 gio_module="gio-2.0 >= 2.15.0"
 PKG_CHECK_MODULES(GIO, "$gio_module", enable_gio_=yes, enable_gio_=no)
 
@@ -158,12 +154,6 @@ AC_SUBST(CURSES_LIB)
 AC_CHECK_HEADERS(popt.h)
 AC_CHECK_LIB([popt], [poptParseArgvString])
 AC_CHECK_LIB([glib-2.0], [g_main_loop_run])
-AC_CHECK_LIB([glib-2.0], [g_timeout_add_seconds],
-AC_DEFINE(HAVE_GLIB_TIMEOUT_ADD_SECONDS, 1, [ Define to 1 if your GLIB supports the g_timeout_add_seconds call. ]))
-AC_CHECK_LIB([glib-2.0], [g_spawn_check_exit_status],
-AC_DEFINE(HAVE_GLIB_SPAWN_CHECK_EXIT_STATUS, 1, [ Define to 1 if your GLIB supports the g_spawn_check_exit_status call. ]))
-AC_CHECK_LIB([glib-2.0], [g_type_init],
-AC_DEFINE(HAVE_GLIB_TYPE_INIT, 1, [ Define to 1 if your GLIB requires the g_type_init call. ]))
 
 # Checks for header files.
 AC_HEADER_STDC
