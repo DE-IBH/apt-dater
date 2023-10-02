@@ -34,7 +34,7 @@
 static volatile int sigintcnt = 0;
 static gboolean ignsigint = FALSE;
 
-static RETSIGTYPE sigintSigHandler(int sig)
+static void sigintSigHandler(int sig)
 {
  switch(sig) {
   case SIGINT:
@@ -56,7 +56,7 @@ static RETSIGTYPE sigintSigHandler(int sig)
 }
 
 
-static RETSIGTYPE sigtermSigHandler() {
+static void sigtermSigHandler() {
  cleanUI();
  refreshUI();
  g_main_loop_quit (loop);

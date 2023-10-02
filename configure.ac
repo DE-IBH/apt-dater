@@ -395,8 +395,6 @@ else
 fi
 AC_SUBST(DBXSL)
 
-AC_TYPE_SIGNAL
-
 AC_CONFIG_FILES([ po/Makefile.in
 Makefile
 etc/Makefile
