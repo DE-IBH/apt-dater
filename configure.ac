@@ -93,6 +93,7 @@ AC_MSG_RESULT($enable_runcust)
 if test "$enable_runcust" = "yes"; then
     AC_DEFINE(FEAT_RUNCUST, 1, [ Define if you want 'run custom commands' support included. ])
 fi
+AM_CONDITIONAL(FEAT_RUNCUST, [test "$enable_runcust" = "yes"])
 
 AC_SUBST(VERSION)
 AC_SUBST(PACKAGE)
@@ -345,6 +346,7 @@ if test "$enable_tmux" = "yes"; then
     echo "$tmux_binary"
     AC_DEFINE(FEAT_TMUX, 1, [ Define if you want to use tmux terminal multiplexer. ])
 fi
+AM_CONDITIONAL(FEAT_TMUX, [test "${enable_tmux}" = "yes"])
 
 
 # Check if `env' is installed on your system (used by history feature)

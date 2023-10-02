@@ -1,5 +1,22 @@
 SUBDIRS = conf po man src lib etc schema
 
+EXTRA_DIST = \
+	build \
+	images \
+	include \
+	test \
+	xmlreport \
+	README.autoref \
+	README.clusters \
+	README.history \
+	README.hooks \
+	README.md \
+	README.tagging \
+	README.tclfilter \
+	README.ttymux \
+	README.xmlreport
+
+
 AUTOMAKE_OPTIONS =
 	1.16
 	dist-bzip2
@@ -11,7 +28,7 @@ distclean-local:
 
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = config.rpath m4/ChangeLog mkinstalldirs
+EXTRA_DIST += config.rpath m4/ChangeLog mkinstalldirs
 
 check-gettext:
 	@if test x$(USE_NLS) != "xyes" ; then echo "Missing gettext. Rerun configure and check for" \
