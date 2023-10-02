@@ -7,7 +7,7 @@ AC_PREREQ([2.71])
 AC_INIT([apt-dater],[1.0.4],[apt-dater@ibh.de])
 
 # include local macros
-m4_include([m4/adl_recursive_eval.m4])
+m4_include([m4lib/adl_recursive_eval.m4])
 
 # Recursive eval some vars
 adl_RECURSIVE_EVAL([$sysconfdir], sysconfdir)
@@ -32,6 +32,7 @@ AC_CONFIG_SRCDIR([src/adsh.c])
 AC_CONFIG_HEADERS([config.h])
 
 AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_REQUIRE_VERSION([0.19.3])
 AC_CHECK_HEADERS(locale.h)
 
 glib_module="glib-2.0 >= 2.3.6"

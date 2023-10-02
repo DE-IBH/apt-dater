@@ -35,3 +35,7 @@ install-sh
 Makefile.in
 missing
 mkinstalldirs
+m4
+## autopoint
+ABOUT-NLS
+config.rpath
