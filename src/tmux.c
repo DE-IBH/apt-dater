@@ -36,6 +36,7 @@
 
 #ifdef FEAT_TMUX
 
+#include "ttymux.h"
 #include "tmux.h"
 #include "parsecmd.h"
 #include "history.h"
@@ -83,18 +84,14 @@ tmux_initialize(HostNode *n) {
   g_signal_connect(n->mon_ttymux, "changed", G_CALLBACK(tmux_changed), n);
 }
 
-gboolean
-tmux_get_sessions(HostNode *n) {
+GList*
+tmux_get_sessions(const HostNode *n) {
+  GList *screens = NULL;
   g_assert(n);
-
-  if (n->screens) {
-    g_list_free(n->screens);
-    n->screens = NULL;
-  }
 
   const gchar *sdir = tmux_get_sdir();
   if (!sdir)
-    return FALSE;
+    return NULL;
 
   gchar *sock = g_strdup_printf("%s/%s_%s_%d", cfg->tmuxsockpath, n->ssh_user, n->hostname, n->ssh_port);
   gchar *argv[7] = {TMUX_BINARY, "-S", sock, "list-session", "-F", "#{session_name}\t#{session_created}\t#{session_attached}", NULL};
@@ -117,7 +114,7 @@ tmux_get_sessions(HostNode *n) {
     g_warning("failed to run tmux: %s", error->message);
     g_clear_error (&error);
 
-    return FALSE;
+    return NULL;
   }
 
 #if GLIB_CHECK_VERSION(2, 70, 0)
@@ -130,7 +127,7 @@ tmux_get_sessions(HostNode *n) {
     g_clear_error(&error);
     g_free(out);
 
-    return FALSE;
+    return NULL;
   }
 
   gchar **lines = g_strsplit(out, "\n", 0xff);
@@ -163,11 +160,12 @@ tmux_get_sessions(HostNode *n) {
     }
     g_strfreev(line);
 
-    n->screens = g_list_append(n->screens, s);
+    screens = g_list_prepend(screens, s);
   }
 
   g_strfreev(lines);
-  return g_list_length(n->screens) > 0;
+
+  return g_list_reverse(screens);
 }
 
 gchar **
@@ -224,7 +222,7 @@ tmux_attach(HostNode *n, const SessNode *s, const gboolean shared) {
  g_strfreev(argv);
 
 #ifdef FEAT_HISTORY
- if(n->parse_result && !tmux_get_sessions(n)) {
+ if(n->parse_result && !ttymux_update_sessions(n)) {
     n->parse_result = FALSE;
     return history_ts_failed(cfg, n);
  }

@@ -504,7 +504,7 @@ gboolean refreshStats(GList *hosts)
  while(ho) {
   HostNode *n = (HostNode *) ho->data;
 
-  if(TTYMUX_GET_SESSIONS(n)) {
+  if(ttymux_update_sessions(n)) {
    if(n->category != C_SESSIONS) {
     n->category = C_SESSIONS;
     rebuilddl = TRUE;

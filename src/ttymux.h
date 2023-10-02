@@ -28,6 +28,8 @@
 #include "apt-dater.h"
 #include "history.h"
 
+gboolean ttymux_update_sessions(HostNode *n);
+
 #ifdef FEAT_TMUX
 
 #include "tmux.h"

@@ -1,10 +1,7 @@
 /* apt-dater - terminal-based remote package update manager
  *
  * Authors:
- *   Thomas Liske <liske@ibh.de>
- *
- * Copyright Holder:
- *   2008-2015 (C) IBH IT-Service GmbH [https://www.ibh.de/apt-dater/]
+ *   2023 (C) Stefan Bühler <source@stbuehler.de>
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -22,21 +19,22 @@
  *   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#ifndef _TMUX_H
-#define _TMUX_H
-
 #include "apt-dater.h"
-#include "history.h"
+#include "ttymux.h"
 
-#define TMUX_SDFORMT "%s/S-%s"
-#define TMUX_SOCKPRE "apt-dater_"
-#define TMUX_SOCKPATH "/tmp"
+static void ttymux_free_session_list(GList *sessions) {
+    while (sessions) {
+        GList *next = g_list_next(sessions);
+        g_free((SessNode*) sessions->data);
+        g_list_free1(sessions);
+        sessions = next;
+    }
+}
 
-void tmux_initialize(HostNode *n);
-GList* tmux_get_sessions(const HostNode *n);
+gboolean ttymux_update_sessions(HostNode *n) {
+    ttymux_free_session_list(n->screens);
 
-gchar **tmux_new(HostNode *n, const gboolean detached);
-gboolean tmux_attach(HostNode *n, const SessNode *s, const gboolean shared);
-gchar *tmux_get_dump(const SessNode *s);
+    n->screens = TTYMUX_GET_SESSIONS(n);
 
-#endif /* _TMUX_H */
+    return (n->screens != NULL);
+}
