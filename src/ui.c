@@ -1840,8 +1840,9 @@ void doUI (GList *hosts)
 {
 #ifdef FEAT_TCLFILTER
  /* Prepare TCL interpreter */
+ filterexp[sizeof(filterexp) - 1] = 0;
  if(cfg->filterexp)
-  strncpy(filterexp, cfg->filterexp, BUF_MAX_LEN);
+  strncpy(filterexp, cfg->filterexp, sizeof(filterexp) - 1);
  else
   filterexp[0] = 0;
 
