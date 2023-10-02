@@ -126,13 +126,15 @@ tmux_get_sessions(HostNode *n) {
   /* deprecated name for g_spawn_check_wait_status: */
   if(!g_spawn_check_exit_status(rc, &error)) {
 #endif
-    /*    g_warning("error on list-sessions: %s", error->message);
-	  g_clear_error (&error);*/
+    /* g_warning("error on list-sessions: %s", error->message); */
+    g_clear_error(&error);
+    g_free(out);
 
     return FALSE;
   }
 
   gchar **lines = g_strsplit(out, "\n", 0xff);
+  g_free(out);
   gint i = -1;
   while(lines[++i] && strlen(lines[i])) {
     SessNode *s = g_new0(SessNode, 1);
