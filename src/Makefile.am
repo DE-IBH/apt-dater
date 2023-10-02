@@ -12,6 +12,8 @@ SHARED_SOURCES =			\
 	apt-dater.h			\
 	colors.c			\
 	colors.h			\
+	completion.c			\
+	completion.h			\
 	exec.c				\
 	exec.h				\
 	extern.h			\

@@ -2,6 +2,7 @@
 ./src/autoref.c
 ./src/clusters.c
 ./src/colors.c
+./src/completion.c
 ./src/env.c
 ./src/exec.c
 ./src/history.c

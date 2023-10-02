@@ -32,6 +32,7 @@
 #include "apt-dater.h"
 #include "ui.h"
 #include "colors.h"
+#include "completion.h"
 #include "ttymux.h"
 #include "exec.h"
 #include "stats.h"
@@ -75,7 +76,7 @@ gchar  maintainer[48];
 gchar  filterexp[BUF_MAX_LEN];
 #endif
 gint   sc_mask = 0;
-static GCompletion* dlCompl = NULL;
+static Completion* dlCompl = NULL;
 
 #ifdef FEAT_TCLFILTER
 static Tcl_Interp *tcl_interp = NULL;
@@ -396,20 +397,6 @@ static void setMenuEntries(gint mask) {
   }
 }
 
-
-static gchar *compDl(gpointer p)
-{
- gchar *ret = NULL;
-
- ret = getStrFromDrawNode((DrawNode *) p);
-
- return ret;
-}
-
-static gint strcompDl (const gchar *s1, const gchar *s2, gsize n)
-{
- return(g_ascii_strncasecmp(s1, s2, n));
-}
 
 void freeDrawNode (DrawNode *n)
 {
@@ -1864,9 +1851,8 @@ void doUI (GList *hosts)
  refreshDraw();
 
  /* Create completion list. */
- dlCompl = g_completion_new(compDl);
- g_completion_add_items(dlCompl, drawlist);
- g_completion_set_compare(dlCompl, strcompDl);
+ dlCompl = completion_init();
+ completion_set_entries(dlCompl, drawlist);
 
  const gchar *m = getenv("MAINTAINER");
  if (m)
@@ -2499,8 +2485,7 @@ static void expandAllNodes(GList *hosts)
 
   rebuildDrawList(hosts);
  }
- g_completion_clear_items (dlCompl);
- g_completion_add_items (dlCompl, drawlist);
+ completion_set_entries(dlCompl, drawlist);
 }
 
 
@@ -2558,7 +2543,7 @@ void searchEntry(GList *hosts) {
 
    /* find completion matches */
    if(strlen(s))
-    matches = g_completion_complete(dlCompl, s, NULL);
+    matches = completion_search(dlCompl, s);
    else
     matches = NULL;
 
@@ -2568,7 +2553,7 @@ void searchEntry(GList *hosts) {
      s[--pos] = 0;
 
      if(pos>0)
-       matches = g_completion_complete(dlCompl, s, NULL);
+       matches = completion_search(dlCompl, s);
    }
    /* print new search string */
    else {
@@ -3738,7 +3723,7 @@ gboolean ctrlUI (GList *hosts)
 #ifdef FEAT_TCLFILTER
    if (!Tcl_InterpDeleted(tcl_interp)) Tcl_DeleteInterp(tcl_interp);
 #endif
-   if(dlCompl) g_completion_free (dlCompl);
+   if(dlCompl) completion_free (dlCompl);
 
    ret = FALSE;
    attrset(A_NORMAL);

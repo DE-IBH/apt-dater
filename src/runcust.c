@@ -25,14 +25,14 @@
 
 #include <glib.h>
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #ifdef HAVE_NCURSES_H
 #include <ncurses.h>
 #else
 #include <curses.h>
-#endif
-
-#ifdef HAVE_CONFIG_H
-# include "config.h"
 #endif
 
 #ifdef FEAT_RUNCUST
