@@ -19,7 +19,6 @@ AC_CANONICAL_HOST
 
 AM_INIT_AUTOMAKE([-Wno-portability])
 
-AM_GNU_GETTEXT
 
 case "${host_os}" in
 linux*)
