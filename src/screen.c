@@ -117,7 +117,7 @@ screen_get_sessions(HostNode *n) {
 
 gchar **
 screen_new(HostNode *n, const gboolean detached) {
-  gchar **_argv = (gchar **) g_malloc0(sizeof(gchar *) * 8);
+  gchar **_argv = (gchar **) g_malloc0(sizeof(gchar *) * 9);
   gchar *title = parse_string(cfg->screentitle, n);
 
   _argv[0] = g_strdup(SCREEN_BINARY);
@@ -129,7 +129,8 @@ screen_new(HostNode *n, const gboolean detached) {
   _argv[4] = title;
   _argv[5] = g_strdup("-c");
   _argv[6] = g_strdup(cfg->screenrcfile);
-  _argv[7] = NULL;
+  _argv[7] = g_strdup(PKGLIBDIR"/cmd");
+  _argv[8] = NULL;
 
   return _argv;
 }

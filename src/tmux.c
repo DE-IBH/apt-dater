@@ -172,7 +172,7 @@ tmux_get_sessions(HostNode *n) {
 
 gchar **
 tmux_new(HostNode *n, const gboolean detached) {
-  gchar **_argv = (gchar **) g_malloc0(sizeof(gchar *) * 9);
+  gchar **_argv = (gchar **) g_malloc0(sizeof(gchar *) * 10);
   gchar *title = parse_string("%m # %U%H", n);
 
   _argv[0] = g_strdup(TMUX_BINARY);
@@ -183,7 +183,8 @@ tmux_new(HostNode *n, const gboolean detached) {
   _argv[5] = g_strdup("new-session");
   _argv[6] = g_strdup_printf("-%sn", detached ? "d" : "");
   _argv[7] = title;
-  _argv[8] = NULL;
+  _argv[8] = g_strdup(PKGLIBDIR"/cmd");
+  _argv[9] = NULL;
 
   return _argv;
 }
