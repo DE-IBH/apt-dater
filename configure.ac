@@ -127,7 +127,8 @@ if eval "test x$CURSES_LIB_NAME = x"; then
 fi
 
 if eval "test x$CURSES_LIB_NAME = x"; then
-    AC_CHECK_HEADERS(curses.h)
+    # only to log result:
+    AC_CHECK_HEADER(curses.h)
 
     if test x$enable_utf8 != xno; then
 	AC_CHECK_LIB(curses, get_wch, [CURSES_LIB="-lcurses" CURSES_LIB_NAME=curses CURSES_LIB_WIDE=yes])
@@ -149,20 +150,12 @@ fi
 
 LIBS="$LIBS $CURSES_LIB"
 
-AC_SUBST(CURSES_LIB)
-
-AC_CHECK_HEADERS(popt.h)
-AC_CHECK_LIB([popt], [poptParseArgvString])
-AC_CHECK_LIB([glib-2.0], [g_main_loop_run])
-
-# Checks for header files.
-AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h stdlib.h string.h sys/file.h unistd.h])
+AC_CHECK_HEADER([popt.h], [], [AC_MSG_ERROR([Missing popt.h])])
+AC_CHECK_LIB([popt], [poptParseArgvString], [], [AC_MSG_ERROR([Missing library popt with poptParseArgvString])])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_C_INLINE
-AC_STRUCT_TM
 
 # Where to put schema definitions
 AC_MSG_CHECKING(XMLSCHEMADIR)
@@ -402,11 +395,7 @@ else
 fi
 AC_SUBST(DBXSL)
 
-# Checks for library functions.
 AC_TYPE_SIGNAL
-AC_FUNC_STAT
-AC_FUNC_STRFTIME
-AC_CHECK_FUNCS([memset strchr strdup strerror])
 
 AC_CONFIG_FILES([ po/Makefile.in
 Makefile
