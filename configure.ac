@@ -18,7 +18,7 @@ adl_RECURSIVE_EVAL([$datarootdir], datarootdir)
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([-Wno-portability])
 
 AM_GNU_GETTEXT
 
