@@ -3,8 +3,8 @@
 
 PACKAGE=apt-dater
 
-AC_PREREQ(2.61)
-AC_INIT(apt-dater, 1.0.4, apt-dater@ibh.de)
+AC_PREREQ([2.71])
+AC_INIT([apt-dater],[1.0.4],[apt-dater@ibh.de])
 
 # include local macros
 m4_include([m4/adl_recursive_eval.m4])
@@ -29,7 +29,7 @@ AM_CONDITIONAL([LINUX], [test "$build_linux" = "yes"])
 
 AC_CONFIG_SRCDIR([src/apt-dater.c])
 AC_CONFIG_SRCDIR([src/adsh.c])
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 
 AM_GNU_GETTEXT([external])
 AC_CHECK_HEADERS(locale.h)
