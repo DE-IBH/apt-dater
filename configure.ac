@@ -3,11 +3,11 @@
 
 PACKAGE=apt-dater
 
-AC_PREREQ(2.61)
-AC_INIT(apt-dater, 1.0.4, apt-dater@ibh.de)
+AC_PREREQ([2.71])
+AC_INIT([apt-dater],[1.0.4],[apt-dater@ibh.de])
 
 # include local macros
-m4_include([m4/adl_recursive_eval.m4])
+m4_include([m4lib/adl_recursive_eval.m4])
 
 # Recursive eval some vars
 adl_RECURSIVE_EVAL([$sysconfdir], sysconfdir)
@@ -16,39 +16,27 @@ adl_RECURSIVE_EVAL([$datarootdir], datarootdir)
 
 # Environment
 AC_CANONICAL_HOST
-AC_CANONICAL_TARGET
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([-Wno-portability])
 
-AM_GNU_GETTEXT
 
-case "${target_os}" in
-darwin*)
-        AC_DEFINE([DARWIN], [1], [Define if Darwin or Mac OS X])
-        ;;
-freebsd*)
-        freebsd="yes"
-        ;;
-*)
-        linux="yes"
+case "${host_os}" in
+linux*)
+        build_linux="yes"
         ;;
 esac
-AM_CONDITIONAL(LINUX, test x"$linux" = x"yes")
-AM_CONDITIONAL(FREEBSD, test x"$freebsd" = x"yes")
+AM_CONDITIONAL([LINUX], [test "$build_linux" = "yes"])
 
 AC_CONFIG_SRCDIR([src/apt-dater.c])
 AC_CONFIG_SRCDIR([src/adsh.c])
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 
 AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_REQUIRE_VERSION([0.19.3])
 AC_CHECK_HEADERS(locale.h)
 
 glib_module="glib-2.0 >= 2.3.6"
 PKG_CHECK_MODULES(GLIB, "$glib_module", enable_glib_=yes, enable_glib_=no)
-PKG_CHECK_MODULES(GLIB2_36, glib-2.0 >= 2.36,
-[],
-AC_DEFINE(REQUIRE_GLIB_TYPE_INIT, 1, [ Define to 1 if your GLIB requires the g_type_init call. ]),
-)
 gio_module="gio-2.0 >= 2.15.0"
 PKG_CHECK_MODULES(GIO, "$gio_module", enable_gio_=yes, enable_gio_=no)
 
@@ -106,6 +94,7 @@ AC_MSG_RESULT($enable_runcust)
 if test "$enable_runcust" = "yes"; then
     AC_DEFINE(FEAT_RUNCUST, 1, [ Define if you want 'run custom commands' support included. ])
 fi
+AM_CONDITIONAL(FEAT_RUNCUST, [test "$enable_runcust" = "yes"])
 
 AC_SUBST(VERSION)
 AC_SUBST(PACKAGE)
@@ -140,7 +129,8 @@ if eval "test x$CURSES_LIB_NAME = x"; then
 fi
 
 if eval "test x$CURSES_LIB_NAME = x"; then
-    AC_CHECK_HEADERS(curses.h)
+    # only to log result:
+    AC_CHECK_HEADER(curses.h)
 
     if test x$enable_utf8 != xno; then
 	AC_CHECK_LIB(curses, get_wch, [CURSES_LIB="-lcurses" CURSES_LIB_NAME=curses CURSES_LIB_WIDE=yes])
@@ -162,26 +152,12 @@ fi
 
 LIBS="$LIBS $CURSES_LIB"
 
-AC_SUBST(CURSES_LIB)
-
-AC_CHECK_HEADERS(popt.h)
-AC_CHECK_LIB([popt], [poptParseArgvString])
-AC_CHECK_LIB([glib-2.0], [g_main_loop_run])
-AC_CHECK_LIB([glib-2.0], [g_timeout_add_seconds],
-AC_DEFINE(HAVE_GLIB_TIMEOUT_ADD_SECONDS, 1, [ Define to 1 if your GLIB supports the g_timeout_add_seconds call. ]))
-AC_CHECK_LIB([glib-2.0], [g_spawn_check_exit_status],
-AC_DEFINE(HAVE_GLIB_SPAWN_CHECK_EXIT_STATUS, 1, [ Define to 1 if your GLIB supports the g_spawn_check_exit_status call. ]))
-AC_CHECK_LIB([glib-2.0], [g_type_init],
-AC_DEFINE(HAVE_GLIB_TYPE_INIT, 1, [ Define to 1 if your GLIB requires the g_type_init call. ]))
-
-# Checks for header files.
-AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h stdlib.h string.h sys/file.h unistd.h])
+AC_CHECK_HEADER([popt.h], [], [AC_MSG_ERROR([Missing popt.h])])
+AC_CHECK_LIB([popt], [poptParseArgvString], [], [AC_MSG_ERROR([Missing library popt with poptParseArgvString])])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_C_INLINE
-AC_STRUCT_TM
 
 # Where to put schema definitions
 AC_MSG_CHECKING(XMLSCHEMADIR)
@@ -371,6 +347,7 @@ if test "$enable_tmux" = "yes"; then
     echo "$tmux_binary"
     AC_DEFINE(FEAT_TMUX, 1, [ Define if you want to use tmux terminal multiplexer. ])
 fi
+AM_CONDITIONAL(FEAT_TMUX, [test "${enable_tmux}" = "yes"])
 
 
 # Check if `env' is installed on your system (used by history feature)
@@ -420,12 +397,6 @@ else
     echo "not found."
 fi
 AC_SUBST(DBXSL)
-
-# Checks for library functions.
-AC_TYPE_SIGNAL
-AC_FUNC_STAT
-AC_FUNC_STRFTIME
-AC_CHECK_FUNCS([memset strchr strdup strerror])
 
 AC_CONFIG_FILES([ po/Makefile.in
 Makefile

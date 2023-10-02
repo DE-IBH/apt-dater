@@ -25,16 +25,16 @@
 #include "apt-dater.h"
 #include "glue.h"
 
-#ifndef HAVE_GLIB_TIMEOUT_ADD_SECONDS
-#warning Your glib2 does not support g_timeout_seconds (glib >= 2.13.5) - using glue code.
+#if !GLIB_CHECK_VERSION(2, 14, 0)
+#warning Your glib2 does not support g_timeout_seconds (glib >= 2.14.0) - using glue code.
 guint
 g_timeout_add_seconds(guint interval, GSourceFunc function, gpointer data) {
     g_timeout_add(interval*1000, function, data);
 }
 #endif
 
-#ifndef HAVE_GLIB_SPAWN_CHECK_EXIT_STATUS
-#warning Your glib2 does not support g_spawn_check_exit_status (glib >= 2.33.4) - using glue code.
+#if !GLIB_CHECK_VERSION(2, 34, 0)
+#warning Your glib2 does not support g_spawn_check_exit_status (glib >= 2.34.0) - using glue code.
 /* Implementation has been taken from:
  *
  * gspawn.[ch] - Process launching

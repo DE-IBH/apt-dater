@@ -83,7 +83,8 @@ int main(int argc, char **argv, char **envp)
  textdomain(PACKAGE);
 #endif
 
-#ifdef REQUIRE_GLIB_TYPE_INIT
+#if !GLIB_CHECK_VERSION(2, 36, 0)
+ /* since glib 2.36 this is done automatically */
  g_type_init();
 #endif
 
