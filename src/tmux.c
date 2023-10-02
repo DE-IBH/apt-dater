@@ -222,7 +222,7 @@ tmux_attach(HostNode *n, const SessNode *s, const gboolean shared) {
  g_strfreev(argv);
 
 #ifdef FEAT_HISTORY
- if(n->parse_result && !ttymux_update_sessions(n)) {
+ if(n->parse_result && !ttymux_is_session_alive(n, s)) {
     n->parse_result = FALSE;
     return history_ts_failed(cfg, n);
  }

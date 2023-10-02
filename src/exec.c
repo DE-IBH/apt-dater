@@ -135,6 +135,9 @@ ssh_cmd_upgrade(HostNode *n, const gboolean detached)
  }
 
 #ifdef FEAT_HISTORY
+ /* TODO: we have no idea which session was created; if no session is left
+  * for the host we check for failures (returning TRUE on error in output).
+  */
  if(!detached && n->parse_result && !ttymux_update_sessions(n)) {
     n->parse_result = FALSE;
     return history_ts_failed(cfg, n);
@@ -183,6 +186,9 @@ ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
  }
 
 #ifdef FEAT_HISTORY
+ /* TODO: we have no idea which session was created; if no session is left
+  * for the host we check for failures (returning TRUE on error in output).
+  */
  if(!detached && n->parse_result && !ttymux_update_sessions(n)) {
     n->parse_result = FALSE;
     return history_ts_failed(cfg, n);

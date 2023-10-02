@@ -38,3 +38,21 @@ gboolean ttymux_update_sessions(HostNode *n) {
 
     return (n->screens != NULL);
 }
+
+gboolean ttymux_is_session_alive(HostNode *n, const SessNode *s) {
+    GList *sessions = TTYMUX_GET_SESSIONS(n);
+    gboolean found = FALSE;
+
+    for (GList *session_link = sessions; session_link; session_link = g_list_next(session_link)) {
+        SessNode *session = (SessNode*) session_link->data;
+
+        if (session->pid == s->pid) {
+            found = TRUE;
+            break;
+        }
+    }
+
+    ttymux_free_session_list(sessions);
+
+    return found;
+}
