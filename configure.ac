@@ -16,25 +16,17 @@ adl_RECURSIVE_EVAL([$datarootdir], datarootdir)
 
 # Environment
 AC_CANONICAL_HOST
-AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE([-Wno-portability])
 
 AM_GNU_GETTEXT
 
-case "${target_os}" in
-darwin*)
-        AC_DEFINE([DARWIN], [1], [Define if Darwin or Mac OS X])
-        ;;
-freebsd*)
-        freebsd="yes"
-        ;;
-*)
-        linux="yes"
+case "${host_os}" in
+linux*)
+        build_linux="yes"
         ;;
 esac
-AM_CONDITIONAL(LINUX, test x"$linux" = x"yes")
-AM_CONDITIONAL(FREEBSD, test x"$freebsd" = x"yes")
+AM_CONDITIONAL([LINUX], [test "$build_linux" = "yes"])
 
 AC_CONFIG_SRCDIR([src/apt-dater.c])
 AC_CONFIG_SRCDIR([src/adsh.c])
