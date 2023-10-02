@@ -29,7 +29,7 @@
 # include "config.h"
 #endif
 
-#ifndef FEAT_RUNCUST
+#ifdef FEAT_RUNCUST
 
 #include "apt-dater.h"
 
