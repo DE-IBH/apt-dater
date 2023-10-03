@@ -1840,8 +1840,9 @@ void doUI (GList *hosts)
 {
 #ifdef FEAT_TCLFILTER
  /* Prepare TCL interpreter */
+ filterexp[sizeof(filterexp) - 1] = 0;
  if(cfg->filterexp)
-  strncpy(filterexp, cfg->filterexp, BUF_MAX_LEN);
+  strncpy(filterexp, cfg->filterexp, sizeof(filterexp) - 1);
  else
   filterexp[0] = 0;
 
@@ -1869,15 +1870,16 @@ void doUI (GList *hosts)
  g_completion_set_compare(dlCompl, strcompDl);
 
  const gchar *m = getenv("MAINTAINER");
+ maintainer[sizeof(maintainer) - 1 ] = 0;
  if (m)
-   strncpy(maintainer, m, sizeof(maintainer));
+   strncpy(maintainer, m, sizeof(maintainer) - 1);
  else {
    struct passwd *pw = getpwuid(getuid());
 
    if (pw && pw->pw_gecos && strlen(pw->pw_gecos))
-     strncpy(maintainer, pw->pw_gecos, sizeof(maintainer));
+     strncpy(maintainer, pw->pw_gecos, sizeof(maintainer) - 1);
    else if (pw && pw->pw_name)
-     strncpy(maintainer, pw->pw_name, sizeof(maintainer));
+     strncpy(maintainer, pw->pw_name, sizeof(maintainer) - 1);
    else
      maintainer[0] = 0;
  }

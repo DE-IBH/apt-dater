@@ -69,19 +69,18 @@ env_init(gchar **envp) {
 
 gchar **
 env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEntry *he) {
-    gchar **new_env = (gchar **) g_new0(gchar**, g_slist_length(base_env) + 24
+    GPtrArray *new_env = g_ptr_array_sized_new(g_slist_length(base_env) + 25
 #ifdef FEAT_CLUSTERS
     + g_list_length(n->clusters)
 #endif
     );
-    gint i = 0;
 
     GSList *p;
     for(p = base_env; p; p = p->next)
-	new_env[i++] = g_strdup(p->data);
+	g_ptr_array_add(new_env, g_strdup(p->data));
 
 #define ADD_HENV(name, value) \
-    new_env[i++] = g_strdup_printf("AD_"name"=%s", value)
+    g_ptr_array_add(new_env, g_strdup_printf("AD_" name "=%s", value))
 
     ADD_HENV("HOSTNAME"         , n->hostname);
     if(n->comment)
@@ -95,11 +94,11 @@ env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEnt
      ADD_HENV("SSH_USER"        , "");
     ADD_HENV("SSH_HOST"         , (n->ssh_host ? n->ssh_host : n->hostname));
     if(n->ssh_port)
-     new_env[i++] = g_strdup_printf("AD_SSH_PORT=%d", n->ssh_port);
+     g_ptr_array_add(new_env, g_strdup_printf("AD_SSH_PORT=%d", n->ssh_port));
     else
      ADD_HENV("SSH_PORT"        , "");
     if(n->identity_file && strlen(n->identity_file) > 0)
-     new_env[i++] = g_strdup_printf("AD_SSH_ID=-i %s", n->identity_file);
+     g_ptr_array_add(new_env, g_strdup_printf("AD_SSH_ID=-i %s", n->identity_file));
     else
      ADD_HENV("SSH_ID"          , "");
     ADD_HENV("STATSFILE"        , n->statsfile);
@@ -132,11 +131,11 @@ env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEnt
 
 #ifdef FEAT_CLUSTERS
     if(n->clusters != NULL) {
-	new_env[i++] = g_strdup_printf("AD_CLUSTERS=%d", g_list_length(n->clusters));
+	g_ptr_array_add(new_env, g_strdup_printf("AD_CLUSTERS=%d", g_list_length(n->clusters)));
 	int j = 1;
 	GList *c = n->clusters;
 	while(c != NULL) {
-	    new_env[i++] = g_strdup_printf("AD_CLUSTER%d=%s", j, (gchar *)c->data);
+	    g_ptr_array_add(new_env, g_strdup_printf("AD_CLUSTER%d=%s", j, (gchar *)c->data));
 	    c = c->next;
 	    j++;
 	}
@@ -153,7 +152,9 @@ env_build(HostNode *n, const gchar *action, const gchar *param, const HistoryEnt
 
     ADD_HENV("MAINTAINER", maintainer);
     /* add legacy MAINTAINER env variable */
-    new_env[i++] = g_strdup_printf("MAINTAINER=%s", maintainer);
+    g_ptr_array_add(new_env, g_strdup_printf("MAINTAINER=%s", maintainer));
 
-    return new_env;
+    g_ptr_array_add(new_env, NULL);
+
+    return (gchar **) g_ptr_array_free(new_env, FALSE);
 }

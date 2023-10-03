@@ -195,7 +195,7 @@ static void reportHost(gpointer data, gpointer lgroup) {
     xmlTextWriterWriteElement(writer, BAD_CAST("virt"), BAD_CAST("Unknown"));
 
   /* host UUID */
-  if(n->uuid)
+  if(n->uuid[0])
     xmlTextWriterWriteElement(writer, BAD_CAST("uuid"), BAD_CAST(n->uuid));
 
 #ifdef FEAT_HISTORY
