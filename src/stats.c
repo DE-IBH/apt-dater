@@ -414,8 +414,6 @@ gboolean getUpdatesFromStat(HostNode *n)
    continue;
 
   if (sscanf((gchar *) line, "UUID: %" QUOTE(UUID_STRLEN) "s", n->uuid)) {
-   n->uuid[UUID_STRLEN-1] = 0;
-
    linesok++;
    continue;
   }
