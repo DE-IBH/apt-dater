@@ -1,10 +1,7 @@
 /* apt-dater - terminal-based remote package update manager
  *
  * Authors:
- *   Thomas Liske <liske@ibh.de>
- *
- * Copyright Holder:
- *   2008-2017 (C) IBH IT-Service GmbH [https://www.ibh.de/apt-dater/]
+ *   2023 (C) Stefan Bühler <source@stbuehler.de>
  *
  * License:
  *   This program is free software; you can redistribute it and/or modify
@@ -22,19 +19,32 @@
  *   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
  */
 
-#ifndef _RUNCUST_H
-#define _RUNCUST_H
+#ifndef _COMPLETION_H
+#define _COMPLETION_H
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#include <glib.h>
 
-#ifdef FEAT_RUNCUST
+/* Find entries in a GList that match a given prefix.
+ *
+ * Based on deprecated glib GCompletion
+ */
 
-#include "apt-dater.h"
+typedef struct _completion {
+  GList *entries;
 
-void runCustom();
+  /* remember last prefix and the matched entries */
+  gchar* cached_prefix;
+  GList* cached_entries;
+} Completion;
 
-#endif /* FEAT_RUNCUST */
+Completion *completion_init();
 
-#endif /* _RUNCUST_H */
+/* entries: list of `DrawNode*` */
+void completion_set_entries(Completion *cmpl, GList *entries);
+
+/* returns non-owned list; returned list gets invalidated with any other completion_* call on this instance */
+GList *completion_search(Completion *cmpl, const gchar *prefix);
+
+void completion_free(Completion *cmpl);
+
+#endif /* _COMPLETION_H */

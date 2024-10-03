@@ -25,7 +25,9 @@
 #ifndef _APT_DATER_H
 #define _APT_DATER_H
 
-#define _GNU_SOURCE
+#ifndef _GNU_SOURCE
+# define _GNU_SOURCE
+#endif
 
 #include <assert.h>
 #include <stdio.h>
@@ -40,7 +42,10 @@
 #include <glib/gstdio.h>
 #include <gio/gio.h>
 
-#include "../config.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include "../include/adproto.h"
 
 #ifdef HAVE_GETTEXT
@@ -57,10 +62,6 @@
 #define INPUT_MAX 4096
 #define BUF_MAX_LEN 256
 #define PROG_NAME PACKAGE
-
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
 
 #ifndef NDEBUG
 typedef enum {

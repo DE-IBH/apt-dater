@@ -25,7 +25,9 @@
 #ifndef _SCREEN_H
 #define _SCREEN_H
 
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
 
 #ifndef FEAT_TMUX
 

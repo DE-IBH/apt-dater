@@ -120,7 +120,12 @@ tmux_get_sessions(HostNode *n) {
     return FALSE;
   }
 
+#if GLIB_CHECK_VERSION(2, 70, 0)
+  if(!g_spawn_check_wait_status(rc, &error)) {
+#else
+  /* deprecated name for g_spawn_check_wait_status: */
   if(!g_spawn_check_exit_status(rc, &error)) {
+#endif
     /*    g_warning("error on list-sessions: %s", error->message);
 	  g_clear_error (&error);*/
 
