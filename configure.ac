@@ -4,7 +4,7 @@
 PACKAGE=apt-dater
 
 AC_PREREQ([2.71])
-AC_INIT([apt-dater],[1.0.4],[apt-dater@ibh.de])
+AC_INIT([apt-dater],[1.0.5],[apt-dater@ibh.de])
 
 # include local macros
 m4_include([m4lib/adl_recursive_eval.m4])

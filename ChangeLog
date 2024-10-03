@@ -1,3 +1,24 @@
+apt-dater (1.0.5) unstable; urgency=low
+
+  * Update err pattern to ignore fail2ban string.
+    (github pull request #151 by Herman van Rink @helmo)
+  * Clean up whitespace and indenting.
+    (github pull request #170 by Mike Beattie @mjbnz)
+  * Update README.autoref link to *Attacks on Package Managers* article.
+    (github issue request #171 by Jakob Haufe @sur5r)
+  * Fix attribute hasupdate in report.dtd.
+    (github pull request #172 by Juri Grabowski @gratuxri)
+  * Fix quoting of examples in apt-dater.xml.
+    (github pull request #174 by Juri Grabowski @gratuxri)
+  * Cleanup and update autotools.
+    (github pull request #180 by Stefan Bühler @stbuehler)
+  * Fix various memory handling issues.
+    (github pull request #182 by Stefan Bühler @stbuehler)
+  * Fix _GNU_SOURCE redefinition warning.
+    (@alpinelinux aports patch by Henrik Riomar @HRio)
+
+ -- Thomas Liske <liske@ibh.de>  
+
 apt-dater (1.0.4) unstable; urgency=low
 
   * tmux
