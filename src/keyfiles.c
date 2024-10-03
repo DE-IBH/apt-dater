@@ -267,7 +267,9 @@ static xmlNodePtr getXNode(xmlXPathContextPtr context, const gchar *xpath) {
 static void xmlErrIgnoreHandler(void *ctx, const char *msg, ...) {
 }
 
-static void handleXMLError(const xmlErrorPtr e) {
+static void handleXMLError() {
+  xmlError const *e = xmlGetLastError();
+
   if(!e)
     return;
 
@@ -299,7 +301,7 @@ static void handleXMLError(const xmlErrorPtr e) {
 
   fprintf(stderr, "%s", e->message);
 
-  xmlResetError(e);
+  xmlResetLastError();
 }
 
 gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
@@ -311,7 +313,7 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     /* Handle Xincludes. */
     xmlSetGenericErrorFunc(NULL, xmlErrIgnoreHandler);
     xmlXIncludeProcess(xcfg);
-    handleXMLError( xmlGetLastError() );
+    handleXMLError();
     xmlSetGenericErrorFunc(NULL, NULL);
 
     /* Validate against DTD. */
@@ -467,7 +469,7 @@ GList *loadHosts (const gchar *filename) {
     /* Handle Xincludes. */
     xmlSetGenericErrorFunc(NULL, xmlErrIgnoreHandler);
     xmlXIncludeProcess(xcfg);
-    handleXMLError( xmlGetLastError() );
+    handleXMLError();
     xmlSetGenericErrorFunc(NULL, NULL);
 
     /* Validate against DTD. */
