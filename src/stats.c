@@ -421,10 +421,8 @@ gboolean getUpdatesFromStat(HostNode *n)
   }
 
 #ifdef FEAT_CLUSTERS
-  char cluster[ADP_STRLEN_CLUSTER];
+  char cluster[ADP_STRLEN_CLUSTER + 1];
   if (sscanf((gchar *) line, ADP_PATTERN_CLUSTER, cluster)) {
-   cluster[ADP_STRLEN_CLUSTER-1] = 0;
-
    cluster_host_add(n, cluster);
 
    linesok++;
