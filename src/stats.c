@@ -414,17 +414,13 @@ gboolean getUpdatesFromStat(HostNode *n)
    continue;
 
   if (sscanf((gchar *) line, "UUID: %" QUOTE(UUID_STRLEN) "s", n->uuid)) {
-   n->uuid[UUID_STRLEN-1] = 0;
-
    linesok++;
    continue;
   }
 
 #ifdef FEAT_CLUSTERS
-  char cluster[ADP_STRLEN_CLUSTER];
+  char cluster[ADP_STRLEN_CLUSTER + 1];
   if (sscanf((gchar *) line, ADP_PATTERN_CLUSTER, cluster)) {
-   cluster[ADP_STRLEN_CLUSTER-1] = 0;
-
    cluster_host_add(n, cluster);
 
    linesok++;
@@ -504,7 +500,7 @@ gboolean refreshStats(GList *hosts)
  while(ho) {
   HostNode *n = (HostNode *) ho->data;
 
-  if(TTYMUX_GET_SESSIONS(n)) {
+  if(ttymux_update_sessions(n)) {
    if(n->category != C_SESSIONS) {
     n->category = C_SESSIONS;
     rebuilddl = TRUE;

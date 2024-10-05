@@ -100,7 +100,6 @@ gboolean
 ssh_cmd_upgrade(HostNode *n, const gboolean detached)
 {
  gboolean r;
- guint i;
  GError *error = NULL;
  gchar **argv = NULL;
 
@@ -115,14 +114,7 @@ ssh_cmd_upgrade(HostNode *n, const gboolean detached)
  he.action = "upgrade";
  he.data = NULL;
 
- gchar **screen_argv = TTYMUX_NEW(n, detached);
-
- argv = (gchar **) g_malloc0(sizeof(gchar *) * (g_strv_length(screen_argv) + 2));
- for(i = 0; i < g_strv_length(screen_argv); i++)
-   argv[i] = g_strdup(screen_argv[i]);
- argv[i] = g_strdup(PKGLIBDIR"/cmd");
-
- g_strfreev(screen_argv);
+ argv = TTYMUX_NEW(n, detached);
 
 #ifdef FEAT_HISTORY
  n->parse_result = cfg->history_errpattern && strlen(cfg->history_errpattern);;
@@ -143,7 +135,10 @@ ssh_cmd_upgrade(HostNode *n, const gboolean detached)
  }
 
 #ifdef FEAT_HISTORY
- if(!detached && n->parse_result && !TTYMUX_GET_SESSIONS(n)) {
+ /* TODO: we have no idea which session was created; if no session is left
+  * for the host we check for failures (returning TRUE on error in output).
+  */
+ if(!detached && n->parse_result && !ttymux_update_sessions(n)) {
     n->parse_result = FALSE;
     return history_ts_failed(cfg, n);
  }
@@ -156,7 +151,6 @@ gboolean
 ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
 {
  gboolean r;
- guint i;
  GError *error = NULL;
  gchar **argv = NULL;
 
@@ -171,14 +165,7 @@ ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
  he.action = "install";
  he.data = package;
 
- gchar **screen_argv = TTYMUX_NEW(n, detached);
-
- argv = (gchar **) g_malloc0(sizeof(gchar *) * (g_strv_length(screen_argv) + 2));
- for(i = 0; i < g_strv_length(screen_argv); i++)
-   argv[i] = g_strdup(screen_argv[i]);
- argv[i] = g_strdup(PKGLIBDIR"/cmd");
-
- g_strfreev(screen_argv);
+ argv = TTYMUX_NEW(n, detached);
 
 #ifdef FEAT_HISTORY
  n->parse_result = cfg->history_errpattern && strlen(cfg->history_errpattern);
@@ -199,7 +186,10 @@ ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
  }
 
 #ifdef FEAT_HISTORY
- if(!detached && n->parse_result && !TTYMUX_GET_SESSIONS(n)) {
+ /* TODO: we have no idea which session was created; if no session is left
+  * for the host we check for failures (returning TRUE on error in output).
+  */
+ if(!detached && n->parse_result && !ttymux_update_sessions(n)) {
     n->parse_result = FALSE;
     return history_ts_failed(cfg, n);
  }
@@ -211,7 +201,6 @@ ssh_cmd_install(HostNode *n, gchar *package, const gboolean detached)
 void ssh_connect(HostNode *n, const gboolean detached)
 {
  gboolean r;
- guint i;
  GError *error = NULL;
  gchar **argv;
 
@@ -221,14 +210,7 @@ void ssh_connect(HostNode *n, const gboolean detached)
  he.action = "connect";
  he.data = NULL;
 
- gchar **screen_argv = TTYMUX_NEW(n, detached);
-
- argv = (gchar **) g_malloc0(sizeof(gchar *) * (g_strv_length(screen_argv) + 2));
- for(i = 0; i < g_strv_length(screen_argv); i++)
-   argv[i] = g_strdup(screen_argv[i]);
- argv[i] = g_strdup(PKGLIBDIR"/cmd");
-
- g_strfreev(screen_argv);
+ argv = TTYMUX_NEW(n, detached);
 
  gchar **env = env_build(n, "connect", NULL, &he);
 
@@ -248,7 +230,6 @@ void ssh_connect(HostNode *n, const gboolean detached)
 void sftp_connect(HostNode *n)
 {
  gboolean r;
- guint i;
  GError *error = NULL;
  gchar **argv;
 
@@ -260,14 +241,7 @@ void sftp_connect(HostNode *n)
  he.action = "transfer";
  he.data = NULL;
 
- gchar **screen_argv = TTYMUX_NEW(n, FALSE);
-
- argv = (gchar **) g_malloc0(sizeof(gchar *) * (g_strv_length(screen_argv) + 2));
- for(i = 0; i < g_strv_length(screen_argv); i++)
-   argv[i] = g_strdup(screen_argv[i]);
- argv[i] = g_strdup(PKGLIBDIR"/cmd");
-
- g_strfreev(screen_argv);
+ argv = TTYMUX_NEW(n, FALSE);
 
  gchar **env = env_build(n, "transfer", NULL, &he);
 

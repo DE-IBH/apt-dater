@@ -35,6 +35,7 @@
 
 #ifndef FEAT_TMUX
 
+#include "ttymux.h"
 #include "screen.h"
 #include "parsecmd.h"
 #include "history.h"
@@ -64,20 +65,17 @@ screen_get_sdir() {
   return sdir;
 }
 
-gboolean
-screen_get_sessions(HostNode *n) {
-  if (n->screens) {
-    g_list_free(n->screens);
-    n->screens = NULL;
-  }
+GList*
+screen_get_sessions(const HostNode *n) {
+  GList* screens = NULL;
 
   const gchar *sdir = screen_get_sdir();
   if (!sdir)
-    return FALSE;
+    return NULL;
 
   GDir *d = g_dir_open(sdir, 0, NULL);
   if (!d) {
-   return FALSE;
+   return NULL;
   }
 
   gchar *search = g_strdup_printf(SCREEN_SOCKPRE"%s_%s_%d", n->ssh_user, n->hostname, n->ssh_port);
@@ -102,7 +100,7 @@ screen_get_sessions(HostNode *n) {
 	stat(fn, &s->st);
 	s->attached = s->st.st_mode & S_IXUSR;
 
-	n->screens = g_list_prepend(n->screens, s);
+	screens = g_list_prepend(screens, s);
       }
     }
 
@@ -112,12 +110,12 @@ screen_get_sessions(HostNode *n) {
 
   g_free(search);
 
-  return g_list_length(n->screens) > 0;
+  return g_list_reverse(screens);
 }
 
 gchar **
 screen_new(HostNode *n, const gboolean detached) {
-  gchar **_argv = (gchar **) g_malloc0(sizeof(gchar *) * 8);
+  gchar **_argv = (gchar **) g_malloc0(sizeof(gchar *) * 9);
   gchar *title = parse_string(cfg->screentitle, n);
 
   _argv[0] = g_strdup(SCREEN_BINARY);
@@ -129,7 +127,8 @@ screen_new(HostNode *n, const gboolean detached) {
   _argv[4] = title;
   _argv[5] = g_strdup("-c");
   _argv[6] = g_strdup(cfg->screenrcfile);
-  _argv[7] = NULL;
+  _argv[7] = g_strdup(PKGLIBDIR"/cmd");
+  _argv[8] = NULL;
 
   return _argv;
 }
@@ -166,7 +165,7 @@ screen_attach(HostNode *n, const SessNode *s, const gboolean shared) {
  g_strfreev(argv);
 
 #ifdef FEAT_HISTORY
- if(n->parse_result && !screen_get_sessions(n)) {
+ if(n->parse_result && !ttymux_is_session_alive(n, s)) {
     n->parse_result = FALSE;
     return history_ts_failed(cfg, n);
  }

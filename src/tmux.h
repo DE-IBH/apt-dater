@@ -33,7 +33,7 @@
 #define TMUX_SOCKPATH "/tmp"
 
 void tmux_initialize(HostNode *n);
-gboolean tmux_get_sessions(HostNode *n);
+GList* tmux_get_sessions(const HostNode *n);
 
 gchar **tmux_new(HostNode *n, const gboolean detached);
 gboolean tmux_attach(HostNode *n, const SessNode *s, const gboolean shared);
