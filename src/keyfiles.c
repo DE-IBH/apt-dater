@@ -46,7 +46,7 @@
 #include "../conf/screenrc.inc"
 #endif
 
-void dump_config(const gchar *dir, const gchar *fn, const gchar *str, const unsigned int len) {
+static void dump_config(const gchar *dir, const gchar *fn, const gchar *str, const unsigned int len) {
   gchar *pathtofile = g_strdup_printf("%s/%s", dir, (fn));
 
   if(!pathtofile)
@@ -86,6 +86,8 @@ int chkForInitialConfig(const gchar *cfgdir, const gchar *cfgfile) {
       g_clear_error (&error);
     }
   }
+  g_free(fnold);
+  g_free(fnnew);
 
   dump_config(cfgdir, "hosts.xml", (gchar *)hosts_xml, hosts_xml_len);
 #ifdef FEAT_TMUX
@@ -153,7 +155,7 @@ CfgFile *initialConfig() {
     return lcfg;
 }
 
-xmlXPathObjectPtr evalXPath(xmlXPathContextPtr context, const gchar *xpath) {
+static xmlXPathObjectPtr evalXPath(xmlXPathContextPtr context, const gchar *xpath) {
   xmlXPathObjectPtr result = xmlXPathEvalExpression(BAD_CAST(xpath), context);
   if(result == NULL) {
     g_warning("xmlXPathEvalExpression '%s' failed!\n", xpath);
@@ -163,7 +165,7 @@ xmlXPathObjectPtr evalXPath(xmlXPathContextPtr context, const gchar *xpath) {
   return result;
 }
 
-char *getXPropStr(const xmlNodePtr nodes[], const gchar *attr, const gchar *defval) {
+static char *getXPropStr(const xmlNodePtr nodes[], const gchar *attr, const gchar *defval) {
   int i;
   xmlChar *val = NULL;
 
@@ -183,7 +185,26 @@ char *getXPropStr(const xmlNodePtr nodes[], const gchar *attr, const gchar *defv
   return NULL;
 }
 
-int getXPropInt(const xmlNodePtr nodes[], const gchar *attr, const int defval) {
+/* defval is a string that either needs to be freed or returned as owned string */
+static char *getXPropStrOwnedDefault(const xmlNodePtr nodes[], const gchar *attr, gchar *defval) {
+  int i;
+  xmlChar *val = NULL;
+
+  for(i = 0; nodes[i]; i++) {
+    val = xmlGetProp(nodes[i], BAD_CAST(attr));
+
+    if(val) {
+      gchar *ret = g_strdup((gchar *)val);
+      xmlFree(val);
+      g_free(defval);
+      return ret;
+    }
+  }
+
+  return defval;
+}
+
+static int getXPropInt(const xmlNodePtr nodes[], const gchar *attr, const int defval) {
   gchar *sval = getXPropStr(nodes, attr, NULL);
 
   if(!sval)
@@ -196,7 +217,7 @@ int getXPropInt(const xmlNodePtr nodes[], const gchar *attr, const int defval) {
   return ival;
 }
 
-int getXPropBool(const xmlNodePtr nodes[], const gchar *attr, const gboolean defval) {
+static int getXPropBool(const xmlNodePtr nodes[], const gchar *attr, const gboolean defval) {
   gchar *val = getXPropStr(nodes, attr, NULL);
   if(!val)
     return defval;
@@ -224,7 +245,7 @@ int getXPropBool(const xmlNodePtr nodes[], const gchar *attr, const gboolean def
   return FALSE;
 }
 
-xmlNodeSetPtr getXNodes(xmlXPathContextPtr context, const gchar *xpath) {
+static xmlNodeSetPtr getXNodes(xmlXPathContextPtr context, const gchar *xpath) {
   xmlXPathObjectPtr xobj = xmlXPathEvalExpression(BAD_CAST(xpath), context);
   xmlNodeSetPtr ret = xobj->nodesetval;
   xmlXPathFreeNodeSetList(xobj);
@@ -232,7 +253,7 @@ xmlNodeSetPtr getXNodes(xmlXPathContextPtr context, const gchar *xpath) {
   return ret;
 }
 
-xmlNodePtr getXNode(xmlXPathContextPtr context, const gchar *xpath) {
+static xmlNodePtr getXNode(xmlXPathContextPtr context, const gchar *xpath) {
   xmlNodeSetPtr set = getXNodes(context, xpath);
   xmlNodePtr ret = NULL;
 
@@ -243,10 +264,12 @@ xmlNodePtr getXNode(xmlXPathContextPtr context, const gchar *xpath) {
   return ret;
 }
 
-void xmlErrIgnoreHandler(void *ctx, const char *msg, ...) {
+static void xmlErrIgnoreHandler(void *ctx, const char *msg, ...) {
 }
 
-void handleXMLError(const xmlErrorPtr e) {
+static void handleXMLError() {
+  xmlError const *e = xmlGetLastError();
+
   if(!e)
     return;
 
@@ -278,7 +301,7 @@ void handleXMLError(const xmlErrorPtr e) {
 
   fprintf(stderr, "%s", e->message);
 
-  xmlResetError(e);
+  xmlResetLastError();
 }
 
 gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
@@ -290,7 +313,7 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     /* Handle Xincludes. */
     xmlSetGenericErrorFunc(NULL, xmlErrIgnoreHandler);
     xmlXIncludeProcess(xcfg);
-    handleXMLError( xmlGetLastError() );
+    handleXMLError();
     xmlSetGenericErrorFunc(NULL, NULL);
 
     /* Validate against DTD. */
@@ -335,23 +358,24 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     lcfg->umask = getXPropInt(s_path, "umask", S_IRWXG | S_IRWXO);
     umask(lcfg->umask);
 
-    lcfg->hostsfile = getXPropStr(s_path, "hosts-file", g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.xml"));
-    lcfg->statsdir = getXPropStr(s_path, "stats-dir", g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats"));
+    lcfg->hostsfile = getXPropStrOwnedDefault(s_path, "hosts-file", g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "hosts.xml"));
+    lcfg->statsdir = getXPropStrOwnedDefault(s_path, "stats-dir", g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "stats"));
+
     if(g_mkdir_with_parents(lcfg->statsdir, S_IRWXU | S_IRWXG) == -1) {
       g_warning("Failed to create %s: %s", lcfg->statsdir, g_strerror(errno));
       exit(1);
     }
 
 #ifdef FEAT_TMUX
-    lcfg->tmuxconffile = getXPropStr(s_tmux, "conf-file", g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "tmux.conf"));
-    lcfg->tmuxsockpath = getXPropStr(s_tmux, "socket-path", g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "tmux"));
+    lcfg->tmuxconffile = getXPropStrOwnedDefault(s_tmux, "conf-file", g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "tmux.conf"));
+    lcfg->tmuxsockpath = getXPropStrOwnedDefault(s_tmux, "socket-path", g_strdup_printf("%s/%s/%s", g_get_user_cache_dir(), PROG_NAME, "tmux"));
     if(g_mkdir_with_parents(lcfg->tmuxsockpath, S_IRWXU | S_IRWXG) == -1) {
       g_warning("Failed to create %s: %s", lcfg->tmuxsockpath, g_strerror(errno));
       exit(1);
     }
 #else
-    lcfg->screenrcfile = getXPropStr(s_screen, "rc-file", g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc"));
-    lcfg->screentitle = getXPropStr(s_screen, "title", g_strdup("%m # %U%H"));
+    lcfg->screenrcfile = getXPropStrOwnedDefault(s_screen, "rc-file", g_strdup_printf("%s/%s/%s", g_get_user_config_dir(), PROG_NAME, "screenrc"));
+    lcfg->screentitle = getXPropStr(s_screen, "title", "%m # %U%H");
 #endif
 
     lcfg->ssh_agent = getXPropBool(s_ssh, "spawn-agent", FALSE);
@@ -386,6 +410,7 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
     gchar *colors = getXPropStr(s_appearance, "colors", "menu brightgreen blue;status brightgreen blue;selector black red;");
     if(colors)
       lcfg->colors = g_strsplit(colors, ";", -1);
+    g_free(colors);
 
 #ifdef FEAT_TCLFILTER
     lcfg->filterexp = getXPropStr(s_tclfilter, "filter-exp", NULL);
@@ -402,7 +427,7 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
 #ifdef FEAT_HISTORY
     lcfg->record_history = getXPropBool(s_history, "record", TRUE);
     lcfg->history_errpattern = getXPropStr(s_history, "err-pattern", "((?<!no )error|(?<!insserv: )warning|failed|fail(?!2ban))");
-    lcfg->history_dir = getXPropStr(s_path, "history-dir", g_strdup_printf("%s/%s/history", g_get_user_data_dir(), PACKAGE));
+    lcfg->history_dir = getXPropStrOwnedDefault(s_path, "history-dir", g_strdup_printf("%s/%s/history", g_get_user_data_dir(), PACKAGE));
 #endif
 
     lcfg->hook_pre_upgrade = getXPropStr(s_hooks, "pre-upgrade", "/etc/apt-dater/pre-upg.d");
@@ -417,10 +442,13 @@ gboolean loadConfig(const gchar *filename, CfgFile *lcfg) {
 
     lcfg->plugindir = getXPropStr(s_hooks, "plugin-dir", "/etc/apt-dater/plugins");
 
+    xmlFreeDoc(xcfg);
+    xmlXPathFreeContext(xctx);
+
     return (TRUE);
 }
 
-gint cmp_hosts(gconstpointer a, gconstpointer b, gpointer p) {
+static gint cmp_hosts(gconstpointer a, gconstpointer b, gpointer p) {
   HostNode *ha = (HostNode *)a;
   HostNode *hb = (HostNode *)b;
   gint ret;
@@ -441,7 +469,7 @@ GList *loadHosts (const gchar *filename) {
     /* Handle Xincludes. */
     xmlSetGenericErrorFunc(NULL, xmlErrIgnoreHandler);
     xmlXIncludeProcess(xcfg);
-    handleXMLError( xmlGetLastError() );
+    handleXMLError();
     xmlSetGenericErrorFunc(NULL, NULL);
 
     /* Validate against DTD. */
@@ -539,5 +567,7 @@ GList *loadHosts (const gchar *filename) {
     }
 
     xmlXPathFreeObject(groups);
+    xmlXPathFreeContext(xctx);
+    xmlFreeDoc(xcfg);
     return g_list_sort_with_data(hostlist, cmp_hosts, NULL);
 }

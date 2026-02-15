@@ -41,8 +41,8 @@
 #endif
 #define SCREEN_SOCKPRE "apt-dater_"
 
-gboolean
-screen_get_sessions(HostNode *n);
+GList*
+screen_get_sessions(const HostNode *n);
 
 gchar **screen_new(HostNode *n, const gboolean detached);
 gboolean screen_attach(HostNode *n, const SessNode *s, const gboolean shared);

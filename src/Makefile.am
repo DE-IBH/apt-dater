@@ -53,6 +53,7 @@ SHARED_SOURCES =			\
 	clusters.h			\
 	glue.c				\
 	glue.h				\
+	ttymux.c			\
 	ttymux.h			\
 	$(FEAT_RUNCUST_SOURCES) $(FEAT_TTYMUX_SOURCES)
 
