@@ -56,7 +56,7 @@ static void sigintSigHandler(int sig)
 }
 
 
-static void sigtermSigHandler() {
+static void sigtermSigHandler(int signo) {
  cleanUI();
  refreshUI();
  g_main_loop_quit (loop);
