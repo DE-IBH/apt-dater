@@ -2087,6 +2087,7 @@ void rebuildDrawList(GList *hosts)
    dl_new = g_list_nth(drawlist,j);
   }
  }
+ if (!selset) savesel = j-1;
 
  dl_new = g_list_nth(drawlist,savesel);
  if (dl_new) {
