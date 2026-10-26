@@ -100,14 +100,14 @@
     -->
 
     <!--
-	Requires apt-dater to be build with enable-autoref.
+	Requires apt-dater to be built with enable-autoref.
 
     <auto-ref
         enabled="true"/>
     -->
 
     <!--
-	Requires apt-dater to be build with enable-history.
+	Requires apt-dater to be built with enable-history.
 
     <history
         record="true"
@@ -115,7 +115,7 @@
     -->
 
     <!--
-  Requires apt-dater to be build with enable-tclfilter.
+  Requires apt-dater to be built with enable-tclfilter.
     next characters should be replaced in xml:
       "   &quot;
       '   &apos;
